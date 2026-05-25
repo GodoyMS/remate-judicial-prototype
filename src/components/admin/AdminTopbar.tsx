@@ -5,49 +5,44 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Bell,
-  Gavel,
+  Shield,
   LayoutDashboard,
   Building2,
-  TrendingUp,
+  Users,
   Settings,
   Menu,
   X,
-  History,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/properties", label: "Propiedades", icon: Building2 },
-  { href: "/dashboard/my-investments", label: "Mis inversiones", icon: History },
-  { href: "/dashboard/invest", label: "Invertir", icon: TrendingUp },
-  { href: "/dashboard/account", label: "Mi cuenta", icon: Settings },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/properties", label: "Propiedades", icon: Building2 },
+  { href: "/admin/users", label: "Usuarios", icon: Users },
+  { href: "/admin/settings", label: "Configuración", icon: Settings },
 ];
 
 function getPageTitle(pathname: string): string {
-  if (pathname === "/dashboard") return "Dashboard";
-  if (pathname.startsWith("/dashboard/properties/")) return "Detalle de propiedad";
-  if (pathname === "/dashboard/properties") return "Propiedades";
-  if (pathname === "/dashboard/my-investments") return "Mis inversiones";
-  if (pathname === "/dashboard/invest") return "Invertir";
-  if (pathname === "/dashboard/account") return "Mi cuenta";
-  return "Dashboard";
+  if (pathname === "/admin") return "Dashboard";
+  if (pathname.startsWith("/admin/properties/")) return "Detalle de propiedad";
+  if (pathname === "/admin/properties") return "Propiedades";
+  if (pathname === "/admin/users") return "Usuarios";
+  if (pathname === "/admin/settings") return "Configuración";
+  return "Admin";
 }
 
-export function Topbar() {
+export function AdminTopbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const title = getPageTitle(pathname);
 
   return (
     <>
-      <div className="w-full ">
-      <header className="h-16  flex items-center justify-between px-4 sm:px-6 shrink-0">
-        {/* Left: mobile menu + page title */}
+      <header className="h-16 flex items-center justify-between px-4 sm:px-6 shrink-0 border-b border-border/40 bg-background/80 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2">
             <button
               className="p-1.5 rounded-lg hover:bg-muted transition-colors"
@@ -55,27 +50,34 @@ export function Topbar() {
             >
               <Menu className="size-5 text-muted-foreground" />
             </button>
-            <div className="size-7 rounded-lg bg-primary flex items-center justify-center">
-              <Gavel className="size-3.5 text-primary-foreground" />
+            <div className="size-7 rounded-lg bg-secondary flex items-center justify-center">
+              <Shield className="size-3.5 text-secondary-foreground" />
             </div>
           </div>
           <h1 className="text-base font-semibold text-foreground hidden sm:block">{title}</h1>
         </div>
 
-        {/* Right: notifications + avatar */}
+        <div className="hidden md:flex items-center flex-1 max-w-sm mx-6">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar propiedades, usuarios..."
+              className="pl-9 h-9 rounded-xl border-border/80 bg-muted/30 text-sm"
+            />
+          </div>
+        </div>
+
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="relative rounded-xl">
             <Bell className="size-4" />
             <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500" />
           </Button>
-          <div className="size-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground cursor-pointer hover:opacity-90 transition-opacity">
-            AS
+          <div className="size-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-secondary-foreground cursor-pointer hover:opacity-90 transition-opacity">
+            VR
           </div>
         </div>
       </header>
-      </div>
 
-      {/* Mobile nav drawer */}
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div
@@ -86,9 +88,9 @@ export function Topbar() {
             <div className="flex items-center justify-between px-5 h-16 border-b border-sidebar-border">
               <div className="flex items-center gap-2.5">
                 <div className="size-8 rounded-lg bg-sidebar-primary flex items-center justify-center">
-                  <Gavel className="size-4 text-sidebar-primary-foreground" />
+                  <Shield className="size-4 text-sidebar-primary-foreground" />
                 </div>
-                <span className="text-base font-bold tracking-tight text-sidebar-foreground">remata</span>
+                <span className="text-base font-bold tracking-tight text-sidebar-foreground">remata admin</span>
               </div>
               <button
                 onClick={() => setMobileOpen(false)}

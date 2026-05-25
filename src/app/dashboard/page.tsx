@@ -199,7 +199,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-foreground">Inversiones activas</h3>
             <Link
-              href="/dashboard/properties"
+              href="/dashboard/my-investments"
               className="text-xs font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-1"
             >
               Ver todas

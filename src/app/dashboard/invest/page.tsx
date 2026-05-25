@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle2,
@@ -17,41 +18,30 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  BankTransferForm,
+  isTransferFormValid,
+  type TransferFormData,
+} from "@/components/dashboard/invest/BankTransferForm";
+import {
+  CardPaymentForm,
+  isCardFormValid,
+  type CardFormData,
+} from "@/components/dashboard/invest/CardPaymentForm";
+import { dashboardProperties, formatCurrency } from "@/lib/dashboard/mock-data";
 
 const STEPS = ["Propiedad", "Monto", "Pago", "Confirmación"];
 
-const properties = [
-  {
-    id: 1,
-    name: "Departamento en San Isidro",
-    address: "Av. Javier Prado Este 1240",
-    price: "S/ 285,000",
-    roi: "22%",
-    minInv: 500,
-    deadline: "8 días",
-    img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=120&h=80&fit=crop",
-  },
-  {
-    id: 2,
-    name: "Casa en La Molina",
-    address: "Jr. Las Casuarinas 350",
-    price: "S/ 520,000",
-    roi: "18%",
-    minInv: 1000,
-    deadline: "15 días",
-    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=120&h=80&fit=crop",
-  },
-  {
-    id: 3,
-    name: "Departamento en Barranco",
-    address: "Jr. Unión 245",
-    price: "S/ 165,000",
-    roi: "24%",
-    minInv: 500,
-    deadline: "5 días",
-    img: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=120&h=80&fit=crop",
-  },
-];
+const properties = dashboardProperties.map((p) => ({
+  id: p.id,
+  name: p.name,
+  address: p.address,
+  price: formatCurrency(p.price),
+  roi: `${p.roi}%`,
+  minInv: p.minInvestment,
+  deadline: p.deadline,
+  img: p.img,
+}));
 
 const paymentMethods = [
   { id: "card", label: "Tarjeta débito / crédito", icon: CreditCard, hint: "Visa, Mastercard, Amex" },
@@ -59,18 +49,76 @@ const paymentMethods = [
 ];
 
 export default function InvestPage() {
+  return (
+    <Suspense>
+      <InvestPageContent />
+    </Suspense>
+  );
+}
+
+function InvestPageContent() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [selectedProperty, setSelectedProperty] = useState<number | null>(null);
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+  const [cardForm, setCardForm] = useState<CardFormData>({
+    cardNumber: "",
+    cardholder: "",
+    expiry: "",
+    cvv: "",
+  });
+  const [transferForm, setTransferForm] = useState<TransferFormData>({
+    accountNumber: "",
+    transferNumber: "",
+    amount: "",
+    receipt: null,
+  });
   const [confirming, setConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+
+  useEffect(() => {
+    const propertyParam = searchParams.get("property");
+    if (propertyParam) {
+      const id = parseInt(propertyParam, 10);
+      if (properties.some((p) => p.id === id)) {
+        setSelectedProperty(id);
+      }
+    }
+  }, [searchParams]);
 
   const property = properties.find((p) => p.id === selectedProperty);
 
   const estimatedReturn = property && amount
     ? (parseFloat(amount) * parseFloat(property.roi) / 100).toFixed(2)
     : "0.00";
+
+  const selectPaymentMethod = (methodId: string) => {
+    setPaymentMethod(methodId);
+    if (methodId === "transfer" && amount) {
+      setTransferForm((prev) => ({
+        ...prev,
+        amount: prev.amount || amount,
+      }));
+    }
+  };
+
+  const isPaymentStepValid =
+    paymentMethod === "card"
+      ? isCardFormValid(cardForm)
+      : paymentMethod === "transfer"
+        ? isTransferFormValid(transferForm)
+        : false;
+
+  const resetFlow = () => {
+    setConfirmed(false);
+    setStep(0);
+    setSelectedProperty(null);
+    setAmount("");
+    setPaymentMethod(null);
+    setCardForm({ cardNumber: "", cardholder: "", expiry: "", cvv: "" });
+    setTransferForm({ accountNumber: "", transferNumber: "", amount: "", receipt: null });
+  };
 
   const handleConfirm = () => {
     setConfirming(true);
@@ -120,7 +168,7 @@ export default function InvestPage() {
             </div>
           </div>
           <Button
-            onClick={() => { setConfirmed(false); setStep(0); setSelectedProperty(null); setAmount(""); setPaymentMethod(null); }}
+            onClick={resetFlow}
             className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
           >
             Nueva inversión
@@ -340,7 +388,7 @@ export default function InvestPage() {
                 {paymentMethods.map((m) => (
                   <button
                     key={m.id}
-                    onClick={() => setPaymentMethod(m.id)}
+                    onClick={() => selectPaymentMethod(m.id)}
                     className={`flex items-center gap-4 rounded-xl border p-4 text-left transition-all ${
                       paymentMethod === m.id
                         ? "border-primary bg-primary/5 ring-2 ring-primary/20"
@@ -365,54 +413,16 @@ export default function InvestPage() {
                 ))}
               </div>
 
-              {/* Card form (mock) */}
               {paymentMethod === "card" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col gap-3 pt-4 border-t border-border/60"
-                >
-                  <div className="flex flex-col gap-1.5">
-                    <Label className="text-sm font-medium">Número de tarjeta</Label>
-                    <Input placeholder="4242 4242 4242 4242" className="h-11 rounded-xl border-border/80 bg-muted/30 text-sm" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex flex-col gap-1.5">
-                      <Label className="text-sm font-medium">Vencimiento</Label>
-                      <Input placeholder="MM / AA" className="h-11 rounded-xl border-border/80 bg-muted/30 text-sm" />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <Label className="text-sm font-medium">CVV</Label>
-                      <Input placeholder="•••" className="h-11 rounded-xl border-border/80 bg-muted/30 text-sm" />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Lock className="size-3" />
-                    <span>Pago seguro con encriptación SSL</span>
-                  </div>
-                </motion.div>
+                <CardPaymentForm amount={amount} value={cardForm} onChange={setCardForm} />
               )}
 
               {paymentMethod === "transfer" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="rounded-xl bg-muted/30 border border-border/60 p-4 mt-4"
-                >
-                  <p className="text-sm font-semibold text-foreground mb-2">Datos para transferencia</p>
-                  {[
-                    ["Banco", "BCP"],
-                    ["Cuenta corriente", "193-12345678-0-01"],
-                    ["CCI", "002-193-001234567801-52"],
-                    ["Titular", "Remata S.A.C."],
-                    ["RUC", "20123456789"],
-                  ].map(([k, v]) => (
-                    <div key={k} className="flex justify-between text-xs py-1.5 border-b border-border/40 last:border-0">
-                      <span className="text-muted-foreground">{k}</span>
-                      <span className="font-medium text-foreground">{v}</span>
-                    </div>
-                  ))}
-                </motion.div>
+                <BankTransferForm
+                  defaultAmount={amount}
+                  value={transferForm}
+                  onChange={setTransferForm}
+                />
               )}
             </div>
 
@@ -422,7 +432,7 @@ export default function InvestPage() {
               </Button>
               <Button
                 onClick={() => setStep(3)}
-                disabled={!paymentMethod}
+                disabled={!isPaymentStepValid}
                 className="flex-1 h-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold group disabled:opacity-50"
               >
                 Continuar
@@ -483,7 +493,12 @@ export default function InvestPage() {
             </div>
 
             <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setStep(2)} className="flex-1 h-11 rounded-xl border-border/80">
+              <Button variant="outline" onClick={() => {
+                if (paymentMethod === "transfer" && amount) {
+                  setTransferForm((prev) => ({ ...prev, amount }));
+                }
+                setStep(2);
+              }} className="flex-1 h-11 rounded-xl border-border/80">
                 <ArrowLeft className="size-4 mr-1" /> Atrás
               </Button>
               <Button

@@ -229,32 +229,30 @@ export default function PropertiesPage() {
               transition={{ delay: i * 0.06, duration: 0.4 }}
               className="group rounded-2xl border border-border/60 bg-white overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              {/* Image */}
-              <div className="relative overflow-hidden aspect-[16/9]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.img}
-                  alt={p.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                <div className="absolute top-3 left-3">
-                  <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 border ${p.badgeStyle} border-current/20`}>
-                    {p.badge}
-                  </span>
+              <Link href={`/dashboard/properties/${p.id}`} className="block">
+                <div className="relative overflow-hidden aspect-[16/9]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={p.img}
+                    alt={p.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  <div className="absolute top-3 left-3">
+                    <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 border ${p.badgeStyle} border-current/20`}>
+                      {p.badge}
+                    </span>
+                  </div>
+                  <div className="absolute top-3 right-3">
+                    <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 ${
+                      p.status === "Activo" ? "bg-green-600 text-white" : "bg-amber-500 text-white"
+                    }`}>
+                      {p.status}
+                    </span>
+                  </div>
                 </div>
-                <div className="absolute top-3 right-3">
-                  <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 ${
-                    p.status === "Activo" ? "bg-green-600 text-white" : "bg-amber-500 text-white"
-                  }`}>
-                    {p.status}
-                  </span>
-                </div>
-              </div>
 
-              {/* Content */}
-              <div className="p-4 flex flex-col gap-3">
-                <div>
+                <div className="p-4 pb-0">
                   <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
                     <Home className="size-3" />
                     <span>{p.type} · {p.area}</span>
@@ -266,7 +264,9 @@ export default function PropertiesPage() {
                     <span className="truncate">{p.address}</span>
                   </div>
                 </div>
+              </Link>
 
+              <div className="p-4 pt-3 flex flex-col gap-3">
                 <div className="grid grid-cols-3 divide-x divide-border/60 rounded-xl border border-border/60 overflow-hidden text-center">
                   <div className="py-2 px-1">
                     <p className="text-[9px] text-muted-foreground">Precio base</p>
@@ -293,7 +293,7 @@ export default function PropertiesPage() {
                     size="sm"
                     className="flex-1 h-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold"
                   >
-                    <Link href="/dashboard/invest">Invertir</Link>
+                    <Link href={`/dashboard/invest?property=${p.id}`}>Invertir</Link>
                   </Button>
                 </div>
               </div>
@@ -314,9 +314,9 @@ export default function PropertiesPage() {
               <img
                 src={p.img}
                 alt={p.name}
-                className="size-16 rounded-xl object-cover shrink-0"
+                className="size-16 rounded-xl object-cover shrink-0 cursor-pointer"
               />
-              <div className="flex-1 min-w-0">
+              <Link href={`/dashboard/properties/${p.id}`} className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-semibold text-foreground truncate">{p.name}</h3>
                   <span className={`text-[10px] font-medium rounded-full px-2 py-0.5 shrink-0 ${
@@ -336,7 +336,7 @@ export default function PropertiesPage() {
                     <Clock className="size-3" />{p.deadline}
                   </span>
                 </div>
-              </div>
+              </Link>
               <div className="flex items-center gap-2 shrink-0">
                 <div className="hidden sm:flex items-center gap-1">
                   <SlidersHorizontal className="size-3 text-muted-foreground" />
@@ -347,7 +347,7 @@ export default function PropertiesPage() {
                   size="sm"
                   className="h-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold"
                 >
-                  <Link href="/dashboard/invest">Invertir</Link>
+                  <Link href={`/dashboard/invest?property=${p.id}`}>Invertir</Link>
                 </Button>
               </div>
             </motion.div>
