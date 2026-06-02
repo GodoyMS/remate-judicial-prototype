@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Bell,
   Shield,
   LayoutDashboard,
   Building2,
@@ -12,11 +11,10 @@ import {
   Settings,
   Menu,
   X,
-  Search,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { AdminNotificationsPopover } from "@/components/admin/AdminNotificationsPopover";
+import { AdminUserMenu } from "@/components/admin/AdminUserMenu";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -31,6 +29,7 @@ function getPageTitle(pathname: string): string {
   if (pathname === "/admin/properties") return "Propiedades";
   if (pathname === "/admin/users") return "Usuarios";
   if (pathname === "/admin/settings") return "Configuración";
+  if (pathname === "/admin/notifications") return "Notificaciones";
   return "Admin";
 }
 
@@ -41,42 +40,31 @@ export function AdminTopbar() {
 
   return (
     <>
-      <header className="h-16 flex items-center justify-between px-4 sm:px-6 shrink-0 border-b border-border/40 bg-background/80 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <div className="lg:hidden flex items-center gap-2">
-            <button
-              className="p-1.5 rounded-lg hover:bg-muted transition-colors"
-              onClick={() => setMobileOpen(true)}
-            >
-              <Menu className="size-5 text-muted-foreground" />
-            </button>
-            <div className="size-7 rounded-lg bg-secondary flex items-center justify-center">
-              <Shield className="size-3.5 text-secondary-foreground" />
+      <div className="w-full">
+        <header className="h-16 flex items-center justify-between px-4 sm:px-6 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="lg:hidden flex items-center gap-2">
+              <button
+                className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                onClick={() => setMobileOpen(true)}
+              >
+                <Menu className="size-5 text-muted-foreground" />
+              </button>
+              <div className="size-7 rounded-lg bg-secondary flex items-center justify-center">
+                <Shield className="size-3.5 text-secondary-foreground" />
+              </div>
             </div>
+            <h1 className="text-base font-semibold text-foreground hidden sm:block">
+              {title}
+            </h1>
           </div>
-          <h1 className="text-base font-semibold text-foreground hidden sm:block">{title}</h1>
-        </div>
 
-        <div className="hidden md:flex items-center flex-1 max-w-sm mx-6">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar propiedades, usuarios..."
-              className="pl-9 h-9 rounded-xl border-border/80 bg-muted/30 text-sm"
-            />
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <AdminNotificationsPopover />
+            <AdminUserMenu />
           </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="relative rounded-xl">
-            <Bell className="size-4" />
-            <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500" />
-          </Button>
-          <div className="size-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-secondary-foreground cursor-pointer hover:opacity-90 transition-opacity">
-            VR
-          </div>
-        </div>
-      </header>
+        </header>
+      </div>
 
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
@@ -90,7 +78,9 @@ export function AdminTopbar() {
                 <div className="size-8 rounded-lg bg-sidebar-primary flex items-center justify-center">
                   <Shield className="size-4 text-sidebar-primary-foreground" />
                 </div>
-                <span className="text-base font-bold tracking-tight text-sidebar-foreground">remata admin</span>
+                <span className="text-base font-bold tracking-tight text-sidebar-foreground">
+                  remata admin
+                </span>
               </div>
               <button
                 onClick={() => setMobileOpen(false)}

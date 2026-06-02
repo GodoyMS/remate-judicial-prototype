@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { MapPin, TrendingUp, Clock, ArrowRight, Home } from "lucide-react";
+import {
+  MapPin,
+  TrendingUp,
+  Clock,
+  ArrowRight,
+  Home,
+  Building2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const properties = [
   {
@@ -17,10 +24,9 @@ const properties = [
     roi: "22%",
     deadline: "8 días",
     status: "Activo",
-    statusColor: "bg-green-50 text-green-700 border-green-200",
     img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=360&fit=crop&auto=format",
-    badge: "🔥 Alta demanda",
-    badgeStyle: "bg-orange-50 text-orange-700 border-orange-200",
+    badge: "Alta demanda",
+    featured: true,
   },
   {
     id: 2,
@@ -32,10 +38,9 @@ const properties = [
     roi: "18%",
     deadline: "15 días",
     status: "Activo",
-    statusColor: "bg-green-50 text-green-700 border-green-200",
     img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&h=360&fit=crop&auto=format",
-    badge: "⚖️ Proceso expedito",
-    badgeStyle: "bg-blue-50 text-blue-700 border-blue-200",
+    badge: "Proceso expedito",
+    featured: false,
   },
   {
     id: 3,
@@ -47,115 +52,155 @@ const properties = [
     roi: "20%",
     deadline: "22 días",
     status: "Próximo",
-    statusColor: "bg-amber-50 text-amber-700 border-amber-200",
     img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=360&fit=crop&auto=format",
-    badge: "⭐ Exclusivo",
-    badgeStyle: "bg-purple-50 text-purple-700 border-purple-200",
+    badge: "Exclusivo",
+    featured: false,
   },
 ];
 
 export function PropertyPreview() {
   return (
-    <section id="propiedades" className="py-24 bg-muted/30">
-      <div className="mx-auto max-w-7xl section-padding">
+    <section
+      id="propiedades"
+      className="relative overflow-hidden bg-[#163300] py-24 text-white"
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.25]"
+        aria-hidden
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(159,232,112,0.1) 1px, transparent 0)`,
+          backgroundSize: "32px 32px",
+        }}
+      />
+      <div className="pointer-events-none absolute -bottom-24 left-1/2 size-[500px] -translate-x-1/2 rounded-full bg-[#9FE870]/8 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl section-padding">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12"
+          className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"
         >
-          <div className="flex flex-col gap-3">
-            <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-              Propiedades disponibles
-            </span>
-            <h2 className="text-4xl font-bold tracking-tight text-foreground">
-              Subastas abiertas ahora
+          <div className="flex max-w-xl flex-col gap-4">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#9FE870]/30 bg-[#9FE870]/10 px-4 py-1.5">
+              <Building2 className="size-3.5 text-[#9FE870]" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#9FE870]">
+                Propiedades disponibles
+              </span>
+            </div>
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+              Subastas abiertas{" "}
+              <span className="text-[#9FE870]">ahora</span>
             </h2>
-            <p className="text-muted-foreground max-w-md">
-              Propiedades auditadas legalmente, listas para invertir. Actualizado en tiempo real.
+            <p className="text-lg leading-relaxed text-white/60">
+              Propiedades auditadas legalmente, listas para invertir. Actualizado
+              en tiempo real.
             </p>
           </div>
-          <Button variant="outline" asChild className="shrink-0 rounded-full border-border/80">
+          <Button
+            variant="outline"
+            asChild
+            className="h-11 shrink-0 rounded-full border-[#9FE870]/40 bg-transparent px-6 text-[#9FE870] hover:bg-[#9FE870]/10 hover:text-[#9FE870]"
+          >
             <Link href="/register">
               Ver todas las propiedades
-              <ArrowRight className="size-4 ml-1" />
+              <ArrowRight className="ml-1 size-4" />
             </Link>
           </Button>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {properties.map((p, i) => (
-            <motion.div
+            <motion.article
               key={p.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="group rounded-2xl border border-border/60 bg-white overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className={cn(
+                "group overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1",
+                p.featured
+                  ? "border-[#9FE870]/40 bg-white/10 shadow-xl shadow-black/20 ring-1 ring-[#9FE870]/20"
+                  : "border-white/10 bg-white/5 hover:border-[#9FE870]/30 hover:bg-white/[0.07]"
+              )}
             >
-              {/* Image */}
-              <div className="relative overflow-hidden aspect-[16/9]">
+              <div className="relative aspect-[16/10] overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={p.img}
                   alt={p.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                <div className="absolute top-3 left-3 flex gap-2">
-                  <Badge className={`text-xs border rounded-full px-2.5 py-0.5 font-medium ${p.statusColor}`}>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#163300] via-[#163300]/20 to-transparent" />
+                <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-[#9FE870]/40 bg-[#9FE870]/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#9FE870]">
                     {p.status}
-                  </Badge>
+                  </span>
+                  {p.featured && (
+                    <span className="rounded-full bg-[#9FE870] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#163300]">
+                      Destacado
+                    </span>
+                  )}
                 </div>
-                <div className="absolute top-3 right-3">
-                  <Badge className={`text-xs border rounded-full px-2.5 py-0.5 font-medium ${p.badgeStyle}`}>
-                    {p.badge}
-                  </Badge>
+                <span className="absolute top-3 right-3 rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+                  {p.badge}
+                </span>
+                <div className="absolute right-3 bottom-3 rounded-xl bg-[#9FE870] px-3 py-1.5">
+                  <p className="text-[10px] font-medium text-[#163300]/70">
+                    ROI est.
+                  </p>
+                  <p className="flex items-center gap-0.5 text-lg font-bold text-[#163300]">
+                    <TrendingUp className="size-4" />
+                    {p.roi}
+                  </p>
                 </div>
               </div>
 
-              {/* Content */}
-              <div className="p-5 flex flex-col gap-4">
+              <div className="flex flex-col gap-4 p-5">
                 <div>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1.5">
+                  <div className="mb-1.5 flex items-center gap-1.5 text-xs text-white/50">
                     <Home className="size-3.5" />
-                    <span>{p.type} · {p.area}</span>
+                    <span>
+                      {p.type} · {p.area}
+                    </span>
                   </div>
-                  <h3 className="font-semibold text-foreground text-base leading-snug">{p.title}</h3>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                    <MapPin className="size-3" />
+                  <h3 className="text-base font-semibold leading-snug text-white">
+                    {p.title}
+                  </h3>
+                  <div className="mt-1 flex items-center gap-1 text-xs text-white/45">
+                    <MapPin className="size-3 shrink-0" />
                     <span className="truncate">{p.address}</span>
                   </div>
                 </div>
 
-                {/* Metrics */}
-                <div className="grid grid-cols-3 divide-x divide-border/60 rounded-xl border border-border/60 overflow-hidden">
-                  <div className="flex flex-col items-center py-2.5 px-1">
-                    <span className="text-xs text-muted-foreground">Precio base</span>
-                    <span className="text-xs font-semibold text-foreground mt-0.5">{p.basePrice}</span>
-                  </div>
-                  <div className="flex flex-col items-center py-2.5 px-1">
-                    <span className="text-xs text-muted-foreground">ROI est.</span>
-                    <span className="text-xs font-bold text-green-600 mt-0.5 flex items-center gap-0.5">
-                      <TrendingUp className="size-3" />{p.roi}
+                <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10">
+                  <div className="bg-white/5 px-3 py-3">
+                    <span className="text-[10px] uppercase tracking-wide text-white/40">
+                      Precio base
                     </span>
+                    <p className="mt-0.5 text-sm font-semibold text-white">
+                      {p.basePrice}
+                    </p>
                   </div>
-                  <div className="flex flex-col items-center py-2.5 px-1">
-                    <span className="text-xs text-muted-foreground">Cierra en</span>
-                    <span className="text-xs font-semibold text-foreground mt-0.5 flex items-center gap-0.5">
-                      <Clock className="size-3 text-amber-500" />{p.deadline}
+                  <div className="bg-white/5 px-3 py-3">
+                    <span className="text-[10px] uppercase tracking-wide text-white/40">
+                      Cierra en
                     </span>
+                    <p className="mt-0.5 flex items-center gap-1 text-sm font-semibold text-[#9FE870]">
+                      <Clock className="size-3.5" />
+                      {p.deadline}
+                    </p>
                   </div>
                 </div>
 
                 <Button
-                  className="w-full rounded-xl h-9 bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-sm"
+                  className="h-10 w-full rounded-xl bg-[#9FE870] font-medium text-[#163300] hover:bg-[#9FE870]/90"
                   asChild
                 >
                   <Link href="/register">Invertir ahora</Link>
                 </Button>
               </div>
-            </motion.div>
+            </motion.article>
           ))}
         </div>
       </div>

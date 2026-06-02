@@ -8,7 +8,9 @@ import {
   BarChart3,
   Clock,
   Headphones,
+  Sparkles,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const features = [
   {
@@ -49,72 +51,108 @@ const features = [
   },
 ];
 
+function FeatureCard({
+  feature,
+  index,
+}: {
+  feature: (typeof features)[number];
+  index: number;
+}) {
+  const { icon: Icon, title, desc, highlight } = feature;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.06, duration: 0.45 }}
+      className={cn(
+        "group flex h-full min-h-[220px] flex-col gap-5 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-0.5 sm:min-h-[200px]",
+        highlight
+          ? "border-[#9FE870]/30 bg-[#163300] shadow-lg shadow-[#163300]/10 hover:shadow-xl"
+          : "border-[#163300]/8 bg-white hover:border-[#9FE870]/40 hover:shadow-md"
+      )}
+    >
+      <div
+        className={cn(
+          "flex size-11 shrink-0 items-center justify-center rounded-xl transition-transform group-hover:scale-105",
+          highlight
+            ? "bg-[#9FE870]/20 ring-1 ring-[#9FE870]/30"
+            : "bg-[#9FE870]/20 ring-1 ring-[#9FE870]/25"
+        )}
+      >
+        <Icon
+          className={cn("size-5", highlight ? "text-[#9FE870]" : "text-[#163300]")}
+        />
+      </div>
+
+      <div className="flex flex-1 flex-col gap-2">
+        <h3
+          className={cn(
+            "font-semibold leading-snug",
+            highlight ? "text-base text-white" : "text-sm text-[#163300]"
+          )}
+        >
+          {title}
+        </h3>
+        <p
+          className={cn(
+            "text-sm leading-relaxed",
+            highlight ? "text-white/65" : "text-[#163300]/55"
+          )}
+        >
+          {desc}
+        </p>
+      </div>
+
+      {highlight && (
+        <div className="flex shrink-0 items-center gap-2 rounded-full bg-[#9FE870]/15 px-3 py-1.5 text-xs font-medium text-[#9FE870]">
+          <ShieldCheck className="size-3.5 shrink-0" />
+          Garantía legal en cada operación
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
 export function Features() {
   return (
-    <section id="nosotros" className="py-24 bg-white">
-      <div className="mx-auto max-w-7xl section-padding">
+    <section id="nosotros" className="relative overflow-hidden bg-white py-24">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-30"
+        aria-hidden
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(22,51,0,0.05) 1px, transparent 0)`,
+          backgroundSize: "28px 28px",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-7xl section-padding">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-col items-center text-center gap-4 mb-16"
+          className="mx-auto mb-14 flex max-w-2xl flex-col items-center text-center sm:mb-16"
         >
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-            Por qué Remata
-          </span>
-          <h2 className="text-4xl font-bold tracking-tight text-foreground text-balance">
-            Todo lo que necesitas para invertir
-            <br />
-            de forma inteligente
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#163300]/15 bg-[#E2F6D5] px-4 py-1.5">
+            <Sparkles className="size-3.5 text-[#163300]" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-[#163300]">
+              Por qué Remata
+            </span>
+          </div>
+          <h2 className="text-balance text-4xl font-bold tracking-tight text-[#163300] sm:text-5xl">
+            Todo lo que necesitas para invertir de forma{" "}
+            <span className="text-[#5a8f3c]">inteligente</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-lg">
-            Combinamos tecnología financiera con experiencia legal para darte
-            la ventaja en cada subasta.
+          <p className="mt-4 text-lg leading-relaxed text-[#163300]/60">
+            Combinamos tecnología financiera con experiencia legal para darte la
+            ventaja en cada subasta.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {features.map((f, i) => (
-            <motion.div
-              key={f.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
-              className={`flex flex-col gap-4 rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ${
-                f.highlight
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-muted/30 border-border/60 hover:border-primary/30"
-              }`}
-            >
-              <div
-                className={`size-11 rounded-xl flex items-center justify-center ${
-                  f.highlight ? "bg-primary-foreground/15" : "bg-primary/10"
-                }`}
-              >
-                <f.icon
-                  className={`size-5 ${
-                    f.highlight ? "text-primary-foreground" : "text-primary"
-                  }`}
-                />
-              </div>
-              <div>
-                <p
-                  className={`font-semibold text-sm mb-2 ${
-                    f.highlight ? "text-primary-foreground" : "text-foreground"
-                  }`}
-                >
-                  {f.title}
-                </p>
-                <p
-                  className={`text-sm leading-relaxed ${
-                    f.highlight ? "text-primary-foreground/75" : "text-muted-foreground"
-                  }`}
-                >
-                  {f.desc}
-                </p>
-              </div>
-            </motion.div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((feature, i) => (
+            <FeatureCard key={feature.title} feature={feature} index={i} />
           ))}
         </div>
       </div>

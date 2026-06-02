@@ -21,10 +21,15 @@ export interface AdminProperty {
   featured: boolean;
   notifyUsers: boolean;
   image: string;
+  images: string[];
   investorsCount: number;
   createdAt: string;
   status: PropertyStatus;
 }
+
+export type PaymentMethodId = "card" | "yape" | "transfer" | "deposit";
+
+export type InvestmentStatus = "confirmed" | "pending" | "rejected";
 
 export interface PropertyInvestment {
   id: string;
@@ -33,8 +38,22 @@ export interface PropertyInvestment {
   userName: string;
   userEmail: string;
   amount: number;
-  date: string;
-  status: "confirmed" | "pending" | "cancelled";
+  submittedAt: string;
+  confirmedAt?: string;
+  status: InvestmentStatus;
+  paymentMethod: PaymentMethodId;
+  transferNumber?: string;
+  originAccountNumber?: string;
+  voucherNumber?: string;
+  voucherDate?: string;
+  operationNumber?: string;
+  receiptUrl?: string;
+  yapePhone?: string;
+  yapeApprovalCode?: string;
+  cardLastFour?: string;
+  rejectionReason?: string;
+  rejectedBy?: string;
+  rejectedAt?: string;
 }
 
 export interface AdminUser {
@@ -60,6 +79,46 @@ export interface UserActivity {
   type: "investment" | "login" | "verification" | "withdrawal";
   message: string;
   date: string;
+}
+
+export type DocumentType = "dni" | "passport" | "ce";
+
+export type VerificationQueueStatus = "pending" | "resolicitado" | "rejected";
+
+export type VerificationActivityType =
+  | "submitted"
+  | "review_started"
+  | "accepted"
+  | "rejected"
+  | "resolicitado"
+  | "resubmitted";
+
+export interface VerificationActivity {
+  id: string;
+  verificationId: string;
+  type: VerificationActivityType;
+  message: string;
+  date: string;
+  adminNote?: string;
+}
+
+export interface IdentityVerification {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  documentType: DocumentType;
+  documentNumber: string;
+  phone: string;
+  gender: string;
+  provider: LoginProvider;
+  submittedAt: string;
+  status: VerificationQueueStatus;
+  frontImageUrl: string;
+  backImageUrl: string;
+  rejectionReason?: string;
+  resolicitReason?: string;
+  activityLog: VerificationActivity[];
 }
 
 export interface AdminProfile {

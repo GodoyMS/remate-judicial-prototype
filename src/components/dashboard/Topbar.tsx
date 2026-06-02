@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Bell,
   Gavel,
   LayoutDashboard,
   Building2,
@@ -14,8 +13,9 @@ import {
   X,
   History,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { NotificationsPopover } from "@/components/dashboard/NotificationsPopover";
+import { UserMenu } from "@/components/dashboard/UserMenu";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -32,6 +32,7 @@ function getPageTitle(pathname: string): string {
   if (pathname === "/dashboard/my-investments") return "Mis inversiones";
   if (pathname === "/dashboard/invest") return "Invertir";
   if (pathname === "/dashboard/account") return "Mi cuenta";
+  if (pathname === "/dashboard/notifications") return "Notificaciones";
   return "Dashboard";
 }
 
@@ -63,14 +64,9 @@ export function Topbar() {
         </div>
 
         {/* Right: notifications + avatar */}
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="relative rounded-xl">
-            <Bell className="size-4" />
-            <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500" />
-          </Button>
-          <div className="size-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground cursor-pointer hover:opacity-90 transition-opacity">
-            AS
-          </div>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <NotificationsPopover />
+          <UserMenu />
         </div>
       </header>
       </div>

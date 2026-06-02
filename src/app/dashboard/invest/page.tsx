@@ -14,6 +14,8 @@ import {
   MapPin,
   Lock,
   Info,
+  Landmark,
+  Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +30,16 @@ import {
   isCardFormValid,
   type CardFormData,
 } from "@/components/dashboard/invest/CardPaymentForm";
+import {
+  DepositForm,
+  isDepositFormValid,
+  type DepositFormData,
+} from "@/components/dashboard/invest/DepositForm";
+import {
+  YapePaymentForm,
+  isYapeFormValid,
+  type YapeFormData,
+} from "@/components/dashboard/invest/YapePaymentForm";
 import { dashboardProperties, formatCurrency } from "@/lib/dashboard/mock-data";
 
 const STEPS = ["Propiedad", "Monto", "Pago", "Confirmación"];
@@ -46,6 +58,8 @@ const properties = dashboardProperties.map((p) => ({
 const paymentMethods = [
   { id: "card", label: "Tarjeta débito / crédito", icon: CreditCard, hint: "Visa, Mastercard, Amex" },
   { id: "transfer", label: "Transferencia bancaria", icon: Banknote, hint: "BCP, Interbank, BBVA, Scotiabank" },
+  { id: "deposit", label: "Depósito en cuenta", icon: Landmark, hint: "Ventanilla o agente bancario" },
+  { id: "yape", label: "Yape", icon: Smartphone, hint: "Pago instantáneo con QR o número" },
 ];
 
 export default function InvestPage() {
@@ -74,6 +88,17 @@ function InvestPageContent() {
     amount: "",
     receipt: null,
   });
+  const [depositForm, setDepositForm] = useState<DepositFormData>({
+    voucherNumber: "",
+    voucherDate: undefined,
+    operationNumber: "",
+    amount: "",
+    receipt: null,
+  });
+  const [yapeForm, setYapeForm] = useState<YapeFormData>({
+    phone: "",
+    approvalCode: "",
+  });
   const [confirming, setConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
@@ -95,11 +120,13 @@ function InvestPageContent() {
 
   const selectPaymentMethod = (methodId: string) => {
     setPaymentMethod(methodId);
-    if (methodId === "transfer" && amount) {
-      setTransferForm((prev) => ({
-        ...prev,
-        amount: prev.amount || amount,
-      }));
+    if (amount) {
+      if (methodId === "transfer") {
+        setTransferForm((prev) => ({ ...prev, amount: prev.amount || amount }));
+      }
+      if (methodId === "deposit") {
+        setDepositForm((prev) => ({ ...prev, amount: prev.amount || amount }));
+      }
     }
   };
 
@@ -108,7 +135,11 @@ function InvestPageContent() {
       ? isCardFormValid(cardForm)
       : paymentMethod === "transfer"
         ? isTransferFormValid(transferForm)
-        : false;
+        : paymentMethod === "deposit"
+          ? isDepositFormValid(depositForm)
+          : paymentMethod === "yape"
+            ? isYapeFormValid(yapeForm)
+            : false;
 
   const resetFlow = () => {
     setConfirmed(false);
@@ -118,6 +149,8 @@ function InvestPageContent() {
     setPaymentMethod(null);
     setCardForm({ cardNumber: "", cardholder: "", expiry: "", cvv: "" });
     setTransferForm({ accountNumber: "", transferNumber: "", amount: "", receipt: null });
+    setDepositForm({ voucherNumber: "", voucherDate: undefined, operationNumber: "", amount: "", receipt: null });
+    setYapeForm({ phone: "", approvalCode: "" });
   };
 
   const handleConfirm = () => {
@@ -424,6 +457,22 @@ function InvestPageContent() {
                   onChange={setTransferForm}
                 />
               )}
+
+              {paymentMethod === "deposit" && (
+                <DepositForm
+                  defaultAmount={amount}
+                  value={depositForm}
+                  onChange={setDepositForm}
+                />
+              )}
+
+              {paymentMethod === "yape" && (
+                <YapePaymentForm
+                  defaultAmount={amount}
+                  value={yapeForm}
+                  onChange={setYapeForm}
+                />
+              )}
             </div>
 
             <div className="flex gap-3">
@@ -494,8 +543,13 @@ function InvestPageContent() {
 
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => {
-                if (paymentMethod === "transfer" && amount) {
-                  setTransferForm((prev) => ({ ...prev, amount }));
+                if (amount) {
+                  if (paymentMethod === "transfer") {
+                    setTransferForm((prev) => ({ ...prev, amount }));
+                  }
+                  if (paymentMethod === "deposit") {
+                    setDepositForm((prev) => ({ ...prev, amount }));
+                  }
                 }
                 setStep(2);
               }} className="flex-1 h-11 rounded-xl border-border/80">

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   User,
@@ -26,10 +27,28 @@ const sections = [
   { id: "notifications", label: "Notificaciones", icon: Bell },
 ];
 
+const VALID_SECTIONS = ["profile", "security", "notifications"] as const;
+
 export default function AccountPage() {
+  return (
+    <Suspense>
+      <AccountPageContent />
+    </Suspense>
+  );
+}
+
+function AccountPageContent() {
+  const searchParams = useSearchParams();
   const [activeSection, setActiveSection] = useState("profile");
   const [showPassword, setShowPassword] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    const section = searchParams.get("section");
+    if (section && VALID_SECTIONS.includes(section as (typeof VALID_SECTIONS)[number])) {
+      setActiveSection(section);
+    }
+  }, [searchParams]);
 
   const handleSave = () => {
     setSaved(true);

@@ -27,11 +27,14 @@ import { Separator } from "@/components/ui/separator";
 import type { AdminUser } from "@/lib/admin/types";
 import { getActivitiesByUser, propertyInvestments } from "@/lib/admin/mock-data";
 import { formatCurrency, formatDate } from "@/lib/admin/formatters";
+import { cn } from "@/lib/utils";
 
 interface UserProfileSheetProps {
   user: AdminUser | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onManageTier?: (user: AdminUser) => void;
+  onBlockUser?: (user: AdminUser) => void;
 }
 
 const providerLabels = {
@@ -40,7 +43,13 @@ const providerLabels = {
   apple: "Apple ID",
 };
 
-export function UserProfileSheet({ user, open, onOpenChange }: UserProfileSheetProps) {
+export function UserProfileSheet({
+  user,
+  open,
+  onOpenChange,
+  onManageTier,
+  onBlockUser,
+}: UserProfileSheetProps) {
   if (!user) return null;
 
   const activities = getActivitiesByUser(user.id);
@@ -119,10 +128,14 @@ export function UserProfileSheet({ user, open, onOpenChange }: UserProfileSheetP
                 <div key={inv.id} className="rounded-xl border border-border/60 p-3 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium">{formatCurrency(inv.amount)}</p>
-                    <p className="text-xs text-muted-foreground">{formatDate(inv.date)}</p>
+                    <p className="text-xs text-muted-foreground">{formatDate(inv.submittedAt)}</p>
                   </div>
                   <Badge variant={inv.status === "confirmed" ? "default" : "outline"} className="text-[10px]">
-                    {inv.status === "confirmed" ? "Confirmada" : inv.status === "pending" ? "Pendiente" : "Cancelada"}
+                    {inv.status === "confirmed"
+                      ? "Confirmada"
+                      : inv.status === "pending"
+                        ? "Pendiente"
+                        : "Rechazada"}
                   </Badge>
                 </div>
               ))
@@ -167,16 +180,81 @@ export function UserProfileSheet({ user, open, onOpenChange }: UserProfileSheetP
                 <StatItem icon={Ban} label="Estado" value={user.status === "active" ? "Activo" : "Bloqueado"} />
               </div>
             </div>
+
+            {onManageTier && (
+              <button
+                type="button"
+                onClick={() => onManageTier(user)}
+                className={cn(
+                  "w-full rounded-xl border p-4 text-left transition-all hover:shadow-sm",
+                  user.tier === "premium"
+                    ? "border-amber-200/80 bg-amber-50/50 hover:bg-amber-50"
+                    : "border-border/60 bg-muted/20 hover:bg-muted/30"
+                )}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className={cn(
+                        "size-10 rounded-xl flex items-center justify-center shrink-0",
+                        user.tier === "premium"
+                          ? "bg-amber-100 text-amber-700"
+                          : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      <Crown className="size-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold">
+                        {user.tier === "premium" ? "Gestionar plan Premium" : "Activar plan Premium"}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                        {user.tier === "premium"
+                          ? "Cambiar a Standard o revisar beneficios"
+                          : "Desbloquear acceso anticipado y soporte prioritario"}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge
+                    variant={user.tier === "premium" ? "default" : "outline"}
+                    className="shrink-0 text-[10px]"
+                  >
+                    {user.tier === "premium" ? "Premium" : "Standard"}
+                  </Badge>
+                </div>
+              </button>
+            )}
           </TabsContent>
         </Tabs>
 
-        <div className="px-6 pb-6 flex gap-2">
-          <Button variant="outline" className="flex-1 rounded-xl" onClick={() => onOpenChange(false)}>
-            Cerrar
-          </Button>
-          <Button variant="destructive" className="flex-1 rounded-xl">
-            {user.status === "active" ? "Bloquear usuario" : "Desbloquear"}
-          </Button>
+        <div className="px-6 pb-6 flex flex-col gap-2">
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1 rounded-xl" onClick={() => onOpenChange(false)}>
+              Cerrar
+            </Button>
+            {onManageTier && (
+              <Button
+                variant={user.tier === "premium" ? "outline" : "default"}
+                className={cn(
+                  "flex-1 rounded-xl",
+                  user.tier !== "premium" && "bg-amber-600 hover:bg-amber-700 text-white"
+                )}
+                onClick={() => onManageTier(user)}
+              >
+                <Crown className="size-4 mr-1.5" />
+                {user.tier === "premium" ? "Gestionar plan" : "Activar Premium"}
+              </Button>
+            )}
+          </div>
+          {onBlockUser && (
+            <Button
+              variant="destructive"
+              className="w-full rounded-xl"
+              onClick={() => onBlockUser(user)}
+            >
+              {user.status === "active" ? "Bloquear usuario" : "Desbloquear"}
+            </Button>
+          )}
         </div>
       </SheetContent>
     </Sheet>
