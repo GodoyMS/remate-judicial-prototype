@@ -8,6 +8,7 @@ import { PropertyPreview } from "@/components/landing/PropertyPreview";
 import { SocialProof } from "@/components/landing/SocialProof";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { Footer } from "@/components/landing/Footer";
+import { PlatformChatbot } from "@/components/landing/PlatformChatbot";
 
 export default function LandingPage() {
   return (
@@ -24,6 +25,7 @@ export default function LandingPage() {
         <FinalCTA />
       </main>
       <Footer />
+      <PlatformChatbot />
     </>
   );
 }
