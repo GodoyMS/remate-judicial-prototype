@@ -15,6 +15,7 @@ interface UserRowActionsProps {
   onViewProfile: (user: AdminUser) => void;
   onSendMessage: (user: AdminUser) => void;
   onToggleBlock: (user: AdminUser) => void;
+  readOnly?: boolean;
 }
 
 interface ActionTooltipButtonProps {
@@ -60,6 +61,7 @@ export function UserRowActions({
   onViewProfile,
   onSendMessage,
   onToggleBlock,
+  readOnly = false,
 }: UserRowActionsProps) {
   const isBlocked = user.status === "blocked";
 
@@ -77,32 +79,36 @@ export function UserRowActions({
         <Eye className="size-4" />
       </ActionTooltipButton>
 
-      <ActionTooltipButton
-        label="Enviar mensaje"
-        hint="Comunicación directa con el inversor"
-        onClick={() => onSendMessage(user)}
-      >
-        <MessageSquare className="size-4" />
-      </ActionTooltipButton>
+      {!readOnly && (
+        <>
+          <ActionTooltipButton
+            label="Enviar mensaje"
+            hint="Comunicación directa con el inversor"
+            onClick={() => onSendMessage(user)}
+          >
+            <MessageSquare className="size-4" />
+          </ActionTooltipButton>
 
-      <div className="mx-0.5 h-5 w-px shrink-0 bg-border/60" aria-hidden />
+          <div className="mx-0.5 h-5 w-px shrink-0 bg-border/60" aria-hidden />
 
-      <ActionTooltipButton
-        label={isBlocked ? "Desbloquear usuario" : "Bloquear usuario"}
-        hint={
-          isBlocked
-            ? "Restaurar acceso a la plataforma"
-            : "Revocar acceso e impedir nuevas inversiones"
-        }
-        onClick={() => onToggleBlock(user)}
-        className={cn(
-          isBlocked
-            ? "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-            : "text-destructive hover:text-destructive hover:bg-destructive/10"
-        )}
-      >
-        <Ban className="size-4" />
-      </ActionTooltipButton>
+          <ActionTooltipButton
+            label={isBlocked ? "Desbloquear usuario" : "Bloquear usuario"}
+            hint={
+              isBlocked
+                ? "Restaurar acceso a la plataforma"
+                : "Revocar acceso e impedir nuevas inversiones"
+            }
+            onClick={() => onToggleBlock(user)}
+            className={cn(
+              isBlocked
+                ? "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                : "text-destructive hover:text-destructive hover:bg-destructive/10"
+            )}
+          >
+            <Ban className="size-4" />
+          </ActionTooltipButton>
+        </>
+      )}
     </div>
   );
 }

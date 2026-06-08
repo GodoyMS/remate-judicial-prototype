@@ -49,6 +49,8 @@ import { adminTestimonials } from "@/lib/admin/mock-data";
 import { formatDate } from "@/lib/admin/formatters";
 import type { AdminTestimonial } from "@/lib/admin/types";
 import { usePagination } from "@/hooks/use-pagination";
+import { ReadOnlyBanner } from "@/components/admin/rbac/ReadOnlyBanner";
+import { PermissionGate } from "@/components/admin/rbac/PermissionGate";
 import { cn } from "@/lib/utils";
 
 export default function AdminTestimonialsPage() {
@@ -161,6 +163,7 @@ export default function AdminTestimonialsPage() {
 
   return (
     <div className="w-full">
+      <ReadOnlyBanner module="testimonials" />
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -177,13 +180,15 @@ export default function AdminTestimonialsPage() {
             Gestiona las historias de inversores en la página principal
           </p>
         </div>
-        <Button
-          onClick={() => setCreateOpen(true)}
-          className="w-full shrink-0 rounded-xl font-semibold sm:w-auto"
-        >
-          <Plus className="mr-2 size-4" />
-          Nuevo testimonio
-        </Button>
+        <PermissionGate module="testimonials" showDisabled>
+          <Button
+            onClick={() => setCreateOpen(true)}
+            className="w-full shrink-0 rounded-xl font-semibold sm:w-auto"
+          >
+            <Plus className="mr-2 size-4" />
+            Nuevo testimonio
+          </Button>
+        </PermissionGate>
       </motion.div>
 
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
@@ -386,6 +391,7 @@ export default function AdminTestimonialsPage() {
                     </p>
                   </TableCell>
                   <TableCell className="py-3 pr-4">
+                    <PermissionGate module="testimonials" fallback={<span className="text-[10px] text-muted-foreground">Solo lectura</span>}>
                     <div className="flex items-center justify-end gap-0.5 opacity-80 group-hover:opacity-100">
                       <Button
                         variant="ghost"
@@ -440,6 +446,7 @@ export default function AdminTestimonialsPage() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
+                    </PermissionGate>
                   </TableCell>
                 </TableRow>
               ))}

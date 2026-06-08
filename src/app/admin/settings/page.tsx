@@ -6,8 +6,6 @@ import {
   Shield,
   Bell,
   Lock,
-  UserPlus,
-  Mail,
   Key,
   Smartphone,
   Eye,
@@ -23,26 +21,16 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { currentAdmin } from "@/lib/admin/mock-data";
+import { AdminPermissionsPanel } from "@/components/admin/rbac/AdminPermissionsPanel";
+import { useAdminAuth } from "@/contexts/admin-auth-context";
+import { getInitials } from "@/lib/admin/rbac/constants";
 import { formatDate } from "@/lib/admin/formatters";
 
-const existingAdmins = [
-  { name: "Valentina Ríos", email: "admin@remata.pe", role: "super_admin", active: true },
-  { name: "Carlos Admin", email: "carlos.admin@remata.pe", role: "admin", active: true },
-  { name: "María Ops", email: "maria.ops@remata.pe", role: "moderator", active: false },
-];
-
 export default function AdminSettingsPage() {
+  const { account, role, isSuperAdmin } = useAdminAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [twoFactor, setTwoFactor] = useState(currentAdmin.twoFactorEnabled);
+  const [twoFactor, setTwoFactor] = useState(account?.twoFactorEnabled ?? false);
   const [notifications, setNotifications] = useState({
     newInvestments: true,
     newUsers: true,
@@ -50,13 +38,8 @@ export default function AdminSettingsPage() {
     systemAlerts: true,
     weeklyReport: true,
   });
-  const [newAdmin, setNewAdmin] = useState({
-    name: "",
-    email: "",
-    role: "admin",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
+
+  if (!account) return null;
 
   const handleSaveNotifications = () => {
     toast.success("Preferencias de notificación guardadas");
@@ -67,39 +50,21 @@ export default function AdminSettingsPage() {
     toast.success(enabled ? "Autenticación 2FA activada" : "Autenticación 2FA desactivada");
   };
 
-  const handleRegisterAdmin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Administrador registrado", {
-        description: `Invitación enviada a ${newAdmin.email}`,
-      });
-      setNewAdmin({ name: "", email: "", role: "admin", password: "" });
-    }, 1500);
-  };
-
-  const roleLabels = {
-    super_admin: "Super Admin",
-    admin: "Administrador",
-    moderator: "Moderador",
-  };
-
   return (
     <div className="w-full max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <h2 className="text-2xl font-bold text-foreground tracking-tight">Configuración</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Administra tu cuenta, seguridad y equipo de backoffice
+          Administra tu cuenta, seguridad y preferencias del backoffice
         </p>
       </motion.div>
 
       <Tabs defaultValue="profile">
         <TabsList className="rounded-xl mb-6">
           <TabsTrigger value="profile" className="rounded-lg">Mi cuenta</TabsTrigger>
+          <TabsTrigger value="permissions" className="rounded-lg">Mis permisos</TabsTrigger>
           <TabsTrigger value="notifications" className="rounded-lg">Notificaciones</TabsTrigger>
           <TabsTrigger value="security" className="rounded-lg">Seguridad</TabsTrigger>
-          <TabsTrigger value="team" className="rounded-lg">Equipo admin</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -107,14 +72,14 @@ export default function AdminSettingsPage() {
             <CardHeader>
               <div className="flex items-center gap-4">
                 <div className="size-16 rounded-2xl bg-secondary flex items-center justify-center text-xl font-bold text-secondary-foreground">
-                  VR
+                  {getInitials(account.name)}
                 </div>
                 <div>
-                  <CardTitle>{currentAdmin.name}</CardTitle>
-                  <CardDescription>{currentAdmin.email}</CardDescription>
+                  <CardTitle>{account.name}</CardTitle>
+                  <CardDescription>{account.email}</CardDescription>
                   <Badge className="mt-2 text-[10px]">
                     <Shield className="size-3 mr-0.5" />
-                    {roleLabels[currentAdmin.role]}
+                    {isSuperAdmin ? "Super Admin" : role?.name ?? "Administrador"}
                   </Badge>
                 </div>
               </div>
@@ -123,18 +88,18 @@ export default function AdminSettingsPage() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="admin-name">Nombre completo</Label>
-                  <Input id="admin-name" defaultValue={currentAdmin.name} className="rounded-xl" />
+                  <Input id="admin-name" defaultValue={account.name} className="rounded-xl" />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="admin-email">Correo corporativo</Label>
-                  <Input id="admin-email" defaultValue={currentAdmin.email} className="rounded-xl" />
+                  <Input id="admin-email" defaultValue={account.email} className="rounded-xl" disabled />
                 </div>
               </div>
               <div className="rounded-xl bg-muted/40 p-4 flex items-center gap-3">
                 <CheckCircle2 className="size-5 text-green-600 shrink-0" />
                 <div>
                   <p className="text-sm font-medium">Último acceso</p>
-                  <p className="text-xs text-muted-foreground">{formatDate(currentAdmin.lastLogin)} · Lima, PE</p>
+                  <p className="text-xs text-muted-foreground">{formatDate(account.lastLogin)} · Lima, PE</p>
                 </div>
               </div>
               <Button className="rounded-xl" onClick={() => toast.success("Perfil actualizado")}>
@@ -142,6 +107,16 @@ export default function AdminSettingsPage() {
               </Button>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="permissions">
+          <AdminPermissionsPanel />
+          {!isSuperAdmin && (
+            <p className="text-xs text-muted-foreground mt-4 text-center">
+              Los permisos son asignados por un Super Admin desde{" "}
+              <span className="font-medium text-foreground">Gestión de accesos</span>.
+            </p>
+          )}
         </TabsContent>
 
         <TabsContent value="notifications">
@@ -249,116 +224,6 @@ export default function AdminSettingsPage() {
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="team">
-          <div className="space-y-6">
-            <Card className="rounded-2xl border-border/60">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <UserPlus className="size-4" />
-                  Registrar nuevo administrador
-                </CardTitle>
-                <CardDescription>
-                  Invita a un miembro del equipo al panel de backoffice
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleRegisterAdmin} className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <Label htmlFor="new-name">Nombre completo</Label>
-                      <Input
-                        id="new-name"
-                        placeholder="Ej. Juan Pérez"
-                        value={newAdmin.name}
-                        onChange={(e) => setNewAdmin((p) => ({ ...p, name: e.target.value }))}
-                        required
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <Label htmlFor="new-email">Correo corporativo</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                        <Input
-                          id="new-email"
-                          type="email"
-                          placeholder="admin@remata.pe"
-                          value={newAdmin.email}
-                          onChange={(e) => setNewAdmin((p) => ({ ...p, email: e.target.value }))}
-                          required
-                          className="pl-9 rounded-xl"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <Label>Rol</Label>
-                      <Select
-                        value={newAdmin.role}
-                        onValueChange={(v) => setNewAdmin((p) => ({ ...p, role: v }))}
-                      >
-                        <SelectTrigger className="w-full rounded-xl">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="admin">Administrador</SelectItem>
-                          <SelectItem value="moderator">Moderador</SelectItem>
-                          <SelectItem value="super_admin">Super Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <Label htmlFor="new-pass">Contraseña temporal</Label>
-                      <Input
-                        id="new-pass"
-                        type="password"
-                        placeholder="••••••••"
-                        value={newAdmin.password}
-                        onChange={(e) => setNewAdmin((p) => ({ ...p, password: e.target.value }))}
-                        required
-                        className="rounded-xl"
-                      />
-                    </div>
-                  </div>
-                  <Button type="submit" disabled={loading} className="rounded-xl">
-                    {loading ? "Registrando..." : "Registrar administrador"}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-2xl border-border/60">
-              <CardHeader>
-                <CardTitle className="text-base">Equipo actual</CardTitle>
-                <CardDescription>{existingAdmins.length} administradores registrados</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {existingAdmins.map((admin) => (
-                  <div
-                    key={admin.email}
-                    className="flex items-center gap-3 rounded-xl border border-border/60 p-3"
-                  >
-                    <div className="size-10 rounded-full bg-secondary/20 flex items-center justify-center text-sm font-bold text-secondary shrink-0">
-                      {admin.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{admin.name}</p>
-                      <p className="text-xs text-muted-foreground">{admin.email}</p>
-                    </div>
-                    <Badge variant="outline" className="text-[10px] shrink-0">
-                      {roleLabels[admin.role as keyof typeof roleLabels]}
-                    </Badge>
-                    <Badge variant={admin.active ? "default" : "secondary"} className="text-[10px] shrink-0">
-                      {admin.active ? "Activo" : "Inactivo"}
-                    </Badge>
-                  </div>
-                ))}
               </CardContent>
             </Card>
           </div>

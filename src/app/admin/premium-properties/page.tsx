@@ -32,6 +32,8 @@ import { adminPremiumProperties } from "@/lib/admin/premium-mock-data";
 import { formatCurrency, formatDate } from "@/lib/admin/formatters";
 import type { PremiumPropertyAdminStatus } from "@/lib/admin/types";
 import { usePagination } from "@/hooks/use-pagination";
+import { ReadOnlyBanner } from "@/components/admin/rbac/ReadOnlyBanner";
+import { PermissionGate } from "@/components/admin/rbac/PermissionGate";
 import { cn } from "@/lib/utils";
 
 const statusConfig: Record<
@@ -100,6 +102,7 @@ export default function AdminPremiumPropertiesPage() {
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6 pb-10">
+      <ReadOnlyBanner module="premium_properties" />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -110,10 +113,12 @@ export default function AdminPremiumPropertiesPage() {
             Gestiona ventanas exclusivas, capturas al 100% y conversiones a estándar
           </p>
         </div>
-        <Button className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white">
-          <Crown className="size-4 mr-2" />
-          Nueva propiedad Premium
-        </Button>
+        <PermissionGate module="premium_properties" showDisabled>
+          <Button className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white">
+            <Crown className="size-4 mr-2" />
+            Nueva propiedad Premium
+          </Button>
+        </PermissionGate>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

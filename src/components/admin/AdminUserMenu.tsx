@@ -15,6 +15,7 @@ import {
   UserCheck,
   TrendingUp,
   ExternalLink,
+  KeyRound,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -27,46 +28,61 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useAdminNotifications } from "@/contexts/admin-notifications-context";
+import { useAdminAuth } from "@/contexts/admin-auth-context";
 import { dashboardKpis } from "@/lib/admin/mock-data";
+import { getInitials } from "@/lib/admin/rbac/constants";
 import { cn } from "@/lib/utils";
-
-const MENU_ITEMS = [
-  {
-    href: "/admin",
-    label: "Dashboard",
-    description: "KPIs y actividad reciente",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/admin/properties",
-    label: "Propiedades",
-    description: `${dashboardKpis.activeProperties} activas`,
-    icon: Building2,
-  },
-  {
-    href: "/admin/users",
-    label: "Usuarios",
-    description: "Gestión y verificaciones",
-    icon: Users,
-  },
-  {
-    href: "/admin/notifications",
-    label: "Notificaciones",
-    description: "Centro de alertas",
-    icon: Bell,
-    showBadge: true,
-  },
-  {
-    href: "/admin/settings",
-    label: "Configuración",
-    description: "Equipo y preferencias",
-    icon: Settings,
-  },
-] as const;
 
 export function AdminUserMenu() {
   const router = useRouter();
   const { unreadCount } = useAdminNotifications();
+  const { account, role, isSuperAdmin, logout, canAccess } = useAdminAuth();
+
+  const menuItems = [
+    canAccess("dashboard") && {
+      href: "/admin",
+      label: "Dashboard",
+      description: "KPIs y actividad reciente",
+      icon: LayoutDashboard,
+    },
+    canAccess("properties") && {
+      href: "/admin/properties",
+      label: "Propiedades",
+      description: `${dashboardKpis.activeProperties} activas`,
+      icon: Building2,
+    },
+    canAccess("users") && {
+      href: "/admin/users",
+      label: "Usuarios",
+      description: "Gestión y verificaciones",
+      icon: Users,
+    },
+    canAccess("notifications") && {
+      href: "/admin/notifications",
+      label: "Notificaciones",
+      description: "Centro de alertas",
+      icon: Bell,
+      showBadge: true,
+    },
+    canAccess("access") && {
+      href: "/admin/access",
+      label: "Gestión de accesos",
+      description: "Roles y permisos",
+      icon: KeyRound,
+    },
+    canAccess("settings") && {
+      href: "/admin/settings",
+      label: "Configuración",
+      description: "Cuenta y preferencias",
+      icon: Settings,
+    },
+  ].filter(Boolean) as Array<{
+    href: string;
+    label: string;
+    description: string;
+    icon: typeof LayoutDashboard;
+    showBadge?: boolean;
+  }>;
 
   const handleHelp = () => {
     toast.message("Soporte interno", {
@@ -76,11 +92,15 @@ export function AdminUserMenu() {
   };
 
   const handleLogout = () => {
+    const name = account?.name?.split(" ")[0] ?? "Admin";
+    logout();
     toast.success("Sesión cerrada", {
-      description: "Hasta pronto, Valentina. El backoffice queda registrado.",
+      description: `Hasta pronto, ${name}. El backoffice queda registrado.`,
     });
     router.push("/login-admin");
   };
+
+  if (!account) return null;
 
   return (
     <DropdownMenu>
@@ -90,7 +110,7 @@ export function AdminUserMenu() {
           className="relative size-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-secondary-foreground cursor-pointer hover:opacity-90 transition-all ring-2 ring-transparent hover:ring-secondary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/40"
           aria-label="Menú de administrador"
         >
-          VR
+          {getInitials(account.name)}
           <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-500 border-2 border-background" />
         </button>
       </DropdownMenuTrigger>
@@ -103,21 +123,21 @@ export function AdminUserMenu() {
         <div className="bg-gradient-to-br from-secondary/15 via-background to-muted/40 px-4 py-4 border-b border-border/50">
           <div className="flex items-center gap-3">
             <div className="size-11 rounded-full bg-secondary flex items-center justify-center text-sm font-bold text-secondary-foreground shrink-0 shadow-md">
-              VR
+              {getInitials(account.name)}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-foreground truncate">
-                Valentina Ríos
+                {account.name}
               </p>
               <p className="text-xs text-muted-foreground truncate">
-                admin@remata.pe
+                {account.email}
               </p>
               <Badge
                 variant="outline"
                 className="mt-1.5 h-5 text-[10px] font-medium border-secondary/30 bg-secondary/10 text-secondary-foreground"
               >
                 <Shield className="size-2.5 mr-1" />
-                Super Admin
+                {isSuperAdmin ? "Super Admin" : role?.name ?? "Admin"}
               </Badge>
             </div>
           </div>
@@ -147,7 +167,7 @@ export function AdminUserMenu() {
         </div>
 
         <DropdownMenuGroup className="p-1.5">
-          {MENU_ITEMS.map((item) => (
+          {menuItems.map((item) => (
             <DropdownMenuItem key={item.href} asChild className="p-0">
               <Link
                 href={item.href}
@@ -164,7 +184,7 @@ export function AdminUserMenu() {
                     {item.description}
                   </p>
                 </div>
-                {"showBadge" in item && item.showBadge && unreadCount > 0 ? (
+                {item.showBadge && unreadCount > 0 ? (
                   <span className="size-5 flex items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shrink-0">
                     {unreadCount}
                   </span>
