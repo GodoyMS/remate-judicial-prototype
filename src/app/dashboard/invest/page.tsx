@@ -40,7 +40,9 @@ import {
   isYapeFormValid,
   type YapeFormData,
 } from "@/components/dashboard/invest/YapePaymentForm";
+import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
 import { dashboardProperties, formatCurrency } from "@/lib/dashboard/mock-data";
+import { getCurrencyLabel, getCurrencySymbol, type PropertyCurrency } from "@/lib/currency";
 
 const STEPS = ["Propiedad", "Monto", "Pago", "Confirmación"];
 
@@ -48,11 +50,12 @@ const properties = dashboardProperties.map((p) => ({
   id: p.id,
   name: p.name,
   address: p.address,
-  price: formatCurrency(p.price),
+  price: formatCurrency(p.price, p.currency),
   roi: `${p.roi}%`,
   minInv: p.minInvestment,
   deadline: p.deadline,
   img: p.img,
+  currency: p.currency,
 }));
 
 const paymentMethods = [
@@ -113,6 +116,21 @@ function InvestPageContent() {
   }, [searchParams]);
 
   const property = properties.find((p) => p.id === selectedProperty);
+  const propertyCurrency: PropertyCurrency = property?.currency ?? "PEN";
+
+  const availablePaymentMethods = paymentMethods.filter(
+    (m) => propertyCurrency === "PEN" || m.id !== "yape"
+  );
+
+  const quickAmounts = property
+    ? propertyCurrency === "USD"
+      ? [property.minInv, 100, 500, 1000].filter(
+          (v, i, arr) => arr.indexOf(v) === i
+        )
+      : [property.minInv, 1000, 5000, 10000].filter(
+          (v, i, arr) => arr.indexOf(v) === i
+        )
+    : [];
 
   const estimatedReturn = property && amount
     ? (parseFloat(amount) * parseFloat(property.roi) / 100).toFixed(2)
@@ -176,7 +194,7 @@ function InvestPageContent() {
           <div>
             <h2 className="text-2xl font-bold text-foreground tracking-tight">¡Inversión realizada!</h2>
             <p className="text-muted-foreground mt-2 max-w-sm leading-relaxed">
-              Tu inversión de <strong className="text-foreground">S/ {parseFloat(amount).toLocaleString()}</strong> en{" "}
+              Tu inversión de <strong className="text-foreground">{formatCurrency(parseFloat(amount), propertyCurrency)}</strong> en{" "}
               <strong className="text-foreground">{property?.name}</strong> ha sido confirmada.
             </p>
           </div>
@@ -187,11 +205,11 @@ function InvestPageContent() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Monto invertido</span>
-              <span className="font-bold text-foreground">S/ {parseFloat(amount).toLocaleString()}</span>
+              <span className="font-bold text-foreground">{formatCurrency(parseFloat(amount), propertyCurrency)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Retorno estimado</span>
-              <span className="font-bold text-green-600">S/ {parseFloat(estimatedReturn).toLocaleString()} ({property?.roi})</span>
+              <span className="font-bold text-green-600">{formatCurrency(parseFloat(estimatedReturn), propertyCurrency)} ({property?.roi})</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Método de pago</span>
@@ -281,7 +299,8 @@ function InvestPageContent() {
                         <MapPin className="size-3" />
                         <span>{p.address}</span>
                       </div>
-                      <div className="flex items-center gap-4 mt-2">
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        <CurrencyBadge currency={p.currency} />
                         <span className="text-xs font-medium text-foreground">{p.price}</span>
                         <span className="text-xs font-bold text-green-600">{p.roi} ROI</span>
                         <span className="text-xs text-muted-foreground">{p.deadline}</span>
@@ -327,7 +346,10 @@ function InvestPageContent() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={property.img} alt={property.name} className="size-14 rounded-xl object-cover" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{property.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-foreground">{property.name}</p>
+                    <CurrencyBadge currency={property.currency} />
+                  </div>
                   <p className="text-xs text-green-600 font-bold">{property.roi} retorno estimado</p>
                 </div>
               </div>
@@ -335,9 +357,9 @@ function InvestPageContent() {
               <h3 className="text-base font-semibold text-foreground mb-4">¿Cuánto deseas invertir?</h3>
 
               <div className="flex flex-col gap-3">
-                <Label className="text-sm font-medium">Monto de inversión (soles)</Label>
+                <Label className="text-sm font-medium">Monto de inversión ({getCurrencyLabel(propertyCurrency)})</Label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">S/</span>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">{getCurrencySymbol(propertyCurrency)}</span>
                   <Input
                     type="number"
                     placeholder={`${property.minInv}`}
@@ -349,13 +371,13 @@ function InvestPageContent() {
                 </div>
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Info className="size-3" />
-                  Inversión mínima: S/ {property.minInv.toLocaleString()}
+                  Inversión mínima: {formatCurrency(property.minInv, propertyCurrency)}
                 </p>
               </div>
 
               {/* Quick amounts */}
               <div className="flex gap-2 mt-3">
-                {[property.minInv, 1000, 5000, 10000].map((q) => (
+                {quickAmounts.map((q) => (
                   <button
                     key={q}
                     onClick={() => setAmount(String(q))}
@@ -382,7 +404,7 @@ function InvestPageContent() {
                   </div>
                   <div>
                     <p className="text-xs text-green-700 font-medium">Retorno estimado al año</p>
-                    <p className="text-xl font-bold text-green-700">S/ {parseFloat(estimatedReturn).toLocaleString()}</p>
+                    <p className="text-xl font-bold text-green-700">{formatCurrency(parseFloat(estimatedReturn), propertyCurrency)}</p>
                   </div>
                 </motion.div>
               )}
@@ -418,7 +440,7 @@ function InvestPageContent() {
               <h3 className="text-base font-semibold text-foreground mb-4">Método de pago</h3>
 
               <div className="flex flex-col gap-3 mb-6">
-                {paymentMethods.map((m) => (
+                {availablePaymentMethods.map((m) => (
                   <button
                     key={m.id}
                     onClick={() => selectPaymentMethod(m.id)}
@@ -453,6 +475,7 @@ function InvestPageContent() {
               {paymentMethod === "transfer" && (
                 <BankTransferForm
                   defaultAmount={amount}
+                  currency={propertyCurrency}
                   value={transferForm}
                   onChange={setTransferForm}
                 />
@@ -461,6 +484,7 @@ function InvestPageContent() {
               {paymentMethod === "deposit" && (
                 <DepositForm
                   defaultAmount={amount}
+                  currency={propertyCurrency}
                   value={depositForm}
                   onChange={setDepositForm}
                 />
@@ -520,8 +544,9 @@ function InvestPageContent() {
               {/* Details */}
               <div className="flex flex-col gap-3">
                 {[
-                  ["Monto a invertir", `S/ ${parseFloat(amount).toLocaleString()}`],
-                  ["Retorno estimado", `S/ ${parseFloat(estimatedReturn).toLocaleString()} (${property.roi})`],
+                  ["Monto a invertir", formatCurrency(parseFloat(amount), propertyCurrency)],
+                  ["Retorno estimado", `${formatCurrency(parseFloat(estimatedReturn), propertyCurrency)} (${property.roi})`],
+                  ["Moneda", propertyCurrency === "USD" ? "Dólares (USD)" : "Soles (PEN)"],
                   ["Cierre de subasta", property.deadline],
                   ["Método de pago", paymentMethods.find((m) => m.id === paymentMethod)?.label ?? ""],
                 ].map(([k, v]) => (

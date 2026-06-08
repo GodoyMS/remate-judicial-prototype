@@ -1,3 +1,5 @@
+import type { PropertyCurrency } from "@/lib/currency";
+
 export type PropertyStatus = "published" | "draft" | "closed";
 export type UserTier = "premium" | "standard";
 export type LoginProvider = "google" | "email" | "apple";
@@ -25,6 +27,7 @@ export interface AdminProperty {
   investorsCount: number;
   createdAt: string;
   status: PropertyStatus;
+  currency: PropertyCurrency;
 }
 
 export type PaymentMethodId = "card" | "yape" | "transfer" | "deposit";
@@ -38,6 +41,7 @@ export interface PropertyInvestment {
   userName: string;
   userEmail: string;
   amount: number;
+  currency: PropertyCurrency;
   submittedAt: string;
   confirmedAt?: string;
   status: InvestmentStatus;

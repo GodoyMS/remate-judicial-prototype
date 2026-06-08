@@ -67,7 +67,7 @@ export function PaymentVerificationRejectDialog({
             </p>
           </div>
           <div className="rounded-xl bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-            {formatCurrency(investment.amount)} ·{" "}
+            {formatCurrency(investment.amount, investment.currency)} ·{" "}
             {PAYMENT_METHOD_LABELS[investment.paymentMethod]}
           </div>
         </DialogHeader>

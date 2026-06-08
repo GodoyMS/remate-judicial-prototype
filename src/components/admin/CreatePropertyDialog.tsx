@@ -37,6 +37,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { DISTRICTS, PROVINCES, REGIONS } from "@/lib/admin/mock-data";
+import { CURRENCY_OPTIONS, getCurrencySymbol, type PropertyCurrency } from "@/lib/currency";
 
 interface CreatePropertyDialogProps {
   open: boolean;
@@ -50,6 +51,7 @@ export function CreatePropertyDialog({ open, onOpenChange }: CreatePropertyDialo
   const [district, setDistrict] = useState<string>("");
   const [publishDate, setPublishDate] = useState<Date>();
   const [notifyUsers, setNotifyUsers] = useState(true);
+  const [currency, setCurrency] = useState<PropertyCurrency>("PEN");
   const [files, setFiles] = useState<string[]>([]);
 
   const provinces = PROVINCES[region] ?? [];
@@ -76,6 +78,7 @@ export function CreatePropertyDialog({ open, onOpenChange }: CreatePropertyDialo
       });
       setFiles([]);
       setPublishDate(undefined);
+      setCurrency("PEN");
     }, 1500);
   };
 
@@ -106,13 +109,35 @@ export function CreatePropertyDialog({ open, onOpenChange }: CreatePropertyDialo
             />
           </div>
 
+          <div className="flex flex-col gap-1.5">
+            <Label>Moneda de la propiedad</Label>
+            <Select
+              value={currency}
+              onValueChange={(v) => setCurrency(v as PropertyCurrency)}
+            >
+              <SelectTrigger className="w-full rounded-xl">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CURRENCY_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Todas las inversiones de esta propiedad se registrarán en la moneda seleccionada.
+            </p>
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="roi">ROI estimado (%)</Label>
               <Input id="roi" type="number" min={1} max={100} placeholder="22" required className="rounded-xl" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="total">Monto total de inversión (S/)</Label>
+              <Label htmlFor="total">Monto total de inversión ({getCurrencySymbol(currency)})</Label>
               <Input id="total" type="number" min={1000} placeholder="285000" required className="rounded-xl" />
             </div>
           </div>

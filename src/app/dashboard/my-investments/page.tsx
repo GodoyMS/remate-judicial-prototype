@@ -46,6 +46,7 @@ import {
   formatCurrency,
   formatDate,
 } from "@/lib/dashboard/mock-data";
+import { formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
 import type { UserInvestment, InvestmentStatus } from "@/lib/dashboard/types";
 import { usePagination } from "@/hooks/use-pagination";
 import { cn } from "@/lib/utils";
@@ -172,15 +173,21 @@ export default function MyInvestmentsPage() {
     resetDeps: [search, statusFilter, districtFilter, paymentFilter, sortBy, pageSize],
   });
 
-  const stats = useMemo(
-    () => ({
-      total: enriched.reduce((s, i) => s + i.amount, 0),
+  const stats = useMemo(() => {
+    const investedByCurrency = sumByCurrency(enriched);
+    const returnsByCurrency = sumByCurrency(
+      enriched.map((i) => ({
+        amount: i.estimatedReturn,
+        currency: i.currency,
+      }))
+    );
+    return {
+      totalLabel: formatMixedCurrencyTotals(investedByCurrency),
+      returnsLabel: formatMixedCurrencyTotals(returnsByCurrency),
       active: enriched.filter((i) => i.status === "active").length,
-      returns: enriched.reduce((s, i) => s + i.estimatedReturn, 0),
       transactions: enriched.length,
-    }),
-    [enriched]
-  );
+    };
+  }, [enriched]);
 
   const activeFiltersCount = [
     statusFilter !== "all",
@@ -239,7 +246,7 @@ export default function MyInvestmentsPage() {
           },
           {
             label: "Capital invertido",
-            value: formatCurrency(stats.total),
+            value: stats.totalLabel,
             sub: "monto acumulado",
             icon: Wallet,
             accent: "text-blue-600 bg-blue-50",
@@ -253,7 +260,7 @@ export default function MyInvestmentsPage() {
           },
           {
             label: "Retorno estimado",
-            value: formatCurrency(stats.returns),
+            value: stats.returnsLabel,
             sub: "proyección total",
             icon: Clock,
             accent: "text-amber-600 bg-amber-50",
@@ -457,7 +464,7 @@ export default function MyInvestmentsPage() {
                     </TableCell>
                     <TableCell className="py-3 whitespace-nowrap">
                       <p className="text-sm font-bold tabular-nums">
-                        {formatCurrency(inv.amount)}
+                        {formatCurrency(inv.amount, inv.currency)}
                       </p>
                     </TableCell>
                     <TableCell className="py-3">
@@ -475,7 +482,7 @@ export default function MyInvestmentsPage() {
                       <p className="text-sm font-semibold text-emerald-600 tabular-nums">
                         {inv.status === "cancelled"
                           ? "—"
-                          : formatCurrency(inv.estimatedReturn)}
+                          : formatCurrency(inv.estimatedReturn, inv.currency)}
                       </p>
                       {inv.status !== "cancelled" && inv.status !== "completed" && (
                         <p className="text-[10px] text-muted-foreground flex items-center gap-0.5 mt-0.5">

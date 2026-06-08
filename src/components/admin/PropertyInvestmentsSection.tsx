@@ -180,7 +180,7 @@ export function PropertyInvestmentsSection({
       confirmedAt: now,
     });
     toast.success("Pago confirmado", {
-      description: `Se envió un correo a ${inv.userEmail} confirmando el registro de ${formatCurrency(inv.amount)}.`,
+      description: `Se envió un correo a ${inv.userEmail} confirmando el registro de ${formatCurrency(inv.amount, inv.currency)}.`,
     });
     setConfirmTarget(null);
   };
@@ -374,7 +374,7 @@ export function PropertyInvestmentsSection({
               <span className="block">
                 Vas a acreditar la inversión de{" "}
                 <strong>{confirmTarget?.userName}</strong> por{" "}
-                <strong>{confirmTarget && formatCurrency(confirmTarget.amount)}</strong>.
+                <strong>{confirmTarget && formatCurrency(confirmTarget.amount, confirmTarget.currency)}</strong>.
               </span>
               <span className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-xs text-foreground/90">
                 <Mail className="size-4 text-primary shrink-0 mt-0.5" />
@@ -577,7 +577,7 @@ function InvestmentSummary({
           )}
         </div>
       </div>
-      <p className="text-base font-bold tabular-nums shrink-0">{formatCurrency(inv.amount)}</p>
+      <p className="text-base font-bold tabular-nums shrink-0">{formatCurrency(inv.amount, inv.currency)}</p>
     </div>
   );
 }

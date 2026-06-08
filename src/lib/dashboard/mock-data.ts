@@ -29,6 +29,7 @@ export const dashboardProperties: DashboardProperty[] = [
     investors: 23,
     raisedAmount: 198500,
     totalInvestment: 285000,
+    currency: "PEN",
     liveInvestments: [
       { id: "l1", obfuscatedName: "M*** V.", amount: 5000, timeAgo: "hace 2 min" },
       { id: "l2", obfuscatedName: "C*** M.", amount: 2500, timeAgo: "hace 8 min" },
@@ -64,6 +65,7 @@ export const dashboardProperties: DashboardProperty[] = [
     investors: 14,
     raisedAmount: 312000,
     totalInvestment: 520000,
+    currency: "PEN",
     liveInvestments: [
       { id: "l6", obfuscatedName: "M*** V.", amount: 15000, timeAgo: "hace 5 min" },
       { id: "l7", obfuscatedName: "R*** S.", amount: 3000, timeAgo: "hace 18 min" },
@@ -95,6 +97,7 @@ export const dashboardProperties: DashboardProperty[] = [
     investors: 8,
     raisedAmount: 85000,
     totalInvestment: 680000,
+    currency: "USD",
     liveInvestments: [
       { id: "l8", obfuscatedName: "J*** P.", amount: 2000, timeAgo: "hace 1 h" },
     ],
@@ -125,6 +128,7 @@ export const dashboardProperties: DashboardProperty[] = [
     investors: 19,
     raisedAmount: 171000,
     totalInvestment: 190000,
+    currency: "USD",
     liveInvestments: [
       { id: "l9", obfuscatedName: "D*** R.", amount: 3000, timeAgo: "hace 12 min" },
       { id: "l10", obfuscatedName: "P*** G.", amount: 1500, timeAgo: "hace 45 min" },
@@ -156,6 +160,7 @@ export const dashboardProperties: DashboardProperty[] = [
     investors: 31,
     raisedAmount: 165000,
     totalInvestment: 165000,
+    currency: "PEN",
     liveInvestments: [],
   },
   {
@@ -183,6 +188,7 @@ export const dashboardProperties: DashboardProperty[] = [
     investors: 6,
     raisedAmount: 45000,
     totalInvestment: 410000,
+    currency: "PEN",
     liveInvestments: [
       { id: "l11", obfuscatedName: "S*** L.", amount: 1000, timeAgo: "hace 3 h" },
     ],
@@ -195,6 +201,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2026-001847",
     propertyId: 1,
     amount: 3500,
+    currency: "PEN",
     roi: 22,
     datePaid: "2026-04-10",
     expectedRoiDate: "2027-04-10",
@@ -208,6 +215,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2026-001923",
     propertyId: 2,
     amount: 5000,
+    currency: "PEN",
     roi: 18,
     datePaid: "2026-03-22",
     expectedRoiDate: "2027-03-22",
@@ -221,6 +229,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2026-002104",
     propertyId: 5,
     amount: 2500,
+    currency: "PEN",
     roi: 24,
     datePaid: "2026-02-15",
     expectedRoiDate: "2026-08-15",
@@ -234,6 +243,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2025-009812",
     propertyId: 4,
     amount: 1500,
+    currency: "USD",
     roi: 18,
     datePaid: "2025-11-05",
     expectedRoiDate: "2026-05-05",
@@ -247,6 +257,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2026-002301",
     propertyId: 3,
     amount: 2000,
+    currency: "USD",
     roi: 20,
     datePaid: "2026-05-18",
     expectedRoiDate: "2027-05-18",
@@ -260,6 +271,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2025-008456",
     propertyId: 1,
     amount: 1000,
+    currency: "PEN",
     roi: 22,
     datePaid: "2025-09-20",
     expectedRoiDate: "2026-03-20",
@@ -273,6 +285,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2026-002518",
     propertyId: 4,
     amount: 4200,
+    currency: "USD",
     roi: 18,
     datePaid: "2026-05-02",
     expectedRoiDate: "2027-05-02",
@@ -286,6 +299,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2025-007203",
     propertyId: 2,
     amount: 800,
+    currency: "PEN",
     roi: 18,
     datePaid: "2025-08-14",
     expectedRoiDate: "2026-02-14",
@@ -299,6 +313,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2026-002640",
     propertyId: 5,
     amount: 1500,
+    currency: "PEN",
     roi: 24,
     datePaid: "2026-05-25",
     expectedRoiDate: "2026-11-25",
@@ -312,6 +327,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2025-006891",
     propertyId: 3,
     amount: 3000,
+    currency: "USD",
     roi: 20,
     datePaid: "2025-07-03",
     expectedRoiDate: "2026-01-03",
@@ -325,6 +341,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2026-001102",
     propertyId: 1,
     amount: 750,
+    currency: "PEN",
     roi: 22,
     datePaid: "2026-01-28",
     expectedRoiDate: "2027-01-28",
@@ -338,6 +355,7 @@ export const userInvestments: UserInvestment[] = [
     certificateId: "REM-2026-002789",
     propertyId: 4,
     amount: 6000,
+    currency: "USD",
     roi: 18,
     datePaid: "2026-05-28",
     expectedRoiDate: "2027-05-28",
@@ -356,13 +374,7 @@ export function getInvestmentById(id: string): UserInvestment | undefined {
   return userInvestments.find((i) => i.id === id);
 }
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("es-PE", {
-    style: "currency",
-    currency: "PEN",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+export { formatCurrency } from "@/lib/currency";
 
 export function formatDate(date: string): string {
   return new Intl.DateTimeFormat("es-PE", {
