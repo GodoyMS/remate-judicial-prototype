@@ -13,6 +13,7 @@ import {
   MessageSquareQuote,
   BarChart3,
   BookOpen,
+  Bot,
   Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/admin/premium-properties", label: "Premium", icon: Crown },
   { href: "/admin/testimonials", label: "Testimonios", icon: MessageSquareQuote },
   { href: "/admin/complaints", label: "Reclamaciones", icon: BookOpen },
+  { href: "/admin/chatbot-conversations", label: "Chatbot", icon: Bot },
   { href: "/admin/users", label: "Usuarios", icon: Users },
   { href: "/admin/settings", label: "Configuración", icon: Settings },
 ];

@@ -194,3 +194,29 @@ export interface Complaint {
   createdAt: string;
   response?: ComplaintResponse;
 }
+
+export type ChatbotMessageRole = "user" | "assistant";
+
+export interface ChatbotMessage {
+  id: string;
+  role: ChatbotMessageRole;
+  content: string;
+  createdAt: string;
+  isOnboarding?: boolean;
+  offTopic?: boolean;
+}
+
+export type ChatbotConversationStatus = "active" | "completed";
+
+export interface ChatbotConversation {
+  id: string;
+  sessionId: string;
+  userName: string;
+  userEmail: string;
+  messages: ChatbotMessage[];
+  startedAt: string;
+  lastMessageAt: string;
+  status: ChatbotConversationStatus;
+  topics: string[];
+  source: "landing";
+}

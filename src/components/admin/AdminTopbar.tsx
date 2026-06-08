@@ -13,6 +13,9 @@ import {
   X,
   MessageSquareQuote,
   BarChart3,
+  Bot,
+  BookOpen,
+  Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminNotificationsPopover } from "@/components/admin/AdminNotificationsPopover";
@@ -22,7 +25,10 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/analytics", label: "Analítica", icon: BarChart3 },
   { href: "/admin/properties", label: "Propiedades", icon: Building2 },
+  { href: "/admin/premium-properties", label: "Premium", icon: Crown },
   { href: "/admin/testimonials", label: "Testimonios", icon: MessageSquareQuote },
+  { href: "/admin/complaints", label: "Reclamaciones", icon: BookOpen },
+  { href: "/admin/chatbot-conversations", label: "Chatbot", icon: Bot },
   { href: "/admin/users", label: "Usuarios", icon: Users },
   { href: "/admin/settings", label: "Configuración", icon: Settings },
 ];
@@ -32,7 +38,10 @@ function getPageTitle(pathname: string): string {
   if (pathname === "/admin/analytics") return "Analítica";
   if (pathname.startsWith("/admin/properties/")) return "Detalle de propiedad";
   if (pathname === "/admin/properties") return "Propiedades";
+  if (pathname === "/admin/premium-properties") return "Premium";
   if (pathname === "/admin/testimonials") return "Testimonios";
+  if (pathname === "/admin/complaints") return "Reclamaciones";
+  if (pathname === "/admin/chatbot-conversations") return "Chatbot";
   if (pathname === "/admin/users") return "Usuarios";
   if (pathname === "/admin/settings") return "Configuración";
   if (pathname === "/admin/notifications") return "Notificaciones";
