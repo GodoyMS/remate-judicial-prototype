@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex-1 w-full min-w-0 overflow-hidden">
             <div className="flex flex-col w-full h-full min-w-0 overflow-hidden">
               <AdminTopbar />
-              <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+              <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden min-w-0">
                 <AdminRouteGuard>{children}</AdminRouteGuard>
               </main>
             </div>

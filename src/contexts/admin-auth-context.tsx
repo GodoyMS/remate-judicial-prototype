@@ -16,6 +16,7 @@ import {
   findRoleById,
   getAccounts,
   getRoles,
+  normalizeAdminAccount,
   saveAccounts,
 } from "@/lib/admin/rbac/store";
 import {
@@ -82,7 +83,14 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     if (session) {
       const found = getAccounts().find((a) => a.id === session.accountId);
       if (found?.active) {
-        setAccount(found);
+        const normalized = normalizeAdminAccount(found);
+        if (normalized !== found) {
+          const updatedAccounts = getAccounts().map((a) =>
+            a.id === normalized.id ? normalized : a
+          );
+          saveAccounts(updatedAccounts);
+        }
+        setAccount(normalized);
       } else {
         localStorage.removeItem(SESSION_KEY);
       }
@@ -113,9 +121,13 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           : a
       );
       saveAccounts(updatedAccounts);
-      setAccounts(updatedAccounts);
-      setAccount({ ...authenticated, lastLogin: session.loggedInAt });
-      return authenticated;
+      const normalized = normalizeAdminAccount({
+        ...authenticated,
+        lastLogin: session.loggedInAt,
+      });
+      setAccounts(updatedAccounts.map((a) => (a.id === normalized.id ? normalized : a)));
+      setAccount(normalized);
+      return normalized;
     },
     []
   );

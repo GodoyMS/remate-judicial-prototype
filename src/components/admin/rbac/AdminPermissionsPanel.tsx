@@ -66,8 +66,8 @@ export function AdminPermissionsPanel({
     <Card className={cn("rounded-2xl border-border/60", className)}>
       {showHeader && (
         <CardHeader className={compact ? "pb-3" : undefined}>
-          <div className="flex items-start justify-between gap-3">
-            <div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Shield className="size-4 text-secondary" />
                 Mis permisos
@@ -79,12 +79,12 @@ export function AdminPermissionsPanel({
               </CardDescription>
             </div>
             {isSuperAdmin ? (
-              <Badge className="bg-violet-100 text-violet-700 border-violet-200 hover:bg-violet-100">
+              <Badge className="self-start bg-violet-100 text-violet-700 border-violet-200 hover:bg-violet-100">
                 <Lock className="size-3 mr-1" />
                 Super Admin
               </Badge>
             ) : (
-              <div className="flex gap-1.5 shrink-0">
+              <div className="flex flex-wrap gap-1.5 shrink-0">
                 {writeCount > 0 && (
                   <Badge variant="outline" className={PERMISSION_COLORS.write}>
                     {writeCount} escritura

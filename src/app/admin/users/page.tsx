@@ -485,11 +485,11 @@ export default function AdminUsersPage() {
         >
           <TabsList
             variant="line"
-            className="w-full justify-start border-b border-border/50 rounded-none h-auto p-0 bg-transparent gap-0"
+            className="w-full justify-start border-b border-border/50 rounded-none h-auto p-0 bg-transparent gap-0 overflow-x-auto flex flex-nowrap"
           >
             <TabsTrigger
               value="clientes"
-              className="rounded-none px-4 py-2.5 data-active:after:bg-primary"
+              className="rounded-none px-3 sm:px-4 py-2.5 text-xs sm:text-sm shrink-0 data-active:after:bg-primary"
             >
               Clientes
               <span className="ml-1.5 text-[10px] tabular-nums text-muted-foreground">
@@ -498,7 +498,7 @@ export default function AdminUsersPage() {
             </TabsTrigger>
             <TabsTrigger
               value="pendientes"
-              className="rounded-none px-4 py-2.5 data-active:after:bg-amber-500"
+              className="rounded-none px-3 sm:px-4 py-2.5 text-xs sm:text-sm shrink-0 data-active:after:bg-amber-500"
             >
               Pendientes
               {pendientes.length > 0 && (
@@ -509,7 +509,7 @@ export default function AdminUsersPage() {
             </TabsTrigger>
             <TabsTrigger
               value="rechazados"
-              className="rounded-none px-4 py-2.5 data-active:after:bg-red-500"
+              className="rounded-none px-3 sm:px-4 py-2.5 text-xs sm:text-sm shrink-0 data-active:after:bg-red-500"
             >
               Rechazados
               <span className="ml-1.5 text-[10px] tabular-nums text-muted-foreground">

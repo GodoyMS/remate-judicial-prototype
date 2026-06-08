@@ -33,7 +33,6 @@ import {
 } from "@/lib/admin/mock-data";
 import { formatCurrency } from "@/lib/admin/formatters";
 import { PermissionGate } from "@/components/admin/rbac/PermissionGate";
-import { useAdminAuth } from "@/contexts/admin-auth-context";
 
 const kpiCards = [
   {
@@ -85,7 +84,6 @@ const chartConfig = {
 };
 
 export default function AdminDashboardPage() {
-  const { canWrite } = useAdminAuth();
   const featured = adminProperties.filter((p) => p.featured);
   const recentUsers = adminUsers.slice(0, 4);
 
@@ -105,7 +103,7 @@ export default function AdminDashboardPage() {
           </p>
         </div>
         <PermissionGate module="properties" showDisabled>
-          <Button asChild className="rounded-xl font-semibold" disabled={!canWrite("properties")}>
+          <Button asChild className="w-full sm:w-auto rounded-xl font-semibold">
             <Link href="/admin/properties">
               <Plus className="size-4 mr-1" />
               Nueva propiedad
