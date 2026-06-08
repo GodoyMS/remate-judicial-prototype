@@ -5,6 +5,12 @@ export type UserTier = "premium" | "standard";
 export type LoginProvider = "google" | "email" | "apple";
 export type UserStatus = "active" | "blocked";
 
+export type PremiumPropertyAdminStatus =
+  | "available"
+  | "caught"
+  | "expired"
+  | "converted";
+
 export interface AdminProperty {
   id: string;
   title: string;
@@ -28,6 +34,14 @@ export interface AdminProperty {
   createdAt: string;
   status: PropertyStatus;
   currency: PropertyCurrency;
+  isPremiumExclusive?: boolean;
+  premiumRoi?: number;
+  premiumDeadline?: string;
+  premiumStatus?: PremiumPropertyAdminStatus;
+  caughtByUserId?: string;
+  caughtByUserName?: string;
+  caughtAt?: string;
+  notifyPremiumUsers?: boolean;
 }
 
 export type PaymentMethodId = "card" | "yape" | "transfer" | "deposit";

@@ -15,7 +15,11 @@ import {
   Eye,
   EyeOff,
   LogOut,
+  Crown,
+  Sparkles,
 } from "lucide-react";
+import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
+import { useCurrentUser } from "@/contexts/user-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,11 +27,12 @@ import Link from "next/link";
 
 const sections = [
   { id: "profile", label: "Perfil personal", icon: User },
+  { id: "premium", label: "Plan Premium", icon: Crown },
   { id: "security", label: "Seguridad", icon: Lock },
   { id: "notifications", label: "Notificaciones", icon: Bell },
 ];
 
-const VALID_SECTIONS = ["profile", "security", "notifications"] as const;
+const VALID_SECTIONS = ["profile", "premium", "security", "notifications"] as const;
 
 export default function AccountPage() {
   return (
@@ -39,6 +44,7 @@ export default function AccountPage() {
 
 function AccountPageContent() {
   const searchParams = useSearchParams();
+  const { user, isPremium } = useCurrentUser();
   const [activeSection, setActiveSection] = useState("profile");
   const [showPassword, setShowPassword] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -71,11 +77,14 @@ function AccountPageContent() {
           {/* Profile summary */}
           <div className="rounded-2xl  bg-secondary/5 p-4 flex flex-col items-center gap-3 mb-2">
             <div className="size-16 rounded-full bg-primary flex items-center justify-center text-xl font-bold text-primary-foreground">
-              AS
+              {user.initials}
             </div>
             <div className="text-center">
-              <p className="text-sm font-semibold text-foreground">Ana Sofía Torres</p>
-              <p className="text-xs text-muted-foreground">ana.torres@mail.com</p>
+              <div className="flex items-center justify-center gap-1.5">
+                <p className="text-sm font-semibold text-foreground">{user.name}</p>
+                {isPremium && <PremiumBadge size="sm" />}
+              </div>
+              <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
             <div className="flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-2.5 py-1">
               <CheckCircle2 className="size-3 text-green-600" />
@@ -220,6 +229,102 @@ function AccountPageContent() {
                     )}
                   </Button>
                 </div>
+              </div>
+            )}
+
+            {activeSection === "premium" && (
+              <div className="rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-base font-semibold text-foreground">Plan Premium</h3>
+                  {isPremium ? (
+                    <PremiumBadge size="md" />
+                  ) : (
+                    <span className="text-xs font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
+                      Plan Estándar
+                    </span>
+                  )}
+                </div>
+
+                {isPremium ? (
+                  <div className="space-y-6">
+                    <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="size-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+                          <Crown className="size-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-foreground">Plan Premium activo</p>
+                          <p className="text-sm text-muted-foreground">Acceso completo a inversiones exclusivas</p>
+                        </div>
+                      </div>
+                      <ul className="grid sm:grid-cols-2 gap-3">
+                        {[
+                          "Captura propiedades al 100%",
+                          "ROI hasta 52% vs 24% estándar",
+                          "Acceso anticipado exclusivo",
+                          "Comisión reducida 0.5%",
+                          "Soporte prioritario 24/7",
+                          "Notificaciones en tiempo real",
+                        ].map((benefit) => (
+                          <li key={benefit} className="flex items-center gap-2 text-sm text-foreground">
+                            <Sparkles className="size-3.5 text-amber-600 shrink-0" />
+                            {benefit}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="grid sm:grid-cols-3 gap-3">
+                      <div className="rounded-xl border p-4 text-center">
+                        <p className="text-2xl font-bold text-foreground">{user.premiumInvestments}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Inversiones Premium</p>
+                      </div>
+                      <div className="rounded-xl border p-4 text-center">
+                        <p className="text-2xl font-bold text-foreground">0.5%</p>
+                        <p className="text-xs text-muted-foreground mt-1">Comisión</p>
+                      </div>
+                      <div className="rounded-xl border p-4 text-center">
+                        <p className="text-2xl font-bold text-foreground">48%</p>
+                        <p className="text-xs text-muted-foreground mt-1">ROI máximo</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="rounded-2xl border border-dashed border-border p-8 text-center">
+                      <Crown className="size-12 mx-auto mb-4 text-amber-500" />
+                      <h4 className="text-lg font-bold mb-2">Actualiza a Premium</h4>
+                      <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
+                        Accede a propiedades exclusivas, captura inversiones al 100%
+                        y obtén retornos excepcionales antes del mercado estándar.
+                      </p>
+                      <Button className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold">
+                        <Crown className="size-4 mr-2" />
+                        Solicitar upgrade Premium
+                      </Button>
+                      <p className="text-xs text-muted-foreground mt-4">
+                        Demo: cierra sesión e inicia con premium@remata.com
+                      </p>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="rounded-xl border p-4">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-3">Plan Estándar</p>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          <li>• Acceso a subastas publicadas</li>
+                          <li>• Dashboard de inversiones</li>
+                          <li>• Comisión 1.5%</li>
+                        </ul>
+                      </div>
+                      <div className="rounded-xl border border-amber-200 bg-amber-50/30 p-4">
+                        <p className="text-xs font-semibold text-amber-700 uppercase mb-3">Plan Premium</p>
+                        <ul className="space-y-2 text-sm text-foreground">
+                          <li>• Captura al 100% exclusiva</li>
+                          <li>• ROI hasta 52%</li>
+                          <li>• Comisión 0.5%</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
