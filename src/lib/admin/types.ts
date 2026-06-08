@@ -151,3 +151,32 @@ export interface AdminTestimonial {
   sortOrder: number;
   createdAt: string;
 }
+
+export type ComplaintType =
+  | "reclamo"
+  | "queja"
+  | "sugerencia"
+  | "consulta";
+
+export type ComplaintStatus = "pending" | "in_review" | "resolved";
+
+export interface ComplaintResponse {
+  message: string;
+  respondedBy: string;
+  respondedAt: string;
+}
+
+export interface Complaint {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  documentType: DocumentType;
+  documentNumber: string;
+  type: ComplaintType;
+  subject: string;
+  description: string;
+  status: ComplaintStatus;
+  createdAt: string;
+  response?: ComplaintResponse;
+}

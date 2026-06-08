@@ -14,19 +14,19 @@ const columns = [
   {
     title: "Legal",
     links: [
-      { label: "Términos de uso", href: "#" },
-      { label: "Política de privacidad", href: "#" },
-      { label: "Cumplimiento regulatorio", href: "#" },
-      { label: "AML & KYC", href: "#" },
+      { label: "Términos de uso", href: "/terminos-de-uso" },
+      { label: "Política de privacidad", href: "/politica-de-privacidad" },
+      { label: "Cumplimiento regulatorio", href: "/cumplimiento-regulatorio" },
+      { label: "Libro de reclamaciones", href: "/libro-de-reclamaciones" },
     ],
   },
   {
     title: "Soporte",
     links: [
-      { label: "Centro de ayuda", href: "#" },
-      { label: "Contacto", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Preguntas frecuentes", href: "#" },
+      { label: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
+      { label: "Libro de reclamaciones", href: "/libro-de-reclamaciones" },
+      { label: "Contacto", href: "mailto:soporte@remata.pe" },
+      { label: "Cumplimiento AML & KYC", href: "/cumplimiento-regulatorio" },
     ],
   },
 ];
