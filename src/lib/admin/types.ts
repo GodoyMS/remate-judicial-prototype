@@ -130,3 +130,20 @@ export interface AdminProfile {
   lastLogin: string;
   twoFactorEnabled: boolean;
 }
+
+export interface AdminTestimonial {
+  id: string;
+  name: string;
+  role: string;
+  review: string;
+  stars: number;
+  amount?: string;
+  avatar: string;
+  avatarImageUrl?: string;
+  videoUrl?: string;
+  videoPosterUrl?: string;
+  published: boolean;
+  featured: boolean;
+  sortOrder: number;
+  createdAt: string;
+}

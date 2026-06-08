@@ -11,6 +11,7 @@ import {
   Settings,
   Menu,
   X,
+  MessageSquareQuote,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminNotificationsPopover } from "@/components/admin/AdminNotificationsPopover";
@@ -19,6 +20,7 @@ import { AdminUserMenu } from "@/components/admin/AdminUserMenu";
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/properties", label: "Propiedades", icon: Building2 },
+  { href: "/admin/testimonials", label: "Testimonios", icon: MessageSquareQuote },
   { href: "/admin/users", label: "Usuarios", icon: Users },
   { href: "/admin/settings", label: "Configuración", icon: Settings },
 ];
@@ -27,6 +29,7 @@ function getPageTitle(pathname: string): string {
   if (pathname === "/admin") return "Dashboard";
   if (pathname.startsWith("/admin/properties/")) return "Detalle de propiedad";
   if (pathname === "/admin/properties") return "Propiedades";
+  if (pathname === "/admin/testimonials") return "Testimonios";
   if (pathname === "/admin/users") return "Usuarios";
   if (pathname === "/admin/settings") return "Configuración";
   if (pathname === "/admin/notifications") return "Notificaciones";
