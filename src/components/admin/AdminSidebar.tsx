@@ -12,6 +12,7 @@ import {
   ChevronRight,
   MessageSquareQuote,
   BarChart3,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,7 @@ const navItems = [
   { href: "/admin/analytics", label: "Analítica", icon: BarChart3 },
   { href: "/admin/properties", label: "Propiedades", icon: Building2 },
   { href: "/admin/testimonials", label: "Testimonios", icon: MessageSquareQuote },
+  { href: "/admin/complaints", label: "Reclamaciones", icon: BookOpen },
   { href: "/admin/users", label: "Usuarios", icon: Users },
   { href: "/admin/settings", label: "Configuración", icon: Settings },
 ];
