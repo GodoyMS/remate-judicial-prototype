@@ -49,8 +49,7 @@ import { formatDate } from "@/lib/admin/formatters";
 import { cn } from "@/lib/utils";
 
 export default function AdminAccessPage() {
-  const { canWrite, isSuperAdmin, refreshStore, roles: ctxRoles, accounts: ctxAccounts } = useAdminAuth();
-  const canManage = canWrite("access");
+  const { isSuperAdmin, refreshStore, roles: ctxRoles, accounts: ctxAccounts } = useAdminAuth();
 
   const [roles, setRoles] = useState<AdminRole[]>(ctxRoles);
   const [accounts, setAccounts] = useState<AdminAccount[]>(ctxAccounts);
@@ -135,6 +134,7 @@ export default function AdminAccessPage() {
               name: data.name,
               password: data.password || a.password,
               roleId: data.roleId,
+              isSuperAdmin: data.roleId === "role-super-admin",
               active: data.active,
             }
           : a
@@ -197,15 +197,15 @@ export default function AdminAccessPage() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+    <div className="w-full max-w-5xl mx-auto min-w-0">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <div className="size-9 rounded-xl bg-violet-100 flex items-center justify-center">
+              <div className="size-9 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
                 <KeyRound className="size-4 text-violet-600" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
                 Gestión de accesos
               </h2>
             </div>
@@ -225,30 +225,29 @@ export default function AdminAccessPage() {
       <ReadOnlyBanner module="access" />
 
       <Tabs defaultValue="users">
-        <TabsList className="rounded-xl mb-6">
-          <TabsTrigger value="users" className="rounded-lg gap-1.5">
-            <Users className="size-3.5" />
-            Administradores
+        <TabsList className="w-full sm:w-auto h-auto rounded-xl mb-6 p-1 bg-muted/50 overflow-x-auto flex flex-nowrap justify-start">
+          <TabsTrigger value="users" className="rounded-lg gap-1.5 flex-1 sm:flex-none min-w-0 px-3 text-xs sm:text-sm">
+            <Users className="size-3.5 shrink-0" />
+            <span className="truncate">Administradores</span>
           </TabsTrigger>
-          <TabsTrigger value="roles" className="rounded-lg gap-1.5">
-            <Shield className="size-3.5" />
-            Roles y permisos
+          <TabsTrigger value="roles" className="rounded-lg gap-1.5 flex-1 sm:flex-none min-w-0 px-3 text-xs sm:text-sm">
+            <Shield className="size-3.5 shrink-0" />
+            <span className="truncate">Roles y permisos</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">
               {accounts.length} administradores registrados
             </p>
             <PermissionGate module="access" showDisabled>
               <Button
-                className="rounded-xl gap-1.5"
+                className="w-full sm:w-auto rounded-xl gap-1.5"
                 onClick={() => {
                   setEditingAccount(null);
                   setUserDialogOpen(true);
                 }}
-                disabled={!canManage}
               >
                 <UserPlus className="size-4" />
                 Nuevo administrador
@@ -267,7 +266,8 @@ export default function AdminAccessPage() {
                     !account.active && "opacity-60"
                   )}
                 >
-                  <CardContent className="flex items-center gap-4 p-4">
+                  <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-4">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
                     <div
                       className="size-11 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
                       style={{ backgroundColor: role?.color ?? "#64748b" }}
@@ -291,14 +291,15 @@ export default function AdminAccessPage() {
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground">{account.email}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                      <p className="text-[10px] text-muted-foreground mt-0.5 break-words">
                         Rol: {role?.name ?? "—"} · Último acceso: {formatDate(account.lastLogin)}
                       </p>
+                    </div>
                     </div>
                     <PermissionGate module="access" fallback={null}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="rounded-xl shrink-0">
+                          <Button variant="ghost" size="icon" className="rounded-xl shrink-0 self-end sm:self-auto">
                             <MoreHorizontal className="size-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -340,18 +341,17 @@ export default function AdminAccessPage() {
         </TabsContent>
 
         <TabsContent value="roles" className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">
               {roles.length} roles configurados
             </p>
             <PermissionGate module="access" showDisabled>
               <Button
-                className="rounded-xl gap-1.5"
+                className="w-full sm:w-auto rounded-xl gap-1.5"
                 onClick={() => {
                   setEditingRole(null);
                   setRoleDialogOpen(true);
                 }}
-                disabled={!canManage}
               >
                 <Plus className="size-4" />
                 Nuevo rol
@@ -373,16 +373,16 @@ export default function AdminAccessPage() {
               return (
                 <Card key={role.id} className="rounded-2xl border-border/60 overflow-hidden">
                   <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="flex items-start gap-3 min-w-0">
                         <div
-                          className="size-10 rounded-xl flex items-center justify-center"
+                          className="size-10 rounded-xl flex items-center justify-center shrink-0"
                           style={{ backgroundColor: `${role.color}20` }}
                         >
                           <Shield className="size-4" style={{ color: role.color }} />
                         </div>
-                        <div>
-                          <CardTitle className="text-base flex items-center gap-2">
+                        <div className="min-w-0">
+                          <CardTitle className="text-base flex flex-wrap items-center gap-2">
                             {role.name}
                             {role.isSystem && (
                               <Badge variant="outline" className="text-[9px] h-4">
@@ -395,7 +395,7 @@ export default function AdminAccessPage() {
                           </CardDescription>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                         <Badge variant="outline" className="text-[10px]">
                           {userCount} usuario{userCount !== 1 ? "s" : ""}
                         </Badge>
@@ -430,14 +430,14 @@ export default function AdminAccessPage() {
                         </PermissionGate>
                       </div>
                     </div>
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex flex-wrap gap-2 mt-3">
                       {writeModules > 0 && (
-                        <Badge variant="outline" className={PERMISSION_COLORS.write}>
+                        <Badge variant="outline" className={cn(PERMISSION_COLORS.write, "text-[10px]")}>
                           {writeModules} módulos · escritura
                         </Badge>
                       )}
                       {readModules > 0 && (
-                        <Badge variant="outline" className={PERMISSION_COLORS.read}>
+                        <Badge variant="outline" className={cn(PERMISSION_COLORS.read, "text-[10px]")}>
                           {readModules} módulos · lectura
                         </Badge>
                       )}
@@ -452,8 +452,8 @@ export default function AdminAccessPage() {
                       {isExpanded ? "Ocultar permisos" : "Ver matriz de permisos"}
                     </button>
                     {isExpanded && (
-                      <div className="mt-3 rounded-xl border border-border/50 p-3 bg-muted/20">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      <div className="mt-3 rounded-xl border border-border/50 p-3 bg-muted/20 overflow-hidden">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                           {Object.entries(role.permissions).map(([mod, level]) =>
                             level !== "none" ? (
                               <div

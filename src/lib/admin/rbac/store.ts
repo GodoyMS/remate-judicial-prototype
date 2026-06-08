@@ -136,11 +136,16 @@ export function saveRoles(roles: AdminRole[]): void {
 }
 
 export function getAccounts(): AdminAccount[] {
-  return readFromStorage(ACCOUNTS_KEY, DEFAULT_ACCOUNTS);
+  const accounts = readFromStorage(ACCOUNTS_KEY, DEFAULT_ACCOUNTS);
+  const normalized = normalizeAdminAccounts(accounts);
+  if (normalized.some((account, index) => account !== accounts[index])) {
+    writeToStorage(ACCOUNTS_KEY, normalized);
+  }
+  return normalized;
 }
 
 export function saveAccounts(accounts: AdminAccount[]): void {
-  writeToStorage(ACCOUNTS_KEY, accounts);
+  writeToStorage(ACCOUNTS_KEY, normalizeAdminAccounts(accounts));
 }
 
 export function resetRbacStore(): void {
@@ -156,6 +161,17 @@ export function findAccountByEmail(email: string): AdminAccount | undefined {
 
 export function findRoleById(roleId: string): AdminRole | undefined {
   return getRoles().find((r) => r.id === roleId);
+}
+
+/** Keeps isSuperAdmin in sync with the assigned Super Admin role. */
+export function normalizeAdminAccount(account: AdminAccount): AdminAccount {
+  const isSuperAdmin = account.roleId === "role-super-admin";
+  if (account.isSuperAdmin === isSuperAdmin) return account;
+  return { ...account, isSuperAdmin };
+}
+
+export function normalizeAdminAccounts(accounts: AdminAccount[]): AdminAccount[] {
+  return accounts.map(normalizeAdminAccount);
 }
 
 export function authenticateAdmin(

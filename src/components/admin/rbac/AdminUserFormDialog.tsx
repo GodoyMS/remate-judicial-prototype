@@ -92,7 +92,7 @@ export function AdminUserFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-2xl">
+      <DialogContent className="w-[calc(100%-1.5rem)] sm:max-w-md rounded-2xl p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>{account ? "Editar administrador" : "Nuevo administrador"}</DialogTitle>
           <DialogDescription>
@@ -143,7 +143,7 @@ export function AdminUserFormDialog({
             <Select
               value={roleId}
               onValueChange={setRoleId}
-              disabled={account?.isSuperAdmin}
+              disabled={!!account?.isSuperAdmin}
             >
               <SelectTrigger className="w-full rounded-xl">
                 <SelectValue placeholder="Seleccionar rol" />
@@ -174,11 +174,16 @@ export function AdminUserFormDialog({
               <Switch checked={active} onCheckedChange={setActive} />
             </div>
           )}
-          <DialogFooter>
-            <Button type="button" variant="outline" className="rounded-xl" onClick={() => onOpenChange(false)}>
+          <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full sm:w-auto rounded-xl"
+              onClick={() => onOpenChange(false)}
+            >
               Cancelar
             </Button>
-            <Button type="submit" className="rounded-xl">
+            <Button type="submit" className="w-full sm:w-auto rounded-xl">
               {account ? "Guardar cambios" : "Crear administrador"}
             </Button>
           </DialogFooter>

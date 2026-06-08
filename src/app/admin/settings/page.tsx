@@ -51,20 +51,28 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <h2 className="text-2xl font-bold text-foreground tracking-tight">Configuración</h2>
+    <div className="w-full max-w-4xl mx-auto min-w-0">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">Configuración</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Administra tu cuenta, seguridad y preferencias del backoffice
         </p>
       </motion.div>
 
       <Tabs defaultValue="profile">
-        <TabsList className="rounded-xl mb-6">
-          <TabsTrigger value="profile" className="rounded-lg">Mi cuenta</TabsTrigger>
-          <TabsTrigger value="permissions" className="rounded-lg">Mis permisos</TabsTrigger>
-          <TabsTrigger value="notifications" className="rounded-lg">Notificaciones</TabsTrigger>
-          <TabsTrigger value="security" className="rounded-lg">Seguridad</TabsTrigger>
+        <TabsList className="w-full sm:w-auto h-auto rounded-xl mb-6 p-1 bg-muted/50 overflow-x-auto flex flex-nowrap justify-start">
+          <TabsTrigger value="profile" className="rounded-lg flex-1 sm:flex-none min-w-0 px-2.5 sm:px-3 text-xs sm:text-sm">
+            Mi cuenta
+          </TabsTrigger>
+          <TabsTrigger value="permissions" className="rounded-lg flex-1 sm:flex-none min-w-0 px-2.5 sm:px-3 text-xs sm:text-sm">
+            Mis permisos
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="rounded-lg flex-1 sm:flex-none min-w-0 px-2.5 sm:px-3 text-xs sm:text-sm">
+            Notificaciones
+          </TabsTrigger>
+          <TabsTrigger value="security" className="rounded-lg flex-1 sm:flex-none min-w-0 px-2.5 sm:px-3 text-xs sm:text-sm">
+            Seguridad
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">

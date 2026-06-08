@@ -21,8 +21,8 @@ export function AdminTopbar() {
   return (
     <>
       <div className="w-full">
-        <header className="h-16 flex items-center justify-between px-4 sm:px-6 shrink-0">
-          <div className="flex items-center gap-3">
+        <header className="h-16 flex items-center justify-between px-4 sm:px-6 shrink-0 gap-3 min-w-0">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="lg:hidden flex items-center gap-2">
               <button
                 className="p-1.5 rounded-lg hover:bg-muted transition-colors"
@@ -34,7 +34,7 @@ export function AdminTopbar() {
                 <Shield className="size-3.5 text-secondary-foreground" />
               </div>
             </div>
-            <h1 className="text-base font-semibold text-foreground hidden sm:block">
+            <h1 className="text-sm sm:text-base font-semibold text-foreground truncate">
               {title}
             </h1>
           </div>
@@ -52,7 +52,7 @@ export function AdminTopbar() {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="relative w-72 bg-sidebar flex flex-col shadow-2xl">
+          <aside className="relative w-[min(18rem,85vw)] bg-sidebar flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-5 h-16 border-b border-sidebar-border">
               <div className="flex items-center gap-2.5">
                 <div className="size-8 rounded-lg bg-sidebar-primary flex items-center justify-center">

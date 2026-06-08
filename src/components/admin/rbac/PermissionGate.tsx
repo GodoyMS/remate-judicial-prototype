@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
 import type { AdminModule } from "@/lib/admin/rbac/types";
 import { useAdminAuth } from "@/contexts/admin-auth-context";
 import {
@@ -20,6 +20,16 @@ interface PermissionGateProps {
   showDisabled?: boolean;
   disabledClassName?: string;
   tooltip?: string;
+}
+
+function withDisabledChild(children: ReactNode) {
+  if (!isValidElement(children)) return children;
+
+  const child = children as ReactElement<{ disabled?: boolean; className?: string }>;
+  return cloneElement(child, {
+    disabled: true,
+    className: cn(child.props.className, "pointer-events-none"),
+  });
 }
 
 export function PermissionGate({
@@ -43,12 +53,12 @@ export function PermissionGate({
           <TooltipTrigger asChild>
             <span
               className={cn(
-                "inline-flex cursor-not-allowed opacity-50 pointer-events-none",
+                "inline-flex cursor-not-allowed opacity-50",
                 disabledClassName
               )}
               aria-disabled
             >
-              {children}
+              {withDisabledChild(children)}
             </span>
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-xs text-xs">
