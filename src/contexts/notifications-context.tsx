@@ -11,8 +11,24 @@ import {
 } from "react";
 import {
   INITIAL_NOTIFICATIONS,
+  PREMIUM_NOTIFICATIONS,
   type AppNotification,
 } from "@/lib/dashboard/notifications";
+function getInitialNotifications(): AppNotification[] {
+  if (typeof window === "undefined") return INITIAL_NOTIFICATIONS;
+  try {
+    const stored = localStorage.getItem("remata-demo-user-v1");
+    if (stored) {
+      const user = JSON.parse(stored) as { tier?: string };
+      if (user.tier === "premium") {
+        return [...PREMIUM_NOTIFICATIONS, ...INITIAL_NOTIFICATIONS];
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  return INITIAL_NOTIFICATIONS;
+}
 
 const STORAGE_KEY = "remata-notifications-v1";
 
@@ -47,7 +63,11 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = loadStored();
-    if (stored?.length) setNotifications(stored);
+    if (stored?.length) {
+      setNotifications(stored);
+    } else {
+      setNotifications(getInitialNotifications());
+    }
     setHydrated(true);
   }, []);
 

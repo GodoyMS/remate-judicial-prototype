@@ -4,7 +4,8 @@ export type NotificationCategory =
   | "payment"
   | "legal"
   | "system"
-  | "alert";
+  | "alert"
+  | "premium";
 
 export interface AppNotification {
   id: string;
@@ -21,6 +22,45 @@ export interface AppNotification {
 const now = Date.now();
 const hour = 60 * 60 * 1000;
 const day = 24 * hour;
+
+export const PREMIUM_NOTIFICATIONS: AppNotification[] = [
+  {
+    id: "pn1",
+    category: "premium",
+    title: "Nueva oportunidad Premium — Penthouse Chorrillos",
+    description:
+      "Invierte el 100% y obtén un ROI del 48% antes de que pase al mercado estándar. Solo quedan 3 días para capturar esta propiedad.",
+    timeAgo: "hace 5 min",
+    timestamp: now - 5 * 60 * 1000,
+    read: false,
+    href: "/dashboard/premium-properties/pp-101",
+    highlight: "ROI 48%",
+  },
+  {
+    id: "pn2",
+    category: "premium",
+    title: "Ventana Premium abierta — San Borja",
+    description:
+      "Departamento Skyline disponible exclusivamente para usuarios Premium. Captura el 100% con retorno del 42%.",
+    timeAgo: "hace 1 h",
+    timestamp: now - hour,
+    read: false,
+    href: "/dashboard/premium-properties/pp-104",
+    highlight: "7 días restantes",
+  },
+  {
+    id: "pn3",
+    category: "premium",
+    title: "Propiedad capturada — Villa Asia",
+    description:
+      "La Villa de Lujo en Asia fue capturada por otro inversor Premium. Explora otras oportunidades disponibles.",
+    timeAgo: "hace 2 días",
+    timestamp: now - 2 * day,
+    read: true,
+    href: "/dashboard/premium-properties/pp-102",
+    highlight: "Capturada",
+  },
+];
 
 export const INITIAL_NOTIFICATIONS: AppNotification[] = [
   {
@@ -179,6 +219,12 @@ export const CATEGORY_META: Record<
     iconName: "Zap",
     color: "text-orange-600",
     bg: "bg-orange-50 border-orange-100",
+  },
+  premium: {
+    label: "Premium",
+    iconName: "Crown",
+    color: "text-amber-700",
+    bg: "bg-amber-50 border-amber-100",
   },
 };
 

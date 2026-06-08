@@ -10,6 +10,7 @@ import {
   Zap,
   Check,
   Circle,
+  Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,7 @@ const ICONS = {
   Scale,
   Sparkles,
   Zap,
+  Crown,
 } as const;
 
 function CategoryIcon({ category }: { category: NotificationCategory }) {

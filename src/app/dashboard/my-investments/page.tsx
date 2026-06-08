@@ -1,8 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Crown } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PremiumInvestmentsTab } from "@/components/dashboard/PremiumInvestmentsTab";
+import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
+import { useCurrentUser } from "@/contexts/user-context";
 import {
   Search,
   Eye,
@@ -96,7 +102,23 @@ function PaymentMethodIcon({ method }: { method: string }) {
 }
 
 export default function MyInvestmentsPage() {
+  return (
+    <Suspense>
+      <MyInvestmentsContent />
+    </Suspense>
+  );
+}
+
+function MyInvestmentsContent() {
+  const searchParams = useSearchParams();
+  const { isPremium } = useCurrentUser();
+  const [activeTab, setActiveTab] = useState("standard");
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "premium") setActiveTab("premium");
+  }, [searchParams]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [districtFilter, setDistrictFilter] = useState("all");
   const [paymentFilter, setPaymentFilter] = useState("all");
@@ -235,6 +257,29 @@ export default function MyInvestmentsPage() {
         </div>
       </motion.div>
 
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <TabsList className="rounded-xl h-10 p-1 bg-muted/50">
+          <TabsTrigger value="standard" className="rounded-lg text-xs font-medium px-4">
+            Inversiones estándar
+          </TabsTrigger>
+          <TabsTrigger value="premium" className="rounded-lg text-xs font-medium px-4 gap-1.5">
+            <Crown className="size-3" />
+            Premium
+            {isPremium && <PremiumBadge size="sm" className="scale-75" />}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="premium" className="mt-6">
+          <PremiumInvestmentsTab />
+        </TabsContent>
+
+        <TabsContent value="standard" className="mt-0">
+          <div className="mt-6" />
+        </TabsContent>
+      </Tabs>
+
+      {activeTab === "standard" && (
+      <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {[
           {
@@ -578,6 +623,8 @@ export default function MyInvestmentsPage() {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
       />
+      </>
+      )}
     </div>
   );
 }
