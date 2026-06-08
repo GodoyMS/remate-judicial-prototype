@@ -1,37 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, Quote, Users } from "lucide-react";
-
-const testimonials = [
-  {
-    name: "María Elena Quispe",
-    role: "Inversionista independiente",
-    avatar: "ME",
-    review:
-      "Nunca pensé que podría invertir en propiedades con tan poco capital. En mi primera subasta obtuve un retorno del 19%. El proceso fue transparente y el soporte legal excelente.",
-    stars: 5,
-    amount: "S/ 12,500 invertido",
-  },
-  {
-    name: "Carlos Rodríguez V.",
-    role: "Empresario, Lima",
-    avatar: "CR",
-    review:
-      "Llevo 8 meses en Remata y ya tengo 4 inversiones activas. La plataforma es intuitiva, la documentación siempre está disponible y los retornos superan cualquier instrumento bancario.",
-    stars: 5,
-    amount: "S/ 45,000 invertido",
-  },
-  {
-    name: "Ana Sofía Torres",
-    role: "Consultora financiera",
-    avatar: "AT",
-    review:
-      "Como asesora financiera, recomiendo Remata a mis clientes que buscan diversificación. El marco legal es sólido, los procesos son claros y el equipo siempre responde.",
-    stars: 5,
-    amount: "S/ 78,000 gestionado",
-  },
-];
+import { Users } from "lucide-react";
+import { TestimonialsCarousel } from "@/components/landing/TestimonialsCarousel";
 
 const counters = [
   { value: "S/ 48M+", label: "En propiedades subastadas" },
@@ -90,50 +61,8 @@ export function SocialProof() {
           </h2>
         </motion.div>
 
-        {/* Testimonials */}
-        <div className="grid gap-5 md:grid-cols-3">
-          {testimonials.map((t, i) => (
-            <motion.div
-              key={t.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="group flex flex-col gap-5 rounded-2xl border border-[#163300]/8 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#9FE870]/40 hover:shadow-lg"
-            >
-              <div className="flex items-start justify-between">
-                <Quote className="size-8 text-[#9FE870]/50" />
-                <div className="flex gap-0.5">
-                  {Array.from({ length: t.stars }).map((_, j) => (
-                    <Star
-                      key={j}
-                      className="size-3.5 fill-[#9FE870] text-[#9FE870]"
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <p className="flex-1 text-sm leading-relaxed text-[#163300]/80">
-                &ldquo;{t.review}&rdquo;
-              </p>
-
-              <div className="flex items-center gap-3 border-t border-[#163300]/8 pt-4">
-                <div className="flex size-10 items-center justify-center rounded-full bg-[#163300] text-sm font-bold text-[#9FE870]">
-                  {t.avatar}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-[#163300]">
-                    {t.name}
-                  </p>
-                  <p className="text-xs text-[#163300]/50">{t.role}</p>
-                </div>
-                <span className="shrink-0 rounded-full bg-[#9FE870]/25 px-2.5 py-1 text-[10px] font-semibold text-[#163300]">
-                  {t.amount}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        {/* Testimonials carousel */}
+        <TestimonialsCarousel />
       </div>
     </section>
   );

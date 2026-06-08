@@ -1,6 +1,7 @@
 import type {
   AdminProfile,
   AdminProperty,
+  AdminTestimonial,
   AdminUser,
   IdentityVerification,
   PropertyInvestment,
@@ -2140,8 +2141,251 @@ export const investmentChartData = [
   { month: "Jun", amount: 420000 },
 ];
 
+export const adminTestimonials: AdminTestimonial[] = [
+  {
+    id: "t1",
+    name: "María Elena Quispe",
+    role: "Inversionista independiente",
+    avatar: "ME",
+    review:
+      "Nunca pensé que podría invertir en propiedades con tan poco capital. En mi primera subasta obtuve un retorno del 19%. El proceso fue transparente y el soporte legal excelente.",
+    stars: 5,
+    amount: "S/ 12,500 invertido",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    videoPosterUrl:
+      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=450&fit=crop",
+    published: true,
+    featured: true,
+    sortOrder: 1,
+    createdAt: "2025-11-12",
+  },
+  {
+    id: "t2",
+    name: "Carlos Rodríguez V.",
+    role: "Empresario, Lima",
+    avatar: "CR",
+    review:
+      "Llevo 8 meses en Remata y ya tengo 4 inversiones activas. La plataforma es intuitiva, la documentación siempre está disponible y los retornos superan cualquier instrumento bancario.",
+    stars: 5,
+    amount: "S/ 45,000 invertido",
+    published: true,
+    featured: true,
+    sortOrder: 2,
+    createdAt: "2025-11-20",
+  },
+  {
+    id: "t3",
+    name: "Ana Sofía Torres",
+    role: "Consultora financiera",
+    avatar: "AT",
+    review:
+      "Como asesora financiera, recomiendo Remata a mis clientes que buscan diversificación. El marco legal es sólido, los procesos son claros y el equipo siempre responde.",
+    stars: 5,
+    amount: "S/ 78,000 gestionado",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    videoPosterUrl:
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&h=450&fit=crop",
+    published: true,
+    featured: true,
+    sortOrder: 3,
+    createdAt: "2025-12-01",
+  },
+  {
+    id: "t4",
+    name: "Roberto Mendoza",
+    role: "Ingeniero civil, Arequipa",
+    avatar: "RM",
+    review:
+      "Invertí en un lote en remate judicial y la documentación estuvo impecable desde el día uno. El retorno superó mis expectativas y el proceso fue mucho más simple de lo que imaginaba.",
+    stars: 5,
+    amount: "S/ 28,000 invertido",
+    published: true,
+    featured: false,
+    sortOrder: 4,
+    createdAt: "2025-12-08",
+  },
+  {
+    id: "t5",
+    name: "Lucía Fernández",
+    role: "Médica, Miraflores",
+    avatar: "LF",
+    review:
+      "Con mi agenda ocupada necesitaba algo 100% digital. Remata me permite invertir en minutos y seguir mis activos desde el celular. La transparencia es lo que más valoro.",
+    stars: 5,
+    amount: "S/ 35,000 invertido",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    videoPosterUrl:
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&h=450&fit=crop",
+    published: true,
+    featured: false,
+    sortOrder: 5,
+    createdAt: "2025-12-15",
+  },
+  {
+    id: "t6",
+    name: "Diego Huamán",
+    role: "Emprendedor tech",
+    avatar: "DH",
+    review:
+      "Diversifiqué parte de mi portafolio en remates inmobiliarios. La curva de aprendizaje fue corta gracias a los tutoriales y al equipo de soporte que responde al instante.",
+    stars: 4,
+    amount: "S/ 62,000 invertido",
+    published: true,
+    featured: false,
+    sortOrder: 6,
+    createdAt: "2026-01-05",
+  },
+  {
+    id: "t7",
+    name: "Patricia Salas",
+    role: "Contadora, San Borja",
+    avatar: "PS",
+    review:
+      "Revisé cada cláusula antes de invertir y quedé impresionada con el rigor legal. Remata no es una moda pasajera: es infraestructura seria para el mercado peruano.",
+    stars: 5,
+    amount: "S/ 19,500 invertido",
+    published: true,
+    featured: false,
+    sortOrder: 7,
+    createdAt: "2026-01-18",
+  },
+  {
+    id: "t8",
+    name: "Jorge Castillo",
+    role: "Arquitecto, Surco",
+    avatar: "JC",
+    review:
+      "Como profesional del sector inmobiliario, valoro el análisis de cada propiedad. Los informes técnicos y la trazabilidad del remate me dieron confianza para mi primera inversión.",
+    stars: 5,
+    amount: "S/ 51,000 invertido",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    videoPosterUrl:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&h=450&fit=crop",
+    published: true,
+    featured: true,
+    sortOrder: 8,
+    createdAt: "2026-02-02",
+  },
+  {
+    id: "t9",
+    name: "Carmen Vargas",
+    role: "Jubilada, Trujillo",
+    avatar: "CV",
+    review:
+      "Mi hijo me ayudó a registrarme y ahora gestiono mis inversiones sola. La interfaz es clara y los retornos me han permitido complementar mi pensión con tranquilidad.",
+    stars: 5,
+    amount: "S/ 8,200 invertido",
+    published: true,
+    featured: false,
+    sortOrder: 9,
+    createdAt: "2026-02-14",
+  },
+  {
+    id: "t10",
+    name: "Andrés Nakamura",
+    role: "Chef ejecutivo",
+    avatar: "AN",
+    review:
+      "Empecé con el monto mínimo para probar y hoy ya tengo tres propiedades en cartera. La liquidez al cierre de cada subasta es rápida y sin sorpresas.",
+    stars: 4,
+    amount: "S/ 22,800 invertido",
+    published: true,
+    featured: false,
+    sortOrder: 10,
+    createdAt: "2026-03-01",
+  },
+  {
+    id: "t11",
+    name: "Valeria Ríos",
+    role: "Abogada corporativa",
+    avatar: "VR",
+    review:
+      "El marco de remates judiciales puede intimidar, pero Remata lo traduce a un flujo digital comprensible. Recomiendo la plataforma a colegas que buscan activos alternativos.",
+    stars: 5,
+    amount: "S/ 94,000 gestionado",
+    published: true,
+    featured: false,
+    sortOrder: 11,
+    createdAt: "2026-03-20",
+  },
+  {
+    id: "t12",
+    name: "Miguel Ángel Paz",
+    role: "Comerciante, Cusco",
+    avatar: "MP",
+    review:
+      "Invertir desde provincia era mi mayor duda. Todo el proceso es remoto, con firma digital y seguimiento en tiempo real. Ya recomendé Remata a mi círculo de negocios.",
+    stars: 5,
+    amount: "S/ 16,400 invertido",
+    videoUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    videoPosterUrl:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop",
+    published: true,
+    featured: false,
+    sortOrder: 12,
+    createdAt: "2026-04-05",
+  },
+  {
+    id: "t13",
+    name: "Sofía Delgado",
+    role: "Diseñadora UX",
+    avatar: "SD",
+    review:
+      "Como diseñadora, aprecio cuando un producto financiero no sacrifica la experiencia. Remata se siente moderno, confiable y pensado para personas reales.",
+    stars: 5,
+    amount: "S/ 11,000 invertido",
+    published: false,
+    featured: false,
+    sortOrder: 13,
+    createdAt: "2026-04-18",
+  },
+  {
+    id: "t14",
+    name: "Fernando López",
+    role: "Piloto comercial",
+    avatar: "FL",
+    review:
+      "Viajo constantemente y necesitaba invertir sin papeleo físico. La app y las notificaciones me mantienen al día aunque esté en otra zona horaria.",
+    stars: 4,
+    amount: "S/ 33,500 invertido",
+    published: true,
+    featured: false,
+    sortOrder: 14,
+    createdAt: "2026-05-02",
+  },
+  {
+    id: "t15",
+    name: "Gabriela Ortiz",
+    role: "Profesora universitaria",
+    avatar: "GO",
+    review:
+      "Usé Remata para enseñar sobre inversión inmobiliaria a mis alumnos. La plataforma demuestra que la tecnología puede democratizar un mercado tradicionalmente cerrado.",
+    stars: 5,
+    amount: "S/ 27,600 invertido",
+    published: true,
+    featured: true,
+    sortOrder: 15,
+    createdAt: "2026-05-20",
+  },
+];
+
 export function getPropertyById(id: string): AdminProperty | undefined {
   return adminProperties.find((p) => p.id === id);
+}
+
+export function getTestimonialById(id: string): AdminTestimonial | undefined {
+  return adminTestimonials.find((t) => t.id === id);
+}
+
+export function getPublishedTestimonials(): AdminTestimonial[] {
+  return adminTestimonials
+    .filter((t) => t.published)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
 export function getInvestmentsByProperty(propertyId: string): PropertyInvestment[] {
