@@ -9,7 +9,7 @@ import {
   Sparkles,
   X,
   Minus,
-  Phone,
+  Maximize2,
   Loader2,
   Shield,
 } from "lucide-react";
@@ -17,9 +17,11 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import {
-  HUMAN_SUPPORT_CONTACTS,
-  SUGGESTED_QUESTIONS,
-} from "@/lib/chat/platform-context";
+  isValidEmail,
+  isValidName,
+  parseMessageContent,
+} from "@/lib/chat/message-format";
+import { SUGGESTED_QUESTIONS } from "@/lib/chat/platform-context";
 
 interface ChatMessage {
   id: string;
@@ -27,29 +29,48 @@ interface ChatMessage {
   content: string;
 }
 
+type OnboardingStep = "name" | "email" | "complete";
+
+interface UserProfile {
+  name: string;
+  email: string;
+}
+
 const WELCOME_MESSAGE: ChatMessage = {
   id: "welcome",
   role: "assistant",
   content:
-    "¡Hola! Soy **Remata AI**, tu asistente especializado en inversiones en remates judiciales. Puedo ayudarte con todo sobre la plataforma: cómo funciona, regulación, inversiones, propiedades y más.\n\n¿En qué te puedo ayudar hoy?",
+    "¡Hola! Soy **Remata AI**, tu asistente sobre inversiones en remates judiciales.\n\nAntes de empezar, ¿cómo te llamas?",
 };
 
 function formatMessageContent(content: string) {
-  const parts = content.split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((part, i) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      return (
-        <strong key={i} className="font-semibold text-foreground">
-          {part.slice(2, -2)}
-        </strong>
-      );
+  const nodes = parseMessageContent(content);
+
+  return nodes.map((node, i) => {
+    switch (node.type) {
+      case "bold":
+        return (
+          <strong key={i} className="font-semibold text-foreground">
+            {node.value}
+          </strong>
+        );
+      case "link":
+        return (
+          <a
+            key={i}
+            href={node.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-[#163300] underline decoration-[#9FE870]/60 underline-offset-2 hover:text-[#163300]/80"
+          >
+            {node.label}
+          </a>
+        );
+      case "break":
+        return <br key={i} />;
+      default:
+        return <span key={i}>{node.value}</span>;
     }
-    return part.split("\n").map((line, j, arr) => (
-      <span key={`${i}-${j}`}>
-        {line}
-        {j < arr.length - 1 && <br />}
-      </span>
-    ));
   });
 }
 
@@ -79,16 +100,48 @@ function TypingIndicator() {
   );
 }
 
+function QuickReplyChips({
+  questions,
+  onSelect,
+  disabled,
+}: {
+  questions: readonly string[];
+  onSelect: (question: string) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="flex flex-wrap justify-end gap-2">
+      {questions.map((question) => (
+        <button
+          key={question}
+          type="button"
+          disabled={disabled}
+          onClick={() => onSelect(question)}
+          className="max-w-[90%] rounded-2xl rounded-tr-md border border-[#163300]/15 bg-white px-3 py-2 text-left text-xs font-medium text-[#163300] shadow-sm transition-all hover:border-[#9FE870]/50 hover:bg-[#9FE870]/10 active:scale-[0.98] disabled:opacity-50"
+        >
+          {question}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function PlatformChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>("name");
+  const userProfileRef = useRef<UserProfile | null>(null);
+  const [showQuickReplies, setShowQuickReplies] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const updateUserProfile = useCallback((profile: UserProfile) => {
+    userProfileRef.current = profile;
+  }, []);
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
@@ -98,7 +151,7 @@ export function PlatformChatbot() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isLoading, scrollToBottom]);
+  }, [messages, isLoading, showQuickReplies, scrollToBottom]);
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
@@ -107,11 +160,64 @@ export function PlatformChatbot() {
     }
   }, [isOpen, isMinimized]);
 
+  const appendAssistantMessage = useCallback((content: string) => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `assistant-${Date.now()}`,
+        role: "assistant",
+        content,
+      },
+    ]);
+  }, []);
+
+  const handleOnboarding = useCallback(
+    (text: string): boolean => {
+      if (onboardingStep === "name") {
+        if (!isValidName(text)) {
+          appendAssistantMessage(
+            "Por favor, escribe tu nombre (mínimo 2 caracteres) para continuar."
+          );
+          return true;
+        }
+
+        const name = text.trim();
+        updateUserProfile({ name, email: "" });
+        setOnboardingStep("email");
+        appendAssistantMessage(
+          `¡Encantado, **${name}**! ¿Cuál es tu correo electrónico?`
+        );
+        return true;
+      }
+
+      if (onboardingStep === "email") {
+        if (!isValidEmail(text)) {
+          appendAssistantMessage(
+            "Ese correo no parece válido. Escríbelo en formato ejemplo@correo.com"
+          );
+          return true;
+        }
+
+        const email = text.trim();
+        const name = userProfileRef.current?.name ?? "";
+        updateUserProfile({ name, email });
+        setOnboardingStep("complete");
+        appendAssistantMessage(
+          `¡Perfecto! Ya puedo ayudarte con todo sobre Remata.\n\nEstas son algunas preguntas frecuentes — elige una o escribe la tuya:`
+        );
+        setShowQuickReplies(true);
+        return true;
+      }
+
+      return false;
+    },
+    [appendAssistantMessage, onboardingStep, updateUserProfile]
+  );
+
   const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || isLoading) return;
 
-    setShowSuggestions(false);
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: "user",
@@ -121,6 +227,21 @@ export function PlatformChatbot() {
     const nextMessages = [...messages, userMessage];
     setMessages(nextMessages);
     setInput("");
+    setShowQuickReplies(false);
+
+    if (handleOnboarding(trimmed)) {
+      return;
+    }
+
+    const profile = userProfileRef.current;
+    if (!profile?.name || !profile?.email) {
+      appendAssistantMessage(
+        "Antes de continuar, necesito tu nombre y correo. ¿Cómo te llamas?"
+      );
+      setOnboardingStep("name");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -131,7 +252,10 @@ export function PlatformChatbot() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({
+          messages: history,
+          userProfile: profile,
+        }),
       });
 
       const data = (await response.json()) as {
@@ -142,7 +266,7 @@ export function PlatformChatbot() {
       const assistantContent =
         data.message ??
         data.error ??
-        "No pude procesar tu consulta. Intenta de nuevo o contáctanos por WhatsApp.";
+        "No pude procesar tu consulta. Intenta de nuevo.";
 
       setMessages((prev) => [
         ...prev,
@@ -161,7 +285,7 @@ export function PlatformChatbot() {
           id: `error-${Date.now()}`,
           role: "assistant",
           content:
-            "Hubo un problema de conexión. Verifica tu internet e intenta de nuevo, o escríbenos por WhatsApp.",
+            "Hubo un problema de conexión. Verifica tu internet e intenta de nuevo.",
         },
       ]);
     } finally {
@@ -181,6 +305,17 @@ export function PlatformChatbot() {
     setIsMinimized(false);
     setHasUnread(false);
   };
+
+  const toggleMinimized = () => {
+    setIsMinimized((prev) => !prev);
+  };
+
+  const inputPlaceholder =
+    onboardingStep === "name"
+      ? "Escribe tu nombre..."
+      : onboardingStep === "email"
+        ? "Escribe tu correo electrónico..."
+        : "Escribe tu pregunta sobre Remata...";
 
   return (
     <>
@@ -229,14 +364,10 @@ export function PlatformChatbot() {
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 24, scale: 0.95 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              height: isMinimized ? "auto" : undefined,
-            }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            layout={false}
             className={cn(
               "fixed z-50 flex flex-col overflow-hidden border border-border/60 bg-white shadow-2xl shadow-black/20",
               "bottom-0 right-0 left-0 rounded-t-3xl sm:bottom-6 sm:left-auto sm:right-6 sm:w-[420px] sm:rounded-3xl",
@@ -276,11 +407,15 @@ export function PlatformChatbot() {
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
-                    onClick={() => setIsMinimized((v) => !v)}
+                    onClick={toggleMinimized}
                     className="flex size-8 items-center justify-center rounded-lg text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     aria-label={isMinimized ? "Expandir chat" : "Minimizar chat"}
                   >
-                    <Minus className="size-4" />
+                    {isMinimized ? (
+                      <Maximize2 className="size-4" />
+                    ) : (
+                      <Minus className="size-4" />
+                    )}
                   </button>
                   <button
                     type="button"
@@ -306,7 +441,7 @@ export function PlatformChatbot() {
             {!isMinimized && (
               <>
                 {/* Messages */}
-                <ScrollArea className="flex-1 min-h-0">
+                <ScrollArea className="min-h-0 flex-1">
                   <div className="flex flex-col gap-4 p-4">
                     {messages.map((message) => (
                       <motion.div
@@ -336,52 +471,17 @@ export function PlatformChatbot() {
                       </motion.div>
                     ))}
 
+                    {showQuickReplies && !isLoading && (
+                      <QuickReplyChips
+                        questions={SUGGESTED_QUESTIONS}
+                        onSelect={sendMessage}
+                      />
+                    )}
+
                     {isLoading && <TypingIndicator />}
                     <div ref={bottomRef} aria-hidden />
                   </div>
                 </ScrollArea>
-
-                {/* Suggested questions */}
-                {showSuggestions && !isLoading && (
-                  <div className="shrink-0 border-t border-border/40 bg-[#F5F9F2]/50 px-4 py-3">
-                    <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Preguntas frecuentes
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {SUGGESTED_QUESTIONS.map((question) => (
-                        <button
-                          key={question}
-                          type="button"
-                          onClick={() => sendMessage(question)}
-                          className="rounded-full border border-[#163300]/15 bg-white px-3 py-1.5 text-left text-xs font-medium text-[#163300] transition-all hover:border-[#9FE870]/50 hover:bg-[#9FE870]/10 hover:shadow-sm active:scale-[0.98]"
-                        >
-                          {question}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Human support */}
-                <div className="shrink-0 border-t border-border/40 px-4 py-2.5">
-                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    ¿Prefieres hablar con una persona?
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {HUMAN_SUPPORT_CONTACTS.map((contact) => (
-                      <a
-                        key={contact.phone}
-                        href={contact.whatsappUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-[11px] font-medium text-green-800 transition-colors hover:bg-green-100"
-                      >
-                        <Phone className="size-3" />
-                        {contact.display}
-                      </a>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Input */}
                 <div className="shrink-0 border-t border-border/60 bg-white p-4">
@@ -391,7 +491,7 @@ export function PlatformChatbot() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="Escribe tu pregunta sobre Remata..."
+                      placeholder={inputPlaceholder}
                       rows={1}
                       disabled={isLoading}
                       className="max-h-24 min-h-[40px] flex-1 resize-none bg-transparent px-2 py-2 text-sm outline-none placeholder:text-muted-foreground disabled:opacity-50"

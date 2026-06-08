@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { resolveChatProviderConfig } from "@/lib/chat/config";
+import { sanitizeAssistantMessage } from "@/lib/chat/message-format";
 import { buildChatSystemPrompt } from "@/lib/chat/prompt";
 
 export const runtime = "nodejs";
@@ -11,6 +12,10 @@ interface ChatMessage {
 
 interface ChatRequestBody {
   messages?: ChatMessage[];
+  userProfile?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 const OFF_TOPIC_KEYWORDS = [
@@ -94,6 +99,14 @@ export async function POST(request: Request) {
 
     const body = (await request.json()) as ChatRequestBody;
     const messages = body.messages ?? [];
+    const userProfile = body.userProfile;
+
+    if (!userProfile?.name?.trim() || !userProfile?.email?.trim()) {
+      return NextResponse.json(
+        { error: "Se requiere nombre y correo del usuario." },
+        { status: 400 }
+      );
+    }
 
     if (messages.length === 0) {
       return NextResponse.json(
@@ -113,13 +126,17 @@ export async function POST(request: Request) {
 
     if (isLikelyOffTopic(lastUserMessage.content)) {
       return NextResponse.json({
-        message:
-          "Solo puedo ayudarte con preguntas sobre **Remata** y nuestras inversiones en remates judiciales. ¿Tienes alguna duda sobre la plataforma, cómo invertir, regulación o nuestras propiedades?",
+        message: sanitizeAssistantMessage(
+          "Solo puedo ayudarte con preguntas sobre **Remata** y nuestras inversiones en remates judiciales. ¿Tienes alguna duda sobre la plataforma, cómo invertir, regulación o nuestras propiedades?"
+        ),
         offTopic: true,
       });
     }
 
-    const systemPrompt = buildChatSystemPrompt();
+    const systemPrompt = buildChatSystemPrompt({
+      userName: userProfile.name.trim(),
+      userEmail: userProfile.email.trim(),
+    });
 
     const response = await fetch(`${config.baseUrl}/chat/completions`, {
       method: "POST",
@@ -136,8 +153,8 @@ export async function POST(request: Request) {
             content: m.content,
           })),
         ],
-        temperature: 0.4,
-        max_tokens: 800,
+        temperature: 0.3,
+        max_tokens: 350,
       }),
     });
 
@@ -157,11 +174,13 @@ export async function POST(request: Request) {
       choices?: Array<{ message?: { content?: string } }>;
     };
 
-    const assistantMessage =
+    const rawMessage =
       data.choices?.[0]?.message?.content?.trim() ??
       "No pude generar una respuesta. Por favor intenta de nuevo.";
 
-    return NextResponse.json({ message: assistantMessage });
+    return NextResponse.json({
+      message: sanitizeAssistantMessage(rawMessage),
+    });
   } catch (error) {
     console.error("Chat route error:", error);
     return NextResponse.json(
