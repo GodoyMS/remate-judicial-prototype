@@ -22,11 +22,15 @@ import {
   parseMessageContent,
 } from "@/lib/chat/message-format";
 import { SUGGESTED_QUESTIONS } from "@/lib/chat/platform-context";
+import { getOrCreateChatSessionId } from "@/lib/chatbot-conversations/session";
 
 interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
+  createdAt: string;
+  isOnboarding?: boolean;
+  offTopic?: boolean;
 }
 
 type OnboardingStep = "name" | "email" | "complete";
@@ -41,6 +45,8 @@ const WELCOME_MESSAGE: ChatMessage = {
   role: "assistant",
   content:
     "¡Hola! Soy **Remata AI**, tu asistente sobre inversiones en remates judiciales.\n\nAntes de empezar, ¿cómo te llamas?",
+  createdAt: new Date().toISOString(),
+  isOnboarding: true,
 };
 
 function formatMessageContent(content: string) {
@@ -138,10 +144,45 @@ export function PlatformChatbot() {
   const [hasUnread, setHasUnread] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const sessionIdRef = useRef<string>("");
+  const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    sessionIdRef.current = getOrCreateChatSessionId();
+  }, []);
 
   const updateUserProfile = useCallback((profile: UserProfile) => {
     userProfileRef.current = profile;
   }, []);
+
+  const syncConversation = useCallback(
+    (nextMessages: ChatMessage[]) => {
+      const profile = userProfileRef.current;
+      if (!profile?.name || !profile?.email || !sessionIdRef.current) return;
+
+      if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+      syncTimeoutRef.current = setTimeout(() => {
+        fetch("/api/chatbot-conversations/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: sessionIdRef.current,
+            userName: profile.name,
+            userEmail: profile.email,
+            messages: nextMessages.map((m) => ({
+              id: m.id,
+              role: m.role,
+              content: m.content,
+              createdAt: m.createdAt,
+              isOnboarding: m.isOnboarding,
+              offTopic: m.offTopic,
+            })),
+          }),
+        }).catch(() => {});
+      }, 600);
+    },
+    []
+  );
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
@@ -160,24 +201,34 @@ export function PlatformChatbot() {
     }
   }, [isOpen, isMinimized]);
 
-  const appendAssistantMessage = useCallback((content: string) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: `assistant-${Date.now()}`,
-        role: "assistant",
-        content,
-      },
-    ]);
-  }, []);
+  const appendAssistantMessage = useCallback(
+    (content: string, extra?: Partial<ChatMessage>) => {
+      setMessages((prev) => {
+        const next = [
+          ...prev,
+          {
+            id: `assistant-${Date.now()}`,
+            role: "assistant" as const,
+            content,
+            createdAt: new Date().toISOString(),
+            ...extra,
+          },
+        ];
+        syncConversation(next);
+        return next;
+      });
+    },
+    [syncConversation]
+  );
 
   const handleOnboarding = useCallback(
     (text: string): boolean => {
       if (onboardingStep === "name") {
         if (!isValidName(text)) {
-          appendAssistantMessage(
-            "Por favor, escribe tu nombre (mínimo 2 caracteres) para continuar."
-          );
+        appendAssistantMessage(
+          "Por favor, escribe tu nombre (mínimo 2 caracteres) para continuar.",
+          { isOnboarding: true }
+        );
           return true;
         }
 
@@ -185,7 +236,8 @@ export function PlatformChatbot() {
         updateUserProfile({ name, email: "" });
         setOnboardingStep("email");
         appendAssistantMessage(
-          `¡Encantado, **${name}**! ¿Cuál es tu correo electrónico?`
+          `¡Encantado, **${name}**! ¿Cuál es tu correo electrónico?`,
+          { isOnboarding: true }
         );
         return true;
       }
@@ -193,7 +245,8 @@ export function PlatformChatbot() {
       if (onboardingStep === "email") {
         if (!isValidEmail(text)) {
           appendAssistantMessage(
-            "Ese correo no parece válido. Escríbelo en formato ejemplo@correo.com"
+            "Ese correo no parece válido. Escríbelo en formato ejemplo@correo.com",
+            { isOnboarding: true }
           );
           return true;
         }
@@ -203,7 +256,8 @@ export function PlatformChatbot() {
         updateUserProfile({ name, email });
         setOnboardingStep("complete");
         appendAssistantMessage(
-          `¡Perfecto! Ya puedo ayudarte con todo sobre Remata.\n\nEstas son algunas preguntas frecuentes — elige una o escribe la tuya:`
+          `¡Perfecto! Ya puedo ayudarte con todo sobre Remata.\n\nEstas son algunas preguntas frecuentes — elige una o escribe la tuya:`,
+          { isOnboarding: true }
         );
         setShowQuickReplies(true);
         return true;
@@ -218,10 +272,15 @@ export function PlatformChatbot() {
     const trimmed = text.trim();
     if (!trimmed || isLoading) return;
 
+    const isOnboarding =
+      onboardingStep === "name" || onboardingStep === "email";
+
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: "user",
       content: trimmed,
+      createdAt: new Date().toISOString(),
+      isOnboarding,
     };
 
     const nextMessages = [...messages, userMessage];
@@ -230,6 +289,7 @@ export function PlatformChatbot() {
     setShowQuickReplies(false);
 
     if (handleOnboarding(trimmed)) {
+      syncConversation(nextMessages);
       return;
     }
 
@@ -261,6 +321,7 @@ export function PlatformChatbot() {
       const data = (await response.json()) as {
         message?: string;
         error?: string;
+        offTopic?: boolean;
       };
 
       const assistantContent =
@@ -268,26 +329,37 @@ export function PlatformChatbot() {
         data.error ??
         "No pude procesar tu consulta. Intenta de nuevo.";
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `assistant-${Date.now()}`,
-          role: "assistant",
-          content: assistantContent,
-        },
-      ]);
+      setMessages((prev) => {
+        const next = [
+          ...prev,
+          {
+            id: `assistant-${Date.now()}`,
+            role: "assistant" as const,
+            content: assistantContent,
+            createdAt: new Date().toISOString(),
+            offTopic: data.offTopic,
+          },
+        ];
+        syncConversation(next);
+        return next;
+      });
 
       if (!isOpen || isMinimized) setHasUnread(true);
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `error-${Date.now()}`,
-          role: "assistant",
-          content:
-            "Hubo un problema de conexión. Verifica tu internet e intenta de nuevo.",
-        },
-      ]);
+      setMessages((prev) => {
+        const next = [
+          ...prev,
+          {
+            id: `error-${Date.now()}`,
+            role: "assistant" as const,
+            content:
+              "Hubo un problema de conexión. Verifica tu internet e intenta de nuevo.",
+            createdAt: new Date().toISOString(),
+          },
+        ];
+        syncConversation(next);
+        return next;
+      });
     } finally {
       setIsLoading(false);
     }
