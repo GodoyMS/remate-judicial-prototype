@@ -53,6 +53,8 @@ import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
 import { formatCurrency, formatDate } from "@/lib/admin/formatters";
 import type { AdminProperty, PropertyStatus } from "@/lib/admin/types";
 import { usePagination } from "@/hooks/use-pagination";
+import { ReadOnlyBanner } from "@/components/admin/rbac/ReadOnlyBanner";
+import { PermissionGate } from "@/components/admin/rbac/PermissionGate";
 import { cn } from "@/lib/utils";
 
 const statusConfig: Record<
@@ -165,6 +167,7 @@ export default function AdminPropertiesPage() {
 
   return (
     <div className="w-full">
+      <ReadOnlyBanner module="properties" />
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -181,13 +184,15 @@ export default function AdminPropertiesPage() {
             Publicación, financiamiento y seguimiento de activos en remate
           </p>
         </div>
-        <Button
-          onClick={() => setCreateOpen(true)}
-          className="rounded-xl font-semibold shrink-0 w-full sm:w-auto"
-        >
-          <Plus className="size-4 mr-2" />
-          Nueva propiedad
-        </Button>
+        <PermissionGate module="properties" showDisabled>
+          <Button
+            onClick={() => setCreateOpen(true)}
+            className="rounded-xl font-semibold shrink-0 w-full sm:w-auto"
+          >
+            <Plus className="size-4 mr-2" />
+            Nueva propiedad
+          </Button>
+        </PermissionGate>
       </motion.div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
@@ -400,32 +405,34 @@ export default function AdminPropertiesPage() {
                             <Eye className="size-4" />
                           </Link>
                         </Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              className="rounded-lg"
-                            >
-                              <MoreHorizontal className="size-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="rounded-xl">
-                            <DropdownMenuItem onClick={() => toggleFeatured(p.id)}>
-                              <Star className="size-4 mr-2" />
-                              {p.featured ? "Quitar destacado" : "Marcar destacada"}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => togglePublished(p.id)}>
-                              {p.published ? "Despublicar" : "Publicar"}
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem asChild>
-                              <Link href={`/admin/properties/${p.id}`}>
-                                Ver detalle
-                              </Link>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <PermissionGate module="properties" fallback={null}>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                className="rounded-lg"
+                              >
+                                <MoreHorizontal className="size-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="rounded-xl">
+                              <DropdownMenuItem onClick={() => toggleFeatured(p.id)}>
+                                <Star className="size-4 mr-2" />
+                                {p.featured ? "Quitar destacado" : "Marcar destacada"}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => togglePublished(p.id)}>
+                                {p.published ? "Despublicar" : "Publicar"}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem asChild>
+                                <Link href={`/admin/properties/${p.id}`}>
+                                  Ver detalle
+                                </Link>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </PermissionGate>
                       </div>
                     </TableCell>
                   </TableRow>

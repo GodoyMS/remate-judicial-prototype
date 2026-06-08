@@ -32,6 +32,8 @@ import {
   investmentChartData,
 } from "@/lib/admin/mock-data";
 import { formatCurrency } from "@/lib/admin/formatters";
+import { PermissionGate } from "@/components/admin/rbac/PermissionGate";
+import { useAdminAuth } from "@/contexts/admin-auth-context";
 
 const kpiCards = [
   {
@@ -83,6 +85,7 @@ const chartConfig = {
 };
 
 export default function AdminDashboardPage() {
+  const { canWrite } = useAdminAuth();
   const featured = adminProperties.filter((p) => p.featured);
   const recentUsers = adminUsers.slice(0, 4);
 
@@ -101,12 +104,14 @@ export default function AdminDashboardPage() {
             Resumen de operaciones — <strong className="text-foreground">22 May 2026</strong>
           </p>
         </div>
-        <Button asChild className="rounded-xl font-semibold">
-          <Link href="/admin/properties">
-            <Plus className="size-4 mr-1" />
-            Nueva propiedad
-          </Link>
-        </Button>
+        <PermissionGate module="properties" showDisabled>
+          <Button asChild className="rounded-xl font-semibold" disabled={!canWrite("properties")}>
+            <Link href="/admin/properties">
+              <Plus className="size-4 mr-1" />
+              Nueva propiedad
+            </Link>
+          </Button>
+        </PermissionGate>
       </motion.div>
 
       <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">

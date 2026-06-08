@@ -76,6 +76,8 @@ import type {
   VerificationActivityType,
 } from "@/lib/admin/types";
 import { usePagination } from "@/hooks/use-pagination";
+import { ReadOnlyBanner } from "@/components/admin/rbac/ReadOnlyBanner";
+import { useModuleAccess } from "@/hooks/use-module-access";
 import { cn } from "@/lib/utils";
 
 const providerIcons: Record<LoginProvider, string> = {
@@ -135,6 +137,7 @@ function matchesVerificationSearch(v: IdentityVerification, q: string) {
 }
 
 export default function AdminUsersPage() {
+  const { isReadOnly } = useModuleAccess("users");
   const [users, setUsers] = useState<AdminUser[]>(adminUsers);
   const [verifications, setVerifications] =
     useState<IdentityVerification[]>(identityVerifications);
@@ -394,6 +397,7 @@ export default function AdminUsersPage() {
   return (
     <TooltipProvider delayDuration={250}>
       <div className="w-full">
+        <ReadOnlyBanner module="users" />
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -549,6 +553,7 @@ export default function AdminUsersPage() {
                 onSendMessage={openDm}
                 onToggleBlock={setBlockDialog}
                 onManageTier={openTierDialog}
+                readOnly={isReadOnly}
               />
             </TabsContent>
 
@@ -566,6 +571,7 @@ export default function AdminUsersPage() {
                   setActionDialog({ verification: v, mode: "resolicitar" })
                 }
                 onViewMore={openVerificationSheet}
+                readOnly={isReadOnly}
               />
             </TabsContent>
 
@@ -687,6 +693,7 @@ function UsersTable({
   onSendMessage,
   onToggleBlock,
   onManageTier,
+  readOnly = false,
 }: {
   users: AdminUser[];
   totalFiltered: number;
@@ -695,6 +702,7 @@ function UsersTable({
   onSendMessage: (u: AdminUser) => void;
   onToggleBlock: (u: AdminUser) => void;
   onManageTier: (u: AdminUser) => void;
+  readOnly?: boolean;
 }) {
   return (
     <div className="overflow-x-auto">
@@ -797,6 +805,7 @@ function UsersTable({
                       onViewProfile={onViewProfile}
                       onSendMessage={onSendMessage}
                       onToggleBlock={onToggleBlock}
+                      readOnly={readOnly}
                     />
                   </div>
                 </TableCell>
@@ -826,6 +835,7 @@ function VerificationsTable({
   onReject,
   onResolicitar,
   onViewMore,
+  readOnly = false,
 }: {
   items: IdentityVerification[];
   totalFiltered: number;
@@ -838,6 +848,7 @@ function VerificationsTable({
   onReject?: (v: IdentityVerification) => void;
   onResolicitar?: (v: IdentityVerification) => void;
   onViewMore: (v: IdentityVerification) => void;
+  readOnly?: boolean;
 }) {
   const isRejectedTab = variant === "rechazados";
 
@@ -975,6 +986,7 @@ function VerificationsTable({
                       onReject={onReject}
                       onResolicitar={onResolicitar}
                       onViewMore={onViewMore}
+                      readOnly={readOnly}
                     />
                   </div>
                 </TableCell>

@@ -26,6 +26,7 @@ interface VerificationRowActionsProps {
   onViewMore: (v: IdentityVerification) => void;
   compact?: boolean;
   hideViewMore?: boolean;
+  readOnly?: boolean;
 }
 
 function ActionBtn({
@@ -75,6 +76,7 @@ export function VerificationRowActions({
   onViewMore,
   compact = false,
   hideViewMore = false,
+  readOnly = false,
 }: VerificationRowActionsProps) {
   const isRejected = verification.status === "rejected";
 
@@ -87,7 +89,7 @@ export function VerificationRowActions({
         compact ? "p-0.5" : "p-0.5 flex-wrap justify-end"
       )}
     >
-      {showAccept && onAccept && !isRejected && (
+      {!readOnly && showAccept && onAccept && !isRejected && (
         <ActionBtn
           label="Aceptar"
           hint="Aprueba KYC y mueve a Clientes"
@@ -98,7 +100,7 @@ export function VerificationRowActions({
         </ActionBtn>
       )}
 
-      {showReject && onReject && !isRejected && (
+      {!readOnly && showReject && onReject && !isRejected && (
         <ActionBtn
           label="Rechazar"
           hint="Notifica por correo y mueve a Rechazados"
@@ -109,7 +111,7 @@ export function VerificationRowActions({
         </ActionBtn>
       )}
 
-      {showResolicitar && onResolicitar && !isRejected && (
+      {!readOnly && showResolicitar && onResolicitar && !isRejected && (
         <>
           <div className="mx-0.5 h-5 w-px shrink-0 bg-border/60 hidden sm:block" aria-hidden />
           <ActionBtn
