@@ -24,6 +24,7 @@ export function ReceiptUploadField({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!value?.type.startsWith("image/")) {
@@ -37,11 +38,20 @@ export function ReceiptUploadField({
 
   const handleFile = (file: File | null) => {
     if (!file) {
+      setFileError(null);
       onChange(null);
       return;
     }
     const validTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
-    if (!validTypes.includes(file.type)) return;
+    if (!validTypes.includes(file.type)) {
+      setFileError("Formato no válido. Usa JPG, PNG, WebP o PDF.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setFileError("El archivo supera el límite de 10 MB.");
+      return;
+    }
+    setFileError(null);
     onChange(file);
   };
 
@@ -104,7 +114,11 @@ export function ReceiptUploadField({
             </span>
           </div>
         </button>
-      ) : (
+      ) : null}
+      {fileError && (
+        <p className="text-xs text-destructive font-medium">{fileError}</p>
+      )}
+      {value ? (
         <div className="overflow-hidden rounded-xl border border-border/60 bg-white shadow-sm">
           <div className="flex items-center gap-3 p-3">
             {preview ? (
@@ -139,7 +153,7 @@ export function ReceiptUploadField({
             Cambiar archivo
           </button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

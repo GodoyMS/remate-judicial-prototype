@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useMemo, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,27 +18,24 @@ import {
   MapPin,
   Shield,
   Percent,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   BankTransferForm,
-  isTransferFormValid,
   type TransferFormData,
 } from "@/components/dashboard/invest/BankTransferForm";
 import {
   CardPaymentForm,
-  isCardFormValid,
   type CardFormData,
 } from "@/components/dashboard/invest/CardPaymentForm";
 import {
   DepositForm,
-  isDepositFormValid,
   type DepositFormData,
 } from "@/components/dashboard/invest/DepositForm";
 import {
   YapePaymentForm,
-  isYapeFormValid,
   type YapeFormData,
 } from "@/components/dashboard/invest/YapePaymentForm";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
@@ -50,7 +47,11 @@ import {
   getPremiumPropertyById,
 } from "@/lib/premium/mock-data";
 import { formatCurrency } from "@/lib/dashboard/mock-data";
-import { getCurrencyLabel, type PropertyCurrency } from "@/lib/currency";
+import type { PropertyCurrency } from "@/lib/currency";
+import {
+  getPaymentValidationHint,
+  isPaymentFormValid,
+} from "@/lib/invest/payment-validation";
 
 const STEPS = ["Propiedad", "Revisión", "Pago", "Confirmación"];
 
@@ -88,16 +89,26 @@ function PremiumInvestContent() {
   const [yapeForm, setYapeForm] = useState<YapeFormData>({ phone: "", approvalCode: "" });
   const [confirming, setConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const deepLinkHandled = useRef(false);
 
-  const availableProperties = premiumProperties.filter((p) => p.status === "available");
+  const availableProperties = useMemo(
+    () => premiumProperties.filter((p) => p.status === "available"),
+    []
+  );
 
   useEffect(() => {
+    if (deepLinkHandled.current) return;
     const param = searchParams.get("property");
-    if (param && availableProperties.some((p) => p.id === param)) {
+    if (!param) return;
+    const isAvailable = premiumProperties.some(
+      (p) => p.id === param && p.status === "available"
+    );
+    if (isAvailable) {
       setSelectedPropertyId(param);
       setStep(1);
+      deepLinkHandled.current = true;
     }
-  }, [searchParams, availableProperties]);
+  }, [searchParams]);
 
   const property = selectedPropertyId ? getPremiumPropertyById(selectedPropertyId) : null;
   const propertyCurrency: PropertyCurrency = property?.currency ?? "PEN";
@@ -109,12 +120,9 @@ function PremiumInvestContent() {
     (m) => propertyCurrency === "PEN" || m.id !== "yape"
   );
 
-  const isPaymentStepValid =
-    paymentMethod === "card" ? isCardFormValid(cardForm)
-    : paymentMethod === "transfer" ? isTransferFormValid(transferForm)
-    : paymentMethod === "deposit" ? isDepositFormValid(depositForm)
-    : paymentMethod === "yape" ? isYapeFormValid(yapeForm)
-    : false;
+  const paymentForms = { card: cardForm, transfer: transferForm, deposit: depositForm, yape: yapeForm };
+  const isPaymentStepValid = isPaymentFormValid(paymentMethod, paymentForms);
+  const paymentValidationHint = getPaymentValidationHint(paymentMethod, paymentForms);
 
   const selectPaymentMethod = (methodId: string) => {
     setPaymentMethod(methodId);
@@ -125,6 +133,14 @@ function PremiumInvestContent() {
     if (methodId === "deposit") {
       setDepositForm((prev) => ({ ...prev, amount: amountStr }));
     }
+  };
+
+  const goToPaymentStep = () => {
+    const defaultMethod = availablePaymentMethods[0]?.id ?? null;
+    if (!paymentMethod && defaultMethod) {
+      selectPaymentMethod(defaultMethod);
+    }
+    setStep(2);
   };
 
   const handleConfirm = () => {
@@ -165,7 +181,7 @@ function PremiumInvestContent() {
           initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 18 }}
-          className="w-full rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50/50 to-white p-10 flex flex-col items-center gap-6 text-center shadow-xl"
+          className="w-full rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50/50 to-white p-6 sm:p-10 flex flex-col items-center gap-6 text-center shadow-xl"
         >
           <div className="size-20 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
             <Crown className="size-10 text-white" />
@@ -209,16 +225,16 @@ function PremiumInvestContent() {
               <span className="font-mono text-xs">PREM-2026-NEW</span>
             </div>
           </div>
-          <div className="flex gap-3 w-full">
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
             <Button
               variant="outline"
-              className="flex-1 rounded-xl"
+              className="flex-1 rounded-xl h-11"
               onClick={() => router.push("/dashboard/premium-properties")}
             >
               Ver propiedades Premium
             </Button>
             <Button
-              className="flex-1 rounded-xl bg-amber-500 hover:bg-amber-600 text-white"
+              className="flex-1 rounded-xl h-11 bg-amber-500 hover:bg-amber-600 text-white"
               onClick={() => router.push("/dashboard/my-investments?tab=premium")}
             >
               Mis inversiones Premium
@@ -230,11 +246,11 @@ function PremiumInvestContent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-1">
-          <Crown className="size-5 text-amber-600" />
-          <h2 className="text-2xl font-bold text-foreground tracking-tight">
+    <div className="max-w-2xl mx-auto w-full">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 mb-1 flex-wrap">
+          <Crown className="size-5 text-amber-600 shrink-0" />
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
             Captura Premium
           </h2>
           <PremiumBadge />
@@ -244,10 +260,10 @@ function PremiumInvestContent() {
         </p>
       </div>
 
-      <div className="flex items-center mb-8">
+      <div className="flex items-center mb-6 sm:mb-8 overflow-x-auto pb-1 -mx-1 px-1">
         {STEPS.map((s, i) => (
-          <div key={s} className="flex items-center flex-1">
-            <div className="flex flex-col items-center gap-1">
+          <div key={s} className="flex items-center flex-1 min-w-[52px]">
+            <div className="flex flex-col items-center gap-1 shrink-0">
               <div
                 className={`size-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                   step > i
@@ -259,12 +275,12 @@ function PremiumInvestContent() {
               >
                 {step > i ? <CheckCircle2 className="size-4" /> : i + 1}
               </div>
-              <span className={`text-[10px] font-medium hidden sm:block ${step >= i ? "text-foreground" : "text-muted-foreground"}`}>
+              <span className={`text-[10px] font-medium text-center leading-tight max-w-[4.5rem] sm:max-w-none hidden sm:block ${step >= i ? "text-foreground" : "text-muted-foreground"}`}>
                 {s}
               </span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-2 mb-4 ${step > i ? "bg-amber-500" : "bg-border"}`} />
+              <div className={`flex-1 h-0.5 mx-1.5 sm:mx-2 mb-4 min-w-[12px] ${step > i ? "bg-amber-500" : "bg-border"}`} />
             )}
           </div>
         ))}
@@ -279,7 +295,7 @@ function PremiumInvestContent() {
             exit={{ opacity: 0, x: -24 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-amber-200/60 bg-white p-4 sm:p-6 shadow-sm">
               <h3 className="text-base font-semibold mb-4">Selecciona una propiedad disponible</h3>
               <div className="flex flex-col gap-3">
                 {availableProperties.map((p) => (
@@ -329,7 +345,7 @@ function PremiumInvestContent() {
             exit={{ opacity: 0, x: -24 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-amber-200/60 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-amber-200/60 bg-white p-4 sm:p-6 shadow-sm">
               <div className="flex items-center gap-3 mb-6 pb-5 border-b">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={property.img} alt={property.name} className="size-14 rounded-xl object-cover" />
@@ -379,13 +395,13 @@ function PremiumInvestContent() {
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setStep(0)} className="rounded-xl">
+            <div className="flex flex-col-reverse sm:flex-row gap-3">
+              <Button variant="outline" onClick={() => setStep(0)} className="rounded-xl h-11 w-full sm:w-auto">
                 <ArrowLeft className="size-4 mr-1" /> Atrás
               </Button>
               <Button
-                onClick={() => setStep(2)}
-                className="flex-1 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold"
+                onClick={goToPaymentStep}
+                className="flex-1 rounded-xl h-11 bg-amber-500 hover:bg-amber-600 text-white font-semibold"
               >
                 Proceder al pago <ArrowRight className="size-4 ml-1" />
               </Button>
@@ -401,35 +417,45 @@ function PremiumInvestContent() {
             exit={{ opacity: 0, x: -24 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
-              <div className="rounded-xl bg-muted/30 p-3 mb-5 flex justify-between text-sm">
-                <span className="text-muted-foreground">Monto a pagar</span>
-                <span className="font-bold text-lg">{formatCurrency(amount, propertyCurrency)}</span>
+            <div className="rounded-2xl border border-border/60 bg-white p-4 sm:p-6 shadow-sm">
+              <div className="rounded-xl bg-muted/30 p-3 mb-5 flex justify-between items-center gap-3 text-sm">
+                <span className="text-muted-foreground shrink-0">Monto a pagar</span>
+                <span className="font-bold text-base sm:text-lg text-right">{formatCurrency(amount, propertyCurrency)}</span>
               </div>
 
               <h3 className="text-base font-semibold mb-4">Método de pago</h3>
-              <div className="grid gap-2 mb-5">
+              <div className="flex flex-col gap-2.5 mb-5">
                 {availablePaymentMethods.map((m) => (
                   <button
                     key={m.id}
+                    type="button"
                     onClick={() => selectPaymentMethod(m.id)}
-                    className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-all ${
+                    className={`flex items-center gap-3 sm:gap-4 rounded-xl border p-3.5 sm:p-4 text-left transition-all ${
                       paymentMethod === m.id
                         ? "border-amber-400 bg-amber-50 ring-2 ring-amber-200"
                         : "border-border/60 hover:border-amber-300"
                     }`}
                   >
-                    <m.icon className="size-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">{m.label}</p>
+                    <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      paymentMethod === m.id ? "bg-amber-500 text-white" : "bg-muted text-muted-foreground"
+                    }`}>
+                      <m.icon className="size-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold">{m.label}</p>
                       <p className="text-xs text-muted-foreground">{m.hint}</p>
+                    </div>
+                    <div className={`size-5 rounded-full border-2 shrink-0 transition-colors ${
+                      paymentMethod === m.id ? "border-amber-500 bg-amber-500" : "border-border"
+                    }`}>
+                      {paymentMethod === m.id && <CheckCircle2 className="size-full text-white" />}
                     </div>
                   </button>
                 ))}
               </div>
 
               {paymentMethod === "card" && (
-                <CardPaymentForm amount={String(amount)} value={cardForm} onChange={setCardForm} />
+                <CardPaymentForm amount={String(amount)} currency={propertyCurrency} value={cardForm} onChange={setCardForm} />
               )}
               {paymentMethod === "transfer" && (
                 <BankTransferForm defaultAmount={String(amount)} currency={propertyCurrency} value={transferForm} onChange={setTransferForm} />
@@ -438,18 +464,25 @@ function PremiumInvestContent() {
                 <DepositForm defaultAmount={String(amount)} currency={propertyCurrency} value={depositForm} onChange={setDepositForm} />
               )}
               {paymentMethod === "yape" && (
-                <YapePaymentForm defaultAmount={String(amount)} value={yapeForm} onChange={setYapeForm} />
+                <YapePaymentForm defaultAmount={String(amount)} currency={propertyCurrency} value={yapeForm} onChange={setYapeForm} />
               )}
             </div>
 
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setStep(1)} className="rounded-xl">
+            {!isPaymentStepValid && paymentValidationHint && (
+              <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                <AlertCircle className="size-4 shrink-0 mt-0.5" />
+                <p>{paymentValidationHint}</p>
+              </div>
+            )}
+
+            <div className="flex flex-col-reverse sm:flex-row gap-3">
+              <Button variant="outline" onClick={() => setStep(1)} className="rounded-xl h-11 w-full sm:w-auto">
                 <ArrowLeft className="size-4 mr-1" /> Atrás
               </Button>
               <Button
                 onClick={() => setStep(3)}
                 disabled={!isPaymentStepValid}
-                className="flex-1 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold disabled:opacity-50"
+                className="flex-1 rounded-xl h-11 bg-amber-500 hover:bg-amber-600 text-white font-semibold disabled:opacity-50"
               >
                 Revisar y confirmar <ArrowRight className="size-4 ml-1" />
               </Button>
@@ -465,7 +498,7 @@ function PremiumInvestContent() {
             exit={{ opacity: 0, x: -24 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50/30 to-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50/30 to-white p-4 sm:p-6 shadow-sm">
               <h3 className="text-base font-semibold mb-4">Confirmar captura Premium</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -499,14 +532,14 @@ function PremiumInvestContent() {
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setStep(2)} className="rounded-xl">
+            <div className="flex flex-col-reverse sm:flex-row gap-3">
+              <Button variant="outline" onClick={() => setStep(2)} className="rounded-xl h-11 w-full sm:w-auto">
                 <ArrowLeft className="size-4 mr-1" /> Atrás
               </Button>
               <Button
                 onClick={handleConfirm}
                 disabled={confirming}
-                className="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold h-12"
+                className="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold h-11 sm:h-12"
               >
                 {confirming ? (
                   <span className="flex items-center gap-2">
