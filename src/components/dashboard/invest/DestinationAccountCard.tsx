@@ -2,17 +2,35 @@
 
 import { useState } from "react";
 import { Building2, Check, Copy } from "lucide-react";
+import type { PropertyCurrency } from "@/lib/currency";
 
-const bankDetails = [
-  { label: "Banco", value: "BCP" },
-  { label: "Cuenta corriente", value: "193-12345678-0-01", copy: true },
-  { label: "CCI", value: "002-193-001234567801-52", copy: true },
-  { label: "Titular", value: "Remata S.A.C." },
-  { label: "RUC", value: "20123456789" },
-];
+const bankDetailsByCurrency: Record<
+  PropertyCurrency,
+  { label: string; value: string; copy?: boolean }[]
+> = {
+  PEN: [
+    { label: "Banco", value: "BCP" },
+    { label: "Cuenta corriente (PEN)", value: "193-12345678-0-01", copy: true },
+    { label: "CCI", value: "002-193-001234567801-52", copy: true },
+    { label: "Titular", value: "Remata S.A.C." },
+    { label: "RUC", value: "20123456789" },
+  ],
+  USD: [
+    { label: "Banco", value: "BCP" },
+    { label: "Cuenta corriente (USD)", value: "194-98765432-1-56", copy: true },
+    { label: "CCI", value: "002-194-009876543256-78", copy: true },
+    { label: "Titular", value: "Remata S.A.C." },
+    { label: "RUC", value: "20123456789" },
+  ],
+};
 
-export function DestinationAccountCard() {
+interface DestinationAccountCardProps {
+  currency?: PropertyCurrency;
+}
+
+export function DestinationAccountCard({ currency = "PEN" }: DestinationAccountCardProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const bankDetails = bankDetailsByCurrency[currency];
 
   const handleCopy = async (text: string, field: string) => {
     await navigator.clipboard.writeText(text.replace(/-/g, ""));
@@ -28,7 +46,9 @@ export function DestinationAccountCard() {
             <Building2 className="size-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Cuenta destino — Remata</p>
+            <p className="text-sm font-semibold">
+              Cuenta destino — Remata ({currency === "USD" ? "USD" : "PEN"})
+            </p>
             <p className="text-xs text-white/60">Realiza la transferencia o depósito a esta cuenta</p>
           </div>
         </div>

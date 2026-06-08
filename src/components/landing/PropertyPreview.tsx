@@ -11,52 +11,25 @@ import {
   Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
+import { dashboardProperties, formatCurrency } from "@/lib/dashboard/mock-data";
 import { cn } from "@/lib/utils";
 
-const properties = [
-  {
-    id: 1,
-    title: "Departamento en San Isidro",
-    address: "Av. Javier Prado Este 1240, San Isidro",
-    type: "Departamento",
-    area: "112 m²",
-    basePrice: "S/ 285,000",
-    roi: "22%",
-    deadline: "8 días",
-    status: "Activo",
-    img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=360&fit=crop&auto=format",
-    badge: "Alta demanda",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Casa en La Molina",
-    address: "Jr. Las Casuarinas 350, La Molina",
-    type: "Casa",
-    area: "280 m²",
-    basePrice: "S/ 520,000",
-    roi: "18%",
-    deadline: "15 días",
-    status: "Activo",
-    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&h=360&fit=crop&auto=format",
-    badge: "Proceso expedito",
-    featured: false,
-  },
-  {
-    id: 3,
-    title: "Penthouse en Miraflores",
-    address: "Calle Berlín 847, Miraflores",
-    type: "Penthouse",
-    area: "195 m²",
-    basePrice: "S/ 680,000",
-    roi: "20%",
-    deadline: "22 días",
-    status: "Próximo",
-    img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=360&fit=crop&auto=format",
-    badge: "Exclusivo",
-    featured: false,
-  },
-];
+const properties = dashboardProperties.slice(0, 3).map((p) => ({
+  id: p.id,
+  title: p.name,
+  address: p.address,
+  type: p.type,
+  area: p.area,
+  basePrice: formatCurrency(p.price, p.currency),
+  currency: p.currency,
+  roi: `${p.roi}%`,
+  deadline: p.deadline,
+  status: p.status,
+  img: p.img,
+  badge: p.badge.replace(/^[^\s]+\s/, ""),
+  featured: p.id === 1,
+}));
 
 export function PropertyPreview() {
   return (
@@ -93,8 +66,8 @@ export function PropertyPreview() {
               <span className="text-[#9FE870]">ahora</span>
             </h2>
             <p className="text-lg leading-relaxed text-white/60">
-              Propiedades auditadas legalmente, listas para invertir. Actualizado
-              en tiempo real.
+              Propiedades auditadas legalmente, listas para invertir en soles o dólares.
+              Actualizado en tiempo real.
             </p>
           </div>
           <Button
@@ -158,11 +131,15 @@ export function PropertyPreview() {
 
               <div className="flex flex-col gap-4 p-5">
                 <div>
-                  <div className="mb-1.5 flex items-center gap-1.5 text-xs text-white/50">
+                  <div className="mb-1.5 flex items-center gap-2 text-xs text-white/50">
                     <Home className="size-3.5" />
                     <span>
                       {p.type} · {p.area}
                     </span>
+                    <CurrencyBadge
+                      currency={p.currency}
+                      className="ml-auto border-white/20 bg-white/10 text-white"
+                    />
                   </div>
                   <h3 className="text-base font-semibold leading-snug text-white">
                     {p.title}

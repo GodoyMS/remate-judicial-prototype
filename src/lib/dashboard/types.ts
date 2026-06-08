@@ -1,3 +1,5 @@
+import type { PropertyCurrency } from "@/lib/currency";
+
 export type InvestmentStatus = "active" | "completed" | "pending" | "cancelled";
 export type PropertyStatus = "Activo" | "Próximo" | "Cerrado";
 
@@ -30,6 +32,7 @@ export interface DashboardProperty {
   investors: number;
   raisedAmount: number;
   totalInvestment: number;
+  currency: PropertyCurrency;
   liveInvestments: LiveInvestment[];
 }
 
@@ -38,6 +41,7 @@ export interface UserInvestment {
   certificateId: string;
   propertyId: number;
   amount: number;
+  currency: PropertyCurrency;
   roi: number;
   datePaid: string;
   expectedRoiDate: string;

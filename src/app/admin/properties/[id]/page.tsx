@@ -33,6 +33,7 @@ import {
 } from "@/lib/admin/mock-data";
 import { getAdminPropertyImages } from "@/lib/admin/properties";
 import type { AdminProperty } from "@/lib/admin/types";
+import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
 import { formatCurrency, formatDate } from "@/lib/admin/formatters";
 import {
   countUniqueInvestors,
@@ -98,6 +99,7 @@ export default function AdminPropertyDetailPage({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-bold truncate">{property.title}</h1>
+              <CurrencyBadge currency={property.currency} />
               {featured && (
                 <Badge className="text-[10px]">
                   <Star className="size-3 mr-0.5 fill-current" />
@@ -141,15 +143,15 @@ export default function AdminPropertyDetailPage({
         <KpiCard
           icon={Wallet}
           label="Meta de inversión"
-          value={formatCurrency(property.totalInvestment)}
+          value={formatCurrency(property.totalInvestment, property.currency)}
           sub={`${progress}% recaudado`}
         />
         <KpiCard
           icon={CheckCircle2}
           iconClass="text-emerald-600"
           label="Confirmado"
-          value={formatCurrency(confirmedAmount)}
-          sub={`${formatCurrency(remaining)} disponible`}
+          value={formatCurrency(confirmedAmount, property.currency)}
+          sub={`${formatCurrency(remaining, property.currency)} disponible`}
         />
         <KpiCard
           icon={Clock}
@@ -203,8 +205,8 @@ export default function AdminPropertyDetailPage({
                 <Progress value={progress} className="h-2" />
               </div>
               <div className="grid grid-cols-1 gap-2">
-                <StatPill label="Recaudado" value={formatCurrency(confirmedAmount)} highlight />
-                <StatPill label="Disponible" value={formatCurrency(remaining)} />
+                <StatPill label="Recaudado" value={formatCurrency(confirmedAmount, property.currency)} highlight />
+                <StatPill label="Disponible" value={formatCurrency(remaining, property.currency)} />
                 <StatPill
                   label="Creada"
                   value={formatDate(property.createdAt)}

@@ -49,6 +49,7 @@ import {
 import { TablePagination } from "@/components/ui/table-pagination";
 import { matchesMulti } from "@/lib/admin/filters";
 import { adminProperties } from "@/lib/admin/mock-data";
+import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
 import { formatCurrency, formatDate } from "@/lib/admin/formatters";
 import type { AdminProperty, PropertyStatus } from "@/lib/admin/types";
 import { usePagination } from "@/hooks/use-pagination";
@@ -332,6 +333,7 @@ export default function AdminPropertiesPage() {
                             <p className="text-sm font-medium truncate max-w-[200px]">
                               {p.title}
                             </p>
+                            <CurrencyBadge currency={p.currency} className="shrink-0" />
                             {p.featured && (
                               <Star className="size-3 text-amber-500 fill-amber-500 shrink-0" />
                             )}
@@ -365,8 +367,8 @@ export default function AdminPropertiesPage() {
                         </div>
                         <Progress value={progress} className="h-1.5" />
                         <p className="text-[10px] text-muted-foreground mt-0.5 tabular-nums">
-                          {formatCurrency(p.raisedAmount)} /{" "}
-                          {formatCurrency(p.totalInvestment)}
+                          {formatCurrency(p.raisedAmount, p.currency)} /{" "}
+                          {formatCurrency(p.totalInvestment, p.currency)}
                         </p>
                       </div>
                     </TableCell>

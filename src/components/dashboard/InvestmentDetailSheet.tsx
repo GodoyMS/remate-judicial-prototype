@@ -82,9 +82,9 @@ export function InvestmentDetailSheet({
     <div style="color:#666;margin-top:4px">${property.address}</div>
   </div>
   <div class="grid">
-    <div><div class="label">Monto invertido</div><div class="value">${formatCurrency(investment.amount)}</div></div>
+    <div><div class="label">Monto invertido</div><div class="value">${formatCurrency(investment.amount, investment.currency)}</div></div>
     <div><div class="label">ROI estimado</div><div class="value">+${investment.roi}%</div></div>
-    <div><div class="label">Retorno estimado</div><div class="value">${formatCurrency(investment.estimatedReturn)}</div></div>
+    <div><div class="label">Retorno estimado</div><div class="value">${formatCurrency(investment.estimatedReturn, investment.currency)}</div></div>
     <div><div class="label">Fecha de pago</div><div class="value">${formatDate(investment.datePaid)}</div></div>
     <div><div class="label">Fecha estimada de retorno</div><div class="value">${formatDate(investment.expectedRoiDate)}</div></div>
     <div><div class="label">Método de pago</div><div class="value">${investment.paymentMethod}</div></div>
@@ -139,9 +139,9 @@ export function InvestmentDetailSheet({
 
           <div className="rounded-2xl bg-muted/30 border border-border/60 p-4 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Monto invertido</p>
-            <p className="text-3xl font-bold text-foreground mt-1">{formatCurrency(investment.amount)}</p>
+            <p className="text-3xl font-bold text-foreground mt-1">{formatCurrency(investment.amount, investment.currency)}</p>
             <p className="text-sm text-green-600 font-semibold mt-1">
-              Retorno est. {formatCurrency(investment.estimatedReturn)}
+              Retorno est. {formatCurrency(investment.estimatedReturn, investment.currency)}
             </p>
           </div>
 

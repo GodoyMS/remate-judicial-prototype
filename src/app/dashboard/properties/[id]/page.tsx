@@ -30,6 +30,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { PropertyGalleryFullscreen } from "@/components/dashboard/PropertyGalleryFullscreen";
+import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
 import { getPropertyById, formatCurrency } from "@/lib/dashboard/mock-data";
 
 export default function PropertyDetailPage({
@@ -98,6 +99,7 @@ export default function PropertyDetailPage({
             <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 border ${property.badgeStyle}`}>
               {property.badge}
             </span>
+            <CurrencyBadge currency={property.currency} />
             <Badge
               variant={property.status === "Activo" ? "default" : "outline"}
               className="text-[10px]"
@@ -209,7 +211,7 @@ export default function PropertyDetailPage({
                             <p className="text-[10px] text-muted-foreground">{inv.timeAgo}</p>
                           </div>
                         </div>
-                        <p className="text-sm font-bold text-green-600">{formatCurrency(inv.amount)}</p>
+                        <p className="text-sm font-bold text-green-600">{formatCurrency(inv.amount, property.currency)}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -224,7 +226,7 @@ export default function PropertyDetailPage({
             <CardContent className="p-5 space-y-5">
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Precio base</p>
-                <p className="text-2xl font-bold">{formatCurrency(property.price)}</p>
+                <p className="text-2xl font-bold">{formatCurrency(property.price, property.currency)}</p>
               </div>
 
               <div className="flex items-center justify-between rounded-xl bg-green-50 border border-green-200 p-3">
@@ -242,8 +244,8 @@ export default function PropertyDetailPage({
                 </div>
                 <Progress value={progress} className="h-2.5" />
                 <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                  <span>{formatCurrency(raisedAmount)} recaudado</span>
-                  <span>{formatCurrency(remaining)} disponible</span>
+                  <span>{formatCurrency(raisedAmount, property.currency)} recaudado</span>
+                  <span>{formatCurrency(remaining, property.currency)} disponible</span>
                 </div>
               </div>
 
@@ -252,7 +254,7 @@ export default function PropertyDetailPage({
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { icon: Users, label: "Inversores", value: String(property.investors) },
-                  { icon: Target, label: "Mínimo", value: formatCurrency(property.minInvestment) },
+                  { icon: Target, label: "Mínimo", value: formatCurrency(property.minInvestment, property.currency) },
                   { icon: Clock, label: "Cierra", value: property.deadline },
                   { icon: Zap, label: "Demanda", value: progress > 80 ? "Alta" : "Media" },
                 ].map((kpi) => (
@@ -272,7 +274,7 @@ export default function PropertyDetailPage({
               </Button>
 
               <p className="text-[10px] text-muted-foreground text-center">
-                Inversión mínima {formatCurrency(property.minInvestment)} · Proceso 100% digital
+                Inversión mínima {formatCurrency(property.minInvestment, property.currency)} · Proceso 100% digital
               </p>
             </CardContent>
           </Card>

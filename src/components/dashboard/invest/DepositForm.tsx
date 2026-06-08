@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { DestinationAccountCard } from "@/components/dashboard/invest/DestinationAccountCard";
 import { ReceiptUploadField } from "@/components/dashboard/invest/ReceiptUploadField";
+import { getCurrencyLabel, getCurrencySymbol, type PropertyCurrency } from "@/lib/currency";
 
 export type DepositFormData = {
   voucherNumber: string;
@@ -23,6 +24,7 @@ export type DepositFormData = {
 
 type DepositFormProps = {
   defaultAmount: string;
+  currency?: PropertyCurrency;
   value: DepositFormData;
   onChange: (data: DepositFormData) => void;
 };
@@ -39,14 +41,14 @@ export function isDepositFormValid(data: DepositFormData) {
   );
 }
 
-export function DepositForm({ defaultAmount, value, onChange }: DepositFormProps) {
+export function DepositForm({ defaultAmount, currency = "PEN", value, onChange }: DepositFormProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col gap-5 pt-2"
     >
-      <DestinationAccountCard />
+      <DestinationAccountCard currency={currency} />
 
       <div className="rounded-2xl border border-border/60 bg-gradient-to-b from-white to-muted/20 p-5 shadow-sm">
         <div className="mb-5 flex items-center gap-3">
@@ -122,11 +124,11 @@ export function DepositForm({ defaultAmount, value, onChange }: DepositFormProps
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="deposit-amount" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Monto (Soles)
+              Monto ({getCurrencyLabel(currency)})
             </Label>
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">
-                S/
+                {getCurrencySymbol(currency)}
               </span>
               <Input
                 id="deposit-amount"

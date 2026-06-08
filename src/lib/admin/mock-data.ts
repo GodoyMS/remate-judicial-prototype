@@ -59,6 +59,7 @@ export const adminProperties: AdminProperty[] = [
     investorsCount: 23,
     createdAt: "2026-04-15",
     status: "published",
+    currency: "PEN",
   },
   {
     id: "2",
@@ -86,6 +87,7 @@ export const adminProperties: AdminProperty[] = [
     investorsCount: 14,
     createdAt: "2026-04-20",
     status: "published",
+    currency: "PEN",
   },
   {
     id: "3",
@@ -112,6 +114,7 @@ export const adminProperties: AdminProperty[] = [
     investorsCount: 8,
     createdAt: "2026-05-01",
     status: "draft",
+    currency: "USD",
   },
   {
     id: "4",
@@ -138,6 +141,7 @@ export const adminProperties: AdminProperty[] = [
     investorsCount: 19,
     createdAt: "2026-04-25",
     status: "published",
+    currency: "USD",
   },
   {
     id: "5",
@@ -164,6 +168,7 @@ export const adminProperties: AdminProperty[] = [
     investorsCount: 31,
     createdAt: "2026-04-10",
     status: "closed",
+    currency: "PEN",
   },
   {
     id: "6",
@@ -189,6 +194,7 @@ export const adminProperties: AdminProperty[] = [
     investorsCount: 6,
     createdAt: "2026-05-05",
     status: "draft",
+    currency: "PEN",
   },
 ];
 
@@ -288,7 +294,7 @@ export const adminUsers: AdminUser[] = [
 const RECEIPT_PLACEHOLDER =
   "https://images.unsplash.com/photo-1554224311-beee415c201f?w=600&h=400&fit=crop";
 
-export const propertyInvestments: PropertyInvestment[] = [
+const rawPropertyInvestments = [
   // —— Propiedad 1: Departamento San Isidro ——
   // Confirmados
   {
@@ -1925,6 +1931,14 @@ export const propertyInvestments: PropertyInvestment[] = [
     rejectedAt: "2026-05-03T09:45:00",
   },
 ];
+
+export const propertyInvestments: PropertyInvestment[] = (
+  rawPropertyInvestments as Omit<PropertyInvestment, "currency">[]
+).map((inv) => ({
+  ...inv,
+  currency:
+    adminProperties.find((p) => p.id === inv.propertyId)?.currency ?? "PEN",
+}));
 
 const DNI_FRONT =
   "https://images.unsplash.com/photo-1628348068343-c6a848962b8a?w=800&h=500&fit=crop";

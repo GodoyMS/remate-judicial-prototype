@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -16,111 +16,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-const allProperties = [
-  {
-    id: 1,
-    name: "Departamento en San Isidro",
-    address: "Av. Javier Prado Este 1240, San Isidro",
-    type: "Departamento",
-    area: "112 m²",
-    price: "S/ 285,000",
-    minInvestment: "S/ 500",
-    roi: "22%",
-    deadline: "8 días",
-    status: "Activo",
-    district: "San Isidro",
-    img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop",
-    badge: "🔥 Alta demanda",
-    badgeStyle: "bg-orange-50 text-orange-700",
-    investors: 23,
-  },
-  {
-    id: 2,
-    name: "Casa en La Molina",
-    address: "Jr. Las Casuarinas 350, La Molina",
-    type: "Casa",
-    area: "280 m²",
-    price: "S/ 520,000",
-    minInvestment: "S/ 1,000",
-    roi: "18%",
-    deadline: "15 días",
-    status: "Activo",
-    district: "La Molina",
-    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&h=400&fit=crop",
-    badge: "⚖️ Proceso expedito",
-    badgeStyle: "bg-blue-50 text-blue-700",
-    investors: 14,
-  },
-  {
-    id: 3,
-    name: "Penthouse en Miraflores",
-    address: "Calle Berlín 847, Miraflores",
-    type: "Penthouse",
-    area: "195 m²",
-    price: "S/ 680,000",
-    minInvestment: "S/ 2,000",
-    roi: "20%",
-    deadline: "22 días",
-    status: "Próximo",
-    district: "Miraflores",
-    img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=400&fit=crop",
-    badge: "⭐ Exclusivo",
-    badgeStyle: "bg-purple-50 text-purple-700",
-    investors: 8,
-  },
-  {
-    id: 4,
-    name: "Oficina en San Borja",
-    address: "Av. Angamos Oeste 600, San Borja",
-    type: "Oficina",
-    area: "85 m²",
-    price: "S/ 190,000",
-    minInvestment: "S/ 500",
-    roi: "18%",
-    deadline: "30 días",
-    status: "Activo",
-    district: "San Borja",
-    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop",
-    badge: "🏢 Comercial",
-    badgeStyle: "bg-teal-50 text-teal-700",
-    investors: 19,
-  },
-  {
-    id: 5,
-    name: "Departamento en Barranco",
-    address: "Jr. Unión 245, Barranco",
-    type: "Departamento",
-    area: "78 m²",
-    price: "S/ 165,000",
-    minInvestment: "S/ 500",
-    roi: "24%",
-    deadline: "5 días",
-    status: "Activo",
-    district: "Barranco",
-    img: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&h=400&fit=crop",
-    badge: "⚡ Cierra pronto",
-    badgeStyle: "bg-red-50 text-red-700",
-    investors: 31,
-  },
-  {
-    id: 6,
-    name: "Casa en Surco",
-    address: "Calle Las Flores 180, Santiago de Surco",
-    type: "Casa",
-    area: "220 m²",
-    price: "S/ 410,000",
-    minInvestment: "S/ 1,000",
-    roi: "19%",
-    deadline: "18 días",
-    status: "Próximo",
-    district: "Surco",
-    img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
-    badge: "🌿 Residencial",
-    badgeStyle: "bg-green-50 text-green-700",
-    investors: 6,
-  },
-];
+import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
+import { dashboardProperties, formatCurrency } from "@/lib/dashboard/mock-data";
 
 const districts = ["Todos", "San Isidro", "La Molina", "Miraflores", "San Borja", "Barranco", "Surco"];
 
@@ -129,6 +26,30 @@ export default function PropertiesPage() {
   const [district, setDistrict] = useState("Todos");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("roi");
+
+  const allProperties = useMemo(
+    () =>
+      dashboardProperties.map((p) => ({
+        id: p.id,
+        name: p.name,
+        address: p.address,
+        type: p.type,
+        area: p.area,
+        price: formatCurrency(p.price, p.currency),
+        minInvestment: formatCurrency(p.minInvestment, p.currency),
+        currency: p.currency,
+        roi: `${p.roi}%`,
+        deadline: p.deadline,
+        status: p.status,
+        district: p.district,
+        img: p.img,
+        badge: p.badge,
+        badgeStyle: p.badgeStyle,
+        investors: p.investors,
+        priceValue: p.price,
+      })),
+    []
+  );
 
   const filtered = allProperties
     .filter((p) => {
@@ -140,26 +61,23 @@ export default function PropertiesPage() {
     })
     .sort((a, b) => {
       if (sortBy === "roi") return parseFloat(b.roi) - parseFloat(a.roi);
-      if (sortBy === "price") return parseInt(a.price.replace(/\D/g, "")) - parseInt(b.price.replace(/\D/g, ""));
+      if (sortBy === "price") return a.priceValue - b.priceValue;
       if (sortBy === "deadline") return parseInt(a.deadline) - parseInt(b.deadline);
       return 0;
     });
 
   return (
     <div className="w-full">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-foreground tracking-tight">Propiedades en remate</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            {filtered.length} propiedades verificadas disponibles
+            {filtered.length} propiedades verificadas disponibles en soles y dólares
           </p>
         </div>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        {/* Search */}
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -170,7 +88,6 @@ export default function PropertiesPage() {
           />
         </div>
 
-        {/* Sort */}
         <div className="relative">
           <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
           <select
@@ -184,7 +101,6 @@ export default function PropertiesPage() {
           </select>
         </div>
 
-        {/* View toggle */}
         <div className="flex items-center gap-1 rounded-xl border border-border/80 bg-white p-1">
           <button
             onClick={() => setView("grid")}
@@ -201,7 +117,6 @@ export default function PropertiesPage() {
         </div>
       </div>
 
-      {/* District filters */}
       <div className="flex gap-2 flex-wrap mb-6">
         {districts.map((d) => (
           <button
@@ -218,7 +133,6 @@ export default function PropertiesPage() {
         ))}
       </div>
 
-      {/* Grid/List */}
       {view === "grid" ? (
         <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map((p, i) => (
@@ -243,7 +157,8 @@ export default function PropertiesPage() {
                       {p.badge}
                     </span>
                   </div>
-                  <div className="absolute top-3 right-3">
+                  <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
+                    <CurrencyBadge currency={p.currency} />
                     <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 ${
                       p.status === "Activo" ? "bg-green-600 text-white" : "bg-amber-500 text-white"
                     }`}>
@@ -319,6 +234,7 @@ export default function PropertiesPage() {
               <Link href={`/dashboard/properties/${p.id}`} className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-semibold text-foreground truncate">{p.name}</h3>
+                  <CurrencyBadge currency={p.currency} />
                   <span className={`text-[10px] font-medium rounded-full px-2 py-0.5 shrink-0 ${
                     p.status === "Activo" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"
                   }`}>{p.status}</span>

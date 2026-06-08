@@ -42,6 +42,7 @@ import {
 import { cn } from "@/lib/utils";
 import { DISTRICTS, PROVINCES, REGIONS } from "@/lib/admin/mock-data";
 import { getAdminPropertyImages } from "@/lib/admin/properties";
+import { CURRENCY_OPTIONS, getCurrencySymbol, type PropertyCurrency } from "@/lib/currency";
 import type { AdminProperty, PropertyStatus } from "@/lib/admin/types";
 
 interface EditPropertySheetProps {
@@ -88,6 +89,7 @@ export function EditPropertySheet({
   const [featured, setFeatured] = useState(false);
   const [published, setPublished] = useState(false);
   const [notifyUsers, setNotifyUsers] = useState(false);
+  const [currency, setCurrency] = useState<PropertyCurrency>("PEN");
 
   useEffect(() => {
     if (!open || !property) return;
@@ -107,6 +109,7 @@ export function EditPropertySheet({
     setFeatured(property.featured);
     setPublished(property.published);
     setNotifyUsers(property.notifyUsers);
+    setCurrency(property.currency);
   }, [open, property]);
 
   if (!property) return null;
@@ -162,6 +165,7 @@ export function EditPropertySheet({
         featured,
         published,
         notifyUsers,
+        currency,
       };
 
       onSave(updated);
@@ -213,6 +217,28 @@ export function EditPropertySheet({
                 />
               </div>
 
+              <div className="flex flex-col gap-1.5">
+                <Label>Moneda de la propiedad</Label>
+                <Select
+                  value={currency}
+                  onValueChange={(v) => setCurrency(v as PropertyCurrency)}
+                >
+                  <SelectTrigger className="w-full rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCY_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-muted-foreground">
+                  Las inversiones existentes conservan su moneda original.
+                </p>
+              </div>
+
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="edit-roi">ROI estimado (%)</Label>
@@ -228,7 +254,7 @@ export function EditPropertySheet({
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="edit-total">Meta de inversión (S/)</Label>
+                  <Label htmlFor="edit-total">Meta de inversi?n ({getCurrencySymbol(currency)})</Label>
                   <Input
                     id="edit-total"
                     type="number"

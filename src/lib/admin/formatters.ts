@@ -1,9 +1,13 @@
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("es-PE", {
-    style: "currency",
-    currency: "PEN",
-    maximumFractionDigits: 0,
-  }).format(amount);
+import {
+  formatCurrency as formatCurrencyAmount,
+  type PropertyCurrency,
+} from "@/lib/currency";
+
+export function formatCurrency(
+  amount: number,
+  currency: PropertyCurrency = "PEN"
+): string {
+  return formatCurrencyAmount(amount, currency);
 }
 
 export function formatDate(date: string): string {
