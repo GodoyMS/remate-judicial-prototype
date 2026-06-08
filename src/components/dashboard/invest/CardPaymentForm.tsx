@@ -6,6 +6,7 @@ import { Lock, ShieldCheck, Wifi } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { getCurrencySymbol, type PropertyCurrency } from "@/lib/currency";
 
 export type CardFormData = {
   cardNumber: string;
@@ -16,6 +17,7 @@ export type CardFormData = {
 
 type CardPaymentFormProps = {
   amount: string;
+  currency?: PropertyCurrency;
   value: CardFormData;
   onChange: (data: CardFormData) => void;
 };
@@ -57,7 +59,8 @@ export function isCardFormValid(data: CardFormData) {
   );
 }
 
-export function CardPaymentForm({ amount, value, onChange }: CardPaymentFormProps) {
+export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: CardPaymentFormProps) {
+  const currencySymbol = getCurrencySymbol(currency);
   const [focused, setFocused] = useState<"number" | "name" | "expiry" | "cvv" | null>(null);
   const brand = useMemo(() => detectCardBrand(value.cardNumber), [value.cardNumber]);
 
@@ -137,7 +140,7 @@ export function CardPaymentForm({ amount, value, onChange }: CardPaymentFormProp
 
         {amount && (
           <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-border/60 bg-white px-4 py-1.5 text-xs font-semibold text-foreground shadow-md">
-            Total: S/ {parseFloat(amount).toLocaleString()}
+            Total: {currencySymbol} {parseFloat(amount).toLocaleString()}
           </div>
         )}
       </div>

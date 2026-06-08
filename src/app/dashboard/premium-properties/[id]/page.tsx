@@ -277,11 +277,16 @@ export default function PremiumPropertyDetailPage({
                   {isAvailable && (
                     <Button
                       asChild
-                      className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold"
+                      className="w-full min-h-11 h-auto py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold whitespace-normal text-center"
                     >
-                      <Link href={`/dashboard/premium-invest?property=${property.id}`}>
-                        <Crown className="size-4 mr-2" />
-                        Capturar al 100% — {formatCurrency(property.totalValue, property.currency)}
+                      <Link href={`/dashboard/premium-invest?property=${property.id}`} className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+                        <span className="inline-flex items-center gap-2">
+                          <Crown className="size-4 shrink-0" />
+                          Capturar al 100%
+                        </span>
+                        <span className="text-sm sm:text-base font-bold">
+                          {formatCurrency(property.totalValue, property.currency)}
+                        </span>
                       </Link>
                     </Button>
                   )}
