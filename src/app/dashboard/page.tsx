@@ -11,8 +11,13 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
+  Crown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
+import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
+import { useCurrentUser } from "@/contexts/user-context";
+import { premiumProperties } from "@/lib/premium/mock-data";
 
 const summaryCards = [
   {
@@ -127,9 +132,11 @@ const activityFeed = [
 ];
 
 export default function DashboardPage() {
+  const { user, isPremium } = useCurrentUser();
+  const availablePremium = premiumProperties.filter((p) => p.status === "available");
+
   return (
     <div className="w-full">
-      {/* Welcome */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -137,23 +144,79 @@ export default function DashboardPage() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
       >
         <div>
-          <h2 className="text-2xl font-bold text-foreground tracking-tight">
-            Buenos días, Ana Sofía 👋
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">
+              Buenos días, {user.name.split(" ")[0]} 👋
+            </h2>
+            {isPremium && <PremiumBadge size="md" />}
+          </div>
           <p className="text-sm text-muted-foreground mt-1">
-            Tu portafolio está rindiendo un <strong className="text-green-600">+22.7%</strong> este año.
+            {isPremium ? (
+              <>
+                Tienes <strong className="text-amber-700">{availablePremium.length} oportunidades Premium</strong> disponibles para captura al 100%.
+              </>
+            ) : (
+              <>
+                Tu portafolio está rindiendo un <strong className="text-green-600">+22.7%</strong> este año.
+              </>
+            )}
           </p>
         </div>
-        <Button
-          asChild
-          className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
-        >
-          <Link href="/dashboard/invest">
-            Nueva inversión
-            <ArrowRight className="size-4 ml-1" />
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          {isPremium && (
+            <Button
+              asChild
+              className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold"
+            >
+              <Link href="/dashboard/premium-properties">
+                <Crown className="size-4 mr-1" />
+                Premium
+              </Link>
+            </Button>
+          )}
+          <Button
+            asChild
+            className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
+          >
+            <Link href="/dashboard/invest">
+              Nueva inversión
+              <ArrowRight className="size-4 ml-1" />
+            </Link>
+          </Button>
+        </div>
       </motion.div>
+
+      {!isPremium ? (
+        <div className="mb-8">
+          <PremiumUpgradeBanner />
+        </div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 rounded-2xl border border-amber-200/60 bg-gradient-to-r from-amber-50/80 to-white p-5"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                <Crown className="size-5 text-amber-700" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold">Oportunidades Premium activas</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {availablePremium.length} propiedades esperando captura al 100% · ROI hasta 48%
+                </p>
+              </div>
+            </div>
+            <Button asChild variant="outline" className="rounded-xl border-amber-300 text-amber-800 shrink-0">
+              <Link href="/dashboard/premium-properties">
+                Ver oportunidades
+                <ArrowRight className="size-4 ml-1" />
+              </Link>
+            </Button>
+          </div>
+        </motion.div>
+      )}
 
       {/* Summary cards */}
       <div className="grid sm:grid-cols-3 gap-4 mb-8">
