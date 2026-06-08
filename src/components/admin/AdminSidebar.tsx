@@ -11,12 +11,14 @@ import {
   LogOut,
   ChevronRight,
   MessageSquareQuote,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/analytics", label: "Analítica", icon: BarChart3 },
   { href: "/admin/properties", label: "Propiedades", icon: Building2 },
   { href: "/admin/testimonials", label: "Testimonios", icon: MessageSquareQuote },
   { href: "/admin/users", label: "Usuarios", icon: Users },

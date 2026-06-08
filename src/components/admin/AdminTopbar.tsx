@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   MessageSquareQuote,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminNotificationsPopover } from "@/components/admin/AdminNotificationsPopover";
@@ -19,6 +20,7 @@ import { AdminUserMenu } from "@/components/admin/AdminUserMenu";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/analytics", label: "Analítica", icon: BarChart3 },
   { href: "/admin/properties", label: "Propiedades", icon: Building2 },
   { href: "/admin/testimonials", label: "Testimonios", icon: MessageSquareQuote },
   { href: "/admin/users", label: "Usuarios", icon: Users },
@@ -27,6 +29,7 @@ const navItems = [
 
 function getPageTitle(pathname: string): string {
   if (pathname === "/admin") return "Dashboard";
+  if (pathname === "/admin/analytics") return "Analítica";
   if (pathname.startsWith("/admin/properties/")) return "Detalle de propiedad";
   if (pathname === "/admin/properties") return "Propiedades";
   if (pathname === "/admin/testimonials") return "Testimonios";
