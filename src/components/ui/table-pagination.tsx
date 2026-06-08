@@ -50,7 +50,7 @@ export function TablePagination({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 border-t border-border/60 bg-muted/20 px-4 py-3 sm:flex-row sm:items-center sm:justify-between",
+        "flex flex-col gap-4 border-t border-border/60 bg-muted/30 px-5 py-4 sm:flex-row sm:items-center sm:justify-between",
         className
       )}
     >
@@ -71,7 +71,7 @@ export function TablePagination({
               value={String(pageSize)}
               onValueChange={(v) => onPageSizeChange(Number(v))}
             >
-              <SelectTrigger className="h-8 w-[72px] rounded-lg text-xs">
+              <SelectTrigger className="h-9 w-[76px] text-xs" size="sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -92,7 +92,7 @@ export function TablePagination({
             <Button
               variant="outline"
               size="sm"
-              className="h-8 gap-1 rounded-lg px-2.5"
+              className="gap-1.5"
               onClick={() => onPageChange(page - 1)}
               disabled={page <= 1}
               aria-label="Página anterior"
@@ -113,7 +113,7 @@ export function TablePagination({
                   variant={p === page ? "default" : "ghost"}
                   size="icon-sm"
                   className={cn(
-                    "size-8 rounded-lg text-xs font-medium",
+                    "text-xs font-medium",
                     p === page && "pointer-events-none"
                   )}
                   onClick={() => onPageChange(p)}
@@ -129,7 +129,7 @@ export function TablePagination({
             <Button
               variant="outline"
               size="sm"
-              className="h-8 gap-1 rounded-lg px-2.5"
+              className="gap-1.5"
               onClick={() => onPageChange(page + 1)}
               disabled={page >= totalPages}
               aria-label="Página siguiente"
