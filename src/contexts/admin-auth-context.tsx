@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { AccessDeniedUI } from "@/components/admin/rbac/AccessDeniedUI";
 import type { AdminAccount, AdminModule, AdminRole, PermissionLevel } from "@/lib/admin/rbac/types";
 import {
   authenticateAdmin,
@@ -198,17 +199,10 @@ export function AdminRouteGuard({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-
     if (!isAuthenticated) {
       router.replace("/login-admin");
-      return;
     }
-
-    const module = getModuleFromPath(pathname);
-    if (module && !canAccess(module)) {
-      router.replace("/admin?denied=1");
-    }
-  }, [hydrated, isAuthenticated, pathname, canAccess, router, account]);
+  }, [hydrated, isAuthenticated, router, account]);
 
   if (!hydrated) {
     return (
@@ -224,7 +218,9 @@ export function AdminRouteGuard({ children }: { children: ReactNode }) {
   if (!isAuthenticated) return null;
 
   const module = getModuleFromPath(pathname);
-  if (module && !canAccess(module)) return null;
+  if (module && !canAccess(module)) {
+    return <AccessDeniedUI module={module} />;
+  }
 
   return <>{children}</>;
 }

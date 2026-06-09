@@ -42,6 +42,7 @@ import { RoleFormDialog } from "@/components/admin/rbac/RoleFormDialog";
 import { AdminUserFormDialog } from "@/components/admin/rbac/AdminUserFormDialog";
 import { PermissionMatrix } from "@/components/admin/rbac/PermissionMatrix";
 import { useAdminAuth } from "@/contexts/admin-auth-context";
+import { useModuleAccess } from "@/hooks/use-module-access";
 import { getInitials, MODULE_LABELS, PERMISSION_COLORS, PERMISSION_LABELS } from "@/lib/admin/rbac/constants";
 import { getAccounts, getRoles, saveAccounts, saveRoles } from "@/lib/admin/rbac/store";
 import type { AdminAccount, AdminRole, ModulePermissions } from "@/lib/admin/rbac/types";
@@ -50,6 +51,7 @@ import { cn } from "@/lib/utils";
 
 export default function AdminAccessPage() {
   const { isSuperAdmin, refreshStore, roles: ctxRoles, accounts: ctxAccounts } = useAdminAuth();
+  const { canWrite: canWriteAccess } = useModuleAccess("access");
 
   const [roles, setRoles] = useState<AdminRole[]>(ctxRoles);
   const [accounts, setAccounts] = useState<AdminAccount[]>(ctxAccounts);
@@ -225,7 +227,7 @@ export default function AdminAccessPage() {
       <ReadOnlyBanner module="access" />
 
       <Tabs defaultValue="users">
-        <TabsList className="w-full sm:w-auto h-auto rounded-xl mb-6 p-1 bg-muted/50 overflow-x-auto flex flex-nowrap justify-start">
+        <TabsList className="">
           <TabsTrigger value="users" className="rounded-lg gap-1.5 flex-1 sm:flex-none min-w-0 px-3 text-xs sm:text-sm">
             <Users className="size-3.5 shrink-0" />
             <span className="truncate">Administradores</span>
@@ -296,43 +298,46 @@ export default function AdminAccessPage() {
                       </p>
                     </div>
                     </div>
-                    <PermissionGate module="access" fallback={null}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="rounded-xl shrink-0 self-end sm:self-auto">
-                            <MoreHorizontal className="size-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="rounded-xl">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setEditingAccount(account);
-                              setUserDialogOpen(true);
-                            }}
-                          >
-                            <Pencil className="size-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          {!account.isSuperAdmin && (
+                    {account.isSuperAdmin ? (
+                      <div className="flex items-center shrink-0 self-end sm:self-auto">
+                        <span className="text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded-lg flex items-center gap-1">
+                          <Lock className="size-3" />
+                          Protegido
+                        </span>
+                      </div>
+                    ) : (
+                      <PermissionGate module="access" fallback={null}>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="rounded-xl shrink-0 self-end sm:self-auto">
+                              <MoreHorizontal className="size-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="rounded-xl">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setEditingAccount(account);
+                                setUserDialogOpen(true);
+                              }}
+                            >
+                              <Pencil className="size-4" />
+                              Editar
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleToggleActive(account)}>
                               {account.active ? "Desactivar" : "Activar"}
                             </DropdownMenuItem>
-                          )}
-                          {!account.isSuperAdmin && (
-                            <>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                variant="destructive"
-                                onClick={() => setDeleteAccount(account)}
-                              >
-                                <Trash2 className="size-4" />
-                                Eliminar
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </PermissionGate>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={() => setDeleteAccount(account)}
+                            >
+                              <Trash2 className="size-4" />
+                              Eliminar
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </PermissionGate>
+                    )}
                   </CardContent>
                 </Card>
               );
@@ -399,35 +404,49 @@ export default function AdminAccessPage() {
                         <Badge variant="outline" className="text-[10px]">
                           {userCount} usuario{userCount !== 1 ? "s" : ""}
                         </Badge>
-                        <PermissionGate module="access" fallback={null}>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="rounded-xl">
-                                <MoreHorizontal className="size-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="rounded-xl">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setEditingRole(role);
-                                  setRoleDialogOpen(true);
-                                }}
-                              >
-                                <Pencil className="size-4" />
-                                {role.isSystem ? "Ver permisos" : "Editar"}
-                              </DropdownMenuItem>
-                              {!role.isSystem && (
-                                <DropdownMenuItem
-                                  variant="destructive"
-                                  onClick={() => setDeleteRole(role)}
-                                >
-                                  <Trash2 className="size-4" />
-                                  Eliminar
-                                </DropdownMenuItem>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </PermissionGate>
+                        {role.isSystem ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="rounded-xl text-xs gap-1.5 h-8"
+                            onClick={() => { setEditingRole(role); setRoleDialogOpen(true); }}
+                          >
+                            <Shield className="size-3.5" />
+                            Ver permisos
+                          </Button>
+                        ) : canWriteAccess ? (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="rounded-xl text-xs gap-1.5 h-8"
+                              onClick={() => { setEditingRole(role); setRoleDialogOpen(true); }}
+                            >
+                              <Pencil className="size-3.5" />
+                              Editar
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="rounded-xl h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => setDeleteRole(role)}
+                              disabled={userCount > 0}
+                              title={userCount > 0 ? "Reasigna los usuarios antes de eliminar" : "Eliminar rol"}
+                            >
+                              <Trash2 className="size-3.5" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="rounded-xl text-xs gap-1.5 h-8"
+                            onClick={() => { setEditingRole(role); setRoleDialogOpen(true); }}
+                          >
+                            <Shield className="size-3.5" />
+                            Ver permisos
+                          </Button>
+                        )}
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-3">

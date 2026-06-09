@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -10,6 +10,7 @@ import {
   Users,
   Clock,
   XCircle,
+  CheckCircle2,
   FileWarning,
   Mail,
   MessageSquareText,
@@ -75,6 +76,12 @@ import type {
   VerificationActivity,
   VerificationActivityType,
 } from "@/lib/admin/types";
+import {
+  getUpgradeRequests,
+  updateUpgradeRequest,
+  setTierOverride,
+  type PremiumUpgradeRequest,
+} from "@/lib/app-store";
 import { usePagination } from "@/hooks/use-pagination";
 import { ReadOnlyBanner } from "@/components/admin/rbac/ReadOnlyBanner";
 import { useModuleAccess } from "@/hooks/use-module-access";
@@ -141,7 +148,13 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>(adminUsers);
   const [verifications, setVerifications] =
     useState<IdentityVerification[]>(identityVerifications);
+  const [upgradeRequests, setUpgradeRequests] = useState<PremiumUpgradeRequest[]>(() =>
+    getUpgradeRequests()
+  );
   const [activeTab, setActiveTab] = useState("clientes");
+  const [upgradeRejectDialog, setUpgradeRejectDialog] =
+    useState<PremiumUpgradeRequest | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<UsersFilterState>(defaultUsersFilters);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
@@ -202,7 +215,40 @@ export default function AdminUsersPage() {
     return rechazados.filter((v) => matchesVerificationSearch(v, q));
   }, [rechazados, search]);
 
+  const pendingUpgradeRequests = useMemo(
+    () => upgradeRequests.filter((r) => r.status === "pending"),
+    [upgradeRequests]
+  );
+
   const activeFiltersCount = countUsersActiveFilters(filters);
+
+  const handleApproveUpgrade = (req: PremiumUpgradeRequest) => {
+    const now = new Date().toISOString();
+    updateUpgradeRequest(req.id, { status: "approved", resolvedAt: now });
+    setTierOverride(req.userId, "premium");
+    // Also update in the local users list if found
+    setUsers((prev) =>
+      prev.map((u) => (u.id === req.userId ? { ...u, tier: "premium" } : u))
+    );
+    setUpgradeRequests(getUpgradeRequests());
+        toast.success(`${req.userName} ahora es Premium`, {
+      description: "El tier fue actualizado. El usuario lo verá al recargar.",
+    });
+  };
+
+  const handleRejectUpgrade = (req: PremiumUpgradeRequest) => {
+    if (!rejectReason.trim()) return;
+    const now = new Date().toISOString();
+    updateUpgradeRequest(req.id, {
+      status: "rejected",
+      resolvedAt: now,
+      rejectionReason: rejectReason.trim(),
+    });
+    setUpgradeRequests(getUpgradeRequests());
+    setUpgradeRejectDialog(null);
+    setRejectReason("");
+        toast.success(`Solicitud de ${req.userName} rechazada`);
+  };
 
   const [pageSize, setPageSize] = useState(8);
 
@@ -218,13 +264,19 @@ export default function AdminUsersPage() {
     pageSize,
     resetDeps: [search, pageSize],
   });
+  const upgradesPagination = usePagination(pendingUpgradeRequests, {
+    pageSize,
+    resetDeps: [pageSize, upgradeRequests],
+  });
 
   const activePagination =
     activeTab === "clientes"
       ? clientesPagination
       : activeTab === "pendientes"
         ? pendientesPagination
-        : rechazadosPagination;
+        : activeTab === "upgrades"
+          ? upgradesPagination
+          : rechazadosPagination;
 
   const { page, setPage, totalPages, rangeStart, rangeEnd, totalItems } =
     activePagination;
@@ -235,8 +287,9 @@ export default function AdminUsersPage() {
       premium: users.filter((u) => u.tier === "premium").length,
       pendientes: pendientes.length,
       rechazados: rechazados.length,
+      upgradesPending: pendingUpgradeRequests.length,
     }),
-    [users, pendientes, rechazados]
+    [users, pendientes, rechazados, pendingUpgradeRequests]
   );
 
   const clearFilters = () => setFilters(defaultUsersFilters);
@@ -484,12 +537,10 @@ export default function AdminUsersPage() {
           className="gap-4"
         >
           <TabsList
-            variant="line"
-            className="w-full justify-start border-b border-border/50 rounded-none h-auto p-0 bg-transparent gap-0 overflow-x-auto flex flex-nowrap"
+            variant="default"
           >
             <TabsTrigger
               value="clientes"
-              className="rounded-none px-3 sm:px-4 py-2.5 text-xs sm:text-sm shrink-0 data-active:after:bg-primary"
             >
               Clientes
               <span className="ml-1.5 text-[10px] tabular-nums text-muted-foreground">
@@ -498,7 +549,6 @@ export default function AdminUsersPage() {
             </TabsTrigger>
             <TabsTrigger
               value="pendientes"
-              className="rounded-none px-3 sm:px-4 py-2.5 text-xs sm:text-sm shrink-0 data-active:after:bg-amber-500"
             >
               Pendientes
               {pendientes.length > 0 && (
@@ -509,12 +559,19 @@ export default function AdminUsersPage() {
             </TabsTrigger>
             <TabsTrigger
               value="rechazados"
-              className="rounded-none px-3 sm:px-4 py-2.5 text-xs sm:text-sm shrink-0 data-active:after:bg-red-500"
             >
               Rechazados
-              <span className="ml-1.5 text-[10px] tabular-nums text-muted-foreground">
+              <span className="ml-1.5 text-[10px] tabular-nums text-white bg-red-400  min-w-[18px] h-[18px] flex items-center justify-center rounded-full">
                 {rechazados.length}
               </span>
+            </TabsTrigger>
+            <TabsTrigger value="upgrades">
+              Solicitudes Premium
+              {pendingUpgradeRequests.length > 0 && (
+                <span className="ml-1.5 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white px-1">
+                  {pendingUpgradeRequests.length}
+                </span>
+              )}
             </TabsTrigger>
           </TabsList>
 
@@ -582,6 +639,15 @@ export default function AdminUsersPage() {
                 variant="rechazados"
                 onViewMessage={(v, kind) => setMessageDialog({ verification: v, kind })}
                 onViewMore={openVerificationSheet}
+              />
+            </TabsContent>
+
+            <TabsContent value="upgrades" className="mt-0">
+              <UpgradeRequestsTable
+                items={upgradesPagination.paginatedItems}
+                onApprove={handleApproveUpgrade}
+                onReject={(r) => { setUpgradeRejectDialog(r); setRejectReason(""); }}
+                readOnly={isReadOnly}
               />
             </TabsContent>
 
@@ -676,6 +742,40 @@ export default function AdminUsersPage() {
                 onClick={() => blockDialog && handleBlock(blockDialog)}
               >
                 Confirmar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Upgrade rejection dialog */}
+        <AlertDialog
+          open={!!upgradeRejectDialog}
+          onOpenChange={(open) => { if (!open) { setUpgradeRejectDialog(null); setRejectReason(""); } }}
+        >
+          <AlertDialogContent className="rounded-2xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Rechazar solicitud Premium</AlertDialogTitle>
+              <AlertDialogDescription>
+                Explica por qué se rechaza la solicitud de{" "}
+                <strong>{upgradeRejectDialog?.userName}</strong>. El usuario podrá volver a solicitarlo.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="px-0 pb-0">
+              <Input
+                placeholder="Motivo del rechazo..."
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                className="rounded-xl"
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                className="rounded-xl bg-red-600 hover:bg-red-700"
+                disabled={!rejectReason.trim()}
+                onClick={() => upgradeRejectDialog && handleRejectUpgrade(upgradeRejectDialog)}
+              >
+                Rechazar solicitud
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -1043,5 +1143,144 @@ function EmptyRow({
         )}
       </TableCell>
     </TableRow>
+  );
+}
+
+function UpgradeRequestsTable({
+  items,
+  onApprove,
+  onReject,
+  readOnly = false,
+}: {
+  items: PremiumUpgradeRequest[];
+  onApprove: (r: PremiumUpgradeRequest) => void;
+  onReject: (r: PremiumUpgradeRequest) => void;
+  readOnly?: boolean;
+}) {
+  const [expandedId, setExpandedId] = React.useState<string | null>(null);
+
+  if (items.length === 0) {
+    return (
+      <div className="py-16 text-center">
+        <Crown className="size-8 text-muted-foreground/30 mx-auto mb-2" />
+        <p className="text-sm font-medium text-foreground">Sin solicitudes pendientes</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Cuando un usuario solicite upgrade, aparecerá aquí
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="divide-y divide-border/60">
+      {items.map((req) => {
+        const isExpanded = expandedId === req.id;
+        const initials = req.userName
+          .split(" ")
+          .slice(0, 2)
+          .map((n) => n[0])
+          .join("");
+        const submittedDate = new Intl.DateTimeFormat("es-PE", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }).format(new Date(req.submittedAt));
+
+        return (
+          <div key={req.id} className="p-4">
+            {/* Summary row */}
+            <div className="flex items-center gap-4">
+              <div className="size-10 rounded-full bg-amber-100 flex items-center justify-center text-sm font-bold text-amber-800 shrink-0">
+                {initials}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-semibold text-foreground">{req.userName}</p>
+                  <span className="text-xs text-muted-foreground">{req.userEmail}</span>
+                </div>
+                <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground flex-wrap">
+                  <span>Solicitado: {submittedDate}</span>
+                  <span>Invertido: {formatCurrency(req.totalInvested, "PEN")}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-lg text-xs h-8"
+                  onClick={() => setExpandedId(isExpanded ? null : req.id)}
+                >
+                  {isExpanded ? "Ocultar" : "Ver perfil"}
+                </Button>
+                {!readOnly && (
+                  <>
+                    <Button
+                      size="sm"
+                      className="rounded-lg h-8 bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
+                      onClick={() => onApprove(req)}
+                    >
+                      <CheckCircle2 className="size-3.5 mr-1" />
+                      Aprobar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-lg h-8 text-red-600 border-red-200 hover:bg-red-50 text-xs"
+                      onClick={() => onReject(req)}
+                    >
+                      <XCircle className="size-3.5 mr-1" />
+                      Rechazar
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Expanded profile details */}
+            {isExpanded && (
+              <div className="mt-4 ml-14 rounded-xl border border-amber-200 bg-amber-50/40 p-4 grid sm:grid-cols-2 gap-4 text-sm">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Información del usuario
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Mail className="size-3.5 text-muted-foreground shrink-0" />
+                    <span className="truncate">{req.userEmail}</span>
+                  </div>
+                  {req.userPhone && (
+                    <div className="flex items-center gap-2">
+                      <FileWarning className="size-3.5 text-muted-foreground shrink-0" />
+                      <span>{req.userPhone}</span>
+                    </div>
+                  )}
+                  {req.userDni && (
+                    <div className="flex items-center gap-2">
+                      <Shield className="size-3.5 text-muted-foreground shrink-0" />
+                      <span>DNI: {req.userDni}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Actividad de inversión
+                  </p>
+                  <div className="rounded-lg bg-white border border-amber-100 p-3">
+                    <p className="text-xs text-muted-foreground">Total invertido</p>
+                    <p className="text-lg font-bold text-foreground">
+                      {formatCurrency(req.totalInvested, "PEN")}
+                    </p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Al aprobar, el usuario será promovido a Premium de inmediato.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }

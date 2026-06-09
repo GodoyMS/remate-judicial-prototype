@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,8 +52,9 @@ export function AdminUserFormDialog({
   const [roleId, setRoleId] = useState("");
   const [active, setActive] = useState(true);
 
-  const availableRoles = roles.filter(
-    (r) => canAssignSuperAdmin || r.id !== "role-super-admin"
+  const availableRoles = useMemo(
+    () => roles.filter((r) => canAssignSuperAdmin || r.id !== "role-super-admin"),
+    [roles, canAssignSuperAdmin]
   );
 
   useEffect(() => {
@@ -64,7 +65,8 @@ export function AdminUserFormDialog({
       setRoleId(account?.roleId ?? availableRoles[0]?.id ?? "");
       setActive(account?.active ?? true);
     }
-  }, [open, account, availableRoles]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, account?.id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

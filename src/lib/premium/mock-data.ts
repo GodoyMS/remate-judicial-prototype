@@ -1,4 +1,17 @@
 import type { PremiumProperty, PremiumInvestment, DashboardUser } from "./types";
+import { getPremiumPropertyOverride, getPendingInvestmentsForProperty } from "@/lib/app-store";
+
+export { getPremiumPropertyOverride } from "@/lib/app-store";
+
+export function isPropertyEffectivelyAvailable(propertyId: string): boolean {
+  // Check if overridden (admin set status)
+  const override = getPremiumPropertyOverride(propertyId);
+  if (override && override.premiumStatus !== "available") return false;
+  // Check if a pending investment exists (locked while under review)
+  const pending = getPendingInvestmentsForProperty(propertyId);
+  if (pending.some((i) => i.status === "pending_verification")) return false;
+  return true;
+}
 
 const PREMIUM_USER_ID = "premium-demo";
 const OTHER_PREMIUM_USER_ID = "u2";

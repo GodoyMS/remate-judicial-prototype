@@ -17,8 +17,12 @@ import {
   LogOut,
   Crown,
   Sparkles,
+  Clock,
+  XCircle,
+  RefreshCw,
 } from "lucide-react";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
+import { PremiumUpgradeDialog } from "@/components/dashboard/PremiumUpgradeDialog";
 import { useCurrentUser } from "@/contexts/user-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,10 +48,11 @@ export default function AccountPage() {
 
 function AccountPageContent() {
   const searchParams = useSearchParams();
-  const { user, isPremium } = useCurrentUser();
+  const { user, isPremium, upgradeRequest, refreshUpgradeRequest } = useCurrentUser();
   const [activeSection, setActiveSection] = useState("profile");
   const [showPassword, setShowPassword] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
   useEffect(() => {
     const section = searchParams.get("section");
@@ -290,21 +295,70 @@ function AccountPageContent() {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-                      <Crown className="size-12 mx-auto mb-4 text-amber-500" />
-                      <h4 className="text-lg font-bold mb-2">Actualiza a Premium</h4>
-                      <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
-                        Accede a propiedades exclusivas, captura inversiones al 100%
-                        y obtén retornos excepcionales antes del mercado estándar.
-                      </p>
-                      <Button className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold">
-                        <Crown className="size-4 mr-2" />
-                        Solicitar upgrade Premium
-                      </Button>
-                      <p className="text-xs text-muted-foreground mt-4">
-                        Demo: cierra sesión e inicia con premium@remata.com
-                      </p>
-                    </div>
+                    {/* Pending request state */}
+                    {upgradeRequest?.status === "pending" && (
+                      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+                        <div className="flex items-start gap-3">
+                          <div className="size-9 rounded-lg bg-amber-200 flex items-center justify-center shrink-0 mt-0.5">
+                            <Clock className="size-4 text-amber-700" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-amber-900">Solicitud enviada — en revisión</p>
+                            <p className="text-xs text-amber-700 mt-1">
+                              Tu solicitud de upgrade a Premium está siendo revisada. Tiempo estimado: 1-2 días hábiles.
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            className="text-amber-600 hover:text-amber-700 hover:bg-amber-100 rounded-lg shrink-0"
+                            onClick={refreshUpgradeRequest}
+                          >
+                            <RefreshCw className="size-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Rejected state */}
+                    {upgradeRequest?.status === "rejected" && (
+                      <div className="rounded-2xl border border-red-200 bg-red-50 p-5">
+                        <div className="flex items-start gap-3">
+                          <div className="size-9 rounded-lg bg-red-200 flex items-center justify-center shrink-0 mt-0.5">
+                            <XCircle className="size-4 text-red-700" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-red-900">Solicitud rechazada</p>
+                            {upgradeRequest.rejectionReason && (
+                              <p className="text-xs text-red-700 mt-1">{upgradeRequest.rejectionReason}</p>
+                            )}
+                            <p className="text-xs text-red-600 mt-2">
+                              Puedes volver a enviar una solicitud o contactar a soporte.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CTA when no pending/rejected request */}
+                    {(!upgradeRequest || upgradeRequest.status === "rejected") && (
+                      <div className="rounded-2xl border border-dashed border-border p-8 text-center">
+                        <Crown className="size-12 mx-auto mb-4 text-amber-500" />
+                        <h4 className="text-lg font-bold mb-2">Actualiza a Premium</h4>
+                        <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
+                          Accede a propiedades exclusivas, captura inversiones al 100%
+                          y obtén retornos excepcionales antes del mercado estándar.
+                        </p>
+                        <Button
+                          onClick={() => setUpgradeDialogOpen(true)}
+                          className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold"
+                        >
+                          <Crown className="size-4 mr-2" />
+                          {upgradeRequest?.status === "rejected" ? "Volver a solicitar upgrade" : "Solicitar upgrade Premium"}
+                        </Button>
+                      </div>
+                    )}
+
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="rounded-xl border p-4">
                         <p className="text-xs font-semibold text-muted-foreground uppercase mb-3">Plan Estándar</p>
@@ -323,6 +377,12 @@ function AccountPageContent() {
                         </ul>
                       </div>
                     </div>
+
+                    <PremiumUpgradeDialog
+                      open={upgradeDialogOpen}
+                      onOpenChange={setUpgradeDialogOpen}
+                      onRequested={refreshUpgradeRequest}
+                    />
                   </div>
                 )}
               </div>

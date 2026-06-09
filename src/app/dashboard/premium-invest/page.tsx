@@ -45,6 +45,7 @@ import { useCurrentUser } from "@/contexts/user-context";
 import {
   premiumProperties,
   getPremiumPropertyById,
+  isPropertyEffectivelyAvailable,
 } from "@/lib/premium/mock-data";
 import { formatCurrency } from "@/lib/dashboard/mock-data";
 import type { PropertyCurrency } from "@/lib/currency";
@@ -52,6 +53,10 @@ import {
   getPaymentValidationHint,
   isPaymentFormValid,
 } from "@/lib/invest/payment-validation";
+import {
+  savePendingPremiumInvestment,
+  getPendingInvestmentsForProperty,
+} from "@/lib/app-store";
 
 const STEPS = ["Propiedad", "Revisión", "Pago", "Confirmación"];
 
@@ -92,7 +97,10 @@ function PremiumInvestContent() {
   const deepLinkHandled = useRef(false);
 
   const availableProperties = useMemo(
-    () => premiumProperties.filter((p) => p.status === "available"),
+    () =>
+      premiumProperties.filter(
+        (p) => p.status === "available" && isPropertyEffectivelyAvailable(p.id)
+      ),
     []
   );
 
@@ -100,9 +108,9 @@ function PremiumInvestContent() {
     if (deepLinkHandled.current) return;
     const param = searchParams.get("property");
     if (!param) return;
-    const isAvailable = premiumProperties.some(
-      (p) => p.id === param && p.status === "available"
-    );
+    const isAvailable =
+      premiumProperties.some((p) => p.id === param && p.status === "available") &&
+      isPropertyEffectivelyAvailable(param);
     if (isAvailable) {
       setSelectedPropertyId(param);
       setStep(1);
@@ -143,11 +151,43 @@ function PremiumInvestContent() {
     setStep(2);
   };
 
+  const requiresVerification =
+    paymentMethod === "transfer" || paymentMethod === "deposit";
+
   const handleConfirm = () => {
     setConfirming(true);
     setTimeout(() => {
       setConfirming(false);
-      setConfirmed(true);
+      if (requiresVerification && property) {
+        // Save pending investment for admin verification
+        const investmentId = `pinv-${user.id}-${Date.now()}`;
+        savePendingPremiumInvestment({
+          id: investmentId,
+          certificateId: `PREM-2026-${investmentId.slice(-6).toUpperCase()}`,
+          propertyId: property.id,
+          propertyName: property.name,
+          userId: user.id,
+          userName: user.name,
+          userEmail: user.email,
+          amount,
+          currency: propertyCurrency,
+          premiumRoi: property.premiumRoi,
+          estimatedReturn,
+          paymentMethod: paymentMethod as "transfer" | "deposit",
+          submittedAt: new Date().toISOString(),
+          status: "pending_verification",
+          // Transfer fields
+          transferNumber: paymentMethod === "transfer" ? transferForm.transferNumber : undefined,
+          originAccountNumber: paymentMethod === "transfer" ? transferForm.accountNumber : undefined,
+          // Deposit fields
+          voucherNumber: paymentMethod === "deposit" ? depositForm.voucherNumber : undefined,
+          voucherDate: paymentMethod === "deposit" ? (depositForm.voucherDate ? String(depositForm.voucherDate) : undefined) : undefined,
+          operationNumber: paymentMethod === "deposit" ? depositForm.operationNumber : undefined,
+        });
+        setConfirmed(true);
+      } else {
+        setConfirmed(true);
+      }
     }, 2500);
   };
 
@@ -175,6 +215,87 @@ function PremiumInvestContent() {
   }
 
   if (confirmed && property) {
+    // Transfer / deposit → pending verification screen
+    if (requiresVerification) {
+      return (
+        <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 200, damping: 18 }}
+            className="w-full rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50/50 to-white p-6 sm:p-10 flex flex-col items-center gap-6 text-center shadow-xl"
+          >
+            <div className="size-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+              <Shield className="size-10 text-white" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                <div className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
+                En verificación
+              </div>
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">
+                Pago recibido — verificando
+              </h2>
+              <p className="text-muted-foreground mt-2 max-w-md leading-relaxed">
+                Recibimos tu comprobante de pago para{" "}
+                <strong className="text-foreground">{property.name}</strong>.
+                Un administrador verificará los datos y confirmará tu inversión.
+              </p>
+            </div>
+            <div className="w-full rounded-2xl bg-white border border-blue-100 p-5 flex flex-col gap-3 text-left">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Inversión enviada</span>
+                <span className="font-bold">{formatCurrency(amount, propertyCurrency)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Método</span>
+                <span>{paymentMethods.find((m) => m.id === paymentMethod)?.label}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">ROI Premium</span>
+                <span className="font-bold text-amber-700">{property.premiumRoi}%</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Retorno estimado</span>
+                <span className="font-bold text-emerald-600">
+                  {formatCurrency(estimatedReturn, propertyCurrency)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Estado</span>
+                <span className="text-blue-700 font-medium">Pendiente de aprobación</span>
+              </div>
+            </div>
+            <div className="w-full rounded-xl bg-amber-50 border border-amber-200 p-4 text-left text-sm">
+              <p className="font-semibold text-amber-900 mb-1">¿Qué sigue?</p>
+              <ul className="space-y-1 text-amber-800 text-xs">
+                <li>• El administrador revisará tu comprobante en 1-2 días hábiles</li>
+                <li>• La propiedad quedará reservada mientras se verifica</li>
+                <li>• Recibirás una notificación cuando sea confirmado</li>
+                <li>• Si es rechazado, la propiedad vuelve a estar disponible</li>
+              </ul>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <Button
+                variant="outline"
+                className="flex-1 rounded-xl h-11"
+                onClick={() => router.push("/dashboard/premium-properties")}
+              >
+                Ver propiedades Premium
+              </Button>
+              <Button
+                className="flex-1 rounded-xl h-11 bg-blue-500 hover:bg-blue-600 text-white"
+                onClick={() => router.push("/dashboard/my-investments?tab=premium")}
+              >
+                Mis inversiones Premium
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      );
+    }
+
+    // Card / Yape → immediate capture
     return (
       <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
         <motion.div
