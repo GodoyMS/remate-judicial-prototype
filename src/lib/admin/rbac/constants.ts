@@ -1,4 +1,16 @@
-import type { AdminModule, ModulePermissions } from "./types";
+import type { AdminModule, AdminRole, ModulePermissions } from "./types";
+
+/**
+ * The Super Admin role is the only immutable role: it must always keep full
+ * access so the platform can never be locked out of its own access controls.
+ * Every other role — including the remaining system roles — can have its
+ * module permissions edited by anyone with full access to the access module.
+ */
+export const PROTECTED_ROLE_ID = "role-super-admin";
+
+export function isProtectedRole(role: AdminRole | null | undefined): boolean {
+  return role?.id === PROTECTED_ROLE_ID;
+}
 
 export const MODULE_LABELS: Record<AdminModule, string> = {
   dashboard: "Dashboard",

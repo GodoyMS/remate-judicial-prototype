@@ -40,10 +40,15 @@ import { ReadOnlyBanner } from "@/components/admin/rbac/ReadOnlyBanner";
 import { PermissionGate } from "@/components/admin/rbac/PermissionGate";
 import { RoleFormDialog } from "@/components/admin/rbac/RoleFormDialog";
 import { AdminUserFormDialog } from "@/components/admin/rbac/AdminUserFormDialog";
-import { PermissionMatrix } from "@/components/admin/rbac/PermissionMatrix";
 import { useAdminAuth } from "@/contexts/admin-auth-context";
 import { useModuleAccess } from "@/hooks/use-module-access";
-import { getInitials, MODULE_LABELS, PERMISSION_COLORS, PERMISSION_LABELS } from "@/lib/admin/rbac/constants";
+import {
+  getInitials,
+  isProtectedRole,
+  MODULE_LABELS,
+  PERMISSION_COLORS,
+  PERMISSION_LABELS,
+} from "@/lib/admin/rbac/constants";
 import { getAccounts, getRoles, saveAccounts, saveRoles } from "@/lib/admin/rbac/store";
 import type { AdminAccount, AdminRole, ModulePermissions } from "@/lib/admin/rbac/types";
 import { formatDate } from "@/lib/admin/formatters";
@@ -76,12 +81,24 @@ export default function AdminAccessPage() {
     [roles]
   );
 
+  // A role can be edited when the admin has full access to the access module
+  // and the role is not the protected Super Admin role.
+  const canEditRole = (role: AdminRole) => canWriteAccess && !isProtectedRole(role);
+
   const handleSaveRole = (data: {
     name: string;
     description: string;
     color: string;
     permissions: ModulePermissions;
   }) => {
+    if (!canWriteAccess) {
+      toast.error("No tienes permisos para gestionar roles");
+      return;
+    }
+    if (editingRole && isProtectedRole(editingRole)) {
+      toast.error("El rol Super Admin no se puede modificar");
+      return;
+    }
     const now = new Date().toISOString();
     if (editingRole) {
       const updated = roles.map((r) =>
@@ -404,17 +421,7 @@ export default function AdminAccessPage() {
                         <Badge variant="outline" className="text-[10px]">
                           {userCount} usuario{userCount !== 1 ? "s" : ""}
                         </Badge>
-                        {role.isSystem ? (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="rounded-xl text-xs gap-1.5 h-8"
-                            onClick={() => { setEditingRole(role); setRoleDialogOpen(true); }}
-                          >
-                            <Shield className="size-3.5" />
-                            Ver permisos
-                          </Button>
-                        ) : canWriteAccess ? (
+                        {canEditRole(role) ? (
                           <div className="flex items-center gap-1">
                             <Button
                               variant="outline"
@@ -425,16 +432,18 @@ export default function AdminAccessPage() {
                               <Pencil className="size-3.5" />
                               Editar
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="rounded-xl h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                              onClick={() => setDeleteRole(role)}
-                              disabled={userCount > 0}
-                              title={userCount > 0 ? "Reasigna los usuarios antes de eliminar" : "Eliminar rol"}
-                            >
-                              <Trash2 className="size-3.5" />
-                            </Button>
+                            {!role.isSystem && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="rounded-xl h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => setDeleteRole(role)}
+                                disabled={userCount > 0}
+                                title={userCount > 0 ? "Reasigna los usuarios antes de eliminar" : "Eliminar rol"}
+                              >
+                                <Trash2 className="size-3.5" />
+                              </Button>
+                            )}
                           </div>
                         ) : (
                           <Button
@@ -506,6 +515,7 @@ export default function AdminAccessPage() {
         open={roleDialogOpen}
         onOpenChange={setRoleDialogOpen}
         role={editingRole}
+        canEdit={editingRole ? canEditRole(editingRole) : canWriteAccess}
         onSave={handleSaveRole}
       />
 
