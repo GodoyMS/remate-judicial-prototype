@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Video, Star, User } from "lucide-react";
+import { Video, Star, Sparkles, Eye, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +16,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { MediaUploadField, type MediaValue } from "@/components/admin/MediaUploadField";
+import { cn } from "@/lib/utils";
 import type { AdminTestimonial } from "@/lib/admin/types";
 
 interface CreateTestimonialDialogProps {
@@ -35,6 +36,8 @@ function getInitials(name: string) {
     .join("");
 }
 
+const MAX_REVIEW = 320;
+
 export function CreateTestimonialDialog({
   open,
   onOpenChange,
@@ -46,9 +49,11 @@ export function CreateTestimonialDialog({
   const [role, setRole] = useState("");
   const [review, setReview] = useState("");
   const [stars, setStars] = useState(5);
+  const [hoverStars, setHoverStars] = useState(0);
   const [amount, setAmount] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [videoPosterUrl, setVideoPosterUrl] = useState("");
+  const [avatar, setAvatar] = useState<MediaValue | null>(null);
+  const [video, setVideo] = useState<MediaValue | null>(null);
+  const [poster, setPoster] = useState<MediaValue | null>(null);
   const [published, setPublished] = useState(true);
   const [featured, setFeatured] = useState(false);
 
@@ -57,12 +62,16 @@ export function CreateTestimonialDialog({
     setRole("");
     setReview("");
     setStars(5);
+    setHoverStars(0);
     setAmount("");
-    setVideoUrl("");
-    setVideoPosterUrl("");
+    setAvatar(null);
+    setVideo(null);
+    setPoster(null);
     setPublished(true);
     setFeatured(false);
   };
+
+  const initials = getInitials(name.trim()) || "??";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,9 +84,10 @@ export function CreateTestimonialDialog({
       review: review.trim(),
       stars,
       amount: amount.trim() || undefined,
-      avatar: getInitials(name.trim()) || "??",
-      videoUrl: videoUrl.trim() || undefined,
-      videoPosterUrl: videoPosterUrl.trim() || undefined,
+      avatar: initials,
+      avatarImageUrl: avatar?.url || undefined,
+      videoUrl: video?.url || undefined,
+      videoPosterUrl: poster?.url || avatar?.url || undefined,
       published,
       featured,
       sortOrder: nextSortOrder,
@@ -97,6 +107,8 @@ export function CreateTestimonialDialog({
     }, 600);
   };
 
+  const activeStars = hoverStars || stars;
+
   return (
     <Dialog
       open={open}
@@ -105,117 +117,174 @@ export function CreateTestimonialDialog({
         if (!v) resetForm();
       }}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-2xl sm:max-w-xl">
-        <DialogHeader>
-          <DialogTitle className="text-lg">Nuevo testimonio</DialogTitle>
-          <DialogDescription>
-            Agrega la historia de un inversor para mostrarla en la landing page.
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="t-name">Nombre completo</Label>
-              <Input
-                id="t-name"
-                placeholder="Ej. María Elena Quispe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="rounded-xl"
-              />
+      <DialogContent className="max-h-[92vh] gap-0 overflow-hidden rounded-2xl p-0 sm:max-w-2xl">
+        <DialogHeader className="border-b border-border/60 bg-gradient-to-br from-[#9FE870]/15 via-background to-background px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[#163300] text-[#9FE870]">
+              <Sparkles className="size-5" />
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="t-role">Rol / ocupación</Label>
-              <Input
-                id="t-role"
-                placeholder="Ej. Inversionista independiente"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                required
-                className="rounded-xl"
-              />
+            <div>
+              <DialogTitle className="text-lg">Nuevo testimonio</DialogTitle>
+              <DialogDescription className="mt-0.5">
+                Comparte la historia de un inversor en la landing page.
+              </DialogDescription>
             </div>
           </div>
+        </DialogHeader>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="t-review">Testimonio</Label>
+        <form
+          onSubmit={handleSubmit}
+          className="flex max-h-[calc(92vh-160px)] flex-col gap-6 overflow-y-auto px-6 py-6"
+        >
+          {/* Identity */}
+          <section className="flex flex-col gap-4 sm:flex-row sm:items-start">
+            <div className="flex flex-col items-center gap-2">
+              <div className="size-24">
+                <MediaUploadField
+                  kind="image"
+                  circle
+                  value={avatar}
+                  onChange={setAvatar}
+                  aspect="aspect-square"
+                  emptyTitle="Foto"
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                {avatar ? "Avatar" : `Sin foto · ${initials}`}
+              </p>
+            </div>
+
+            <div className="grid flex-1 gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="t-name">Nombre completo</Label>
+                <Input
+                  id="t-name"
+                  placeholder="Ej. María Elena Quispe"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="t-role">Rol / ocupación</Label>
+                <Input
+                  id="t-role"
+                  placeholder="Ej. Inversionista independiente"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5 sm:col-span-2">
+                <Label htmlFor="t-amount">Monto invertido (opcional)</Label>
+                <Input
+                  id="t-amount"
+                  placeholder="Ej. S/ 12,500 invertido"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="rounded-xl"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Review + rating */}
+          <section className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="t-review">Testimonio</Label>
+              <span
+                className={cn(
+                  "text-[10px] tabular-nums",
+                  review.length > MAX_REVIEW
+                    ? "font-semibold text-destructive"
+                    : "text-muted-foreground",
+                )}
+              >
+                {review.length}/{MAX_REVIEW}
+              </span>
+            </div>
             <Textarea
               id="t-review"
-              placeholder="Escribe el testimonio del inversor..."
+              placeholder="Escribe el testimonio del inversor…"
               rows={4}
+              maxLength={MAX_REVIEW}
               value={review}
               onChange={(e) => setReview(e.target.value)}
               required
-              className="rounded-xl"
+              className="resize-none rounded-xl"
             />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <Label>Calificación</Label>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium text-muted-foreground">
+                Calificación
+              </span>
               <div className="flex items-center gap-1">
-                {Array.from({ length: stars }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className="size-3.5 fill-amber-400 text-amber-400"
-                  />
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setStars(n)}
+                    onMouseEnter={() => setHoverStars(n)}
+                    onMouseLeave={() => setHoverStars(0)}
+                    className="rounded-md p-0.5 transition-transform hover:scale-110"
+                    aria-label={`${n} estrellas`}
+                  >
+                    <Star
+                      className={cn(
+                        "size-5 transition-colors",
+                        n <= activeStars
+                          ? "fill-amber-400 text-amber-400"
+                          : "fill-transparent text-muted-foreground/40",
+                      )}
+                    />
+                  </button>
                 ))}
-                <span className="ml-1 text-xs text-muted-foreground">{stars}/5</span>
+                <span className="ml-1 text-xs font-semibold tabular-nums text-foreground">
+                  {stars}.0
+                </span>
               </div>
             </div>
-            <Slider
-              value={[stars]}
-              onValueChange={([v]) => setStars(v)}
-              min={1}
-              max={5}
-              step={1}
-            />
-          </div>
+          </section>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="t-amount">Monto invertido (opcional)</Label>
-            <Input
-              id="t-amount"
-              placeholder="Ej. S/ 12,500 invertido"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="rounded-xl"
-            />
-          </div>
-
-          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-4">
-            <div className="flex items-center gap-2">
+          {/* Video */}
+          <section className="rounded-2xl border border-border/60 bg-muted/20 p-4">
+            <div className="mb-3 flex items-center gap-2">
               <Video className="size-4 text-muted-foreground" />
-              <p className="text-sm font-medium">Video testimonial (opcional)</p>
+              <p className="text-sm font-medium">Video testimonial</p>
+              <span className="rounded-md bg-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase text-muted-foreground">
+                Opcional
+              </span>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="t-video">URL del video</Label>
-              <Input
-                id="t-video"
-                placeholder="https://..."
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                className="rounded-xl"
-              />
+            <div className="grid gap-4 sm:grid-cols-[1.4fr_1fr]">
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-xs text-muted-foreground">Archivo de video</Label>
+                <MediaUploadField
+                  kind="video"
+                  value={video}
+                  onChange={setVideo}
+                  poster={poster?.url || avatar?.url}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-xs text-muted-foreground">Miniatura / poster</Label>
+                <MediaUploadField
+                  kind="image"
+                  aspect="aspect-video"
+                  value={poster}
+                  onChange={setPoster}
+                  emptyTitle="Poster"
+                  emptyHint="Imagen de portada"
+                />
+              </div>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="t-poster">URL del poster / miniatura</Label>
-              <Input
-                id="t-poster"
-                placeholder="https://..."
-                value={videoPosterUrl}
-                onChange={(e) => setVideoPosterUrl(e.target.value)}
-                className="rounded-xl"
-              />
-            </div>
-          </div>
+          </section>
 
-          <div className="flex flex-col gap-3 rounded-xl border border-border/60 p-4">
+          {/* Visibility */}
+          <section className="flex flex-col gap-3 rounded-2xl border border-border/60 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <User className="size-4 text-muted-foreground" />
+                <Eye className="size-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Publicar en landing</p>
                   <p className="text-xs text-muted-foreground">
@@ -226,30 +295,43 @@ export function CreateTestimonialDialog({
               <Switch checked={published} onCheckedChange={setPublished} />
             </div>
             <div className="flex items-center justify-between border-t border-border/40 pt-3">
-              <div>
-                <p className="text-sm font-medium">Destacar</p>
-                <p className="text-xs text-muted-foreground">
-                  Prioridad en el carrusel
-                </p>
+              <div className="flex items-center gap-2">
+                <Star className="size-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Destacar</p>
+                  <p className="text-xs text-muted-foreground">Prioridad en el carrusel</p>
+                </div>
               </div>
               <Switch checked={featured} onCheckedChange={setFeatured} />
             </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="rounded-xl"
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={loading} className="rounded-xl font-semibold">
-              {loading ? "Guardando..." : "Crear testimonio"}
-            </Button>
-          </DialogFooter>
+          </section>
         </form>
+
+        <DialogFooter className="border-t border-border/60 bg-muted/15 px-6 py-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="rounded-xl"
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={loading || !name.trim() || !role.trim() || !review.trim()}
+            className="rounded-xl font-semibold"
+          >
+            {loading ? (
+              "Guardando…"
+            ) : (
+              <>
+                <UserRound className="mr-2 size-4" />
+                Crear testimonio
+              </>
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

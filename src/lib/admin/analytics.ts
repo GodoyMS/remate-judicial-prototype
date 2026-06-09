@@ -602,9 +602,11 @@ export interface FunnelStep {
 
 export function getInvestmentFunnel(investments: PropertyInvestment[]): FunnelStep[] {
   const total = investments.length;
-  const pending = investments.filter((i) => i.status === "pending").length;
   const confirmed = investments.filter((i) => i.status === "confirmed").length;
   const rejected = investments.filter((i) => i.status === "rejected").length;
+  // Processed = ya pasaron por verificación (confirmadas + rechazadas);
+  // las pendientes aún no completan el embudo.
+  const processed = confirmed + rejected;
 
   return [
     {
@@ -613,9 +615,9 @@ export function getInvestmentFunnel(investments: PropertyInvestment[]): FunnelSt
       percentage: 100,
     },
     {
-      step: "En verificación",
-      count: pending + confirmed + rejected,
-      percentage: total > 0 ? 100 : 0,
+      step: "Procesadas",
+      count: processed,
+      percentage: total > 0 ? (processed / total) * 100 : 0,
     },
     {
       step: "Confirmadas",
@@ -623,6 +625,19 @@ export function getInvestmentFunnel(investments: PropertyInvestment[]): FunnelSt
       percentage: total > 0 ? (confirmed / total) * 100 : 0,
     },
   ];
+}
+
+const PRESET_MONTHS_BACK: Record<AnalyticsDatePreset, number> = {
+  "7d": 2,
+  "30d": 2,
+  "90d": 4,
+  "6m": 6,
+  "1y": 12,
+  all: 12,
+};
+
+export function getMonthsBackForPreset(preset: AnalyticsDatePreset): number {
+  return PRESET_MONTHS_BACK[preset];
 }
 
 export interface PremiumCandidate {
