@@ -10,6 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import {
+  MediaUploadField,
+  type MediaValue,
+} from "@/components/admin/MediaUploadField";
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -51,8 +55,9 @@ export function EditTestimonialSheet({
   const [review, setReview] = useState("");
   const [stars, setStars] = useState(5);
   const [amount, setAmount] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [videoPosterUrl, setVideoPosterUrl] = useState("");
+  const [avatar, setAvatar] = useState<MediaValue | null>(null);
+  const [video, setVideo] = useState<MediaValue | null>(null);
+  const [poster, setPoster] = useState<MediaValue | null>(null);
   const [sortOrder, setSortOrder] = useState(1);
   const [published, setPublished] = useState(false);
   const [featured, setFeatured] = useState(false);
@@ -64,8 +69,21 @@ export function EditTestimonialSheet({
     setReview(testimonial.review);
     setStars(testimonial.stars);
     setAmount(testimonial.amount ?? "");
-    setVideoUrl(testimonial.videoUrl ?? "");
-    setVideoPosterUrl(testimonial.videoPosterUrl ?? "");
+    setAvatar(
+      testimonial.avatarImageUrl
+        ? { url: testimonial.avatarImageUrl, name: "Avatar actual" }
+        : null,
+    );
+    setVideo(
+      testimonial.videoUrl
+        ? { url: testimonial.videoUrl, name: "Video actual" }
+        : null,
+    );
+    setPoster(
+      testimonial.videoPosterUrl
+        ? { url: testimonial.videoPosterUrl, name: "Poster actual" }
+        : null,
+    );
     setSortOrder(testimonial.sortOrder);
     setPublished(testimonial.published);
     setFeatured(testimonial.featured);
@@ -83,8 +101,9 @@ export function EditTestimonialSheet({
       review: review.trim(),
       stars,
       amount: amount.trim() || undefined,
-      videoUrl: videoUrl.trim() || undefined,
-      videoPosterUrl: videoPosterUrl.trim() || undefined,
+      avatarImageUrl: avatar?.url || undefined,
+      videoUrl: video?.url || undefined,
+      videoPosterUrl: poster?.url || undefined,
       sortOrder,
       published,
       featured,
@@ -195,23 +214,45 @@ export function EditTestimonialSheet({
             />
           </div>
 
-          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Foto del inversor</Label>
+            <div className="size-20">
+              <MediaUploadField
+                kind="image"
+                circle
+                value={avatar}
+                onChange={setAvatar}
+                aspect="aspect-square"
+                emptyTitle="Foto"
+              />
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-4">
             <div className="flex items-center gap-2">
               <Video className="size-4 text-muted-foreground" />
-              <p className="text-sm font-medium">Video</p>
+              <p className="text-sm font-medium">Video testimonial</p>
             </div>
-            <Input
-              placeholder="URL del video"
-              value={videoUrl}
-              onChange={(e) => setVideoUrl(e.target.value)}
-              className="rounded-xl"
-            />
-            <Input
-              placeholder="URL del poster"
-              value={videoPosterUrl}
-              onChange={(e) => setVideoPosterUrl(e.target.value)}
-              className="rounded-xl"
-            />
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Archivo de video</Label>
+              <MediaUploadField
+                kind="video"
+                value={video}
+                onChange={setVideo}
+                poster={poster?.url || avatar?.url}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs text-muted-foreground">Miniatura / poster</Label>
+              <MediaUploadField
+                kind="image"
+                aspect="aspect-video"
+                value={poster}
+                onChange={setPoster}
+                emptyTitle="Poster"
+                emptyHint="Imagen de portada"
+              />
+            </div>
           </div>
 
           <div className="flex flex-col gap-3 rounded-xl border border-border/60 p-4">

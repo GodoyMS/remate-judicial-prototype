@@ -152,11 +152,11 @@ export default function AdminChatbotConversationsPage() {
   };
 
   return (
-    <div className="w-full">
+    <div className="flex h-full min-h-0 w-full flex-col">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
+        className="mb-4 shrink-0"
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -180,7 +180,12 @@ export default function AdminChatbotConversationsPage() {
         </div>
       </motion.div>
 
-      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div
+        className={cn(
+          "mb-4 shrink-0 grid-cols-2 gap-3 lg:grid-cols-4",
+          isMobile && mobileShowThread ? "hidden" : "grid",
+        )}
+      >
         {[
           {
             label: "Total",
@@ -243,7 +248,10 @@ export default function AdminChatbotConversationsPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mb-4 flex items-center gap-2 rounded-xl border border-[#9FE870]/30 bg-[#9FE870]/10 px-4 py-2.5"
+          className={cn(
+            "mb-4 shrink-0 items-center gap-2 rounded-xl border border-[#9FE870]/30 bg-[#9FE870]/10 px-4 py-2.5",
+            isMobile && mobileShowThread ? "hidden" : "flex",
+          )}
         >
           <Sparkles className="size-4 shrink-0 text-[#163300]" />
           <p className="text-xs text-[#163300]">
@@ -254,17 +262,17 @@ export default function AdminChatbotConversationsPage() {
         </motion.div>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-border/60 bg-background shadow-sm">
+      <div className="flex min-h-[460px] flex-1 overflow-hidden rounded-2xl border border-border/60 bg-background shadow-sm">
         <div
           className={cn(
-            "grid min-h-[min(72vh,640px)]",
+            "grid min-h-0 w-full",
             isMobile ? "grid-cols-1" : "grid-cols-[minmax(300px,360px)_1fr]"
           )}
         >
           {/* Conversation list */}
           <div
             className={cn(
-              "flex flex-col border-border/60",
+              "flex min-h-0 flex-col border-border/60",
               !isMobile && "border-r",
               isMobile && mobileShowThread && "hidden"
             )}
@@ -383,7 +391,7 @@ export default function AdminChatbotConversationsPage() {
           {/* Thread panel */}
           <div
             className={cn(
-              "flex flex-col bg-[#FAFBF9]",
+              "flex min-h-0 flex-col bg-[#FAFBF9]",
               isMobile && !mobileShowThread && "hidden"
             )}
           >
@@ -391,10 +399,11 @@ export default function AdminChatbotConversationsPage() {
               {selected ? (
                 <motion.div
                   key={selected.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex h-full flex-col"
+                  initial={{ opacity: 0, x: isMobile ? 28 : 0 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: isMobile ? 28 : 0 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  className="flex h-full min-h-0 flex-col"
                 >
                   <div className="shrink-0 border-b border-border/60 bg-white px-4 py-4 sm:px-6">
                     {isMobile && (
