@@ -56,14 +56,16 @@ export function PremiumUpgradeDialog({
   const [loading, setLoading] = useState(false);
 
   const existingRequest = getUpgradeRequestForUser(user.id);
-  const alreadyRequested = !!existingRequest;
+  const alreadyRequested =
+    existingRequest?.status === "pending" || existingRequest?.status === "approved";
 
   const handleRequest = () => {
     setLoading(true);
     // Simulate a brief processing moment
     setTimeout(() => {
+      const prior = getUpgradeRequestForUser(user.id);
       saveUpgradeRequest({
-        id: `ur-${user.id}-${Date.now()}`,
+        id: prior?.status === "rejected" ? prior.id : `ur-${user.id}-${Date.now()}`,
         userId: user.id,
         userName: user.name,
         userEmail: user.email,

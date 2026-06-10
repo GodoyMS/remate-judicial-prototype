@@ -12,6 +12,7 @@ import {
 import type { Complaint } from "@/lib/admin/types";
 import { formatDateTime } from "@/lib/admin/formatters";
 import { cn } from "@/lib/utils";
+import { RichTextContent } from "@/components/admin/RichTextContent";
 
 const typeLabels: Record<Complaint["type"], string> = {
   reclamo: "Reclamo",
@@ -125,9 +126,7 @@ export function ComplaintDetailSheet({
                 Respuesta enviada
               </h4>
               <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 space-y-2">
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                  {complaint.response.message}
-                </p>
+                <RichTextContent html={complaint.response.message} />
                 <p className="text-xs text-muted-foreground">
                   Por {complaint.response.respondedBy} ·{" "}
                   {formatDateTime(complaint.response.respondedAt)}

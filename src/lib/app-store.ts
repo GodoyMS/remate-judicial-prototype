@@ -1,5 +1,6 @@
 import type { PropertyCurrency } from "@/lib/currency";
 import type { PremiumPropertyAdminStatus, UserTier } from "@/lib/admin/types";
+import { seedPremiumUpgradeRequests } from "@/lib/admin/premium-upgrade-mock-data";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -81,7 +82,22 @@ function writeJson<T>(key: string, value: T): void {
 
 // ─── Upgrade Requests ─────────────────────────────────────────────────────────
 
+const UPGRADE_REQUESTS_SEED_KEY = "remata-upgrade-requests-seeded-v1";
+
+function ensureUpgradeRequestsSeeded(): void {
+  if (typeof window === "undefined") return;
+  if (localStorage.getItem(UPGRADE_REQUESTS_SEED_KEY)) return;
+
+  const existing = readJson<PremiumUpgradeRequest[]>(UPGRADE_REQUESTS_KEY, []);
+  if (existing.length === 0) {
+    writeJson(UPGRADE_REQUESTS_KEY, seedPremiumUpgradeRequests);
+  }
+
+  localStorage.setItem(UPGRADE_REQUESTS_SEED_KEY, "1");
+}
+
 export function getUpgradeRequests(): PremiumUpgradeRequest[] {
+  ensureUpgradeRequestsSeeded();
   return readJson<PremiumUpgradeRequest[]>(UPGRADE_REQUESTS_KEY, []);
 }
 
@@ -91,7 +107,15 @@ export function saveUpgradeRequest(req: PremiumUpgradeRequest): void {
   if (idx >= 0) {
     all[idx] = req;
   } else {
-    all.unshift(req);
+    // Replace a prior rejected request instead of stacking duplicates per user.
+    const rejectedIdx = all.findIndex(
+      (r) => r.userId === req.userId && r.status === "rejected"
+    );
+    if (rejectedIdx >= 0) {
+      all[rejectedIdx] = req;
+    } else {
+      all.unshift(req);
+    }
   }
   writeJson(UPGRADE_REQUESTS_KEY, all);
 }
@@ -110,7 +134,20 @@ export function updateUpgradeRequest(
 export function getUpgradeRequestForUser(
   userId: string
 ): PremiumUpgradeRequest | undefined {
-  return getUpgradeRequests().find((r) => r.userId === userId);
+  const userRequests = getUpgradeRequests().filter((r) => r.userId === userId);
+  if (userRequests.length === 0) return undefined;
+
+  const statusPriority: Record<PremiumUpgradeRequest["status"], number> = {
+    pending: 0,
+    rejected: 1,
+    approved: 2,
+  };
+
+  return [...userRequests].sort((a, b) => {
+    const priorityDiff = statusPriority[a.status] - statusPriority[b.status];
+    if (priorityDiff !== 0) return priorityDiff;
+    return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
+  })[0];
 }
 
 // ─── Pending Premium Investments ──────────────────────────────────────────────
