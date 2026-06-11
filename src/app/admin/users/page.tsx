@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -18,6 +18,8 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -152,6 +154,8 @@ export default function AdminUsersPage() {
     getUpgradeRequests()
   );
   const [activeTab, setActiveTab] = useState("clientes");
+  const [upgradeApproveDialog, setUpgradeApproveDialog] =
+    useState<PremiumUpgradeRequest | null>(null);
   const [upgradeRejectDialog, setUpgradeRejectDialog] =
     useState<PremiumUpgradeRequest | null>(null);
   const [rejectReason, setRejectReason] = useState("");
@@ -215,6 +219,10 @@ export default function AdminUsersPage() {
     return rechazados.filter((v) => matchesVerificationSearch(v, q));
   }, [rechazados, search]);
 
+  useEffect(() => {
+    setUpgradeRequests(getUpgradeRequests());
+  }, []);
+
   const pendingUpgradeRequests = useMemo(
     () => upgradeRequests.filter((r) => r.status === "pending"),
     [upgradeRequests]
@@ -226,12 +234,12 @@ export default function AdminUsersPage() {
     const now = new Date().toISOString();
     updateUpgradeRequest(req.id, { status: "approved", resolvedAt: now });
     setTierOverride(req.userId, "premium");
-    // Also update in the local users list if found
     setUsers((prev) =>
       prev.map((u) => (u.id === req.userId ? { ...u, tier: "premium" } : u))
     );
     setUpgradeRequests(getUpgradeRequests());
-        toast.success(`${req.userName} ahora es Premium`, {
+    setUpgradeApproveDialog(null);
+    toast.success(`${req.userName} ahora es Premium`, {
       description: "El tier fue actualizado. El usuario lo verá al recargar.",
     });
   };
@@ -247,7 +255,9 @@ export default function AdminUsersPage() {
     setUpgradeRequests(getUpgradeRequests());
     setUpgradeRejectDialog(null);
     setRejectReason("");
-        toast.success(`Solicitud de ${req.userName} rechazada`);
+    toast.success(`Solicitud de ${req.userName} rechazada`, {
+      description: "El usuario verá el motivo en su panel de cuenta.",
+    });
   };
 
   const [pageSize, setPageSize] = useState(8);
@@ -645,7 +655,7 @@ export default function AdminUsersPage() {
             <TabsContent value="upgrades" className="mt-0">
               <UpgradeRequestsTable
                 items={upgradesPagination.paginatedItems}
-                onApprove={handleApproveUpgrade}
+                onApprove={(r) => setUpgradeApproveDialog(r)}
                 onReject={(r) => { setUpgradeRejectDialog(r); setRejectReason(""); }}
                 readOnly={isReadOnly}
               />
@@ -747,32 +757,82 @@ export default function AdminUsersPage() {
           </AlertDialogContent>
         </AlertDialog>
 
+        {/* Upgrade approval dialog */}
+        <AlertDialog
+          open={!!upgradeApproveDialog}
+          onOpenChange={(open) => !open && setUpgradeApproveDialog(null)}
+        >
+          <AlertDialogContent className="rounded-2xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Aprobar solicitud Premium</AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <p>
+                    ¿Confirmas promover a <strong>{upgradeApproveDialog?.userName}</strong> al
+                    plan Premium?
+                  </p>
+                  {upgradeApproveDialog && (
+                    <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3 text-left text-xs text-amber-900">
+                      <p>
+                        Invertido: {formatCurrency(upgradeApproveDialog.totalInvested, "PEN")}
+                      </p>
+                      <p className="mt-1 text-amber-700">
+                        El usuario obtendrá acceso inmediato a propiedades exclusivas y captura al
+                        100%.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                className="rounded-xl bg-emerald-600 hover:bg-emerald-700"
+                onClick={() =>
+                  upgradeApproveDialog && handleApproveUpgrade(upgradeApproveDialog)
+                }
+              >
+                <CheckCircle2 className="size-4" />
+                Aprobar Premium
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         {/* Upgrade rejection dialog */}
         <AlertDialog
           open={!!upgradeRejectDialog}
           onOpenChange={(open) => { if (!open) { setUpgradeRejectDialog(null); setRejectReason(""); } }}
         >
-          <AlertDialogContent className="rounded-2xl">
+          <AlertDialogContent className="rounded-2xl sm:max-w-md">
             <AlertDialogHeader>
               <AlertDialogTitle>Rechazar solicitud Premium</AlertDialogTitle>
               <AlertDialogDescription>
                 Explica por qué se rechaza la solicitud de{" "}
-                <strong>{upgradeRejectDialog?.userName}</strong>. El usuario podrá volver a solicitarlo.
+                <strong>{upgradeRejectDialog?.userName}</strong>. El usuario verá este mensaje en
+                su cuenta y podrá volver a solicitarlo.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <div className="px-0 pb-0">
-              <Input
-                placeholder="Motivo del rechazo..."
+            <div className="space-y-2">
+              <Label htmlFor="reject-reason">Motivo del rechazo *</Label>
+              <Textarea
+                id="reject-reason"
+                placeholder="Ej: El monto invertido aún no cumple el umbral mínimo para Premium..."
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
-                className="rounded-xl"
+                rows={4}
+                className="rounded-xl resize-none"
               />
+              <p className="text-xs text-muted-foreground text-right">
+                {rejectReason.trim().length}/500
+              </p>
             </div>
             <AlertDialogFooter>
               <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
               <AlertDialogAction
                 className="rounded-xl bg-red-600 hover:bg-red-700"
-                disabled={!rejectReason.trim()}
+                disabled={!rejectReason.trim() || rejectReason.trim().length > 500}
                 onClick={() => upgradeRejectDialog && handleRejectUpgrade(upgradeRejectDialog)}
               >
                 Rechazar solicitud
