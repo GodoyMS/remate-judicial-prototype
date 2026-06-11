@@ -125,6 +125,14 @@ const growthChartConfig = {
   cumulative: { label: "Acumulado", color: "var(--chart-1)" },
 };
 
+const regionalChartConfig = {
+  amount: { label: "Monto", color: "var(--chart-1)" },
+};
+
+const REGIONAL_BAR_SIZE = 28;
+const REGIONAL_ROW_HEIGHT = 44;
+const REGIONAL_CHART_PADDING = 48;
+
 function ChartEmpty({ message }: { message: string }) {
   return (
     <div className="flex h-[220px] w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/60 bg-muted/15 text-center">
@@ -812,13 +820,21 @@ export default function AdminAnalyticsPage() {
             <CardContent>
               {hasRegional ? (
                 <ChartContainer
-                  config={{ amount: { label: "Monto", color: "var(--chart-1)" } }}
-                  className="h-[280px] w-full"
+                  config={regionalChartConfig}
+                  className="aspect-auto w-full"
+                  style={{
+                    height: Math.max(
+                      regionalData.length * REGIONAL_ROW_HEIGHT + REGIONAL_CHART_PADDING,
+                      160
+                    ),
+                  }}
                 >
                   <BarChart
+                    accessibilityLayer
                     data={regionalData}
                     layout="vertical"
-                    margin={{ top: 0, right: 10, left: 0, bottom: 0 }}
+                    margin={{ top: 4, right: 12, left: 4, bottom: 4 }}
+                    barCategoryGap="20%"
                   >
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} className="stroke-border/40" />
                     <XAxis
@@ -827,6 +843,7 @@ export default function AdminAnalyticsPage() {
                       axisLine={false}
                       fontSize={11}
                       tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+                      domain={[0, (max: number) => Math.ceil(max * 1.08)]}
                     />
                     <YAxis
                       type="category"
@@ -834,16 +851,30 @@ export default function AdminAnalyticsPage() {
                       tickLine={false}
                       axisLine={false}
                       fontSize={11}
-                      width={70}
+                      width={96}
+                      tickMargin={8}
                     />
                     <ChartTooltip
+                      cursor={false}
                       content={
                         <ChartTooltipContent
                           formatter={(value) => `${formatCurrency(Number(value))}  `}
                         />
                       }
                     />
-                    <Bar dataKey="amount" fill="var(--color-amount)" radius={[0, 6, 6, 0]} />
+                    <Bar
+                      dataKey="amount"
+                      radius={[0, 6, 6, 0]}
+                      barSize={REGIONAL_BAR_SIZE}
+                      maxBarSize={REGIONAL_BAR_SIZE}
+                    >
+                      {regionalData.map((entry, i) => (
+                        <Cell
+                          key={entry.region}
+                          fill={CHART_COLORS[i % CHART_COLORS.length]}
+                        />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ChartContainer>
               ) : (
