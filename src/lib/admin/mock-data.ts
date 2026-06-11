@@ -2510,7 +2510,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     stars: 5,
     amount: "S/ 12,500 invertido",
     videoUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "/videos/testimonial-1.mp4",
     videoPosterUrl:
       "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=450&fit=crop",
     published: true,
@@ -2542,7 +2542,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     stars: 5,
     amount: "S/ 78,000 gestionado",
     videoUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      "/videos/testimonial-2.mp4",
     videoPosterUrl:
       "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&h=450&fit=crop",
     published: true,
@@ -2574,7 +2574,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     stars: 5,
     amount: "S/ 35,000 invertido",
     videoUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+      "/videos/testimonial-1.mp4",
     videoPosterUrl:
       "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&h=450&fit=crop",
     published: true,
@@ -2620,7 +2620,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     stars: 5,
     amount: "S/ 51,000 invertido",
     videoUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+      "/videos/testimonial-2.mp4",
     videoPosterUrl:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&h=450&fit=crop",
     published: true,
@@ -2680,7 +2680,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     stars: 5,
     amount: "S/ 16,400 invertido",
     videoUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+      "/videos/testimonial-1.mp4",
     videoPosterUrl:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop",
     published: true,
