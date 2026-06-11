@@ -1,4 +1,5 @@
 import type { AdminProperty } from "./types";
+import { getCreatedPremiumProperties } from "@/lib/app-store";
 
 export const adminPremiumProperties: AdminProperty[] = [
   {
@@ -166,6 +167,16 @@ export const adminPremiumProperties: AdminProperty[] = [
   },
 ];
 
+export function getAllAdminPremiumProperties(): AdminProperty[] {
+  if (typeof window === "undefined") {
+    return adminPremiumProperties;
+  }
+  const created = getCreatedPremiumProperties();
+  const createdIds = new Set(created.map((p) => p.id));
+  const staticOnly = adminPremiumProperties.filter((p) => !createdIds.has(p.id));
+  return [...created, ...staticOnly];
+}
+
 export function getAdminPremiumPropertyById(id: string) {
-  return adminPremiumProperties.find((p) => p.id === id);
+  return getAllAdminPremiumProperties().find((p) => p.id === id);
 }

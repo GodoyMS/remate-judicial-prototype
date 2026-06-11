@@ -1,13 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Crown, Filter, Sparkles } from "lucide-react";
 import { PremiumPropertyCard } from "@/components/dashboard/PremiumPropertyCard";
 import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { useCurrentUser } from "@/contexts/user-context";
-import { premiumProperties } from "@/lib/premium/mock-data";
+import { getAllPremiumProperties, premiumProperties } from "@/lib/premium/mock-data";
+import type { PremiumProperty } from "@/lib/premium/types";
 import { cn } from "@/lib/utils";
 
 const filters = [
@@ -20,21 +21,26 @@ const filters = [
 export default function PremiumPropertiesPage() {
   const { user, isPremium } = useCurrentUser();
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [properties, setProperties] = useState<PremiumProperty[]>(premiumProperties);
+
+  useEffect(() => {
+    setProperties(getAllPremiumProperties());
+  }, []);
 
   const filtered = useMemo(() => {
-    if (activeFilter === "all") return premiumProperties;
+    if (activeFilter === "all") return properties;
     if (activeFilter === "available") {
-      return premiumProperties.filter((p) => p.status === "available");
+      return properties.filter((p) => p.status === "available");
     }
     if (activeFilter === "caught") {
-      return premiumProperties.filter((p) => p.status === "caught");
+      return properties.filter((p) => p.status === "caught");
     }
-    return premiumProperties.filter(
+    return properties.filter(
       (p) => p.status === "converted" || p.status === "expired"
     );
-  }, [activeFilter]);
+  }, [activeFilter, properties]);
 
-  const availableCount = premiumProperties.filter((p) => p.status === "available").length;
+  const availableCount = properties.filter((p) => p.status === "available").length;
 
   return (
     <div className="w-full">

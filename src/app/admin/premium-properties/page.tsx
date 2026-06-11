@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -28,7 +28,8 @@ import {
 } from "@/components/ui/table";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
-import { adminPremiumProperties } from "@/lib/admin/premium-mock-data";
+import { getAllAdminPremiumProperties } from "@/lib/admin/premium-mock-data";
+import { CreatePremiumPropertyDialog } from "@/components/admin/CreatePremiumPropertyDialog";
 import { formatCurrency, formatDate } from "@/lib/admin/formatters";
 import type { PremiumPropertyAdminStatus } from "@/lib/admin/types";
 import { usePagination } from "@/hooks/use-pagination";
@@ -70,10 +71,21 @@ export default function AdminPremiumPropertiesPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [pageSize, setPageSize] = useState(8);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const allProperties = useMemo(
+    () => getAllAdminPremiumProperties(),
+    [refreshKey]
+  );
+
+  const handleCreated = useCallback(() => {
+    setRefreshKey((k) => k + 1);
+  }, []);
 
   const filtered = useMemo(
     () =>
-      adminPremiumProperties.filter((p) => {
+      allProperties.filter((p) => {
         const q = search.toLowerCase();
         const matchSearch =
           p.title.toLowerCase().includes(q) ||
@@ -82,19 +94,19 @@ export default function AdminPremiumPropertiesPage() {
           statusFilter === "all" || p.premiumStatus === statusFilter;
         return matchSearch && matchStatus;
       }),
-    [search, statusFilter]
+    [search, statusFilter, allProperties]
   );
 
   const stats = useMemo(
     () => ({
-      total: adminPremiumProperties.length,
-      available: adminPremiumProperties.filter((p) => p.premiumStatus === "available").length,
-      caught: adminPremiumProperties.filter((p) => p.premiumStatus === "caught").length,
-      converted: adminPremiumProperties.filter(
+      total: allProperties.length,
+      available: allProperties.filter((p) => p.premiumStatus === "available").length,
+      caught: allProperties.filter((p) => p.premiumStatus === "caught").length,
+      converted: allProperties.filter(
         (p) => p.premiumStatus === "converted" || p.premiumStatus === "expired"
       ).length,
     }),
-    []
+    [allProperties]
   );
 
   const { page, setPage, totalPages, paginatedItems, rangeStart, rangeEnd, totalItems } =
@@ -114,7 +126,10 @@ export default function AdminPremiumPropertiesPage() {
           </p>
         </div>
         <PermissionGate module="premium_properties" showDisabled>
-          <Button className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white">
+          <Button
+            onClick={() => setCreateOpen(true)}
+            className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white shrink-0 w-full sm:w-auto"
+          >
             <Crown className="size-4 mr-2" />
             Nueva propiedad Premium
           </Button>
@@ -276,6 +291,12 @@ export default function AdminPremiumPropertiesPage() {
           onPageSizeChange={setPageSize}
         />
       </div>
+
+      <CreatePremiumPropertyDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={handleCreated}
+      />
     </div>
   );
 }

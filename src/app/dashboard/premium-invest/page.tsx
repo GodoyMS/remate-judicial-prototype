@@ -43,10 +43,12 @@ import { PremiumCountdown } from "@/components/dashboard/PremiumCountdown";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { useCurrentUser } from "@/contexts/user-context";
 import {
-  premiumProperties,
+  getAllPremiumProperties,
   getPremiumPropertyById,
   isPropertyEffectivelyAvailable,
+  premiumProperties,
 } from "@/lib/premium/mock-data";
+import type { PremiumProperty } from "@/lib/premium/types";
 import { formatCurrency } from "@/lib/dashboard/mock-data";
 import type { PropertyCurrency } from "@/lib/currency";
 import {
@@ -96,12 +98,18 @@ function PremiumInvestContent() {
   const [confirmed, setConfirmed] = useState(false);
   const deepLinkHandled = useRef(false);
 
+  const [allProperties, setAllProperties] = useState<PremiumProperty[]>(premiumProperties);
+
+  useEffect(() => {
+    setAllProperties(getAllPremiumProperties());
+  }, []);
+
   const availableProperties = useMemo(
     () =>
-      premiumProperties.filter(
+      allProperties.filter(
         (p) => p.status === "available" && isPropertyEffectivelyAvailable(p.id)
       ),
-    []
+    [allProperties]
   );
 
   useEffect(() => {
@@ -109,14 +117,14 @@ function PremiumInvestContent() {
     const param = searchParams.get("property");
     if (!param) return;
     const isAvailable =
-      premiumProperties.some((p) => p.id === param && p.status === "available") &&
+      allProperties.some((p) => p.id === param && p.status === "available") &&
       isPropertyEffectivelyAvailable(param);
     if (isAvailable) {
       setSelectedPropertyId(param);
       setStep(1);
       deepLinkHandled.current = true;
     }
-  }, [searchParams]);
+  }, [searchParams, allProperties]);
 
   const property = selectedPropertyId ? getPremiumPropertyById(selectedPropertyId) : null;
   const propertyCurrency: PropertyCurrency = property?.currency ?? "PEN";
