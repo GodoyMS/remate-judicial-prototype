@@ -1,5 +1,5 @@
 import type { PropertyCurrency } from "@/lib/currency";
-import type { PremiumPropertyAdminStatus, UserTier } from "@/lib/admin/types";
+import type { AdminProperty, PremiumPropertyAdminStatus, UserTier } from "@/lib/admin/types";
 import { seedPremiumUpgradeRequests } from "@/lib/admin/premium-upgrade-mock-data";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -58,6 +58,7 @@ const UPGRADE_REQUESTS_KEY = "remata-upgrade-requests-v1";
 const PENDING_INVESTMENTS_KEY = "remata-pending-premium-investments-v1";
 const PROPERTY_OVERRIDES_KEY = "remata-premium-property-overrides-v1";
 const TIER_OVERRIDES_KEY = "remata-tier-overrides-v1";
+const CREATED_PREMIUM_PROPERTIES_KEY = "remata-created-premium-properties-v1";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -235,4 +236,25 @@ export function setTierOverride(userId: string, tier: UserTier): void {
 
 export function getTierOverrideForUser(userId: string): UserTier | undefined {
   return getTierOverrides()[userId];
+}
+
+// ─── Created Premium Properties (admin-created listings) ─────────────────────
+
+export function getCreatedPremiumProperties(): AdminProperty[] {
+  return readJson<AdminProperty[]>(CREATED_PREMIUM_PROPERTIES_KEY, []);
+}
+
+export function saveCreatedPremiumProperty(property: AdminProperty): void {
+  const all = getCreatedPremiumProperties();
+  const idx = all.findIndex((p) => p.id === property.id);
+  if (idx >= 0) {
+    all[idx] = property;
+  } else {
+    all.unshift(property);
+  }
+  writeJson(CREATED_PREMIUM_PROPERTIES_KEY, all);
+}
+
+export function generatePremiumPropertyId(): string {
+  return `pp-${Date.now()}`;
 }

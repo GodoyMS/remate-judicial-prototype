@@ -42,6 +42,8 @@ export interface AdminProperty {
   caughtByUserName?: string;
   caughtAt?: string;
   notifyPremiumUsers?: boolean;
+  propertyType?: string;
+  area?: string;
 }
 
 export type PaymentMethodId = "card" | "yape" | "transfer" | "deposit";

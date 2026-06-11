@@ -1,5 +1,10 @@
 import type { PremiumProperty, PremiumInvestment, DashboardUser } from "./types";
-import { getPremiumPropertyOverride, getPendingInvestmentsForProperty } from "@/lib/app-store";
+import {
+  getCreatedPremiumProperties,
+  getPremiumPropertyOverride,
+  getPendingInvestmentsForProperty,
+} from "@/lib/app-store";
+import { adminPropertyToPremiumProperty } from "./convert";
 
 export { getPremiumPropertyOverride } from "@/lib/app-store";
 
@@ -212,8 +217,18 @@ export const premiumInvestments: PremiumInvestment[] = [
   },
 ];
 
+export function getAllPremiumProperties(): PremiumProperty[] {
+  if (typeof window === "undefined") {
+    return premiumProperties;
+  }
+  const created = getCreatedPremiumProperties().map(adminPropertyToPremiumProperty);
+  const createdIds = new Set(created.map((p) => p.id));
+  const staticOnly = premiumProperties.filter((p) => !createdIds.has(p.id));
+  return [...created, ...staticOnly];
+}
+
 export function getPremiumPropertyById(id: string): PremiumProperty | undefined {
-  return premiumProperties.find((p) => p.id === id);
+  return getAllPremiumProperties().find((p) => p.id === id);
 }
 
 export function getPremiumInvestmentsForUser(userId: string): PremiumInvestment[] {
