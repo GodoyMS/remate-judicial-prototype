@@ -4,7 +4,7 @@
  * Replace the file at `public/videos/landing-demo.mp4` with your own video.
  * Optionally add a poster image at `public/videos/landing-demo-poster.jpg`.
  */
-export const LANDING_DEMO_VIDEO_SRC = "/videos/landing-demo.mp4";
+export const LANDING_DEMO_VIDEO_SRC = "/videos/hero.mp4";
 
 export const LANDING_DEMO_POSTER_SRC = "/videos/landing-demo-poster.jpg";
 
