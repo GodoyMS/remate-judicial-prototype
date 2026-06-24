@@ -59,12 +59,10 @@ const ticketStatusConfig: Record<TicketStatus, { label: string; color: string }>
   resolved: { label: "Resuelto", color: "border-emerald-200 bg-emerald-50 text-emerald-700" },
 };
 
-const DEMO_USER_ID = "user-001";
-
 export default function DashboardRetornosPage() {
   const { user } = useCurrentUser();
   const [retornos, setRetornos] = useState<Retorno[]>(() =>
-    getRetornosByUserId(DEMO_USER_ID)
+    getRetornosByUserId(user.id)
   );
   const [selected, setSelected] = useState<Retorno | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -74,13 +72,18 @@ export default function DashboardRetornosPage() {
   const [typeFilter, setTypeFilter] = useState<RetornoType | "all">("all");
 
   const refresh = useCallback(() => {
-    const updated = getRetornosByUserId(DEMO_USER_ID);
+    const updated = getRetornosByUserId(user.id);
     setRetornos(updated);
     if (selected) {
       const updatedSelected = updated.find((r) => r.id === selected.id);
       if (updatedSelected) setSelected(updatedSelected);
     }
-  }, [selected]);
+  }, [user.id, selected]);
+
+  // Re-load when user changes (demo login switch)
+  useEffect(() => {
+    setRetornos(getRetornosByUserId(user.id));
+  }, [user.id]);
 
   useEffect(() => subscribeRetornos(refresh), [refresh]);
 

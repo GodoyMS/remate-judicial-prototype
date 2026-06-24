@@ -80,11 +80,11 @@ const MOCK_PROPERTIES = [
 ];
 
 const MOCK_USERS: Pick<AdminUser, "id" | "name" | "email">[] = [
-  { id: "user-001", name: "Carlos Mendoza Ríos", email: "carlos.mendoza@gmail.com" },
-  { id: "user-002", name: "Ana Lucía Torres", email: "ana.torres@outlook.com" },
-  { id: "user-003", name: "Roberto Sánchez Vega", email: "rsanchez@empresa.pe" },
-  { id: "user-004", name: "Patricia Huamán Quispe", email: "phuaman@yahoo.com" },
-  { id: "user-005", name: "Jorge Díaz Luna", email: "jorge.diaz@gmail.com" },
+  { id: "standard-demo", name: "Carlos Mendoza", email: "standard@remata.com" },
+  { id: "premium-demo", name: "Valentina Ríos", email: "premium@remata.com" },
+  { id: "user-ext-001", name: "Ana Lucía Torres", email: "ana.torres@outlook.com" },
+  { id: "user-ext-002", name: "Roberto Sánchez Vega", email: "rsanchez@empresa.pe" },
+  { id: "user-ext-003", name: "Patricia Huamán Quispe", email: "phuaman@yahoo.com" },
 ];
 
 const BANKS = ["BCP", "Interbank", "BBVA", "Scotiabank", "BanBif", "Pichincha"];
