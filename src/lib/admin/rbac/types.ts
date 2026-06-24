@@ -5,6 +5,7 @@ export const ADMIN_MODULES = [
   "premium_properties",
   "testimonials",
   "complaints",
+  "retornos",
   "chatbot",
   "users",
   "notifications",

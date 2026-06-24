@@ -129,7 +129,7 @@ export function TestimonialVideoModal({
                 <div className="relative aspect-video w-full bg-[#163300]">
                   <video
                     ref={videoRef}
-                    className="absolute inset-0 size-full object-cover"
+                    className="absolute inset-0 h-full size-full object-cover"
                     src={testimonial.videoUrl}
                     poster={testimonial.videoPosterUrl}
                     playsInline

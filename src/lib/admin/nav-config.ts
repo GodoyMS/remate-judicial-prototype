@@ -10,6 +10,7 @@ import {
   Crown,
   Bell,
   KeyRound,
+  ArrowDownToLine,
   type LucideIcon,
 } from "lucide-react";
 import type { AdminModule } from "@/lib/admin/rbac/types";
@@ -29,6 +30,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   { href: "/admin/premium-properties", label: "Premium", icon: Crown, module: "premium_properties" },
   { href: "/admin/testimonials", label: "Testimonios", icon: MessageSquareQuote, module: "testimonials" },
   { href: "/admin/complaints", label: "Reclamaciones", icon: BookOpen, module: "complaints" },
+  { href: "/admin/retornos", label: "Retornos", icon: ArrowDownToLine, module: "retornos" },
   { href: "/admin/chatbot-conversations", label: "Chatbot", icon: Bot, module: "chatbot" },
   { href: "/admin/users", label: "Usuarios", icon: Users, module: "users" },
   { href: "/admin/notifications", label: "Notificaciones", icon: Bell, module: "notifications" },
@@ -43,5 +45,6 @@ export function getPageTitle(pathname: string): string {
   if (item) return item.label;
   if (pathname.startsWith("/admin/properties/")) return "Detalle de propiedad";
   if (pathname.startsWith("/admin/premium-properties/")) return "Detalle premium";
+  if (pathname.startsWith("/admin/retornos")) return "Retornos";
   return "Admin";
 }

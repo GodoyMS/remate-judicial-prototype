@@ -13,6 +13,7 @@ import {
   X,
   History,
   Crown,
+  ArrowDownToLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationsPopover } from "@/components/dashboard/NotificationsPopover";
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/dashboard/properties", label: "Propiedades", icon: Building2 },
   { href: "/dashboard/premium-properties", label: "Premium", icon: Crown },
   { href: "/dashboard/my-investments", label: "Mis inversiones", icon: History },
+  { href: "/dashboard/retornos", label: "Retornos", icon: ArrowDownToLine },
   { href: "/dashboard/invest", label: "Invertir", icon: TrendingUp },
   { href: "/dashboard/account", label: "Mi cuenta", icon: Settings },
 ];
@@ -34,6 +36,7 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith("/dashboard/properties/")) return "Detalle de propiedad";
   if (pathname === "/dashboard/properties") return "Propiedades";
   if (pathname === "/dashboard/my-investments") return "Mis inversiones";
+  if (pathname === "/dashboard/retornos") return "Retornos";
   if (pathname === "/dashboard/invest") return "Invertir";
   if (pathname === "/dashboard/premium-invest") return "Invertir Premium";
   if (pathname === "/dashboard/account") return "Mi cuenta";

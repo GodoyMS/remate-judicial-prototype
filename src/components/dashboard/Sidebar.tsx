@@ -12,6 +12,7 @@ import {
   ChevronRight,
   History,
   Crown,
+  ArrowDownToLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/dashboard/properties", label: "Propiedades", icon: Building2 },
   { href: "/dashboard/premium-properties", label: "Premium", icon: Crown, premiumHighlight: true },
   { href: "/dashboard/my-investments", label: "Mis inversiones", icon: History },
+  { href: "/dashboard/retornos", label: "Retornos", icon: ArrowDownToLine },
   { href: "/dashboard/invest", label: "Invertir", icon: TrendingUp },
   { href: "/dashboard/account", label: "Mi cuenta", icon: Settings },
 ];

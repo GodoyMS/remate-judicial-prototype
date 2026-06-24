@@ -1,0 +1,188 @@
+1.
+Question 1
+An economy is operating efficiently on its convex (bowed-outward) Production Possibility Frontier (PPF), producing only capital goods and consumer goods. If a sudden technological breakthrough specifically increases the efficiency of producing capital goods but has no direct effect on consumer goods production, what happens to the opportunity cost of producing the first few units of consumer goods as the economy reallocates resources from capital to consumer goods?
+
+
+
+It increases.
+
+
+It drops to zero because the economy gained an absolute advantage.
+
+
+It decreases.
+
+
+It remains unchanged because the technology did not affect consumer goods.
+
+
+1 point
+2.
+Question 2
+Assume that commuting by train and commuting by personal automobile are substitute methods of transportation. If the government subsidizes train tickets while simultaneously a new environmental tax raises the cost of manufacturing personal automobiles, what is the net effect on the equilibrium price and quantity of personal automobile commutes?
+
+
+
+Equilibrium price is ambiguous; equilibrium quantity decreases
+
+
+Equilibrium price increases; equilibrium quantity is ambiguous.
+
+
+Equilibrium price decreases; equilibrium quantity increases.
+
+
+Both equilibrium price and equilibrium quantity decrease.
+
+
+1 point
+3.
+Question 3
+The market for a highly unique, handcrafted artisanal cheese is initially in equilibrium. Economists determine that the Price Elasticity of Demand (PED) for this cheese is highly inelastic. If a sudden dairy cattle epidemic sharply reduces the milk supply needed to make this cheese, what will be the impact on the total revenue of the cheese producers?
+
+
+
+Total revenue will increase.
+
+
+Total revenue will decrease.
+
+
+Total revenue will drop to zero because consumers will boycott the high prices.
+
+
+Total revenue will remain exactly the same.
+
+
+1 point
+4.
+Question 4
+A consumer's Income Elasticity of Demand (YED) for a particular brand of instant noodles is measured to be -0.5. If the regional economy enters a boom and average consumer incomes rise by 10%, what is the expected change in the quantity demanded for this brand of instant noodles?
+
+
+
+Quantity demanded will increase by 5%.
+
+
+Quantity demanded will decrease by 20%.
+
+
+Quantity demanded will remain unchanged because it is a necessity.
+
+
+Quantity demanded will decrease by 5%.
+
+
+1 point
+5.
+Question 5
+Consider a perfectly competitive market where the government imposes a binding price floor above the initial equilibrium price. If the Price Elasticity of Supply (PES) is highly elastic and the Price Elasticity of Demand (PED) is highly inelastic, what will be the primary market outcome?
+
+
+
+A large surplus of the good will accumulate.
+
+
+The market will smoothly clear because elastic supply compensates for inelastic demand.
+
+
+A severe shortage of the good will occur.
+
+
+Quantity demanded will rise to match the expanded supply.
+
+
+1 point
+6.
+Question 6
+Which of the following scenarios would cause an inward (leftward) shift of an economy's entire Production Possibility Frontier (PPF)?
+
+
+
+Firms across the country decide to lower prices to clear unsold retail inventory.
+
+
+The government reallocates public funding away from consumer goods production toward infrastructure development.
+
+
+A significant portion of the country's manufacturing workforce emigrates permanently to other nations.
+
+
+Which of the following scenarios would cause an inward (leftward) shift of an economy's entire Production Possibility Frontier (PPF)?
+
+
+1 point
+7.
+Question 7
+Suppose the cross-price elasticity of demand between Good X and Good Y is calculated to be +1.5. If the price of Good Y increases by 20%, while the government simultaneously implements an improved production technology that lowers the cost of producing Good X, what is the unambiguous outcome in the market for Good X?
+
+
+
+The equilibrium price of Good X will remain perfectly stable.
+
+
+The equilibrium price of Good X will increase.
+
+
+The equilibrium quantity of Good X will increase
+
+
+The equilibrium quantity of Good X will decrease.
+
+
+1 point
+8.
+Question 8
+An economy transitions from a pure command economic system toward a mixed market system. During this transition, who primarily assumes the responsibility for resolving the fundamental economic question of 'for whom to produce' goods and services?
+
+
+
+The price mechanism and consumers' willingness and ability to pay.
+
+
+Industrial workers based strictly on their total hours of physical labor output.
+
+
+A centralized state planning committee distributing goods based on perceived social need.
+
+
+An equal distribution network mandated by localized worker cooperatives.
+
+
+1 point
+9.
+Question 9
+A perfectly linear, downward-sloping demand curve for a specialized software application stretches from the price axis to the quantity axis. As you move downward and rightward along this line from a very high price toward a very low price, how does the Price Elasticity of Demand (PED) change?
+
+
+
+It remains perfectly constant throughout the entire length of the line.
+
+
+It continuously increases from inelastic to elastic.
+
+
+It remains perfectly unit-elastic at every distinct coordinate point.
+
+
+It continuously decreases from elastic to inelastic.
+
+
+1 point
+10.
+Question 10
+If the government imposes a per-unit tax on the producers of a consumer good, under which combination of elasticities will the consumer bear the absolute maximum possible burden of this tax?
+
+
+
+Highly elastic demand combined with highly inelastic supply.
+
+
+Perfecty elastic demand combined with perfectly inelastic supply.
+
+
+Perfecty inelastic demand combined with perfectly elastic supply
+
+
+Unit-elastic demand combined with unit-elastic supply.
+
