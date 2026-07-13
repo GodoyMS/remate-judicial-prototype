@@ -57,8 +57,8 @@ export function PremiumSuggestionsSection({
     return (
       <Card className="rounded-2xl border-border/60 border-dashed">
         <CardContent className="py-12 text-center">
-          <div className="size-14 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-4">
-            <Crown className="size-7 text-amber-600" />
+          <div className="size-14 rounded-2xl bg-premium/10 flex items-center justify-center mx-auto mb-4">
+            <Crown className="size-7 text-premium" />
           </div>
           <p className="text-sm font-semibold text-foreground">
             No hay candidatos Premium pendientes
@@ -85,7 +85,7 @@ export function PremiumSuggestionsSection({
             <Card
               className={cn(
                 "rounded-2xl border-border/60 overflow-hidden h-full transition-shadow hover:shadow-md",
-                candidate.score >= 70 && "border-amber-200/80 bg-gradient-to-br from-amber-50/30 to-background"
+                candidate.score >= 70 && "border-premium/30 bg-gradient-to-br from-premium/10 to-background"
               )}
             >
               <CardHeader className="pb-3">
@@ -95,8 +95,8 @@ export function PremiumSuggestionsSection({
                       className={cn(
                         "size-11 rounded-xl flex items-center justify-center text-xs font-bold shrink-0",
                         candidate.score >= 70
-                          ? "bg-amber-100 text-amber-800"
-                          : "bg-slate-100 text-slate-700"
+                          ? "bg-premium/20 text-premium"
+                          : "bg-muted text-muted-foreground"
                       )}
                     >
                       {candidate.user.name
@@ -119,8 +119,8 @@ export function PremiumSuggestionsSection({
                     className={cn(
                       "shrink-0 text-[10px] font-bold tabular-nums",
                       candidate.score >= 70
-                        ? "border-amber-300 bg-amber-50 text-amber-700"
-                        : "border-slate-200"
+                        ? "border-premium/30 bg-premium/10 text-premium"
+                        : "border-border"
                     )}
                   >
                     {candidate.score}%
@@ -136,7 +136,7 @@ export function PremiumSuggestionsSection({
                   </div>
                   <Progress
                     value={candidate.score}
-                    className={cn("h-2", candidate.score >= 70 && "[&>div]:bg-amber-500")}
+                    className={cn("h-2", candidate.score >= 70 && "[&>div]:bg-premium")}
                   />
                 </div>
 
@@ -173,7 +173,7 @@ export function PremiumSuggestionsSection({
                         key={reason}
                         className="flex items-start gap-1.5 text-[11px] text-foreground/85 leading-snug"
                       >
-                        <Sparkles className="size-3 shrink-0 mt-0.5 text-amber-500" />
+                        <Sparkles className="size-3 shrink-0 mt-0.5 text-premium" />
                         {reason}
                       </li>
                     ))}
@@ -183,7 +183,7 @@ export function PremiumSuggestionsSection({
                 <div className="flex gap-2 pt-1">
                   <Button
                     size="sm"
-                    className="flex-1 rounded-xl bg-amber-600 hover:bg-amber-700 text-white h-9"
+                    className="flex-1 rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground h-9"
                     onClick={() => handleUpgradeClick(candidate)}
                   >
                     <Crown className="size-3.5 mr-1.5" />
@@ -206,15 +206,15 @@ export function PremiumSuggestionsSection({
         ))}
       </div>
 
-      <div className="mt-4 flex items-center justify-between rounded-xl border border-amber-200/60 bg-amber-50/40 px-4 py-3">
+      <div className="mt-4 flex items-center justify-between rounded-xl border border-premium/20 bg-premium/10 px-4 py-3">
         <div className="flex items-center gap-2">
-          <Crown className="size-4 text-amber-600 shrink-0" />
-          <p className="text-xs text-amber-900">
+          <Crown className="size-4 text-premium shrink-0" />
+          <p className="text-xs text-premium">
             <strong>{localCandidates.length} inversores</strong> identificados como candidatos
             Premium según capital, actividad y rendimiento.
           </p>
         </div>
-        <Button variant="ghost" size="sm" className="rounded-lg text-amber-700 hover:text-amber-800 shrink-0" asChild>
+        <Button variant="ghost" size="sm" className="rounded-lg text-premium hover:text-premium/80 shrink-0" asChild>
           <Link href="/admin/users">
             Ver todos los usuarios
             <ArrowRight className="size-3.5 ml-1" />

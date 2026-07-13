@@ -55,20 +55,20 @@ export default function CumplimientoRegulatorioPage() {
         ]}
       />
 
-      <section className="border-b border-[#163300]/8 bg-white py-12">
+      <section className="border-b border-border bg-white py-12">
         <div className="mx-auto max-w-7xl section-padding">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {compliancePillars.map((pillar, i) => (
               <div
                 key={pillar.title}
-                className="group rounded-2xl border border-[#163300]/8 bg-[#F5F9F2]/50 p-5 transition-all hover:border-[#9FE870]/40 hover:shadow-md"
+                className="group rounded-2xl border border-border bg-muted/50 p-5 transition-all hover:border-primary/40 hover:shadow-md"
                 style={{ animationDelay: `${i * 50}ms` }}
               >
-                <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-[#9FE870]/25 transition-colors group-hover:bg-[#9FE870]/40">
-                  <pillar.icon className="size-5 text-[#163300]" />
+                <div className="mb-3 flex size-11 items-center justify-center rounded-xl bg-primary/25 transition-colors group-hover:bg-primary/40">
+                  <pillar.icon className="size-5 text-foreground" />
                 </div>
-                <h3 className="font-bold text-[#163300]">{pillar.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-[#163300]/60">{pillar.desc}</p>
+                <h3 className="font-bold text-foreground">{pillar.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{pillar.desc}</p>
               </div>
             ))}
           </div>
@@ -136,11 +136,11 @@ export default function CumplimientoRegulatorioPage() {
             </p>
             <p>
               Para consultas de cumplimiento:{" "}
-              <a href="mailto:compliance@remata.pe" className="font-medium text-[#163300] underline">
+              <a href="mailto:compliance@remata.pe" className="font-medium text-primary underline">
                 compliance@remata.pe
               </a>
             </p>
-            <p className="text-sm text-[#163300]/50">
+            <p className="text-sm text-muted-foreground">
               Última auditoría de cumplimiento: abril 2026 — Sin observaciones
             </p>
           </LegalContentBlock>

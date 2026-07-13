@@ -53,21 +53,21 @@ const RETORNO_TYPES: {
     label: "Retorno de inversión",
     description: "Pago de ganancias al cliente por inversión exitosa",
     icon: TrendingUp,
-    color: "text-emerald-600 bg-emerald-50 border-emerald-200",
+    color: "text-success bg-success/10 border-success/20",
   },
   {
     id: "refund",
     label: "Reembolso",
     description: "Devolución por problema de pago o error en la inversión",
     icon: RotateCcw,
-    color: "text-blue-600 bg-blue-50 border-blue-200",
+    color: "text-info bg-info/10 border-info/20",
   },
   {
     id: "goal_not_reached",
     label: "Meta no alcanzada",
     description: "Devolución porque la propiedad no alcanzó el monto objetivo",
     icon: Target,
-    color: "text-amber-600 bg-amber-50 border-amber-200",
+    color: "text-warning bg-warning/10 border-warning/20",
   },
 ];
 
@@ -584,7 +584,7 @@ export function CreateRetornoDialog({
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Al confirmar, se creará el retorno con estado{" "}
-                  <span className="font-semibold text-emerald-600">Confirmado</span> y será
+                  <span className="font-semibold text-success">Confirmado</span> y será
                   visible para el cliente en su panel.
                 </p>
               </motion.div>

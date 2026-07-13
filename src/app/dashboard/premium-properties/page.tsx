@@ -62,12 +62,12 @@ export default function PremiumPropertiesPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-4 py-2.5"
+            className="flex items-center gap-2 rounded-xl bg-premium/10 border border-premium/20 px-4 py-2.5"
           >
-            <Sparkles className="size-4 text-amber-600" />
+            <Sparkles className="size-4 text-premium" />
             <div>
-              <p className="text-[10px] text-amber-700 font-medium">Tu ventaja Premium</p>
-              <p className="text-xs font-bold text-amber-900">ROI hasta 52% · Comisión 0.5%</p>
+              <p className="text-[10px] text-premium font-medium">Tu ventaja Premium</p>
+              <p className="text-xs font-bold text-premium">ROI hasta 52% · Comisión 0.5%</p>
             </div>
           </motion.div>
         )}
@@ -80,9 +80,9 @@ export default function PremiumPropertiesPage() {
       )}
 
       {isPremium && (
-        <div className="rounded-2xl border border-amber-200/60 bg-gradient-to-r from-amber-50/80 to-white p-4 mb-6 flex items-start gap-3">
-          <div className="size-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-            <Crown className="size-4 text-amber-700" />
+        <div className="rounded-2xl border border-premium/20 bg-gradient-to-r from-premium/10 to-card p-4 mb-6 flex items-start gap-3">
+          <div className="size-9 rounded-xl bg-premium/15 flex items-center justify-center shrink-0">
+            <Crown className="size-4 text-premium" />
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground">
@@ -105,8 +105,8 @@ export default function PremiumPropertiesPage() {
             className={cn(
               "text-xs font-medium px-3.5 py-1.5 rounded-full border transition-all",
               activeFilter === f.id
-                ? "bg-amber-500 text-white border-amber-500"
-                : "border-border/80 text-muted-foreground hover:border-amber-300 hover:text-foreground bg-white"
+                ? "bg-premium text-premium-foreground border-premium"
+                : "border-border/80 text-muted-foreground hover:border-premium/40 hover:text-foreground bg-card"
             )}
           >
             {f.label}

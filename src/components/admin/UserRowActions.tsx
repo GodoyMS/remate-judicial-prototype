@@ -101,7 +101,7 @@ export function UserRowActions({
             onClick={() => onToggleBlock(user)}
             className={cn(
               isBlocked
-                ? "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                ? "text-success hover:text-success/80 hover:bg-success/10"
                 : "text-destructive hover:text-destructive hover:bg-destructive/10"
             )}
           >

@@ -125,7 +125,7 @@ export function ReceiptUploadField({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={preview} alt="Vista previa" className="size-14 rounded-lg object-cover" />
             ) : (
-              <div className="flex size-14 items-center justify-center rounded-lg bg-red-50 text-red-600">
+              <div className="flex size-14 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
                 <FileText className="size-6" />
               </div>
             )}

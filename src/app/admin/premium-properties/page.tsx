@@ -43,26 +43,26 @@ const statusConfig: Record<
 > = {
   available: {
     label: "Disponible",
-    rowBorder: "border-l-amber-500",
-    badge: "bg-amber-50 text-amber-700 border-amber-200",
+    rowBorder: "border-l-warning",
+    badge: "bg-warning/10 text-warning border-warning/20",
     icon: Clock,
   },
   caught: {
     label: "Capturada",
-    rowBorder: "border-l-emerald-500",
-    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    rowBorder: "border-l-success",
+    badge: "bg-success/10 text-success border-success/20",
     icon: CheckCircle2,
   },
   expired: {
     label: "Expirada",
-    rowBorder: "border-l-red-400",
-    badge: "bg-red-50 text-red-600 border-red-200",
+    rowBorder: "border-l-destructive",
+    badge: "bg-destructive/10 text-destructive border-destructive/20",
     icon: XCircle,
   },
   converted: {
     label: "Convertida",
-    rowBorder: "border-l-blue-400",
-    badge: "bg-blue-50 text-blue-700 border-blue-200",
+    rowBorder: "border-l-info",
+    badge: "bg-info/10 text-info border-info/20",
     icon: ArrowRightLeft,
   },
 };
@@ -118,7 +118,7 @@ export default function AdminPremiumPropertiesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Crown className="size-5 text-amber-600" />
+            <Crown className="size-5 text-premium" />
             <h2 className="text-2xl font-bold tracking-tight">Propiedades Premium</h2>
           </div>
           <p className="text-sm text-muted-foreground">
@@ -128,7 +128,7 @@ export default function AdminPremiumPropertiesPage() {
         <PermissionGate module="premium_properties" showDisabled>
           <Button
             onClick={() => setCreateOpen(true)}
-            className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white shrink-0 w-full sm:w-auto"
+            className="rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground shrink-0 w-full sm:w-auto"
           >
             <Crown className="size-4 mr-2" />
             Nueva propiedad Premium
@@ -138,17 +138,17 @@ export default function AdminPremiumPropertiesPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: "Total Premium", value: stats.total, icon: Crown, color: "text-amber-600 bg-amber-50" },
-          { label: "Disponibles", value: stats.available, icon: Clock, color: "text-amber-600 bg-amber-50" },
-          { label: "Capturadas", value: stats.caught, icon: CheckCircle2, color: "text-emerald-600 bg-emerald-50" },
-          { label: "Convertidas", value: stats.converted, icon: ArrowRightLeft, color: "text-blue-600 bg-blue-50" },
+          { label: "Total Premium", value: stats.total, icon: Crown, color: "text-premium bg-premium/10" },
+          { label: "Disponibles", value: stats.available, icon: Clock, color: "text-warning bg-warning/10" },
+          { label: "Capturadas", value: stats.caught, icon: CheckCircle2, color: "text-success bg-success/10" },
+          { label: "Convertidas", value: stats.converted, icon: ArrowRightLeft, color: "text-info bg-info/10" },
         ].map((s, i) => (
           <motion.div
             key={s.label}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
-            className="rounded-xl border border-border/60 bg-white px-4 py-3"
+            className="rounded-xl border border-border/60 bg-card px-4 py-3"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -181,8 +181,8 @@ export default function AdminPremiumPropertiesPage() {
               className={cn(
                 "text-xs font-medium px-3 py-1.5 rounded-full border transition-all",
                 statusFilter === s
-                  ? "bg-amber-500 text-white border-amber-500"
-                  : "border-border text-muted-foreground hover:border-amber-300 bg-white"
+                  ? "bg-premium text-premium-foreground border-premium"
+                  : "border-border text-muted-foreground hover:border-premium/40 bg-card"
               )}
             >
               {s === "all" ? "Todas" : statusConfig[s as PremiumPropertyAdminStatus]?.label ?? s}
@@ -191,7 +191,7 @@ export default function AdminPremiumPropertiesPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-border/60 bg-white overflow-hidden">
+      <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/30">
@@ -211,7 +211,7 @@ export default function AdminPremiumPropertiesPage() {
               return (
                 <TableRow
                   key={p.id}
-                  className={cn("border-l-4", status.rowBorder, isCaught && "bg-emerald-50/20")}
+                  className={cn("border-l-4", status.rowBorder, isCaught && "bg-success/10")}
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -235,7 +235,7 @@ export default function AdminPremiumPropertiesPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-bold text-amber-700 flex items-center gap-0.5">
+                    <span className="text-sm font-bold text-premium flex items-center gap-0.5">
                       <TrendingUp className="size-3" />
                       {p.premiumRoi}%
                     </span>
@@ -251,7 +251,7 @@ export default function AdminPremiumPropertiesPage() {
                   <TableCell>
                     {isCaught ? (
                       <div>
-                        <p className="text-sm font-medium text-emerald-700">
+                        <p className="text-sm font-medium text-success">
                           {p.caughtByUserName}
                         </p>
                         <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">

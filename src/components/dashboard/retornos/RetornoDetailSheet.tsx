@@ -35,19 +35,19 @@ const retornoTypeConfig = {
   roi_return: {
     label: "Retorno de inversión",
     icon: TrendingUp,
-    color: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    color: "border-success/20 bg-success/10 text-success",
     description: "Ganancia generada por tu inversión en esta propiedad",
   },
   refund: {
     label: "Reembolso",
     icon: RotateCcw,
-    color: "border-blue-200 bg-blue-50 text-blue-700",
+    color: "border-info/20 bg-info/10 text-info",
     description: "Devolución por un problema en el proceso de inversión",
   },
   goal_not_reached: {
     label: "Devolución por meta no alcanzada",
     icon: Target,
-    color: "border-amber-200 bg-amber-50 text-amber-700",
+    color: "border-warning/20 bg-warning/10 text-warning",
     description: "La propiedad no alcanzó el objetivo de inversión",
   },
 };
@@ -55,17 +55,17 @@ const retornoTypeConfig = {
 const ticketStatusConfig = {
   flagged: {
     label: "En observación",
-    color: "border-amber-200 bg-amber-50 text-amber-700",
+    color: "border-warning/20 bg-warning/10 text-warning",
     description: "Tu observación fue recibida y está pendiente de revisión",
   },
   in_review: {
     label: "En revisión",
-    color: "border-blue-200 bg-blue-50 text-blue-700",
+    color: "border-info/20 bg-info/10 text-info",
     description: "Un asesor está revisando tu caso",
   },
   resolved: {
     label: "Resuelto",
-    color: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    color: "border-success/20 bg-success/10 text-success",
     description: "Tu observación fue atendida",
   },
 };
@@ -116,7 +116,7 @@ export function RetornoDetailSheet({ retorno, open, onOpenChange, userName }: Re
               <p className="mt-2 text-4xl font-bold tracking-tight text-foreground">
                 {formatCurrency(retorno.amount, retorno.currency)}
               </p>
-              <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-emerald-600">
+              <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-success">
                 <CheckCircle2 className="size-3.5" />
                 Confirmado
               </div>
@@ -224,8 +224,8 @@ export function RetornoDetailSheet({ retorno, open, onOpenChange, userName }: Re
                   <p className="text-xs text-muted-foreground">{ticketCfg?.description}</p>
 
                   {ticket.status === "resolved" && resolvedActivity && (
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 space-y-1.5">
-                      <p className="text-xs font-semibold text-emerald-700">Respuesta del equipo</p>
+                    <div className="rounded-xl border border-success/20 bg-success/10 p-3 space-y-1.5">
+                      <p className="text-xs font-semibold text-success">Respuesta del equipo</p>
                       <RichTextContent html={resolvedActivity.description ?? ""} />
                       {resolvedActivity.attachments && resolvedActivity.attachments.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-2">
@@ -260,7 +260,7 @@ export function RetornoDetailSheet({ retorno, open, onOpenChange, userName }: Re
                       <Button
                         size="sm"
                         variant="outline"
-                        className="rounded-xl gap-1.5 text-orange-600 border-orange-200 hover:bg-orange-50"
+                        className="rounded-xl gap-1.5 text-warning border-warning/20 hover:bg-warning/10"
                         onClick={() => setReopenOpen(true)}
                       >
                         <RotateCcw className="size-4" />

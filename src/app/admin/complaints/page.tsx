@@ -63,15 +63,15 @@ const statusLabels: Record<ComplaintStatus, string> = {
 };
 
 const statusColors: Record<ComplaintStatus, string> = {
-  pending: "border-amber-200 bg-amber-50 text-amber-700",
-  in_review: "border-blue-200 bg-blue-50 text-blue-700",
-  resolved: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  pending: "border-warning/20 bg-warning/10 text-warning",
+  in_review: "border-info/20 bg-info/10 text-info",
+  resolved: "border-success/20 bg-success/10 text-success",
 };
 
 const borderColors: Record<ComplaintStatus, string> = {
-  pending: "border-l-amber-500",
-  in_review: "border-l-blue-500",
-  resolved: "border-l-emerald-500",
+  pending: "border-l-warning",
+  in_review: "border-l-info",
+  resolved: "border-l-success",
 };
 
 export default function AdminComplaintsPage() {
@@ -175,28 +175,28 @@ export default function AdminComplaintsPage() {
             value: String(stats.total),
             sub: "reclamaciones",
             icon: BookOpen,
-            accent: "text-blue-600 bg-blue-50",
+            accent: "text-info bg-info/10",
           },
           {
             label: "Pendientes",
             value: String(stats.pending),
             sub: "sin atender",
             icon: Clock,
-            accent: "text-amber-600 bg-amber-50",
+            accent: "text-warning bg-warning/10",
           },
           {
             label: "En revisión",
             value: String(stats.inReview),
             sub: "en proceso",
             icon: Eye,
-            accent: "text-violet-600 bg-violet-50",
+            accent: "text-info bg-info/10",
           },
           {
             label: "Resueltas",
             value: String(stats.resolved),
             sub: "respondidas",
             icon: CheckCircle2,
-            accent: "text-emerald-600 bg-emerald-50",
+            accent: "text-success bg-success/10",
           },
         ].map((s, i) => (
           <motion.div

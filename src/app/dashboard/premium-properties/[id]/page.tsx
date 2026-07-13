@@ -82,7 +82,7 @@ export default function PremiumPropertyDetailPage({
             <h2 className="text-xl font-bold truncate">{property.name}</h2>
             <PremiumExclusiveBadge />
             {caughtByMe && (
-              <Badge className="bg-emerald-500 text-white text-[10px]">
+              <Badge className="bg-success text-success-foreground text-[10px]">
                 <CheckCircle2 className="size-3 mr-1" />
                 Capturada por ti
               </Badge>
@@ -111,7 +111,7 @@ export default function PremiumPropertyDetailPage({
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-white shadow-sm">
+            <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-card shadow-sm">
               <Carousel className="w-full">
                 <CarouselContent>
                   {property.images.map((img, i) => (
@@ -156,28 +156,28 @@ export default function PremiumPropertyDetailPage({
           </Card>
 
           {caughtByMe && isPremium && (
-            <Card className="rounded-2xl border-amber-200 bg-gradient-to-br from-amber-50/50 to-white">
+            <Card className="rounded-2xl border-premium/20 bg-gradient-to-br from-premium/10 to-card">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Crown className="size-4 text-amber-600" />
+                  <Crown className="size-4 text-premium" />
                   Tu inversión exclusiva
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="rounded-xl bg-white border border-amber-100 p-4">
+                  <div className="rounded-xl bg-card border border-premium/15 p-4">
                     <p className="text-xs text-muted-foreground">Inversión total</p>
                     <p className="text-xl font-bold text-foreground mt-1">
                       {formatCurrency(property.totalValue, property.currency)}
                     </p>
-                    <p className="text-[10px] text-amber-700 mt-1">100% de la propiedad</p>
+                    <p className="text-[10px] text-premium mt-1">100% de la propiedad</p>
                   </div>
-                  <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-4">
-                    <p className="text-xs text-emerald-700">Retorno estimado</p>
-                    <p className="text-xl font-bold text-emerald-700 mt-1">
+                  <div className="rounded-xl bg-success/10 border border-success/20 p-4">
+                    <p className="text-xs text-success">Retorno estimado</p>
+                    <p className="text-xl font-bold text-success mt-1">
                       {formatCurrency(estimatedReturn, property.currency)}
                     </p>
-                    <p className="text-[10px] text-emerald-600 mt-1">ROI {property.premiumRoi}%</p>
+                    <p className="text-[10px] text-success mt-1">ROI {property.premiumRoi}%</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -192,8 +192,8 @@ export default function PremiumPropertyDetailPage({
             <Card className="rounded-2xl border-border/60 bg-muted/30">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-xl bg-slate-200 flex items-center justify-center shrink-0">
-                    <User className="size-5 text-slate-600" />
+                  <div className="size-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                    <User className="size-5 text-muted-foreground" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-foreground">Propiedad ya capturada</p>
@@ -213,20 +213,20 @@ export default function PremiumPropertyDetailPage({
           <Card className={cn(
             "rounded-2xl overflow-hidden",
             isAvailable && isPremium
-              ? "border-amber-200 ring-1 ring-amber-100"
+              ? "border-premium/20 ring-1 ring-premium/15"
               : "border-border/60"
           )}>
             <div className={cn(
               "p-4",
               isAvailable && isPremium
-                ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white"
+                ? "bg-gradient-to-br from-premium to-premium/80 text-premium-foreground"
                 : "bg-muted/30"
             )}>
               {isAvailable && isPremium ? (
                 <>
-                  <p className="text-xs font-medium text-white/80 mb-1">ROI Premium exclusivo</p>
+                  <p className="text-xs font-medium text-premium-foreground/80 mb-1">ROI Premium exclusivo</p>
                   <p className="text-4xl font-bold">{property.premiumRoi}%</p>
-                  <p className="text-xs text-white/70 mt-1">
+                  <p className="text-xs text-premium-foreground/70 mt-1">
                     +{roiDiff}% vs mercado estándar ({property.standardRoi}%)
                   </p>
                 </>
@@ -253,14 +253,14 @@ export default function PremiumPropertyDetailPage({
                     <Percent className="size-3.5" />
                     Inversión requerida
                   </span>
-                  <span className="font-semibold text-amber-700">100%</span>
+                  <span className="font-semibold text-premium">100%</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1.5">
                     <TrendingUp className="size-3.5" />
                     Ganancia estimada
                   </span>
-                  <span className="font-bold text-emerald-600">
+                  <span className="font-bold text-success">
                     {formatCurrency(estimatedReturn, property.currency)}
                   </span>
                 </div>
@@ -277,7 +277,7 @@ export default function PremiumPropertyDetailPage({
                   {isAvailable && (
                     <Button
                       asChild
-                      className="w-full min-h-11 h-auto py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold whitespace-normal text-center"
+                      className="w-full min-h-11 h-auto py-2.5 rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold whitespace-normal text-center"
                     >
                       <Link href={`/dashboard/premium-invest?property=${property.id}`} className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
                         <span className="inline-flex items-center gap-2">
@@ -294,7 +294,7 @@ export default function PremiumPropertyDetailPage({
                     <Button
                       asChild
                       variant="outline"
-                      className="w-full h-11 rounded-xl border-amber-300"
+                      className="w-full h-11 rounded-xl border-premium/40"
                     >
                       <Link href="/dashboard/my-investments?tab=premium">
                         Ver en mis inversiones
@@ -317,7 +317,7 @@ export default function PremiumPropertyDetailPage({
               ) : (
                 <Button
                   asChild
-                  className="w-full h-11 rounded-xl bg-[#163300] text-[#9FE870] hover:bg-[#163300]/90 font-semibold"
+                  className="w-full h-11 rounded-xl bg-premium text-premium-foreground hover:bg-premium/90 font-semibold"
                 >
                   <Link href="/dashboard/account?section=premium">
                     <Crown className="size-4 mr-2" />

@@ -33,14 +33,14 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const topicColors: Record<string, string> = {
-  Inversiones: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  KYC: "bg-blue-50 text-blue-700 border-blue-200",
-  Regulación: "bg-violet-50 text-violet-700 border-violet-200",
-  Pagos: "bg-amber-50 text-amber-700 border-amber-200",
-  Propiedades: "bg-cyan-50 text-cyan-700 border-cyan-200",
-  Riesgos: "bg-red-50 text-red-700 border-red-200",
-  Proceso: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  Soporte: "bg-orange-50 text-orange-700 border-orange-200",
+  Inversiones: "bg-success/10 text-success border-success/20",
+  KYC: "bg-info/10 text-info border-info/20",
+  Regulación: "bg-chart-1/10 text-chart-1 border-chart-1/20",
+  Pagos: "bg-warning/10 text-warning border-warning/20",
+  Propiedades: "bg-chart-2/10 text-chart-2 border-chart-2/20",
+  Riesgos: "bg-destructive/10 text-destructive border-destructive/20",
+  Proceso: "bg-chart-3/10 text-chart-3 border-chart-3/20",
+  Soporte: "bg-chart-4/10 text-chart-4 border-chart-4/20",
 };
 
 function getInitials(name: string) {
@@ -168,7 +168,7 @@ export default function AdminChatbotConversationsPage() {
                 Conversaciones del chatbot
               </h2>
               {stats.activeCount > 0 && (
-                <Badge className="rounded-lg bg-[#163300] text-[#9FE870] hover:bg-[#163300]/90">
+                <Badge className="rounded-lg bg-primary text-primary-foreground hover:bg-primary/90">
                   {stats.activeCount} activas
                 </Badge>
               )}
@@ -192,28 +192,28 @@ export default function AdminChatbotConversationsPage() {
             value: String(conversations.length),
             sub: "conversaciones",
             icon: MessageSquare,
-            accent: "text-[#163300] bg-[#9FE870]/20",
+            accent: "text-primary bg-primary/10",
           },
           {
             label: "Hoy",
             value: String(stats.todayCount),
             sub: "nuevas sesiones",
             icon: TrendingUp,
-            accent: "text-emerald-600 bg-emerald-50",
+            accent: "text-success bg-success/10",
           },
           {
             label: "Activas",
             value: String(stats.activeCount),
             sub: "en curso",
             icon: Clock,
-            accent: "text-amber-600 bg-amber-50",
+            accent: "text-warning bg-warning/10",
           },
           {
             label: "Promedio",
             value: String(stats.avgMessages),
             sub: "msgs / conversación",
             icon: Users,
-            accent: "text-violet-600 bg-violet-50",
+            accent: "text-chart-1 bg-chart-1/10",
           },
         ].map((s, i) => (
           <motion.div
@@ -249,12 +249,12 @@ export default function AdminChatbotConversationsPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className={cn(
-            "mb-4 shrink-0 items-center gap-2 rounded-xl border border-[#9FE870]/30 bg-[#9FE870]/10 px-4 py-2.5",
+            "mb-4 shrink-0 items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5",
             isMobile && mobileShowThread ? "hidden" : "flex",
           )}
         >
-          <Sparkles className="size-4 shrink-0 text-[#163300]" />
-          <p className="text-xs text-[#163300]">
+          <Sparkles className="size-4 shrink-0 text-primary" />
+          <p className="text-xs text-primary">
             Tema más consultado:{" "}
             <span className="font-semibold">{stats.leadingTopic[0]}</span> (
             {stats.leadingTopic[1]} conversaciones)
@@ -335,15 +335,15 @@ export default function AdminChatbotConversationsPage() {
                       onClick={() => selectConversation(conv.id)}
                       className={cn(
                         "flex w-full gap-3 border-b border-border/30 px-4 py-3.5 text-left transition-colors hover:bg-muted/30",
-                        isSelected && "bg-[#9FE870]/10 hover:bg-[#9FE870]/15",
-                        conv.status === "active" && !isSelected && "border-l-[3px] border-l-[#9FE870]"
+                        isSelected && "bg-primary/10 hover:bg-primary/15",
+                        conv.status === "active" && !isSelected && "border-l-[3px] border-l-primary"
                       )}
                     >
                       <div
                         className={cn(
                           "flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-bold",
                           isSelected
-                            ? "bg-[#163300] text-[#9FE870]"
+                            ? "bg-primary text-primary-foreground"
                             : "bg-muted text-muted-foreground"
                         )}
                       >
@@ -391,7 +391,7 @@ export default function AdminChatbotConversationsPage() {
           {/* Thread panel */}
           <div
             className={cn(
-              "flex min-h-0 flex-col bg-[#FAFBF9]",
+              "flex min-h-0 flex-col bg-muted/20",
               isMobile && !mobileShowThread && "hidden"
             )}
           >
@@ -419,7 +419,7 @@ export default function AdminChatbotConversationsPage() {
                     )}
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex size-11 items-center justify-center rounded-2xl bg-[#163300] text-sm font-bold text-[#9FE870]">
+                        <div className="flex size-11 items-center justify-center rounded-2xl bg-primary text-sm font-bold text-primary-foreground">
                           {getInitials(selected.userName)}
                         </div>
                         <div>
@@ -438,7 +438,7 @@ export default function AdminChatbotConversationsPage() {
                           className={cn(
                             "rounded-lg text-[10px]",
                             selected.status === "active"
-                              ? "border-[#9FE870]/50 bg-[#9FE870]/15 text-[#163300]"
+                              ? "border-primary/50 bg-primary/15 text-primary"
                               : "border-border text-muted-foreground"
                           )}
                         >
@@ -481,8 +481,8 @@ export default function AdminChatbotConversationsPage() {
                   animate={{ opacity: 1 }}
                   className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center"
                 >
-                  <div className="flex size-16 items-center justify-center rounded-2xl bg-[#163300]/10">
-                    <Bot className="size-8 text-[#163300]" />
+                  <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10">
+                    <Bot className="size-8 text-primary" />
                   </div>
                   <div>
                     <p className="text-base font-semibold text-foreground">

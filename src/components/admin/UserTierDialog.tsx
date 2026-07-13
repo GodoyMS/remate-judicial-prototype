@@ -55,14 +55,14 @@ const tierMeta: Record<
   standard: {
     label: "Standard",
     description: "Plan base para todos los usuarios registrados",
-    accent: "text-slate-600",
-    iconBg: "bg-slate-100 text-slate-600",
+    accent: "text-muted-foreground",
+    iconBg: "bg-muted text-muted-foreground",
   },
   premium: {
     label: "Premium",
     description: "Experiencia completa con beneficios exclusivos",
-    accent: "text-amber-700",
-    iconBg: "bg-amber-100 text-amber-700",
+    accent: "text-premium",
+    iconBg: "bg-premium/10 text-premium",
   },
 };
 
@@ -104,8 +104,8 @@ export function UserTierDialog({
           className={cn(
             "px-6 pt-6 pb-5 border-b border-border/40",
             isUpgrade
-              ? "bg-gradient-to-br from-amber-50/90 via-background to-background"
-              : "bg-gradient-to-br from-slate-50/80 via-background to-background"
+              ? "bg-gradient-to-br from-premium/10 via-background to-background"
+              : "bg-gradient-to-br from-muted/40 via-background to-background"
           )}
         >
           <DialogHeader className="text-left space-y-3">
@@ -113,7 +113,7 @@ export function UserTierDialog({
               <div
                 className={cn(
                   "size-12 rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 ring-2 ring-background shadow-sm",
-                  isUpgrade ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-700"
+                  isUpgrade ? "bg-premium/15 text-premium" : "bg-muted text-muted-foreground"
                 )}
               >
                 {user.name
@@ -169,8 +169,8 @@ export function UserTierDialog({
               className={cn(
                 "rounded-xl border p-4",
                 isUpgrade
-                  ? "border-amber-200/80 bg-amber-50/40"
-                  : "border-slate-200/80 bg-slate-50/50"
+                  ? "border-premium/20 bg-premium/10"
+                  : "border-border bg-muted/30"
               )}
             >
               <div className="flex items-start gap-3 mb-3">
@@ -204,7 +204,7 @@ export function UserTierDialog({
                     <CheckCircle2
                       className={cn(
                         "size-3.5 shrink-0 mt-0.5",
-                        isUpgrade ? "text-amber-600" : "text-slate-500"
+                        isUpgrade ? "text-premium" : "text-muted-foreground"
                       )}
                     />
                     {benefit}
@@ -255,7 +255,7 @@ export function UserTierDialog({
             disabled={loading}
             className={cn(
               "rounded-xl min-w-[140px]",
-              isUpgrade && "bg-amber-600 hover:bg-amber-700 text-white"
+              isUpgrade && "bg-premium hover:bg-premium/90 text-premium-foreground"
             )}
           >
             {loading ? (
@@ -293,15 +293,15 @@ function TierPill({
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all",
         tier === "premium"
           ? highlight
-            ? "border-amber-300 bg-amber-100 text-amber-800 shadow-sm"
+            ? "border-premium/40 bg-premium/20 text-premium shadow-sm"
             : active
-              ? "border-amber-200 bg-amber-50 text-amber-700"
-              : "border-amber-100 bg-background text-amber-600"
+              ? "border-premium/20 bg-premium/10 text-premium"
+              : "border-premium/10 bg-background text-premium"
           : highlight
-            ? "border-slate-300 bg-slate-100 text-slate-800 shadow-sm"
+            ? "border-border bg-muted text-foreground shadow-sm"
             : active
-              ? "border-slate-200 bg-slate-50 text-slate-700"
-              : "border-slate-100 bg-background text-slate-600"
+              ? "border-border bg-muted/50 text-foreground"
+              : "border-border/50 bg-background text-muted-foreground"
       )}
     >
       {tier === "premium" ? <Crown className="size-3" /> : <User className="size-3" />}

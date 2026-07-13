@@ -81,7 +81,7 @@ export default function PoliticaDePrivacidadPage() {
             </ul>
             <p>
               Para ejercer estos derechos, escríbenos a{" "}
-              <a href="mailto:privacidad@remata.pe" className="font-medium text-[#163300] underline">
+              <a href="mailto:privacidad@remata.pe" className="font-medium text-primary underline">
                 privacidad@remata.pe
               </a>
             </p>
@@ -96,7 +96,7 @@ export default function PoliticaDePrivacidadPage() {
               <li>Entidades bancarias para procesamiento de pagos</li>
               <li>Autoridades regulatorias cuando la ley lo exija</li>
             </ul>
-            <p className="text-sm text-[#163300]/50">
+            <p className="text-sm text-muted-foreground">
               Última actualización: 1 de junio de 2026
             </p>
           </LegalContentBlock>

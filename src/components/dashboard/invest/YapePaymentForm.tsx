@@ -233,7 +233,7 @@ export function YapePaymentForm({ defaultAmount, currency = "PEN", value, onChan
             </p>
           </div>
           {phoneComplete && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-[10px] font-semibold text-green-700">
+            <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-1 text-[10px] font-semibold text-success">
               <CheckCircle2 className="size-3" />
               Listo
             </span>
@@ -281,7 +281,7 @@ export function YapePaymentForm({ defaultAmount, currency = "PEN", value, onChan
             </p>
           </div>
           {codeComplete && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-[10px] font-semibold text-green-700">
+            <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-1 text-[10px] font-semibold text-success">
               <CheckCircle2 className="size-3" />
               Listo
             </span>

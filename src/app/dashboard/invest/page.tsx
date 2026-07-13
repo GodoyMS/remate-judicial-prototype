@@ -209,7 +209,7 @@ function InvestPageContent() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Retorno estimado</span>
-              <span className="font-bold text-green-600">{formatCurrency(parseFloat(estimatedReturn), propertyCurrency)} ({property?.roi})</span>
+              <span className="font-bold text-success">{formatCurrency(parseFloat(estimatedReturn), propertyCurrency)} ({property?.roi})</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Método de pago</span>
@@ -302,7 +302,7 @@ function InvestPageContent() {
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <CurrencyBadge currency={p.currency} />
                         <span className="text-xs font-medium text-foreground">{p.price}</span>
-                        <span className="text-xs font-bold text-green-600">{p.roi} ROI</span>
+                        <span className="text-xs font-bold text-success">{p.roi} ROI</span>
                         <span className="text-xs text-muted-foreground">{p.deadline}</span>
                       </div>
                     </div>
@@ -350,7 +350,7 @@ function InvestPageContent() {
                     <p className="text-sm font-semibold text-foreground">{property.name}</p>
                     <CurrencyBadge currency={property.currency} />
                   </div>
-                  <p className="text-xs text-green-600 font-bold">{property.roi} retorno estimado</p>
+                  <p className="text-xs text-success font-bold">{property.roi} retorno estimado</p>
                 </div>
               </div>
 
@@ -397,14 +397,14 @@ function InvestPageContent() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-5 rounded-xl bg-green-50 border border-green-200 p-4 flex items-center gap-3"
+                  className="mt-5 rounded-xl bg-success/10 border border-success/20 p-4 flex items-center gap-3"
                 >
-                  <div className="size-9 rounded-xl bg-green-600 flex items-center justify-center">
-                    <TrendingUp className="size-4 text-white" />
+                  <div className="size-9 rounded-xl bg-success flex items-center justify-center">
+                    <TrendingUp className="size-4 text-success-foreground" />
                   </div>
                   <div>
-                    <p className="text-xs text-green-700 font-medium">Retorno estimado al año</p>
-                    <p className="text-xl font-bold text-green-700">{formatCurrency(parseFloat(estimatedReturn), propertyCurrency)}</p>
+                    <p className="text-xs text-success font-medium">Retorno estimado al año</p>
+                    <p className="text-xl font-bold text-success">{formatCurrency(parseFloat(estimatedReturn), propertyCurrency)}</p>
                   </div>
                 </motion.div>
               )}
@@ -552,7 +552,7 @@ function InvestPageContent() {
                 ].map(([k, v]) => (
                   <div key={k} className="flex justify-between items-center py-2 border-b border-border/40 last:border-0">
                     <span className="text-sm text-muted-foreground">{k}</span>
-                    <span className={`text-sm font-semibold ${k === "Retorno estimado" ? "text-green-600" : "text-foreground"}`}>{v}</span>
+                    <span className={`text-sm font-semibold ${k === "Retorno estimado" ? "text-success" : "text-foreground"}`}>{v}</span>
                   </div>
                 ))}
               </div>

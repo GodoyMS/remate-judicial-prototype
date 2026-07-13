@@ -79,7 +79,7 @@ export function AdminPermissionsPanel({
               </CardDescription>
             </div>
             {isSuperAdmin ? (
-              <Badge className="self-start bg-violet-100 text-violet-700 border-violet-200 hover:bg-violet-100">
+              <Badge className="self-start bg-info/10 text-info border-info/20 hover:bg-info/10">
                 <Lock className="size-3 mr-1" />
                 Super Admin
               </Badge>
@@ -114,8 +114,8 @@ export function AdminPermissionsPanel({
                 key={module}
                 className={cn(
                   "flex items-center justify-between gap-3 rounded-xl border border-border/50 px-3.5 py-2.5 transition-colors",
-                  level === "write" && "bg-emerald-50/30",
-                  level === "read" && "bg-sky-50/30",
+                  level === "write" && "bg-success/10",
+                  level === "read" && "bg-info/10",
                   level === "none" && "opacity-40"
                 )}
               >

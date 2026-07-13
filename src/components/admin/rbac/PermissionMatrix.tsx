@@ -69,9 +69,9 @@ interface LevelMeta {
 }
 
 const LEVELS: LevelMeta[] = [
-  { value: "none", label: "Sin acceso", icon: Ban, activeBg: "bg-slate-400", accent: "text-slate-500" },
-  { value: "read", label: "Lectura", icon: Eye, activeBg: "bg-sky-500", accent: "text-sky-600" },
-  { value: "write", label: "Total", icon: ShieldCheck, activeBg: "bg-emerald-500", accent: "text-emerald-600" },
+  { value: "none", label: "Sin acceso", icon: Ban, activeBg: "bg-muted-foreground", accent: "text-muted-foreground" },
+  { value: "read", label: "Lectura", icon: Eye, activeBg: "bg-info", accent: "text-info" },
+  { value: "write", label: "Total", icon: ShieldCheck, activeBg: "bg-success", accent: "text-success" },
 ];
 
 const PRESETS: { level: PermissionLevel; label: string }[] = [
@@ -112,7 +112,7 @@ export function PermissionMatrix({
       {isInteractive && (
         <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-muted/40 px-2.5 py-2">
           <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground pr-0.5">
-            <Sparkles className="size-3 text-violet-500" />
+            <Sparkles className="size-3 text-accent-foreground" />
             Aplicar a todos
           </span>
           {PRESETS.map((preset) => (
@@ -146,8 +146,8 @@ export function PermissionMatrix({
                 <div
                   className={cn(
                     "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors",
-                    currentLevel === "write" && "bg-emerald-100 text-emerald-600",
-                    currentLevel === "read" && "bg-sky-100 text-sky-600",
+                    currentLevel === "write" && "bg-success/10 text-success",
+                    currentLevel === "read" && "bg-info/10 text-info",
                     currentLevel === "none" && "bg-muted text-muted-foreground"
                   )}
                 >

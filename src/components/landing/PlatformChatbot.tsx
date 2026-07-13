@@ -67,7 +67,7 @@ function formatMessageContent(content: string) {
             href={node.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-[#163300] underline decoration-[#9FE870]/60 underline-offset-2 hover:text-[#163300]/80"
+            className="font-medium text-primary underline decoration-primary/60 underline-offset-2 hover:text-primary/80"
           >
             {node.label}
           </a>
@@ -83,15 +83,15 @@ function formatMessageContent(content: string) {
 function TypingIndicator() {
   return (
     <div className="flex items-start gap-2.5">
-      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#163300] ring-2 ring-[#9FE870]/30">
-        <Bot className="size-4 text-[#9FE870]" />
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+        <Bot className="size-4 text-primary" />
       </div>
       <div className="rounded-2xl rounded-tl-md border border-border/60 bg-white px-4 py-3 shadow-sm">
         <div className="flex items-center gap-1">
           {[0, 1, 2].map((i) => (
             <motion.span
               key={i}
-              className="size-2 rounded-full bg-[#163300]/40"
+              className="size-2 rounded-full bg-foreground/40"
               animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
               transition={{
                 duration: 0.8,
@@ -123,7 +123,7 @@ function QuickReplyChips({
           type="button"
           disabled={disabled}
           onClick={() => onSelect(question)}
-          className="max-w-[90%] rounded-2xl rounded-tr-md border border-[#163300]/15 bg-white px-3 py-2 text-left text-xs font-medium text-[#163300] shadow-sm transition-all hover:border-[#9FE870]/50 hover:bg-[#9FE870]/10 active:scale-[0.98] disabled:opacity-50"
+          className="max-w-[90%] rounded-2xl rounded-tr-md border border-foreground/15 bg-white px-3 py-2 text-left text-xs font-medium text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 active:scale-[0.98] disabled:opacity-50"
         >
           {question}
         </button>
@@ -405,13 +405,13 @@ export function PlatformChatbot() {
               type="button"
               onClick={openChat}
               aria-label="Abrir asistente Remata"
-              className="group relative flex size-16 items-center justify-center rounded-full bg-[#163300] text-white shadow-2xl shadow-[#163300]/40 transition-transform hover:scale-105 active:scale-95"
+              className="group relative flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition-transform hover:scale-105 active:scale-95"
             >
-              <span className="absolute inset-0 rounded-full bg-[#9FE870]/30 animate-ping opacity-60" />
-              <span className="absolute inset-0 rounded-full bg-linear-to-br from-[#9FE870]/20 to-transparent" />
+              <span className="absolute inset-0 rounded-full bg-white/20 animate-ping opacity-60" />
+              <span className="absolute inset-0 rounded-full bg-linear-to-br from-white/20 to-transparent" />
               <MessageCircle className="relative size-7" />
               {hasUnread && (
-                <span className="absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold ring-2 ring-white">
+                <span className="absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white ring-2 ring-card">
                   1
                 </span>
               )}
@@ -447,31 +447,31 @@ export function PlatformChatbot() {
             )}
           >
             {/* Header */}
-            <div className="relative shrink-0 overflow-hidden bg-[#163300] px-5 py-4">
+            <div className="relative shrink-0 overflow-hidden bg-primary px-5 py-4">
               <div
                 className="pointer-events-none absolute inset-0 opacity-30"
                 aria-hidden
                 style={{
-                  backgroundImage: `radial-gradient(circle at 1px 1px, rgba(159,232,112,0.15) 1px, transparent 0)`,
+                  backgroundImage: `radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--primary-foreground) 15%, transparent) 1px, transparent 0)`,
                   backgroundSize: "20px 20px",
                 }}
               />
-              <div className="pointer-events-none absolute -top-10 -right-10 size-40 rounded-full bg-[#9FE870]/15 blur-2xl" />
+              <div className="pointer-events-none absolute -top-10 -right-10 size-40 rounded-full bg-white/10 blur-2xl" />
 
               <div className="relative flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="relative flex size-11 items-center justify-center rounded-2xl bg-[#9FE870]/20 ring-2 ring-[#9FE870]/40">
-                    <Bot className="size-5 text-[#9FE870]" />
-                    <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-[#163300] bg-green-400" />
+                  <div className="relative flex size-11 items-center justify-center rounded-2xl bg-white/15 ring-2 ring-white/30">
+                    <Bot className="size-5 text-primary-foreground" />
+                    <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-primary bg-success" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-white">Remata AI</h3>
-                      <span className="rounded-full bg-[#9FE870]/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#9FE870]">
+                      <h3 className="text-base font-bold text-primary-foreground">Remata AI</h3>
+                      <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
                         En línea
                       </span>
                     </div>
-                    <p className="text-xs text-white/60">
+                    <p className="text-xs text-primary-foreground/70">
                       Asistente de inversiones · Remates judiciales
                     </p>
                   </div>
@@ -480,7 +480,7 @@ export function PlatformChatbot() {
                   <button
                     type="button"
                     onClick={toggleMinimized}
-                    className="flex size-8 items-center justify-center rounded-lg text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                    className="flex size-8 items-center justify-center rounded-lg text-primary-foreground/80 transition-colors hover:bg-white/15 hover:text-primary-foreground"
                     aria-label={isMinimized ? "Expandir chat" : "Minimizar chat"}
                   >
                     {isMinimized ? (
@@ -492,7 +492,7 @@ export function PlatformChatbot() {
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="flex size-8 items-center justify-center rounded-lg text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                    className="flex size-8 items-center justify-center rounded-lg text-primary-foreground/80 transition-colors hover:bg-white/15 hover:text-primary-foreground"
                     aria-label="Cerrar chat"
                   >
                     <X className="size-4" />
@@ -501,9 +501,9 @@ export function PlatformChatbot() {
               </div>
 
               {!isMinimized && (
-                <div className="relative mt-3 flex items-center gap-2 rounded-xl border border-[#9FE870]/20 bg-[#9FE870]/10 px-3 py-2">
-                  <Shield className="size-3.5 shrink-0 text-[#9FE870]" />
-                  <p className="text-[11px] leading-snug text-white/70">
+                <div className="relative mt-3 flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2">
+                  <Shield className="size-3.5 shrink-0 text-primary-foreground" />
+                  <p className="text-[11px] leading-snug text-primary-foreground/80">
                     Respuestas basadas en información oficial de Remata. Solo temas de la plataforma.
                   </p>
                 </div>
@@ -526,16 +526,16 @@ export function PlatformChatbot() {
                         )}
                       >
                         {message.role === "assistant" && (
-                          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#163300] ring-2 ring-[#9FE870]/20">
-                            <Sparkles className="size-3.5 text-[#9FE870]" />
+                          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                            <Sparkles className="size-3.5 text-primary" />
                           </div>
                         )}
                         <div
                           className={cn(
                             "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
                             message.role === "user"
-                              ? "rounded-tr-md bg-[#163300] text-white"
-                              : "rounded-tl-md border border-border/50 bg-[#F5F9F2] text-foreground"
+                              ? "rounded-tr-md bg-primary text-primary-foreground"
+                              : "rounded-tl-md border border-border/50 bg-muted text-foreground"
                           )}
                         >
                           {formatMessageContent(message.content)}
@@ -557,7 +557,7 @@ export function PlatformChatbot() {
 
                 {/* Input */}
                 <div className="shrink-0 border-t border-border/60 bg-white p-4">
-                  <div className="flex items-end gap-2 rounded-2xl border border-border/80 bg-muted/30 p-2 focus-within:border-[#9FE870]/60 focus-within:ring-2 focus-within:ring-[#9FE870]/20">
+                  <div className="flex items-end gap-2 rounded-2xl border border-border/80 bg-muted/30 p-2 focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/20">
                     <textarea
                       ref={inputRef}
                       value={input}
@@ -573,7 +573,7 @@ export function PlatformChatbot() {
                       size="icon"
                       disabled={!input.trim() || isLoading}
                       onClick={() => sendMessage(input)}
-                      className="size-10 shrink-0 rounded-xl bg-[#163300] text-[#9FE870] hover:bg-[#163300]/90 disabled:opacity-40"
+                      className="size-10 shrink-0 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
                     >
                       {isLoading ? (
                         <Loader2 className="size-4 animate-spin" />

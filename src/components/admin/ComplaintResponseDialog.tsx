@@ -129,7 +129,7 @@ export function ComplaintResponseDialog({
               <span className="inline-flex items-center rounded-md border border-border bg-background px-2 py-0.5 font-mono text-[10px] font-semibold text-muted-foreground">
                 {complaint.id}
               </span>
-              <span className="inline-flex items-center rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+              <span className="inline-flex items-center rounded-md border border-border bg-muted/50 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
                 {typeLabels[complaint.type]}
               </span>
             </div>
@@ -209,7 +209,7 @@ export function ComplaintResponseDialog({
             </div>
 
             <div className="mt-auto space-y-4">
-              <div className="flex items-start gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs text-blue-700">
+              <div className="flex items-start gap-2 rounded-xl border border-info/20 bg-info/10 px-3 py-2.5 text-xs text-info">
                 <Mail className="mt-0.5 size-3.5 shrink-0" />
                 <span>
                   Prototipo: la respuesta se simulará como envío a{" "}

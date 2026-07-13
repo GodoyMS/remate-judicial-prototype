@@ -434,7 +434,7 @@ export function EditPropertySheet({
               <div className="space-y-3">
                 <ControlToggle
                   icon={Star}
-                  iconClass="text-amber-500"
+                  iconClass="text-warning"
                   label="Destacada"
                   description="Mostrar en la sección de propiedades destacadas"
                   checked={featured}
@@ -442,7 +442,7 @@ export function EditPropertySheet({
                 />
                 <ControlToggle
                   icon={CheckCircle2}
-                  iconClass="text-green-600"
+                  iconClass="text-success"
                   label="Publicada"
                   description="Visible para inversores en la plataforma"
                   checked={published}

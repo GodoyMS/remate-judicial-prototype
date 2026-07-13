@@ -85,22 +85,22 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
             scale: focused ? 1.02 : 1,
           }}
           transition={{ type: "spring", stiffness: 260, damping: 22 }}
-          className="relative aspect-[1.586/1] w-full overflow-hidden rounded-2xl shadow-2xl shadow-[#163300]/25"
+          className="relative aspect-[1.586/1] w-full overflow-hidden rounded-2xl shadow-2xl shadow-foreground/25"
           style={{
-            background: "linear-gradient(135deg, #163300 0%, #2d5a1e 45%, #9FE870 180%)",
+            background: "linear-gradient(135deg, var(--foreground) 0%, var(--foreground) 45%, var(--primary) 180%)",
           }}
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.18),transparent_45%)]" />
           <div className="absolute -right-8 -top-8 size-32 rounded-full bg-white/10 blur-2xl" />
-          <div className="absolute -bottom-10 -left-6 size-36 rounded-full bg-[#9FE870]/20 blur-3xl" />
+          <div className="absolute -bottom-10 -left-6 size-36 rounded-full bg-primary/20 blur-3xl" />
 
           <div className="relative flex h-full flex-col justify-between p-5 sm:p-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div className="size-9 rounded-lg bg-gradient-to-br from-amber-200 via-amber-300 to-amber-500 shadow-inner" />
-                <Wifi className="size-5 rotate-90 text-white/70" />
+                <Wifi className="size-5 rotate-90 text-background" />
               </div>
-              <span className="rounded-md bg-white/15 px-2 py-1 text-[10px] font-bold tracking-widest text-white/90 backdrop-blur-sm">
+              <span className="rounded-md bg-white/15 px-2 py-1 text-[10px] font-bold tracking-widest text-background backdrop-blur-sm">
                 {brandLabels[brand]}
               </span>
             </div>
@@ -108,8 +108,8 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
             <div className="space-y-4">
               <p
                 className={cn(
-                  "font-mono text-lg sm:text-xl tracking-[0.18em] text-white transition-opacity",
-                  !value.cardNumber.replace(/\D/g, "").length && "text-white/55"
+                  "font-mono text-lg sm:text-xl tracking-[0.18em] text-background transition-opacity",
+                  !value.cardNumber.replace(/\D/g, "").length && "text-background/55"
                 )}
               >
                 {displayNumber}
@@ -117,19 +117,19 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
 
               <div className="flex items-end justify-between gap-4">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9px] uppercase tracking-wider text-white/50">Titular</p>
+                  <p className="text-[9px] uppercase tracking-wider text-background/70">Titular</p>
                   <p
                     className={cn(
-                      "truncate text-sm font-semibold uppercase tracking-wide text-white",
-                      !value.cardholder.trim() && "text-white/55"
+                      "truncate text-sm font-semibold uppercase tracking-wide text-background",
+                      !value.cardholder.trim() && "text-background/55"
                     )}
                   >
                     {displayName}
                   </p>
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="text-[9px] uppercase tracking-wider text-white/50">Vence</p>
-                  <p className={cn("font-mono text-sm text-white", !value.expiry && "text-white/55")}>
+                  <p className="text-[9px] uppercase tracking-wider text-background/70">Vence</p>
+                  <p className={cn("font-mono text-sm text-background", !value.expiry && "text-background/55")}>
                     {displayExpiry}
                   </p>
                 </div>

@@ -16,14 +16,14 @@ const DEMO_ACCOUNTS = [
     label: "Usuario Premium",
     description: "Acceso a inversiones exclusivas al 100%",
     icon: Crown,
-    accent: "from-amber-500 to-amber-600 text-white",
+    accent: "from-premium to-premium/80 text-premium-foreground",
   },
   {
     email: "standard@remata.com",
     label: "Usuario Estándar",
     description: "Acceso al mercado regular de propiedades",
     icon: User,
-    accent: "from-[#163300] to-[#2d5a1a] text-[#9FE870]",
+    accent: "from-primary to-primary/80 text-primary-foreground",
   },
 ];
 

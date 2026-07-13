@@ -27,15 +27,15 @@ const statusConfig: Record<
 > = {
   pending: {
     label: "Pendiente",
-    className: "border-amber-200 bg-amber-50 text-amber-700",
+    className: "border-warning/20 bg-warning/10 text-warning",
   },
   in_review: {
     label: "En revisión",
-    className: "border-blue-200 bg-blue-50 text-blue-700",
+    className: "border-info/20 bg-info/10 text-info",
   },
   resolved: {
     label: "Resuelto",
-    className: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    className: "border-success/20 bg-success/10 text-success",
   },
 };
 
@@ -121,11 +121,11 @@ export function ComplaintDetailSheet({
 
           {complaint.response && (
             <div className="space-y-3">
-              <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-emerald-600">
+              <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-success">
                 <CheckCircle2 className="size-3.5" />
                 Respuesta enviada
               </h4>
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 space-y-2">
+              <div className="rounded-xl border border-success/20 bg-success/10 p-4 space-y-2">
                 <RichTextContent html={complaint.response.message} />
                 <p className="text-xs text-muted-foreground">
                   Por {complaint.response.respondedBy} ·{" "}

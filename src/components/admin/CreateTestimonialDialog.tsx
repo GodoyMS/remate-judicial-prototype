@@ -118,9 +118,9 @@ export function CreateTestimonialDialog({
       }}
     >
       <DialogContent className="max-h-[92vh] gap-0 overflow-hidden rounded-2xl p-0 sm:max-w-2xl">
-        <DialogHeader className="border-b border-border/60 bg-gradient-to-br from-[#9FE870]/15 via-background to-background px-6 py-5">
+        <DialogHeader className="border-b border-border/60 bg-gradient-to-br from-primary/15 via-background to-background px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[#163300] text-[#9FE870]">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
               <Sparkles className="size-5" />
             </div>
             <div>
@@ -234,7 +234,7 @@ export function CreateTestimonialDialog({
                       className={cn(
                         "size-5 transition-colors",
                         n <= activeStars
-                          ? "fill-amber-400 text-amber-400"
+                          ? "fill-warning text-warning"
                           : "fill-transparent text-muted-foreground/40",
                       )}
                     />

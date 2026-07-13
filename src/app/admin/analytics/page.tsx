@@ -230,7 +230,7 @@ export default function AdminAnalyticsPage() {
       value: formatMixedCurrencyTotals(kpis.totalInvested),
       change: kpis.investmentGrowth,
       icon: DollarSign,
-      color: "bg-emerald-50 text-emerald-600",
+      color: "bg-success/10 text-success",
       positive: kpis.investmentGrowth >= 0,
     },
     {
@@ -238,49 +238,49 @@ export default function AdminAnalyticsPage() {
       value: String(kpis.uniqueInvestors),
       sub: `${kpis.avgInvestmentsPerUser.toFixed(1)} inv. promedio c/u`,
       icon: Users,
-      color: "bg-blue-50 text-blue-600",
+      color: "bg-chart-1/10 text-chart-1",
     },
     {
       label: "Tasa de conversión",
       value: `${kpis.conversionRate.toFixed(1)}%`,
       sub: `${kpis.confirmedCount} confirmadas / ${kpis.confirmedCount + kpis.pendingCount + kpis.rejectedCount} total`,
       icon: Target,
-      color: "bg-violet-50 text-violet-600",
+      color: "bg-chart-2/10 text-chart-2",
     },
     {
       label: "Ticket promedio",
       value: formatCurrency(kpis.avgInvestment),
       sub: `Ganancias totales: ${formatCurrency(kpis.totalGains)}`,
       icon: Wallet,
-      color: "bg-amber-50 text-amber-600",
+      color: "bg-chart-3/10 text-chart-3",
     },
     {
       label: "Propiedades financiadas",
       value: `${kpis.fundedProperties}/${kpis.totalProperties}`,
       sub: `${kpis.avgFundingProgress.toFixed(0)}% progreso promedio`,
       icon: Building2,
-      color: "bg-orange-50 text-orange-600",
+      color: "bg-chart-4/10 text-chart-4",
     },
     {
       label: "ROI promedio",
       value: `${kpis.avgRoi.toFixed(1)}%`,
       sub: "Sobre propiedades activas",
       icon: Percent,
-      color: "bg-teal-50 text-teal-600",
+      color: "bg-chart-5/10 text-chart-5",
     },
     {
       label: "Usuarios Premium",
       value: String(kpis.premiumUsers),
       sub: `${kpis.standardUsers} usuarios Standard`,
       icon: Crown,
-      color: "bg-amber-50 text-amber-700",
+      color: "bg-premium/10 text-premium",
     },
     {
       label: "Pendientes de verificación",
       value: String(kpis.pendingCount),
       sub: `${kpis.rejectedCount} rechazadas en el período`,
       icon: Activity,
-      color: "bg-rose-50 text-rose-600",
+      color: "bg-warning/10 text-warning",
     },
   ];
 
@@ -377,7 +377,7 @@ export default function AdminAnalyticsPage() {
                   <p
                     className={cn(
                       "mt-1.5 flex items-center gap-1 text-xs font-medium",
-                      card.positive ? "text-emerald-600" : "text-rose-600"
+                      card.positive ? "text-success" : "text-destructive"
                     )}
                   >
                     {card.positive ? (
@@ -520,8 +520,8 @@ export default function AdminAnalyticsPage() {
                       value={step.percentage}
                       className={cn(
                         "h-3",
-                        i === funnel.length - 1 && "[&>div]:bg-emerald-500",
-                        i === 0 && "[&>div]:bg-blue-500"
+                        i === funnel.length - 1 && "[&>div]:bg-success",
+                        i === 0 && "[&>div]:bg-info"
                       )}
                     />
                   </div>
@@ -755,7 +755,7 @@ export default function AdminAnalyticsPage() {
           </div>
 
           {/* Tier comparison insight */}
-          <Card className="rounded-2xl border-border/60 bg-gradient-to-r from-amber-50/40 via-background to-blue-50/30">
+          <Card className="rounded-2xl border-border/60 bg-gradient-to-r from-premium/10 via-background to-info/10">
             <CardHeader className="pb-2">
               <CardTitle className="text-base">Premium vs Standard — impacto en inversiones</CardTitle>
               <CardDescription className="text-xs">
@@ -772,9 +772,9 @@ export default function AdminAnalyticsPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           {tier.tier === "premium" ? (
-                            <Crown className="size-4 text-amber-600" />
+                            <Crown className="size-4 text-premium" />
                           ) : (
-                            <Users className="size-4 text-slate-500" />
+                            <Users className="size-4 text-muted-foreground" />
                           )}
                           <span className="text-sm font-semibold">{tier.label}</span>
                           <Badge variant="outline" className="text-[10px]">
@@ -789,7 +789,7 @@ export default function AdminAnalyticsPage() {
                         value={pct}
                         className={cn(
                           "h-3",
-                          tier.tier === "premium" ? "[&>div]:bg-amber-500" : "[&>div]:bg-slate-400"
+                          tier.tier === "premium" ? "[&>div]:bg-premium" : "[&>div]:bg-muted-foreground"
                         )}
                       />
                       <p className="text-[11px] text-muted-foreground">
@@ -905,9 +905,9 @@ export default function AdminAnalyticsPage() {
                         className={cn(
                           "rounded-xl border p-4 transition-all",
                           intensity > 0.7
-                            ? "border-emerald-200 bg-emerald-50/60"
+                            ? "border-success/20 bg-success/10"
                             : intensity > 0.4
-                              ? "border-blue-200 bg-blue-50/40"
+                              ? "border-info/20 bg-info/10"
                               : "border-border/60 bg-muted/20"
                         )}
                       >
@@ -925,7 +925,7 @@ export default function AdminAnalyticsPage() {
                         </p>
                         <Progress
                           value={intensity * 100}
-                          className="mt-2 h-1.5 [&>div]:bg-emerald-500"
+                          className="mt-2 h-1.5 [&>div]:bg-success"
                         />
                       </motion.div>
                     );
@@ -1003,7 +1003,7 @@ export default function AdminAnalyticsPage() {
                           {formatCurrency(p.raisedAmount, p.currency)}
                         </TableCell>
                         <TableCell className="hidden text-right sm:table-cell">
-                          <span className="text-sm font-semibold text-emerald-600">+{p.roi}%</span>
+                          <span className="text-sm font-semibold text-success">+{p.roi}%</span>
                         </TableCell>
                         <TableCell className="hidden text-right text-sm tabular-nums lg:table-cell">
                           {p.investorsCount}
@@ -1099,7 +1099,7 @@ export default function AdminAnalyticsPage() {
                           {formatCurrency(inv.totalInvested)}
                         </TableCell>
                         <TableCell className="hidden text-right md:table-cell">
-                          <span className="text-sm font-medium tabular-nums text-emerald-600">
+                          <span className="text-sm font-medium tabular-nums text-success">
                             +{formatCurrency(inv.totalGains)}
                           </span>
                           <span className="block text-[10px] text-muted-foreground">
@@ -1133,10 +1133,10 @@ export default function AdminAnalyticsPage() {
 
         {/* ---------- PREMIUM ---------- */}
         <TabsContent value="premium" className="space-y-4">
-          <div className="rounded-2xl border border-amber-200/60 bg-gradient-to-br from-amber-50/50 via-background to-amber-50/20 p-5">
+          <div className="rounded-2xl border border-premium/20 bg-gradient-to-br from-premium/10 via-background to-premium/5 p-5">
             <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-100">
-                <Sparkles className="size-5 text-amber-600" />
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-premium/15">
+                <Sparkles className="size-5 text-premium" />
               </div>
               <div>
                 <h3 className="text-base font-semibold text-foreground">
@@ -1173,7 +1173,7 @@ function InsightRow({
       <span
         className={cn(
           "flex items-center gap-1 font-semibold",
-          positive ? "text-emerald-600" : "text-amber-600"
+          positive ? "text-success" : "text-warning"
         )}
       >
         {positive ? (

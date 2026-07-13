@@ -197,7 +197,7 @@ export function MediaUploadField({
               <button
                 type="button"
                 onClick={handleRemove}
-                className="inline-flex items-center gap-1 rounded-lg bg-red-600/90 px-2 py-1 text-[10px] font-semibold text-white shadow-sm hover:bg-red-600"
+                className="inline-flex items-center gap-1 rounded-lg bg-destructive/90 px-2 py-1 text-[10px] font-semibold text-destructive-foreground shadow-sm hover:bg-destructive"
               >
                 <Trash2 className="size-3" />
                 Quitar
@@ -276,7 +276,7 @@ export function MediaUploadField({
       {hasValue && (
         <div className="mt-2 flex items-center justify-between gap-2 text-[10px] text-muted-foreground">
           <span className="flex min-w-0 items-center gap-1.5">
-            <UploadCloud className="size-3 shrink-0 text-emerald-600" />
+            <UploadCloud className="size-3 shrink-0 text-success" />
             <span className="truncate">{value!.name}</span>
           </span>
           <div className="flex shrink-0 items-center gap-2">

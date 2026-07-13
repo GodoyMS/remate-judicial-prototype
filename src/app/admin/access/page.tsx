@@ -221,8 +221,8 @@ export default function AdminAccessPage() {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <div className="size-9 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
-                <KeyRound className="size-4 text-violet-600" />
+              <div className="size-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <KeyRound className="size-4 text-primary" />
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
                 Gestión de accesos
@@ -233,7 +233,7 @@ export default function AdminAccessPage() {
             </p>
           </div>
           {isSuperAdmin && (
-            <Badge className="self-start bg-violet-100 text-violet-700 border-violet-200 hover:bg-violet-100">
+            <Badge className="self-start bg-info/10 text-info border-info/20 hover:bg-info/10">
               <Crown className="size-3 mr-1" />
               Control total
             </Badge>
@@ -297,7 +297,7 @@ export default function AdminAccessPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-semibold">{account.name}</p>
                         {account.isSuperAdmin && (
-                          <Badge className="text-[9px] h-4 bg-violet-100 text-violet-700 border-violet-200">
+                          <Badge className="text-[9px] h-4 bg-info/10 text-info border-info/20">
                             <Lock className="size-2.5 mr-0.5" />
                             Super Admin
                           </Badge>

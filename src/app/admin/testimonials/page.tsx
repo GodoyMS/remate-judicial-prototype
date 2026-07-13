@@ -198,35 +198,35 @@ export default function AdminTestimonialsPage() {
             value: String(stats.total),
             sub: "testimonios",
             icon: MessageSquareQuote,
-            accent: "text-blue-600 bg-blue-50",
+            accent: "text-info bg-info/10",
           },
           {
             label: "Publicados",
             value: String(stats.published),
             sub: "en landing",
             icon: Eye,
-            accent: "text-emerald-600 bg-emerald-50",
+            accent: "text-success bg-success/10",
           },
           {
             label: "Borradores",
             value: String(stats.draft),
             sub: "ocultos",
             icon: EyeOff,
-            accent: "text-amber-600 bg-amber-50",
+            accent: "text-warning bg-warning/10",
           },
           {
             label: "Con video",
             value: String(stats.withVideo),
             sub: "multimedia",
             icon: Video,
-            accent: "text-violet-600 bg-violet-50",
+            accent: "text-chart-1 bg-chart-1/10",
           },
           {
             label: "Destacados",
             value: String(stats.featured),
             sub: "prioridad",
             icon: Star,
-            accent: "text-orange-600 bg-orange-50",
+            accent: "text-warning bg-warning/10",
           },
         ].map((s, i) => (
           <motion.div
@@ -317,7 +317,7 @@ export default function AdminTestimonialsPage() {
                   key={t.id}
                   className={cn(
                     "group border-l-[3px] transition-colors hover:bg-muted/25",
-                    t.published ? "border-l-emerald-500" : "border-l-amber-500"
+                    t.published ? "border-l-success" : "border-l-warning"
                   )}
                 >
                   <TableCell className="py-3 pl-4">
@@ -331,7 +331,7 @@ export default function AdminTestimonialsPage() {
                             {t.name}
                           </p>
                           {t.featured && (
-                            <Star className="size-3 shrink-0 fill-amber-500 text-amber-500" />
+                            <Star className="size-3 shrink-0 fill-warning text-warning" />
                           )}
                         </div>
                         <p className="max-w-[180px] truncate text-[10px] text-muted-foreground">
@@ -355,14 +355,14 @@ export default function AdminTestimonialsPage() {
                       {Array.from({ length: t.stars }).map((_, i) => (
                         <Star
                           key={i}
-                          className="size-3 fill-amber-400 text-amber-400"
+                          className="size-3 fill-warning text-warning"
                         />
                       ))}
                     </div>
                   </TableCell>
                   <TableCell className="py-3">
                     {t.videoUrl ? (
-                      <span className="inline-flex items-center gap-1 rounded-md border border-violet-200 bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
+                      <span className="inline-flex items-center gap-1 rounded-md border border-chart-1/20 bg-chart-1/10 px-2 py-0.5 text-[10px] font-semibold text-chart-1">
                         <Video className="size-3" />
                         Video
                       </span>
@@ -380,8 +380,8 @@ export default function AdminTestimonialsPage() {
                       className={cn(
                         "inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-semibold",
                         t.published
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-amber-200 bg-amber-50 text-amber-700"
+                          ? "border-success/20 bg-success/10 text-success"
+                          : "border-warning/20 bg-warning/10 text-warning"
                       )}
                     >
                       {t.published ? "Publicado" : "Borrador"}

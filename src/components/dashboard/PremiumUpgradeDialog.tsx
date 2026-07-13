@@ -92,25 +92,25 @@ export function PremiumUpgradeDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md rounded-2xl p-0 overflow-hidden gap-0">
         {/* Header gradient */}
-        <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 text-white">
+        <div className="bg-gradient-to-br from-premium to-premium/80 p-6 text-premium-foreground">
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-white/20 flex items-center justify-center">
-                  <Crown className="size-5 text-white" />
+                <div className="size-10 rounded-xl bg-premium-foreground/20 flex items-center justify-center">
+                  <Crown className="size-5 text-premium-foreground" />
                 </div>
-                <DialogTitle className="text-lg font-bold text-white">
+                <DialogTitle className="text-lg font-bold text-premium-foreground">
                   Plan Premium
                 </DialogTitle>
               </div>
               <button
                 onClick={handleClose}
-                className="size-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                className="size-8 rounded-lg bg-premium-foreground/10 hover:bg-premium-foreground/20 flex items-center justify-center transition-colors"
               >
-                <X className="size-4 text-white" />
+                <X className="size-4 text-premium-foreground" />
               </button>
             </div>
-            <p className="text-sm text-white/80 mt-2 text-left">
+            <p className="text-sm text-premium-foreground/80 mt-2 text-left">
               Accede a las inversiones más exclusivas con retornos excepcionales
             </p>
           </DialogHeader>
@@ -119,8 +119,8 @@ export function PremiumUpgradeDialog({
         <div className="p-6 space-y-4">
           {showSuccess ? (
             <div className="flex flex-col items-center text-center py-4 gap-4">
-              <div className="size-16 rounded-full bg-emerald-100 flex items-center justify-center">
-                <CheckCircle2 className="size-8 text-emerald-600" />
+              <div className="size-16 rounded-full bg-success/10 flex items-center justify-center">
+                <CheckCircle2 className="size-8 text-success" />
               </div>
               <div>
                 <p className="text-base font-bold text-foreground">
@@ -131,15 +131,15 @@ export function PremiumUpgradeDialog({
                   Te notificaremos cuando sea aprobada.
                 </p>
               </div>
-              <div className="w-full rounded-xl bg-amber-50 border border-amber-200 p-4 text-left">
-                <p className="text-xs font-semibold text-amber-800 mb-2">Estado</p>
+              <div className="w-full rounded-xl bg-warning/10 border border-warning/20 p-4 text-left">
+                <p className="text-xs font-semibold text-warning mb-2">Estado</p>
                 <div className="flex items-center gap-2">
-                  <div className="size-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span className="text-sm text-amber-900 font-medium">
+                  <div className="size-2 rounded-full bg-warning animate-pulse" />
+                  <span className="text-sm text-warning font-medium">
                     Pendiente de aprobación
                   </span>
                 </div>
-                <p className="text-xs text-amber-700 mt-2">
+                <p className="text-xs text-warning mt-2">
                   Tiempo estimado: 1-2 días hábiles
                 </p>
               </div>
@@ -153,8 +153,8 @@ export function PremiumUpgradeDialog({
               <div className="space-y-3">
                 {PREMIUM_BENEFITS.map((benefit) => (
                   <div key={benefit.title} className="flex items-start gap-3">
-                    <div className="size-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0 mt-0.5">
-                      <benefit.icon className="size-4 text-amber-600" />
+                    <div className="size-8 rounded-lg bg-premium/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <benefit.icon className="size-4 text-premium" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground">
@@ -180,8 +180,8 @@ export function PremiumUpgradeDialog({
                     <li>Acceso normal</li>
                   </ul>
                 </div>
-                <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-3">
-                  <p className="text-[10px] font-semibold text-amber-700 uppercase mb-2">
+                <div className="rounded-xl border border-premium/20 bg-premium/10 p-3">
+                  <p className="text-[10px] font-semibold text-premium uppercase mb-2">
                     Premium ✦
                   </p>
                   <ul className="space-y-1 text-xs text-foreground font-medium">
@@ -196,11 +196,11 @@ export function PremiumUpgradeDialog({
                 <Button
                   onClick={handleRequest}
                   disabled={loading}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold"
+                  className="w-full h-11 rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
-                      <div className="size-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                      <div className="size-4 border-2 border-premium-foreground/40 border-t-premium-foreground rounded-full animate-spin" />
                       Enviando solicitud...
                     </span>
                   ) : (

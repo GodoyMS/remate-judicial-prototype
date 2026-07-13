@@ -74,7 +74,7 @@ export function AdminNotificationItem({
         compact ? "p-3" : "p-4",
         isUnread
           ? isHighPriority
-            ? "border-orange-300/50 bg-gradient-to-r from-orange-500/[0.08] via-orange-500/[0.03] to-transparent shadow-sm"
+            ? "border-warning/50 bg-gradient-to-r from-warning/[0.08] via-warning/[0.03] to-transparent shadow-sm"
             : "border-primary/20 bg-gradient-to-r from-primary/[0.06] via-primary/[0.03] to-transparent shadow-sm"
           : "border-border/50 bg-muted/20 opacity-80 hover:opacity-100 hover:bg-muted/35"
       )}
@@ -83,7 +83,7 @@ export function AdminNotificationItem({
         <span
           className={cn(
             "absolute left-0 top-3 bottom-3 w-1 rounded-full",
-            isHighPriority ? "bg-orange-500" : "bg-primary"
+            isHighPriority ? "bg-warning" : "bg-primary"
           )}
         />
       )}
@@ -107,7 +107,7 @@ export function AdminNotificationItem({
               <span
                 className={cn(
                   "size-2 rounded-full shrink-0 animate-pulse",
-                  isHighPriority ? "bg-orange-500" : "bg-primary"
+                  isHighPriority ? "bg-warning" : "bg-primary"
                 )}
               />
             )}
@@ -119,7 +119,7 @@ export function AdminNotificationItem({
                 "shrink-0 text-[10px] font-semibold",
                 isUnread &&
                   (isHighPriority
-                    ? "border-orange-300/50 bg-orange-50 text-orange-700"
+                    ? "border-warning/50 bg-warning/10 text-warning"
                     : "border-primary/30 bg-primary/5 text-primary")
               )}
             >

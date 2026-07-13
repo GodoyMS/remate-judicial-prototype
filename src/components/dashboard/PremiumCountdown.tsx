@@ -29,7 +29,7 @@ export function PremiumCountdown({
     return (
       <div
         className={cn(
-          "flex items-center gap-1.5 text-red-600 font-medium",
+          "flex items-center gap-1.5 text-destructive font-medium",
           compact ? "text-xs" : "text-sm",
           className
         )}
@@ -48,19 +48,19 @@ export function PremiumCountdown({
         className
       )}
     >
-      <Clock className="size-3.5 text-amber-600 shrink-0" />
+      <Clock className="size-3.5 text-warning shrink-0" />
       <div className="flex items-center gap-1.5">
         <span className="text-muted-foreground">Quedan</span>
         <div className="flex items-center gap-1">
           {countdown.days > 0 && (
-            <span className="font-bold text-foreground tabular-nums bg-amber-50 px-1.5 py-0.5 rounded-md">
+            <span className="font-bold text-foreground tabular-nums bg-warning/10 px-1.5 py-0.5 rounded-md">
               {countdown.days}d
             </span>
           )}
-          <span className="font-bold text-foreground tabular-nums bg-amber-50 px-1.5 py-0.5 rounded-md">
+          <span className="font-bold text-foreground tabular-nums bg-warning/10 px-1.5 py-0.5 rounded-md">
             {countdown.hours}h
           </span>
-          <span className="font-bold text-foreground tabular-nums bg-amber-50 px-1.5 py-0.5 rounded-md">
+          <span className="font-bold text-foreground tabular-nums bg-warning/10 px-1.5 py-0.5 rounded-md">
             {countdown.minutes}m
           </span>
         </div>

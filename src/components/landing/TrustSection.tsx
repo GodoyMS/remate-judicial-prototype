@@ -129,20 +129,20 @@ function EntityCard({
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm",
+        "flex shrink-0 items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 shadow-sm",
         className
       )}
     >
-      <div className="flex size-10 items-center justify-center rounded-lg bg-[#9FE870]/15 ring-1 ring-[#9FE870]/25">
-        <span className="text-[10px] font-bold tracking-tight text-[#9FE870]">
+      <div className="flex size-10 items-center justify-center rounded-lg bg-primary/15 ring-1 ring-primary/25">
+        <span className="text-[10px] font-bold tracking-tight text-primary">
           {entity.abbr}
         </span>
       </div>
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-white">{entity.name}</p>
-        <p className="text-xs text-white/50">{entity.role}</p>
+        <p className="text-sm font-semibold text-foreground">{entity.name}</p>
+        <p className="text-xs text-muted-foreground">{entity.role}</p>
       </div>
-      <span className="ml-1 hidden rounded-full bg-white/8 px-2 py-0.5 text-[10px] font-medium text-white/60 sm:inline">
+      <span className="ml-1 hidden rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground sm:inline">
         {entity.category}
       </span>
     </div>
@@ -153,8 +153,8 @@ function Marquee() {
   const track = [...entities, ...entities];
   return (
     <div className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#163300] to-transparent sm:w-24" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#163300] to-transparent sm:w-24" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-muted to-transparent sm:w-24" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-muted to-transparent sm:w-24" />
       <motion.div
         className="flex w-max gap-4"
         animate={{ x: ["0%", "-50%"] }}
@@ -172,19 +172,19 @@ export function TrustSection() {
   return (
     <section
       id="confianza"
-      className="relative overflow-hidden bg-[#163300] py-24 text-white"
+      className="relative overflow-hidden bg-muted/40 py-24 text-foreground"
     >
       {/* Background texture */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.35]"
         aria-hidden
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(159,232,112,0.12) 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--primary) 12%, transparent) 1px, transparent 0)`,
           backgroundSize: "32px 32px",
         }}
       />
-      <div className="pointer-events-none absolute -top-40 right-0 size-[480px] rounded-full bg-[#9FE870]/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 left-0 size-[360px] rounded-full bg-[#9FE870]/8 blur-3xl" />
+      <div className="pointer-events-none absolute -top-40 right-0 size-[480px] rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 left-0 size-[360px] rounded-full bg-primary/8 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl section-padding">
         {/* Header */}
@@ -195,17 +195,17 @@ export function TrustSection() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-16 flex max-w-3xl flex-col items-center text-center"
         >
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#9FE870]/30 bg-[#9FE870]/10 px-4 py-1.5">
-            <BadgeCheck className="size-3.5 text-[#9FE870]" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#9FE870]">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5">
+            <BadgeCheck className="size-3.5 text-primary" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-primary">
               Regulación & cumplimiento · Perú
             </span>
           </div>
           <h2 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl">
             Invierte con la tranquilidad de una{" "}
-            <span className="text-[#9FE870]">plataforma 100% legal</span>
+            <span className="text-primary">plataforma 100% legal</span>
           </h2>
-          <p className="mt-5 text-lg leading-relaxed text-white/65">
+          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
             Cada operación en Remata está alineada con entidades del Estado
             peruano, la legislación vigente y las obligaciones fiscales del país.
             Transparencia, trazabilidad y estándares de nivel fintech.
@@ -229,20 +229,20 @@ export function TrustSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.45 }}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors hover:border-[#9FE870]/30 hover:bg-white/[0.07]"
+                className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm transition-colors hover:border-primary/30 hover:shadow-md"
               >
                 <div className="mb-4 flex items-start justify-between gap-3">
-                  <div className="flex size-11 items-center justify-center rounded-xl bg-[#9FE870]/15 ring-1 ring-[#9FE870]/20 transition-transform group-hover:scale-105">
-                    <pillar.icon className="size-5 text-[#9FE870]" />
+                  <div className="flex size-11 items-center justify-center rounded-xl bg-primary/15 ring-1 ring-primary/20 transition-transform group-hover:scale-105">
+                    <pillar.icon className="size-5 text-primary" />
                   </div>
-                  <span className="rounded-full bg-[#9FE870]/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#9FE870]">
+                  <span className="rounded-full bg-primary/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary">
                     {pillar.tag}
                   </span>
                 </div>
-                <h3 className="text-base font-semibold text-white">
+                <h3 className="text-base font-semibold text-foreground">
                   {pillar.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/55">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {pillar.desc}
                 </p>
               </motion.div>
@@ -255,20 +255,20 @@ export function TrustSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="flex flex-col rounded-2xl border border-[#9FE870]/25 bg-gradient-to-b from-[#9FE870]/12 to-transparent p-6 lg:col-span-4"
+            className="flex flex-col rounded-2xl border border-primary/25 bg-gradient-to-b from-primary/12 to-transparent p-6 lg:col-span-4"
           >
             <div className="mb-6 flex items-center gap-3">
-              <div className="relative flex size-14 items-center justify-center rounded-2xl bg-[#9FE870]/20 ring-2 ring-[#9FE870]/30">
-                <Scale className="size-7 text-[#9FE870]" />
-                <div className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-[#9FE870]">
-                  <CheckCircle2 className="size-3 text-[#163300]" strokeWidth={3} />
+              <div className="relative flex size-14 items-center justify-center rounded-2xl bg-primary/20 ring-2 ring-primary/30">
+                <Scale className="size-7 text-primary" />
+                <div className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary">
+                  <CheckCircle2 className="size-3 text-primary-foreground" strokeWidth={3} />
                 </div>
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#9FE870]">
+                <p className="text-sm font-semibold text-primary">
                   Certificación operativa
                 </p>
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-muted-foreground">
                   Validado bajo normativa peruana
                 </p>
               </div>
@@ -277,17 +277,17 @@ export function TrustSection() {
             <ul className="flex flex-1 flex-col gap-3">
               {guarantees.map((item) => (
                 <li key={item} className="flex items-start gap-2.5 text-sm">
-                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#9FE870]" />
-                  <span className="text-white/80">{item}</span>
+                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <span className="text-foreground/80">{item}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="mt-6 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-              <Building2 className="size-5 shrink-0 text-[#9FE870]" />
-              <p className="text-xs leading-relaxed text-white/55">
+            <div className="mt-6 flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
+              <Building2 className="size-5 shrink-0 text-primary" />
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 Integrados con{" "}
-                <strong className="font-semibold text-white/90">
+                <strong className="font-semibold text-foreground">
                   entidades oficiales del Estado Peruano
                 </strong>{" "}
                 para garantizar legitimidad en cada etapa del proceso.
@@ -304,7 +304,7 @@ export function TrustSection() {
           transition={{ duration: 0.5 }}
           className="mb-6"
         >
-          <p className="mb-5 text-center text-xs font-semibold uppercase tracking-widest text-white/40">
+          <p className="mb-5 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Aliados regulatorios & institucionales
           </p>
           <Marquee />
@@ -319,16 +319,16 @@ export function TrustSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.45 }}
-              className="flex flex-col gap-3 rounded-2xl border border-white/8 bg-white/[0.04] p-5 transition-colors hover:border-[#9FE870]/25 hover:bg-white/[0.06]"
+              className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm transition-colors hover:border-primary/25 hover:shadow-md"
             >
-              <div className="flex size-10 items-center justify-center rounded-xl bg-[#9FE870]/15">
-                <signal.icon className="size-5 text-[#9FE870]" />
+              <div className="flex size-10 items-center justify-center rounded-xl bg-primary/15">
+                <signal.icon className="size-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-foreground">
                   {signal.title}
                 </p>
-                <p className="mt-1 text-xs leading-relaxed text-white/50">
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                   {signal.desc}
                 </p>
               </div>

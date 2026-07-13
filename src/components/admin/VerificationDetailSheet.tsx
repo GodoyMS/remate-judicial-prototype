@@ -32,11 +32,11 @@ import { cn } from "@/lib/utils";
 
 const activityIcons: Record<string, string> = {
   submitted: "bg-primary",
-  review_started: "bg-amber-400",
-  accepted: "bg-emerald-500",
-  rejected: "bg-red-500",
-  resolicitado: "bg-sky-500",
-  resubmitted: "bg-violet-500",
+  review_started: "bg-warning",
+  accepted: "bg-success",
+  rejected: "bg-destructive",
+  resolicitado: "bg-info",
+  resubmitted: "bg-info",
 };
 
 function formatDateTime(date: string) {
@@ -143,7 +143,7 @@ export function VerificationDetailSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto p-0 gap-0">
-        <div className="bg-gradient-to-br from-primary/8 via-background to-amber-500/5 px-6 pt-6 pb-5 border-b border-border/40">
+        <div className="bg-gradient-to-br from-primary/8 via-background to-warning/5 px-6 pt-6 pb-5 border-b border-border/40">
           <SheetHeader className="p-0 text-left space-y-0">
             <div className="flex items-start gap-4 pr-8">
               <div className="size-14 rounded-2xl bg-primary/15 flex items-center justify-center text-lg font-bold text-primary shrink-0">
@@ -210,17 +210,17 @@ export function VerificationDetailSheet({
             />
 
             {verification.rejectionReason && onViewAdminMessage && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50/80 p-3">
-                <p className="text-xs font-semibold text-red-800 mb-1">
+              <div className="mt-4 rounded-xl border border-destructive/20 bg-destructive/10 p-3">
+                <p className="text-xs font-semibold text-destructive mb-1">
                   Motivo de rechazo
                 </p>
-                <p className="text-xs text-red-900/80 line-clamp-3 leading-relaxed">
+                <p className="text-xs text-destructive/80 line-clamp-3 leading-relaxed">
                   {verification.rejectionReason}
                 </p>
                 <Button
                   variant="link"
                   size="sm"
-                  className="h-auto p-0 mt-1 text-red-700 text-xs"
+                  className="h-auto p-0 mt-1 text-destructive text-xs"
                   onClick={() => onViewAdminMessage(verification, "rejection")}
                 >
                   Ver mensaje completo
@@ -229,17 +229,17 @@ export function VerificationDetailSheet({
             )}
 
             {verification.resolicitReason && onViewAdminMessage && (
-              <div className="mt-4 rounded-xl border border-sky-200 bg-sky-50/80 p-3">
-                <p className="text-xs font-semibold text-sky-800 mb-1">
+              <div className="mt-4 rounded-xl border border-info/20 bg-info/10 p-3">
+                <p className="text-xs font-semibold text-info mb-1">
                   Solicitud de nueva verificación
                 </p>
-                <p className="text-xs text-sky-900/80 line-clamp-3 leading-relaxed">
+                <p className="text-xs text-info/80 line-clamp-3 leading-relaxed">
                   {verification.resolicitReason}
                 </p>
                 <Button
                   variant="link"
                   size="sm"
-                  className="h-auto p-0 mt-1 text-sky-700 text-xs"
+                  className="h-auto p-0 mt-1 text-info text-xs"
                   onClick={() =>
                     onViewAdminMessage(verification, "resolicit")
                   }

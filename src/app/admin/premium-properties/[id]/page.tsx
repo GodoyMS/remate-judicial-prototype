@@ -148,30 +148,30 @@ export default function AdminPremiumPropertyDetailPage({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl font-bold truncate">{baseProperty.title}</h1>
-              <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0">
+              <Badge className="bg-gradient-to-r from-premium to-premium/80 text-premium-foreground border-0">
                 <Crown className="size-3 mr-1" />
                 Premium
               </Badge>
               {isCaught && (
-                <Badge className="bg-emerald-500 text-white border-0">
+                <Badge className="bg-success text-success-foreground border-0">
                   <CheckCircle2 className="size-3 mr-1" />
                   Capturada
                 </Badge>
               )}
               {isAvailable && pendingInvestments.length > 0 && (
-                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                <Badge variant="outline" className="bg-info/10 text-info border-info/20">
                   <Clock className="size-3 mr-1" />
                   En verificación
                 </Badge>
               )}
               {isAvailable && pendingInvestments.length === 0 && (
-                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
                   <Clock className="size-3 mr-1" />
                   Disponible
                 </Badge>
               )}
               {isConverted && (
-                <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                <Badge variant="outline" className="bg-info/10 text-info">
                   <ArrowRightLeft className="size-3 mr-1" />
                   Convertida a estándar
                 </Badge>
@@ -189,7 +189,7 @@ export default function AdminPremiumPropertyDetailPage({
             Editar
           </Button>
           {isAvailable && pendingInvestments.length === 0 && (
-            <Button className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white">
+            <Button className="rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground">
               <Bell className="size-4 mr-2" />
               Notificar Premium
             </Button>
@@ -202,17 +202,17 @@ export default function AdminPremiumPropertyDetailPage({
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white p-6"
+          className="rounded-2xl border-2 border-info/20 bg-gradient-to-br from-info/10 to-card p-6"
         >
           <div className="flex items-center gap-2 mb-5">
-            <div className="size-10 rounded-xl bg-blue-500 flex items-center justify-center">
-              <AlertCircle className="size-5 text-white" />
+            <div className="size-10 rounded-xl bg-info flex items-center justify-center">
+              <AlertCircle className="size-5 text-info-foreground" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-blue-900">
+              <p className="text-sm font-semibold text-info">
                 Inversión pendiente de verificación
               </p>
-              <p className="text-xs text-blue-700">
+              <p className="text-xs text-info">
                 Revisa el comprobante y aprueba o rechaza la inversión
               </p>
             </div>
@@ -221,17 +221,17 @@ export default function AdminPremiumPropertyDetailPage({
           {pendingInvestments.map((inv) => (
             <div
               key={inv.id}
-              className="rounded-xl bg-white border border-blue-100 p-5 space-y-4"
+              className="rounded-xl bg-card border border-info/15 p-5 space-y-4"
             >
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Investor info */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold flex items-center gap-2">
-                    <User className="size-4 text-blue-600" />
+                    <User className="size-4 text-info" />
                     Datos del inversor
                   </h3>
                   <div className="flex items-center gap-4">
-                    <div className="size-12 rounded-full bg-blue-100 flex items-center justify-center text-base font-bold text-blue-700">
+                    <div className="size-12 rounded-full bg-info/15 flex items-center justify-center text-base font-bold text-info">
                       {inv.userName.split(" ").map((n) => n[0]).join("").slice(0, 2)}
                     </div>
                     <div>
@@ -263,7 +263,7 @@ export default function AdminPremiumPropertyDetailPage({
                 {/* Investment & payment details */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold flex items-center gap-2">
-                    <Wallet className="size-4 text-blue-600" />
+                    <Wallet className="size-4 text-info" />
                     Detalle del pago
                   </h3>
                   <div className="space-y-2 text-sm">
@@ -278,14 +278,14 @@ export default function AdminPremiumPropertyDetailPage({
                         <Percent className="size-3.5" />
                         Participación
                       </span>
-                      <span className="font-bold text-amber-700">100%</span>
+                      <span className="font-bold text-premium">100%</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground flex items-center gap-1">
                         <TrendingUp className="size-3.5" />
                         Retorno estimado
                       </span>
-                      <span className="font-bold text-emerald-600">
+                      <span className="font-bold text-success">
                         {formatCurrency(inv.estimatedReturn, inv.currency)}
                       </span>
                     </div>
@@ -343,9 +343,9 @@ export default function AdminPremiumPropertyDetailPage({
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-blue-100">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-info/15">
                 <Button
-                  className="flex-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="flex-1 rounded-xl bg-success hover:bg-success/90 text-success-foreground"
                   onClick={() => handleApproveInvestment(inv)}
                 >
                   <CheckCircle2 className="size-4 mr-2" />
@@ -353,7 +353,7 @@ export default function AdminPremiumPropertyDetailPage({
                 </Button>
                 <Button
                   variant="outline"
-                  className="flex-1 rounded-xl text-red-600 border-red-200 hover:bg-red-50"
+                  className="flex-1 rounded-xl text-destructive border-destructive/20 hover:bg-destructive/10"
                   onClick={() => { setRejectTarget(inv); setRejectReason(""); }}
                 >
                   <XCircle className="size-4 mr-2" />
@@ -370,26 +370,26 @@ export default function AdminPremiumPropertyDetailPage({
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-6"
+          className="rounded-2xl border-2 border-success/20 bg-gradient-to-br from-success/10 to-card p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <div className="size-10 rounded-xl bg-emerald-500 flex items-center justify-center">
-              <User className="size-5 text-white" />
+            <div className="size-10 rounded-xl bg-success flex items-center justify-center">
+              <User className="size-5 text-success-foreground" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-emerald-900">Inversor único — Captura al 100%</p>
-              <p className="text-xs text-emerald-700">Esta propiedad tiene un solo inversor Premium</p>
+              <p className="text-sm font-semibold text-success">Inversor único — Captura al 100%</p>
+              <p className="text-xs text-success">Esta propiedad tiene un solo inversor Premium</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="rounded-xl bg-white border border-emerald-100 p-5 space-y-4">
+            <div className="rounded-xl bg-card border border-success/15 p-5 space-y-4">
               <h3 className="text-sm font-semibold flex items-center gap-2">
-                <User className="size-4 text-emerald-600" />
+                <User className="size-4 text-success" />
                 Datos del inversor
               </h3>
               <div className="flex items-center gap-4">
-                <div className="size-14 rounded-full bg-emerald-100 flex items-center justify-center text-lg font-bold text-emerald-700">
+                <div className="size-14 rounded-full bg-success/15 flex items-center justify-center text-lg font-bold text-success">
                   {(effectiveCaughtByUserName ?? "")
                     .split(" ")
                     .map((n) => n[0])
@@ -429,9 +429,9 @@ export default function AdminPremiumPropertyDetailPage({
               </div>
             </div>
 
-            <div className="rounded-xl bg-white border border-emerald-100 p-5 space-y-4">
+            <div className="rounded-xl bg-card border border-success/15 p-5 space-y-4">
               <h3 className="text-sm font-semibold flex items-center gap-2">
-                <Wallet className="size-4 text-emerald-600" />
+                <Wallet className="size-4 text-success" />
                 Detalle de inversión
               </h3>
               <div className="space-y-3">
@@ -446,24 +446,24 @@ export default function AdminPremiumPropertyDetailPage({
                     <Percent className="size-3.5" />
                     Participación
                   </span>
-                  <span className="font-bold text-emerald-700">100%</span>
+                  <span className="font-bold text-success">100%</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <TrendingUp className="size-3.5" />
                     ROI Premium
                   </span>
-                  <span className="font-bold text-amber-700">{baseProperty.premiumRoi}%</span>
+                  <span className="font-bold text-premium">{baseProperty.premiumRoi}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Retorno estimado</span>
-                  <span className="font-bold text-emerald-600">
+                  <span className="font-bold text-success">
                     {formatCurrency(estimatedReturn, baseProperty.currency)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Estado del pago</span>
-                  <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200" variant="outline">
+                  <Badge className="bg-success/10 text-success border-success/20" variant="outline">
                     Confirmado
                   </Badge>
                 </div>
@@ -495,19 +495,19 @@ export default function AdminPremiumPropertyDetailPage({
         <div className="space-y-4">
           <Card className={cn(
             "rounded-2xl overflow-hidden",
-            isAvailable && "border-amber-200"
+            isAvailable && "border-premium/20"
           )}>
             <div className={cn(
               "p-4",
               isAvailable
-                ? "bg-gradient-to-br from-amber-500 to-amber-600 text-white"
+                ? "bg-gradient-to-br from-premium to-premium/80 text-premium-foreground"
                 : "bg-muted/30"
             )}>
-              <p className={cn("text-xs mb-1", isAvailable ? "text-white/80" : "text-muted-foreground")}>
+              <p className={cn("text-xs mb-1", isAvailable ? "text-premium-foreground/80" : "text-muted-foreground")}>
                 ROI Premium
               </p>
               <p className="text-3xl font-bold">{baseProperty.premiumRoi}%</p>
-              <p className={cn("text-xs mt-1", isAvailable ? "text-white/70" : "text-muted-foreground")}>
+              <p className={cn("text-xs mt-1", isAvailable ? "text-premium-foreground/70" : "text-muted-foreground")}>
                 Estándar: {baseProperty.roi}%
               </p>
             </div>
@@ -539,18 +539,18 @@ export default function AdminPremiumPropertyDetailPage({
           </Card>
 
           {isAvailable && pendingInvestments.length === 0 && (
-            <Card className="rounded-2xl border-amber-200 bg-amber-50/30">
+            <Card className="rounded-2xl border-premium/20 bg-premium/10">
               <CardContent className="p-4">
-                <p className="text-sm font-semibold text-amber-900 mb-2">Acciones disponibles</p>
+                <p className="text-sm font-semibold text-premium mb-2">Acciones disponibles</p>
                 <div className="flex flex-col gap-2">
-                  <Button className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white w-full">
+                  <Button className="rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground w-full">
                     <Bell className="size-4 mr-2" />
                     Enviar notificación Premium
                   </Button>
                   <Button variant="outline" className="rounded-xl w-full">
                     Extender ventana premium
                   </Button>
-                  <Button variant="outline" className="rounded-xl w-full text-red-600 hover:text-red-700">
+                  <Button variant="outline" className="rounded-xl w-full text-destructive hover:text-destructive/90">
                     Convertir a estándar ahora
                   </Button>
                 </div>
@@ -559,10 +559,10 @@ export default function AdminPremiumPropertyDetailPage({
           )}
 
           {isConverted && (
-            <Card className="rounded-2xl border-blue-200 bg-blue-50/30">
+            <Card className="rounded-2xl border-info/20 bg-info/10">
               <CardContent className="p-4">
-                <p className="text-sm font-semibold text-blue-900 mb-1">Convertida a estándar</p>
-                <p className="text-xs text-blue-700 leading-relaxed">
+                <p className="text-sm font-semibold text-info mb-1">Convertida a estándar</p>
+                <p className="text-xs text-info leading-relaxed">
                   La ventana premium expiró sin inversor. La propiedad ahora está
                   disponible en el mercado estándar con ROI del {baseProperty.roi}%.
                 </p>
@@ -601,7 +601,7 @@ export default function AdminPremiumPropertyDetailPage({
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              className="rounded-xl bg-red-600 hover:bg-red-700"
+              className="rounded-xl bg-destructive hover:bg-destructive/90"
               disabled={!rejectReason.trim()}
               onClick={handleRejectInvestment}
             >

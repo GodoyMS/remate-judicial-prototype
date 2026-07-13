@@ -178,11 +178,11 @@ export default function PropertyDetailPage({
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Activity className="size-4 text-green-600" />
+                  <Activity className="size-4 text-success" />
                   Inversiones en tiempo real
                 </CardTitle>
-                <span className="flex items-center gap-1.5 text-[10px] text-green-600 font-medium">
-                  <span className="size-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="flex items-center gap-1.5 text-[10px] text-success font-medium">
+                  <span className="size-2 rounded-full bg-success animate-pulse" />
                   En vivo
                 </span>
               </div>
@@ -211,7 +211,7 @@ export default function PropertyDetailPage({
                             <p className="text-[10px] text-muted-foreground">{inv.timeAgo}</p>
                           </div>
                         </div>
-                        <p className="text-sm font-bold text-green-600">{formatCurrency(inv.amount, property.currency)}</p>
+                        <p className="text-sm font-bold text-success">{formatCurrency(inv.amount, property.currency)}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -229,12 +229,12 @@ export default function PropertyDetailPage({
                 <p className="text-2xl font-bold">{formatCurrency(property.price, property.currency)}</p>
               </div>
 
-              <div className="flex items-center justify-between rounded-xl bg-green-50 border border-green-200 p-3">
+              <div className="flex items-center justify-between rounded-xl bg-success/10 border border-success/20 p-3">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="size-5 text-green-600" />
-                  <span className="text-sm font-medium text-green-800">ROI estimado</span>
+                  <TrendingUp className="size-5 text-success" />
+                  <span className="text-sm font-medium text-success">ROI estimado</span>
                 </div>
-                <span className="text-xl font-bold text-green-600">+{property.roi}%</span>
+                <span className="text-xl font-bold text-success">+{property.roi}%</span>
               </div>
 
               <div>

@@ -58,7 +58,7 @@ export function Sidebar() {
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group",
                 active
                   ? item.premiumHighlight && isPremium
-                    ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
+                    ? "bg-gradient-to-r from-premium to-premium/80 text-premium-foreground"
                     : "bg-sidebar-primary text-sidebar-primary-foreground"
                   : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent",
                 item.premiumHighlight && !active && !isPremium && "opacity-80"
@@ -67,7 +67,7 @@ export function Sidebar() {
               <item.icon className="size-4 shrink-0" />
               <span className="flex-1">{item.label}</span>
               {item.premiumHighlight && isPremium && !active && (
-                <span className="size-1.5 rounded-full bg-amber-400 animate-pulse" />
+                <span className="size-1.5 rounded-full bg-premium animate-pulse" />
               )}
               {active && <ChevronRight className="size-3.5 opacity-60" />}
             </Link>

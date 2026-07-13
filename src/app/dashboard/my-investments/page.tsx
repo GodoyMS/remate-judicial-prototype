@@ -71,34 +71,34 @@ const statusConfig: Record<
 > = {
   active: {
     label: "Activa",
-    rowBorder: "border-l-emerald-500",
-    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    rowBorder: "border-l-success",
+    badge: "bg-success/10 text-success border-success/20",
   },
   completed: {
     label: "Completada",
-    rowBorder: "border-l-blue-500",
-    badge: "bg-blue-50 text-blue-700 border-blue-200",
+    rowBorder: "border-l-info",
+    badge: "bg-info/10 text-info border-info/20",
   },
   pending: {
     label: "Pendiente",
-    rowBorder: "border-l-amber-500",
-    badge: "bg-amber-50 text-amber-700 border-amber-200",
+    rowBorder: "border-l-warning",
+    badge: "bg-warning/10 text-warning border-warning/20",
   },
   cancelled: {
     label: "Cancelada",
-    rowBorder: "border-l-red-400",
-    badge: "bg-red-50 text-red-600 border-red-200",
+    rowBorder: "border-l-destructive",
+    badge: "bg-destructive/10 text-destructive border-destructive/20",
   },
 };
 
 function PaymentMethodIcon({ method }: { method: string }) {
   if (method.includes("Yape") || method.includes("Plin")) {
-    return <Smartphone className="size-3.5 shrink-0 text-violet-600" />;
+    return <Smartphone className="size-3.5 shrink-0 text-accent-foreground" />;
   }
   if (method.includes("Transferencia")) {
-    return <Landmark className="size-3.5 shrink-0 text-blue-600" />;
+    return <Landmark className="size-3.5 shrink-0 text-info" />;
   }
-  return <CreditCard className="size-3.5 shrink-0 text-slate-600" />;
+  return <CreditCard className="size-3.5 shrink-0 text-muted-foreground" />;
 }
 
 export default function MyInvestmentsPage() {
@@ -287,28 +287,28 @@ function MyInvestmentsContent() {
             value: String(stats.transactions),
             sub: "registros totales",
             icon: Receipt,
-            accent: "text-slate-600 bg-slate-50",
+            accent: "text-muted-foreground bg-muted",
           },
           {
             label: "Capital invertido",
             value: stats.totalLabel,
             sub: "monto acumulado",
             icon: Wallet,
-            accent: "text-blue-600 bg-blue-50",
+            accent: "text-info bg-info/10",
           },
           {
             label: "Posiciones activas",
             value: String(stats.active),
             sub: "en subasta o legal",
             icon: TrendingUp,
-            accent: "text-emerald-600 bg-emerald-50",
+            accent: "text-success bg-success/10",
           },
           {
             label: "Retorno estimado",
             value: stats.returnsLabel,
             sub: "proyección total",
             icon: Clock,
-            accent: "text-amber-600 bg-amber-50",
+            accent: "text-warning bg-warning/10",
           },
         ].map((s, i) => (
           <motion.div
@@ -519,12 +519,12 @@ function MyInvestmentsContent() {
                       </span>
                     </TableCell>
                     <TableCell className="py-3 whitespace-nowrap">
-                      <span className="text-sm font-bold text-emerald-600 tabular-nums">
+                      <span className="text-sm font-bold text-success tabular-nums">
                         +{inv.roi}%
                       </span>
                     </TableCell>
                     <TableCell className="py-3 whitespace-nowrap">
-                      <p className="text-sm font-semibold text-emerald-600 tabular-nums">
+                      <p className="text-sm font-semibold text-success tabular-nums">
                         {inv.status === "cancelled"
                           ? "—"
                           : formatCurrency(inv.estimatedReturn, inv.currency)}

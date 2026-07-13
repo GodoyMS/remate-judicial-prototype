@@ -269,7 +269,7 @@ export function PropertyImagesManager({
                     <button
                       type="button"
                       onClick={() => setDeleteTarget(image)}
-                      className="p-1.5 rounded-lg bg-red-600/90 text-white hover:bg-red-600 transition-colors"
+                      className="p-1.5 rounded-lg bg-destructive/90 text-destructive-foreground hover:bg-destructive transition-colors"
                       aria-label="Eliminar imagen"
                     >
                       <Trash2 className="size-3.5" />
@@ -360,7 +360,7 @@ export function PropertyImagesManager({
                 ? `Se eliminará "${deleteTarget.name}" de la galería.`
                 : "Esta acción no se puede deshacer."}
               {deleteTarget && images[0]?.id === deleteTarget.id && images.length > 1 && (
-                <span className="block mt-2 text-amber-700">
+                <span className="block mt-2 text-warning">
                   Es la portada actual. La siguiente imagen pasará a ser la portada.
                 </span>
               )}

@@ -41,17 +41,17 @@ export default function LibroDeReclamacionesPage() {
         ]}
       />
 
-      <section className="border-b border-[#163300]/8 bg-white py-10">
+      <section className="border-b border-border bg-white py-10">
         <div className="mx-auto max-w-3xl section-padding">
           <div className="grid gap-4 sm:grid-cols-3">
             {infoCards.map((card) => (
               <div
                 key={card.title}
-                className="rounded-xl border border-[#163300]/8 bg-[#F5F9F2]/50 p-4 text-center"
+                className="rounded-xl border border-border bg-muted/50 p-4 text-center"
               >
-                <card.icon className="mx-auto mb-2 size-5 text-[#163300]/60" />
-                <h3 className="text-sm font-semibold text-[#163300]">{card.title}</h3>
-                <p className="mt-1 text-xs leading-relaxed text-[#163300]/55">{card.desc}</p>
+                <card.icon className="mx-auto mb-2 size-5 text-muted-foreground" />
+                <h3 className="text-sm font-semibold text-foreground">{card.title}</h3>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{card.desc}</p>
               </div>
             ))}
           </div>

@@ -94,7 +94,7 @@ export function VerificationRowActions({
           label="Aceptar"
           hint="Aprueba KYC y mueve a Clientes"
           onClick={() => onAccept(verification)}
-          className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+          className="text-success hover:text-success/80 hover:bg-success/10"
         >
           <Check className="size-4" />
         </ActionBtn>
@@ -118,7 +118,7 @@ export function VerificationRowActions({
             label="Solicitar nueva verificación"
             hint="Pide correcciones por email"
             onClick={() => onResolicitar(verification)}
-            className="text-sky-600 hover:text-sky-700 hover:bg-sky-50"
+            className="text-info hover:text-info/80 hover:bg-info/10"
           >
             <RefreshCw className="size-4" />
           </ActionBtn>

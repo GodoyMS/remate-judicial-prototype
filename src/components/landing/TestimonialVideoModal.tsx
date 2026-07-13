@@ -111,7 +111,7 @@ export function TestimonialVideoModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 12 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="relative overflow-hidden rounded-3xl bg-[#0d1f00] shadow-2xl shadow-[#163300]/30 ring-1 ring-[#9FE870]/20"
+          className="relative overflow-hidden rounded-3xl bg-foreground shadow-2xl shadow-foreground/30 ring-1 ring-primary/20"
         >
           <button
             type="button"
@@ -126,7 +126,7 @@ export function TestimonialVideoModal({
             {/* Video / visual panel */}
             <div className="relative lg:col-span-3">
               {hasVideo ? (
-                <div className="relative aspect-video w-full bg-[#163300]">
+                <div className="relative aspect-video w-full bg-foreground">
                   <video
                     ref={videoRef}
                     className="absolute inset-0 h-full size-full object-cover"
@@ -145,7 +145,7 @@ export function TestimonialVideoModal({
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 
                   {hasError && (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#163300] p-6 text-center">
+                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-foreground p-6 text-center">
                       <p className="text-sm text-white/70">Video no disponible</p>
                     </div>
                   )}
@@ -162,11 +162,11 @@ export function TestimonialVideoModal({
                         aria-label="Progreso del video"
                       >
                         <div
-                          className="absolute inset-y-0 left-0 rounded-full bg-[#9FE870]"
+                          className="absolute inset-y-0 left-0 rounded-full bg-primary"
                           style={{ width: `${progress}%` }}
                         />
                         <div
-                          className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#9FE870] opacity-0 shadow-lg transition-opacity group-hover/progress:opacity-100"
+                          className="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary opacity-0 shadow-lg transition-opacity group-hover/progress:opacity-100"
                           style={{ left: `${progress}%` }}
                         />
                       </div>
@@ -211,19 +211,19 @@ export function TestimonialVideoModal({
                       className="absolute inset-0 z-10 flex items-center justify-center"
                       aria-label="Reproducir testimonio en video"
                     >
-                      <span className="flex size-16 items-center justify-center rounded-full bg-[#9FE870] shadow-2xl shadow-[#9FE870]/40 ring-4 ring-[#9FE870]/30 transition-transform hover:scale-105">
-                        <Play className="ml-1 size-7 fill-[#163300] text-[#163300]" />
+                      <span className="flex size-16 items-center justify-center rounded-full bg-primary shadow-2xl shadow-primary/40 ring-4 ring-primary/30 transition-transform hover:scale-105">
+                        <Play className="ml-1 size-7 fill-primary-foreground text-primary-foreground" />
                       </span>
                     </button>
                   )}
                 </div>
               ) : (
-                <div className="relative flex aspect-video items-center justify-center bg-gradient-to-br from-[#163300] to-[#0d1f00] p-8 lg:aspect-auto lg:min-h-[320px]">
+                <div className="relative flex aspect-video items-center justify-center bg-gradient-to-br from-foreground to-foreground/80 p-8 lg:aspect-auto lg:min-h-[320px]">
                   <div className="absolute inset-0 opacity-20">
-                    <div className="absolute -right-20 -top-20 size-64 rounded-full bg-[#9FE870]/30 blur-3xl" />
-                    <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-[#9FE870]/20 blur-2xl" />
+                    <div className="absolute -right-20 -top-20 size-64 rounded-full bg-primary/30 blur-3xl" />
+                    <div className="absolute -bottom-10 -left-10 size-48 rounded-full bg-primary/20 blur-2xl" />
                   </div>
-                  <Quote className="relative size-20 text-[#9FE870]/30" />
+                  <Quote className="relative size-20 text-primary/30" />
                 </div>
               )}
             </div>
@@ -231,8 +231,8 @@ export function TestimonialVideoModal({
             {/* Details panel */}
             <div className="flex flex-col gap-5 bg-white p-6 lg:col-span-2 lg:p-8">
               <div className="flex items-center gap-2">
-                <Sparkles className="size-3.5 text-[#9FE870]" />
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#163300]/50">
+                <Sparkles className="size-3.5 text-primary" />
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                   Testimonio verificado
                 </span>
               </div>
@@ -241,22 +241,22 @@ export function TestimonialVideoModal({
                 {Array.from({ length: testimonial.stars }).map((_, i) => (
                   <Star
                     key={i}
-                    className="size-4 fill-[#9FE870] text-[#9FE870]"
+                    className="size-4 fill-primary text-primary"
                   />
                 ))}
               </div>
 
-              <blockquote className="flex-1 text-base leading-relaxed text-[#163300]/85">
+              <blockquote className="flex-1 text-base leading-relaxed text-foreground/85">
                 &ldquo;{testimonial.review}&rdquo;
               </blockquote>
 
-              <div className="flex items-center gap-3 border-t border-[#163300]/8 pt-5">
+              <div className="flex items-center gap-3 border-t border-foreground/8 pt-5">
                 <div
                   className={cn(
                     "flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-bold",
                     testimonial.avatarImageUrl
-                      ? "overflow-hidden ring-2 ring-[#9FE870]/30"
-                      : "bg-[#163300] text-[#9FE870]"
+                      ? "overflow-hidden ring-2 ring-primary/30"
+                      : "bg-foreground text-primary"
                   )}
                 >
                   {testimonial.avatarImageUrl ? (
@@ -271,13 +271,13 @@ export function TestimonialVideoModal({
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-[#163300]">{testimonial.name}</p>
-                  <p className="text-sm text-[#163300]/50">{testimonial.role}</p>
+                  <p className="font-semibold text-foreground">{testimonial.name}</p>
+                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                 </div>
               </div>
 
               {testimonial.amount && (
-                <span className="inline-flex w-fit items-center rounded-full bg-[#9FE870]/20 px-3 py-1.5 text-xs font-semibold text-[#163300]">
+                <span className="inline-flex w-fit items-center rounded-full bg-primary/20 px-3 py-1.5 text-xs font-semibold text-primary">
                   {testimonial.amount}
                 </span>
               )}

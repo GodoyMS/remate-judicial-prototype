@@ -69,7 +69,7 @@ export function ReopenTicketDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <RotateCcw className="size-4 text-orange-500" />
+            <RotateCcw className="size-4 text-warning" />
             Reabrir observación
           </DialogTitle>
           <DialogDescription>

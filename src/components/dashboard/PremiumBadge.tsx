@@ -18,10 +18,10 @@ export function PremiumBadge({
         "inline-flex items-center gap-1 font-semibold rounded-full",
         size === "sm" ? "text-[10px] px-2 py-0.5" : "text-xs px-2.5 py-1",
         variant === "default" &&
-          "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-sm",
+          "bg-gradient-to-r from-premium to-premium/80 text-premium-foreground shadow-sm",
         variant === "outline" &&
-          "border border-amber-300 bg-amber-50 text-amber-800",
-        variant === "subtle" && "bg-amber-50/80 text-amber-700",
+          "border border-premium/30 bg-premium/10 text-premium",
+        variant === "subtle" && "bg-premium/10 text-premium",
         className
       )}
     >
@@ -36,7 +36,7 @@ export function PremiumExclusiveBadge({ className }: { className?: string }) {
     <span
       className={cn(
         "inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full",
-        "bg-gradient-to-r from-[#163300] to-[#2d5a1a] text-[#9FE870]",
+        "bg-gradient-to-r from-premium to-premium/70 text-premium-foreground",
         className
       )}
     >

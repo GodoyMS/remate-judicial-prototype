@@ -91,9 +91,9 @@ function AccountPageContent() {
               </div>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
-            <div className="flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-2.5 py-1">
-              <CheckCircle2 className="size-3 text-green-600" />
-              <span className="text-[10px] font-medium text-green-700">Identidad verificada</span>
+            <div className="flex items-center gap-1.5 rounded-full bg-success/10 border border-success/20 px-2.5 py-1">
+              <CheckCircle2 className="size-3 text-success" />
+              <span className="text-[10px] font-medium text-success">Identidad verificada</span>
             </div>
           </div>
 
@@ -115,7 +115,7 @@ function AccountPageContent() {
 
           <Link
             href="/login"
-            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all mt-2"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-destructive hover:bg-destructive/10 transition-all mt-2"
           >
             <LogOut className="size-4 shrink-0" />
             Cerrar sesión
@@ -134,9 +134,9 @@ function AccountPageContent() {
               <div className="rounded-2xl  p-6 ">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-base font-semibold text-foreground">Datos personales</h3>
-                  <div className="flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-3 py-1">
-                    <Shield className="size-3 text-green-600" />
-                    <span className="text-xs font-medium text-green-700">KYC completado</span>
+                  <div className="flex items-center gap-1.5 rounded-full bg-success/10 border border-success/20 px-3 py-1">
+                    <Shield className="size-3 text-success" />
+                    <span className="text-xs font-medium text-success">KYC completado</span>
                   </div>
                 </div>
 
@@ -221,7 +221,7 @@ function AccountPageContent() {
                   <Button
                     onClick={handleSave}
                     className={`w-fit rounded-xl font-semibold text-sm transition-all ${
-                      saved ? "bg-green-600 text-white" : "bg-primary text-primary-foreground hover:bg-primary/90"
+                      saved ? "bg-success text-success-foreground" : "bg-primary text-primary-foreground hover:bg-primary/90"
                     }`}
                   >
                     {saved ? (
@@ -252,10 +252,10 @@ function AccountPageContent() {
 
                 {isPremium ? (
                   <div className="space-y-6">
-                    <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6">
+                    <div className="rounded-2xl border border-premium/20 bg-gradient-to-br from-premium/10 to-white p-6">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="size-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                          <Crown className="size-6 text-white" />
+                        <div className="size-12 rounded-xl bg-gradient-to-br from-premium to-premium/80 flex items-center justify-center">
+                          <Crown className="size-6 text-premium-foreground" />
                         </div>
                         <div>
                           <p className="text-lg font-bold text-foreground">Plan Premium activo</p>
@@ -272,7 +272,7 @@ function AccountPageContent() {
                           "Notificaciones en tiempo real",
                         ].map((benefit) => (
                           <li key={benefit} className="flex items-center gap-2 text-sm text-foreground">
-                            <Sparkles className="size-3.5 text-amber-600 shrink-0" />
+                            <Sparkles className="size-3.5 text-premium shrink-0" />
                             {benefit}
                           </li>
                         ))}
@@ -297,21 +297,21 @@ function AccountPageContent() {
                   <div className="space-y-6">
                     {/* Pending request state */}
                     {upgradeRequest?.status === "pending" && (
-                      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+                      <div className="rounded-2xl border border-warning/20 bg-warning/10 p-5">
                         <div className="flex items-start gap-3">
-                          <div className="size-9 rounded-lg bg-amber-200 flex items-center justify-center shrink-0 mt-0.5">
-                            <Clock className="size-4 text-amber-700" />
+                          <div className="size-9 rounded-lg bg-warning/15 flex items-center justify-center shrink-0 mt-0.5">
+                            <Clock className="size-4 text-warning" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-amber-900">Solicitud enviada — en revisión</p>
-                            <p className="text-xs text-amber-700 mt-1">
+                            <p className="text-sm font-semibold text-warning">Solicitud enviada — en revisión</p>
+                            <p className="text-xs text-warning mt-1">
                               Tu solicitud de upgrade a Premium está siendo revisada. Tiempo estimado: 1-2 días hábiles.
                             </p>
                           </div>
                           <Button
                             variant="ghost"
                             size="icon-sm"
-                            className="text-amber-600 hover:text-amber-700 hover:bg-amber-100 rounded-lg shrink-0"
+                            className="text-warning hover:text-warning hover:bg-warning/15 rounded-lg shrink-0"
                             onClick={refreshUpgradeRequest}
                           >
                             <RefreshCw className="size-4" />
@@ -322,17 +322,17 @@ function AccountPageContent() {
 
                     {/* Rejected state */}
                     {upgradeRequest?.status === "rejected" && (
-                      <div className="rounded-2xl border border-red-200 bg-red-50 p-5">
+                      <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-5">
                         <div className="flex items-start gap-3">
-                          <div className="size-9 rounded-lg bg-red-200 flex items-center justify-center shrink-0 mt-0.5">
-                            <XCircle className="size-4 text-red-700" />
+                          <div className="size-9 rounded-lg bg-destructive/15 flex items-center justify-center shrink-0 mt-0.5">
+                            <XCircle className="size-4 text-destructive" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-red-900">Solicitud rechazada</p>
+                            <p className="text-sm font-semibold text-destructive">Solicitud rechazada</p>
                             {upgradeRequest.rejectionReason && (
-                              <p className="text-xs text-red-700 mt-1">{upgradeRequest.rejectionReason}</p>
+                              <p className="text-xs text-destructive mt-1">{upgradeRequest.rejectionReason}</p>
                             )}
-                            <p className="text-xs text-red-600 mt-2">
+                            <p className="text-xs text-destructive mt-2">
                               Puedes volver a enviar una solicitud o contactar a soporte.
                             </p>
                           </div>
@@ -343,7 +343,7 @@ function AccountPageContent() {
                     {/* CTA when no pending/rejected request */}
                     {(!upgradeRequest || upgradeRequest.status === "rejected") && (
                       <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-                        <Crown className="size-12 mx-auto mb-4 text-amber-500" />
+                        <Crown className="size-12 mx-auto mb-4 text-premium" />
                         <h4 className="text-lg font-bold mb-2">Actualiza a Premium</h4>
                         <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
                           Accede a propiedades exclusivas, captura inversiones al 100%
@@ -351,7 +351,7 @@ function AccountPageContent() {
                         </p>
                         <Button
                           onClick={() => setUpgradeDialogOpen(true)}
-                          className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold"
+                          className="rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold"
                         >
                           <Crown className="size-4 mr-2" />
                           {upgradeRequest?.status === "rejected" ? "Volver a solicitar upgrade" : "Solicitar upgrade Premium"}
@@ -368,8 +368,8 @@ function AccountPageContent() {
                           <li>• Comisión 1.5%</li>
                         </ul>
                       </div>
-                      <div className="rounded-xl border border-amber-200 bg-amber-50/30 p-4">
-                        <p className="text-xs font-semibold text-amber-700 uppercase mb-3">Plan Premium</p>
+                      <div className="rounded-xl border border-premium/20 bg-premium/5 p-4">
+                        <p className="text-xs font-semibold text-premium uppercase mb-3">Plan Premium</p>
                         <ul className="space-y-2 text-sm text-foreground">
                           <li>• Captura al 100% exclusiva</li>
                           <li>• ROI hasta 52%</li>
@@ -434,9 +434,9 @@ function AccountPageContent() {
                         <p className="text-sm font-medium text-foreground">Verificación por SMS</p>
                         <p className="text-xs text-muted-foreground mt-0.5">Activada — +51 9** *** 321</p>
                       </div>
-                      <div className="flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-2.5 py-1">
-                        <div className="size-1.5 rounded-full bg-green-600" />
-                        <span className="text-xs font-medium text-green-700">Activa</span>
+                      <div className="flex items-center gap-1.5 rounded-full bg-success/10 border border-success/20 px-2.5 py-1">
+                        <div className="size-1.5 rounded-full bg-success" />
+                        <span className="text-xs font-medium text-success">Activa</span>
                       </div>
                     </div>
                   </div>
@@ -472,7 +472,7 @@ function AccountPageContent() {
                   ))}
                 </div>
 
-                <Button onClick={handleSave} className={`mt-5 rounded-xl font-semibold text-sm transition-all ${saved ? "bg-green-600 text-white" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}>
+                <Button onClick={handleSave} className={`mt-5 rounded-xl font-semibold text-sm transition-all ${saved ? "bg-success text-success-foreground" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}>
                   {saved ? <span className="flex items-center gap-2"><CheckCircle2 className="size-4" />Guardado</span> : "Guardar preferencias"}
                 </Button>
               </div>

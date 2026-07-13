@@ -63,18 +63,18 @@ const statusConfig: Record<
 > = {
   published: {
     label: "Activa",
-    rowBorder: "border-l-emerald-500",
-    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    rowBorder: "border-l-success",
+    badge: "bg-success/10 text-success border-success/20",
   },
   draft: {
     label: "Borrador",
-    rowBorder: "border-l-amber-500",
-    badge: "bg-amber-50 text-amber-700 border-amber-200",
+    rowBorder: "border-l-warning",
+    badge: "bg-warning/10 text-warning border-warning/20",
   },
   closed: {
     label: "Cerrada",
-    rowBorder: "border-l-slate-400",
-    badge: "bg-slate-50 text-slate-600 border-slate-200",
+    rowBorder: "border-l-muted-foreground/40",
+    badge: "bg-muted text-muted-foreground border-border",
   },
 };
 
@@ -202,28 +202,28 @@ export default function AdminPropertiesPage() {
             value: String(stats.total),
             sub: "en plataforma",
             icon: Building2,
-            accent: "text-blue-600 bg-blue-50",
+            accent: "text-info bg-info/10",
           },
           {
             label: "Publicadas",
             value: String(stats.published),
             sub: "subastas activas",
             icon: FileCheck,
-            accent: "text-emerald-600 bg-emerald-50",
+            accent: "text-success bg-success/10",
           },
           {
             label: "Borradores",
             value: String(stats.draft),
             sub: "pendientes",
             icon: FilePen,
-            accent: "text-amber-600 bg-amber-50",
+            accent: "text-warning bg-warning/10",
           },
           {
             label: "Destacadas",
             value: String(stats.featured),
             sub: "en home",
             icon: Star,
-            accent: "text-violet-600 bg-violet-50",
+            accent: "text-warning bg-warning/10",
           },
         ].map((s, i) => (
           <motion.div
@@ -340,7 +340,7 @@ export default function AdminPropertiesPage() {
                             </p>
                             <CurrencyBadge currency={p.currency} className="shrink-0" />
                             {p.featured && (
-                              <Star className="size-3 text-amber-500 fill-amber-500 shrink-0" />
+                              <Star className="size-3 text-warning fill-warning shrink-0" />
                             )}
                           </div>
                           <p className="text-[10px] text-muted-foreground">
@@ -358,7 +358,7 @@ export default function AdminPropertiesPage() {
                       </div>
                     </TableCell>
                     <TableCell className="py-3 whitespace-nowrap">
-                      <span className="text-sm font-bold text-emerald-600 flex items-center gap-0.5 tabular-nums">
+                      <span className="text-sm font-bold text-success flex items-center gap-0.5 tabular-nums">
                         <TrendingUp className="size-3" />
                         +{p.roi}%
                       </span>

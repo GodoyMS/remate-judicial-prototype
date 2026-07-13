@@ -25,7 +25,7 @@ function formatMessageContent(content: string) {
             href={node.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-[#163300] underline decoration-[#9FE870]/60 underline-offset-2 hover:text-[#163300]/80"
+            className="font-medium text-primary underline decoration-primary/60 underline-offset-2 hover:text-primary/80"
           >
             {node.label}
           </a>
@@ -92,13 +92,13 @@ export function ChatbotConversationThread({
                       "flex size-8 shrink-0 items-center justify-center rounded-full",
                       isUser
                         ? "bg-muted ring-2 ring-border/40"
-                        : "bg-[#163300] ring-2 ring-[#9FE870]/25"
+                        : "bg-primary ring-2 ring-primary/25"
                     )}
                   >
                     {isUser ? (
                       <User className="size-3.5 text-muted-foreground" />
                     ) : (
-                      <Sparkles className="size-3.5 text-[#9FE870]" />
+                      <Sparkles className="size-3.5 text-primary-foreground" />
                     )}
                   </div>
 
@@ -113,12 +113,12 @@ export function ChatbotConversationThread({
                         {isUser ? conversation.userName : "Remata AI"}
                       </span>
                       {message.isOnboarding && (
-                        <span className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[9px] font-semibold text-blue-600">
+                        <span className="rounded-md bg-info/10 px-1.5 py-0.5 text-[9px] font-semibold text-info">
                           Onboarding
                         </span>
                       )}
                       {message.offTopic && (
-                        <span className="flex items-center gap-0.5 rounded-md bg-amber-50 px-1.5 py-0.5 text-[9px] font-semibold text-amber-600">
+                        <span className="flex items-center gap-0.5 rounded-md bg-warning/10 px-1.5 py-0.5 text-[9px] font-semibold text-warning">
                           <AlertCircle className="size-2.5" />
                           Off-topic
                         </span>
@@ -129,8 +129,8 @@ export function ChatbotConversationThread({
                       className={cn(
                         "rounded-2xl px-4 py-3 text-sm leading-relaxed",
                         isUser
-                          ? "rounded-tr-md bg-[#163300] text-white"
-                          : "rounded-tl-md border border-border/50 bg-[#F5F9F2] text-foreground"
+                          ? "rounded-tr-md bg-primary text-primary-foreground"
+                          : "rounded-tl-md border border-border/50 bg-muted text-foreground"
                       )}
                     >
                       {formatMessageContent(message.content)}
@@ -153,7 +153,7 @@ export function ChatbotConversationThread({
 
       <div className="shrink-0 border-t border-border/60 bg-muted/20 px-4 py-3 sm:px-6">
         <div className="mx-auto flex max-w-2xl items-center gap-2 text-[11px] text-muted-foreground">
-          <Bot className="size-3.5 shrink-0 text-[#163300]" />
+          <Bot className="size-3.5 shrink-0 text-primary" />
           <span>
             {conversation.messages.filter((m) => m.role === "user").length} mensajes
             del usuario · {conversation.messages.length} mensajes en total

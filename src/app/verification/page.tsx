@@ -272,7 +272,7 @@ export default function VerificationPage() {
                                 <X className="size-4" />
                               </button>
                             </div>
-                            <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-green-600 text-white text-xs px-2.5 py-1 rounded-full">
+                            <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-success text-success-foreground text-xs px-2.5 py-1 rounded-full">
                               <CheckCircle2 className="size-3" />
                               Cargado
                             </div>
@@ -372,7 +372,7 @@ export default function VerificationPage() {
                           item.done
                             ? "bg-primary"
                             : item.active
-                            ? "bg-amber-400"
+                            ? "bg-warning"
                             : "bg-border"
                         }`}
                       >

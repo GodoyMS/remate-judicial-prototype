@@ -14,8 +14,8 @@ export function CurrencyBadge({ currency, className }: CurrencyBadgeProps) {
       className={cn(
         "text-[10px] font-semibold uppercase tracking-wide",
         currency === "USD"
-          ? "border-blue-200 bg-blue-50 text-blue-700"
-          : "border-emerald-200 bg-emerald-50 text-emerald-700",
+          ? "border-info/20 bg-info/10 text-info"
+          : "border-success/20 bg-success/10 text-success",
         className
       )}
     >

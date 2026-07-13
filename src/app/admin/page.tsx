@@ -40,28 +40,28 @@ const kpiCards = [
     value: dashboardKpis.totalUsers.toLocaleString("es-PE"),
     change: `+${dashboardKpis.usersGrowth}% este mes`,
     icon: Users,
-    color: "bg-blue-50 text-blue-600",
+    color: "bg-info/10 text-info",
   },
   {
     label: "Capital invertido",
     value: formatCurrency(dashboardKpis.totalInvested),
     change: `+${dashboardKpis.investedGrowth}% vs mes anterior`,
     icon: TrendingUp,
-    color: "bg-green-50 text-green-600",
+    color: "bg-success/10 text-success",
   },
   {
     label: "Propiedades activas",
     value: String(dashboardKpis.activeProperties),
     change: `+${dashboardKpis.propertiesGrowth} nuevas este mes`,
     icon: Building2,
-    color: "bg-amber-50 text-amber-600",
+    color: "bg-chart-1/10 text-chart-1",
   },
   {
     label: "Ingresos del mes",
     value: formatCurrency(dashboardKpis.monthlyRevenue),
     change: `+${dashboardKpis.revenueGrowth}% crecimiento`,
     icon: DollarSign,
-    color: "bg-purple-50 text-purple-600",
+    color: "bg-chart-2/10 text-chart-2",
   },
 ];
 
@@ -129,7 +129,7 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
                 <p className="text-2xl font-bold text-foreground">{c.value}</p>
-                <p className="text-xs mt-1 text-green-600 flex items-center gap-1">
+                <p className="text-xs mt-1 text-success flex items-center gap-1">
                   <ArrowUpRight className="size-3" />
                   {c.change}
                 </p>
@@ -182,7 +182,7 @@ export default function AdminDashboardPage() {
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold flex items-center gap-2">
-              <Star className="size-4 text-amber-500" />
+              <Star className="size-4 text-warning" />
               Propiedades destacadas
             </h3>
             <Link href="/admin/properties" className="text-xs font-medium text-secondary hover:text-secondary/80 flex items-center gap-1">
@@ -220,7 +220,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="text-right shrink-0 hidden sm:block">
                       <p className="text-sm font-semibold">{formatCurrency(p.raisedAmount)}</p>
-                      <p className="text-xs text-green-600">+{p.roi}% ROI</p>
+                      <p className="text-xs text-success">+{p.roi}% ROI</p>
                     </div>
                   </Link>
                 </motion.div>

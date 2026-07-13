@@ -34,9 +34,9 @@ interface PremiumInvestmentDetailSheetProps {
 }
 
 const statusConfig = {
-  active: { label: "Activa", className: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  pending: { label: "Pendiente", className: "bg-amber-50 text-amber-700 border-amber-200" },
-  completed: { label: "Completada", className: "bg-blue-50 text-blue-700 border-blue-200" },
+  active: { label: "Activa", className: "bg-success/10 text-success border-success/20" },
+  pending: { label: "Pendiente", className: "bg-warning/10 text-warning border-warning/20" },
+  completed: { label: "Completada", className: "bg-info/10 text-info border-info/20" },
 };
 
 export function PremiumInvestmentDetailSheet({
@@ -73,24 +73,24 @@ export function PremiumInvestmentDetailSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-white border border-amber-200 p-5 mb-6">
+        <div className="rounded-2xl bg-gradient-to-br from-premium/10 to-card border border-premium/20 p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <Crown className="size-5 text-amber-600" />
-            <span className="text-sm font-semibold text-amber-900">Retorno Premium</span>
+            <Crown className="size-5 text-premium" />
+            <span className="text-sm font-semibold text-premium">Retorno Premium</span>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-muted-foreground">ROI Premium</p>
-              <p className="text-3xl font-bold text-amber-700">{investment.premiumRoi}%</p>
+              <p className="text-3xl font-bold text-premium">{investment.premiumRoi}%</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Ganancia estimada</p>
-              <p className="text-2xl font-bold text-emerald-600">
+              <p className="text-2xl font-bold text-success">
                 {formatCurrency(investment.estimatedReturn, investment.currency)}
               </p>
             </div>
           </div>
-          <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-700 bg-amber-100/50 rounded-lg px-2.5 py-1.5">
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-premium bg-premium/10 rounded-lg px-2.5 py-1.5">
             <Sparkles className="size-3.5" />
             {roiMultiplier}x el retorno del mercado estándar ({property.standardRoi}%)
           </div>
@@ -106,14 +106,14 @@ export function PremiumInvestmentDetailSheet({
               <Percent className="size-3.5" />
               Participación
             </span>
-            <span className="font-bold text-amber-700">{investment.ownershipPercent}%</span>
+            <span className="font-bold text-premium">{investment.ownershipPercent}%</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground flex items-center gap-1">
               <TrendingUp className="size-3.5" />
               Retorno estimado
             </span>
-            <span className="font-bold text-emerald-600">
+            <span className="font-bold text-success">
               {formatCurrency(investment.estimatedReturn, investment.currency)}
             </span>
           </div>
@@ -150,7 +150,7 @@ export function PremiumInvestmentDetailSheet({
 
         <Button
           onClick={handleDownload}
-          className="w-full rounded-xl bg-[#163300] text-[#9FE870] hover:bg-[#163300]/90"
+          className="w-full rounded-xl bg-premium text-premium-foreground hover:bg-premium/90"
         >
           <Download className="size-4 mr-2" />
           Descargar certificado Premium

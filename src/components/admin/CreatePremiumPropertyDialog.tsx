@@ -197,7 +197,7 @@ export function CreatePremiumPropertyDialog({
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-lg flex items-center gap-2">
-            <Crown className="size-5 text-amber-600" />
+            <Crown className="size-5 text-premium" />
             Nueva propiedad Premium
           </DialogTitle>
           <DialogDescription>
@@ -292,7 +292,7 @@ export function CreatePremiumPropertyDialog({
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="premium-premium-roi" className="flex items-center gap-1">
-                <TrendingUp className="size-3 text-amber-600" />
+                <TrendingUp className="size-3 text-premium" />
                 ROI Premium (%)
               </Label>
               <Input
@@ -303,7 +303,7 @@ export function CreatePremiumPropertyDialog({
                 max={100}
                 placeholder="48"
                 required
-                className="rounded-xl border-amber-200 focus-visible:ring-amber-400"
+                className="rounded-xl border-premium/30 focus-visible:ring-premium"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -348,7 +348,7 @@ export function CreatePremiumPropertyDialog({
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="flex items-center gap-1">
-                <Crown className="size-3 text-amber-600" />
+                <Crown className="size-3 text-premium" />
                 Vence ventana Premium
               </Label>
               <Popover>
@@ -357,11 +357,11 @@ export function CreatePremiumPropertyDialog({
                     type="button"
                     variant="outline"
                     className={cn(
-                      "w-full justify-start rounded-xl font-normal border-amber-200",
+                      "w-full justify-start rounded-xl font-normal border-premium/30",
                       !premiumDeadline && "text-muted-foreground"
                     )}
                   >
-                    <CalendarIcon className="size-4 mr-2 text-amber-600" />
+                    <CalendarIcon className="size-4 mr-2 text-premium" />
                     {premiumDeadline
                       ? format(premiumDeadline, "PPP", { locale: es })
                       : "Seleccionar fecha"}
@@ -454,7 +454,7 @@ export function CreatePremiumPropertyDialog({
             </div>
           </div>
 
-          <div className="rounded-xl border border-amber-200/60 overflow-hidden bg-amber-50/30">
+          <div className="rounded-xl border border-premium/20 overflow-hidden bg-premium/10">
             <div className="aspect-[16/6] bg-muted/40 flex flex-col items-center justify-center gap-2 relative">
               <MapPin className="size-8 text-muted-foreground/40" />
               <p className="text-xs text-muted-foreground">Vista previa de ubicación</p>
@@ -495,9 +495,9 @@ export function CreatePremiumPropertyDialog({
             )}
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-amber-200/60 p-4 bg-amber-50/40">
+          <div className="flex items-center justify-between rounded-xl border border-premium/20 p-4 bg-premium/10">
             <div className="flex items-center gap-3">
-              <Bell className="size-4 text-amber-600" />
+              <Bell className="size-4 text-premium" />
               <div>
                 <p className="text-sm font-medium">Notificar usuarios Premium</p>
                 <p className="text-xs text-muted-foreground">
@@ -528,7 +528,7 @@ export function CreatePremiumPropertyDialog({
             <Button
               type="submit"
               disabled={loading}
-              className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white"
+              className="rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground"
             >
               {loading ? "Creando..." : "Crear propiedad Premium"}
             </Button>

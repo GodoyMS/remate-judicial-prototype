@@ -133,14 +133,14 @@ export function InvestmentDetailSheet({
             <div className="min-w-0">
               <p className="text-sm font-semibold truncate">{property.name}</p>
               <p className="text-xs text-muted-foreground truncate">{property.address}</p>
-              <p className="text-xs text-green-600 font-bold mt-1">+{investment.roi}% ROI</p>
+              <p className="text-xs text-success font-bold mt-1">+{investment.roi}% ROI</p>
             </div>
           </div>
 
           <div className="rounded-2xl bg-muted/30 border border-border/60 p-4 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Monto invertido</p>
             <p className="text-3xl font-bold text-foreground mt-1">{formatCurrency(investment.amount, investment.currency)}</p>
-            <p className="text-sm text-green-600 font-semibold mt-1">
+            <p className="text-sm text-success font-semibold mt-1">
               Retorno est. {formatCurrency(investment.estimatedReturn, investment.currency)}
             </p>
           </div>

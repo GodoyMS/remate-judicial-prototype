@@ -178,7 +178,7 @@ export function EditTestimonialSheet({
                 {Array.from({ length: stars }).map((_, i) => (
                   <Star
                     key={i}
-                    className="size-3.5 fill-amber-400 text-amber-400"
+                    className="size-3.5 fill-warning text-warning"
                   />
                 ))}
               </div>

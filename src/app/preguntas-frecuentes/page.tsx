@@ -125,20 +125,20 @@ export default function PreguntasFrecuentesPage() {
             animate={{ opacity: 1, y: 0 }}
             className="relative mb-10"
           >
-            <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[#163300]/40" />
+            <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Buscar en preguntas frecuentes..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-14 rounded-2xl border-[#163300]/10 bg-white pl-12 text-base shadow-sm focus-visible:ring-[#9FE870]"
+              className="h-14 rounded-2xl border-border bg-white pl-12 text-base shadow-sm focus-visible:ring-primary"
             />
           </motion.div>
 
           {filteredCategories.length === 0 ? (
-            <div className="rounded-2xl border border-[#163300]/8 bg-white p-12 text-center">
-              <HelpCircle className="mx-auto mb-4 size-10 text-[#163300]/20" />
-              <p className="font-medium text-[#163300]">No encontramos resultados</p>
-              <p className="mt-2 text-sm text-[#163300]/60">
+            <div className="rounded-2xl border border-border bg-white p-12 text-center">
+              <HelpCircle className="mx-auto mb-4 size-10 text-muted-foreground" />
+              <p className="font-medium text-foreground">No encontramos resultados</p>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Prueba con otras palabras o{" "}
                 <Link href="/libro-de-reclamaciones" className="font-medium underline">
                   contáctanos directamente
@@ -155,22 +155,22 @@ export default function PreguntasFrecuentesPage() {
                   viewport={{ once: true }}
                   transition={{ delay: catIndex * 0.05 }}
                 >
-                  <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-[#163300]/50">
+                  <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
                     <BookOpen className="size-4" />
                     {category.label}
                   </h2>
-                  <div className="overflow-hidden rounded-2xl border border-[#163300]/8 bg-white shadow-sm">
+                  <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
                     <Accordion type="single" collapsible>
                       {category.questions.map((item, i) => (
                         <AccordionItem
                           key={item.q}
                           value={`${category.id}-${i}`}
-                          className="border-[#163300]/8 px-5 last:border-b-0"
+                          className="border-border px-5 last:border-b-0"
                         >
-                          <AccordionTrigger className="py-5 text-left text-base font-semibold text-[#163300] hover:no-underline hover:text-[#163300]/80">
+                          <AccordionTrigger className="py-5 text-left text-base font-semibold text-foreground hover:no-underline hover:text-foreground/80">
                             {item.q}
                           </AccordionTrigger>
-                          <AccordionContent className="pb-5 text-[#163300]/70 leading-relaxed">
+                          <AccordionContent className="pb-5 text-muted-foreground leading-relaxed">
                             {item.a}
                           </AccordionContent>
                         </AccordionItem>
@@ -186,23 +186,23 @@ export default function PreguntasFrecuentesPage() {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-12 rounded-2xl border border-[#9FE870]/30 bg-[#9FE870]/10 p-6 sm:p-8"
+            className="mt-12 rounded-2xl border border-primary/30 bg-primary/10 p-6 sm:p-8"
           >
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#9FE870]/30">
-                  <MessageCircle className="size-6 text-[#163300]" />
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/30">
+                  <MessageCircle className="size-6 text-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#163300]">¿Aún tienes dudas?</h3>
-                  <p className="mt-1 text-sm text-[#163300]/65">
+                  <h3 className="font-bold text-foreground">¿Aún tienes dudas?</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
                     Nuestro equipo responde en menos de 24 horas hábiles.
                   </p>
                 </div>
               </div>
               <Link
                 href="/libro-de-reclamaciones"
-                className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#163300] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#163300]/90"
+                className="inline-flex shrink-0 items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Libro de reclamaciones
               </Link>

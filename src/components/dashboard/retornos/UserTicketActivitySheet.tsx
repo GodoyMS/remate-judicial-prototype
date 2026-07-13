@@ -17,14 +17,14 @@ const activityConfig: Record<
   TicketActivityType,
   { icon: typeof Flag; color: string; label: string }
 > = {
-  created: { icon: MessageSquare, color: "bg-blue-100 text-blue-600", label: "Creado" },
-  flagged: { icon: Flag, color: "bg-amber-100 text-amber-600", label: "Observado" },
-  assigned: { icon: UserCheck, color: "bg-violet-100 text-violet-600", label: "Asignado" },
-  in_review: { icon: ShieldCheck, color: "bg-sky-100 text-sky-600", label: "En revisión" },
-  resolved: { icon: Check, color: "bg-emerald-100 text-emerald-600", label: "Resuelto" },
-  reopened: { icon: RotateCcw, color: "bg-orange-100 text-orange-600", label: "Reabierto" },
-  admin_message: { icon: ShieldCheck, color: "bg-emerald-100 text-emerald-600", label: "Respuesta del equipo" },
-  client_message: { icon: MessageSquare, color: "bg-blue-100 text-blue-600", label: "Tu mensaje" },
+  created: { icon: MessageSquare, color: "bg-info/10 text-info", label: "Creado" },
+  flagged: { icon: Flag, color: "bg-warning/10 text-warning", label: "Observado" },
+  assigned: { icon: UserCheck, color: "bg-accent text-accent-foreground", label: "Asignado" },
+  in_review: { icon: ShieldCheck, color: "bg-info/10 text-info", label: "En revisión" },
+  resolved: { icon: Check, color: "bg-success/10 text-success", label: "Resuelto" },
+  reopened: { icon: RotateCcw, color: "bg-warning/10 text-warning", label: "Reabierto" },
+  admin_message: { icon: ShieldCheck, color: "bg-success/10 text-success", label: "Respuesta del equipo" },
+  client_message: { icon: MessageSquare, color: "bg-info/10 text-info", label: "Tu mensaje" },
 };
 
 function ActivityItem({ item }: { item: TicketActivity }) {
@@ -53,8 +53,8 @@ function ActivityItem({ item }: { item: TicketActivity }) {
           <div className={cn(
             "mt-2 rounded-xl border p-3",
             item.byRole === "admin"
-              ? "border-emerald-200 bg-emerald-50/50"
-              : "border-blue-200 bg-blue-50/50"
+              ? "border-success/20 bg-success/10"
+              : "border-info/20 bg-info/10"
           )}>
             <RichTextContent html={item.description} />
           </div>

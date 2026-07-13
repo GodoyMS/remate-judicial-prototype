@@ -11,11 +11,11 @@ import { cn } from "@/lib/utils";
 
 const tierConfig: Record<UserTier, { badge: string; label: string }> = {
   premium: {
-    badge: "bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100/80",
+    badge: "bg-premium/10 text-premium border-premium/20 hover:bg-premium/15",
     label: "Premium",
   },
   standard: {
-    badge: "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100/80",
+    badge: "bg-muted text-muted-foreground border-border hover:bg-muted/70",
     label: "Standard",
   },
 };

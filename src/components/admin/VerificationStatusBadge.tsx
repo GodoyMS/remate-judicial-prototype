@@ -9,15 +9,15 @@ const config: Record<
 > = {
   pending: {
     label: "Pendiente",
-    className: "bg-amber-50 text-amber-800 border-amber-200",
+    className: "bg-warning/10 text-warning border-warning/20",
   },
   resolicitado: {
     label: "Resolicitado",
-    className: "bg-sky-50 text-sky-800 border-sky-200",
+    className: "bg-info/10 text-info border-info/20",
   },
   rejected: {
     label: "Rechazado",
-    className: "bg-red-50 text-red-700 border-red-200",
+    className: "bg-destructive/10 text-destructive border-destructive/20",
   },
 };
 

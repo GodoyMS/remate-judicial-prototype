@@ -62,10 +62,10 @@ function useCountdown(hours: number, minutes: number, seconds: number) {
 
 /* ─── Investor feed ─── */
 const INVESTORS = [
-  { name: "María E.", amount: "S/ 1,500", ago: "hace 1 min", avatar: "ME", color: "bg-blue-500" },
-  { name: "Carlos R.", amount: "S/ 3,000", ago: "hace 3 min", avatar: "CR", color: "bg-emerald-500" },
-  { name: "Sofía T.", amount: "S/ 800",   ago: "hace 6 min", avatar: "ST", color: "bg-purple-500" },
-  { name: "Diego M.", amount: "S/ 5,000", ago: "hace 9 min", avatar: "DM", color: "bg-amber-500" },
+  { name: "María E.", amount: "S/ 1,500", ago: "hace 1 min", avatar: "ME", color: "bg-chart-1" },
+  { name: "Carlos R.", amount: "S/ 3,000", ago: "hace 3 min", avatar: "CR", color: "bg-chart-2" },
+  { name: "Sofía T.", amount: "S/ 800",   ago: "hace 6 min", avatar: "ST", color: "bg-chart-3" },
+  { name: "Diego M.", amount: "S/ 5,000", ago: "hace 9 min", avatar: "DM", color: "bg-chart-4" },
 ];
 
 /* ─── Background grid ─── */
@@ -167,8 +167,8 @@ export function Hero() {
             >
               <div className="inline-flex items-center gap-2 rounded-full bg-accent/20 border border-accent/40 px-4 py-1.5">
                 <span className="relative flex size-2">
-                  <span className="animate-ping absolute inline-flex size-full rounded-full bg-green-500 opacity-75" />
-                  <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+                  <span className="animate-ping absolute inline-flex size-full rounded-full bg-success opacity-75" />
+                  <span className="relative inline-flex size-2 rounded-full bg-success" />
                 </span>
                 <span className="text-xs font-semibold text-foreground">
                   12 subastas activas ahora mismo
@@ -311,7 +311,7 @@ export function Hero() {
                 <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
 
                 {/* LIVE badge */}
-                <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-destructive text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
                   <span className="relative flex size-1.5">
                     <span className="animate-ping absolute inline-flex size-full rounded-full bg-white opacity-75" />
                     <span className="relative inline-flex size-1.5 rounded-full bg-white" />
@@ -321,8 +321,8 @@ export function Hero() {
 
                 {/* Countdown top-right */}
                 <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm text-white text-sm font-mono font-bold px-3 py-1.5 rounded-xl border border-white/10">
-                  <Clock className="size-3.5 text-amber-400" />
-                  <span className="text-amber-400 tabular-nums">
+                  <Clock className="size-3.5 text-warning" />
+                  <span className="text-warning tabular-nums">
                     {pad(countdown.h)}:{pad(countdown.m)}:{pad(countdown.s)}
                   </span>
                 </div>
@@ -367,7 +367,7 @@ export function Hero() {
                       S/ 312,500
                     </motion.p>
                   </div>
-                  <div className="flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 rounded-lg px-2.5 py-1">
+                  <div className="flex items-center gap-1 text-xs font-medium text-success bg-success/10 rounded-lg px-2.5 py-1">
                     <ChevronUp className="size-3.5" />
                     +11.6%
                   </div>
@@ -416,7 +416,7 @@ export function Hero() {
                         </div>
                         <span className="text-xs text-foreground font-medium">{inv.name}</span>
                         <span className="text-xs text-muted-foreground">invirtió</span>
-                        <span className="text-xs font-bold text-green-600">{inv.amount}</span>
+                        <span className="text-xs font-bold text-success">{inv.amount}</span>
                         <span className="text-[10px] text-muted-foreground ml-auto">{inv.ago}</span>
                       </motion.div>
                     ))}
@@ -452,13 +452,13 @@ export function Hero() {
             >
               <div className="rounded-2xl bg-white border border-border/60 shadow-2xl p-4 w-52">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="size-7 rounded-lg bg-green-500 flex items-center justify-center">
+                  <div className="size-7 rounded-lg bg-success flex items-center justify-center">
                     <TrendingUp className="size-3.5 text-white" />
                   </div>
                   <span className="text-xs font-semibold text-foreground">Mi portafolio</span>
                 </div>
                 <p className="text-2xl font-black text-foreground">S/ 8,420</p>
-                <p className="text-[10px] text-green-600 font-semibold flex items-center gap-0.5 mt-0.5">
+                <p className="text-[10px] text-success font-semibold flex items-center gap-0.5 mt-0.5">
                   <ChevronUp className="size-3" />
                   +18.4% este año
                 </p>
@@ -467,12 +467,12 @@ export function Hero() {
                   <polyline
                     points="0,20 12,16 24,14 36,10 48,12 60,6 72,4 80,2"
                     fill="none"
-                    stroke="#16a34a"
+                    className="stroke-success"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  <circle cx="80" cy="2" r="3" fill="#16a34a" />
+                  <circle cx="80" cy="2" r="3" className="fill-success" />
                 </svg>
               </div>
             </FloatingPill>
@@ -494,8 +494,8 @@ export function Hero() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1 mb-0.5">
-                    <span className="size-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[9px] font-bold text-green-600 uppercase">Nueva subasta</span>
+                    <span className="size-1.5 rounded-full bg-success animate-pulse" />
+                    <span className="text-[9px] font-bold text-success uppercase">Nueva subasta</span>
                   </div>
                   <p className="text-xs font-semibold text-foreground truncate">Dept. Barranco</p>
                   <p className="text-[10px] text-muted-foreground">S/ 165K · ROI +24%</p>
@@ -513,7 +513,7 @@ export function Hero() {
                 <div className="flex items-center gap-2">
                   {/* Stacked avatars */}
                   <div className="flex -space-x-2">
-                    {["bg-blue-500", "bg-purple-500", "bg-amber-500"].map((c, i) => (
+                    {["bg-chart-1", "bg-chart-3", "bg-chart-4"].map((c, i) => (
                       <div
                         key={i}
                         className={`size-7 rounded-full ${c} border-2 border-white flex items-center justify-center text-[9px] font-bold text-white`}

@@ -27,9 +27,9 @@ import type { PremiumInvestment } from "@/lib/premium/types";
 import { cn } from "@/lib/utils";
 
 const statusConfig = {
-  active: { label: "Activa", className: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  pending: { label: "Pendiente", className: "bg-amber-50 text-amber-700 border-amber-200" },
-  completed: { label: "Completada", className: "bg-blue-50 text-blue-700 border-blue-200" },
+  active: { label: "Activa", className: "bg-success/10 text-success border-success/20" },
+  pending: { label: "Pendiente", className: "bg-warning/10 text-warning border-warning/20" },
+  completed: { label: "Completada", className: "bg-info/10 text-info border-info/20" },
 };
 
 export function PremiumInvestmentsTab() {
@@ -71,13 +71,13 @@ export function PremiumInvestmentsTab() {
 
   if (enriched.length === 0) {
     return (
-      <div className="rounded-2xl border border-amber-200/60 bg-amber-50/30 p-12 text-center">
-        <Crown className="size-10 mx-auto mb-3 text-amber-500" />
+      <div className="rounded-2xl border border-premium/20 bg-premium/10 p-12 text-center">
+        <Crown className="size-10 mx-auto mb-3 text-premium" />
         <p className="text-sm font-medium text-foreground mb-1">Aún no tienes inversiones Premium</p>
         <p className="text-xs text-muted-foreground mb-4">
           Captura una propiedad al 100% y obtén retornos excepcionales.
         </p>
-        <Button asChild className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white">
+        <Button asChild className="rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground">
           <Link href="/dashboard/premium-properties">Explorar oportunidades Premium</Link>
         </Button>
       </div>
@@ -98,21 +98,21 @@ export function PremiumInvestmentsTab() {
             value: String(enriched.length),
             sub: "capturas al 100%",
             icon: Crown,
-            accent: "text-amber-600 bg-amber-50",
+            accent: "text-premium bg-premium/10",
           },
           {
             label: "Capital Premium",
             value: formatCurrency(totalInvested, enriched[0]?.currency ?? "PEN"),
             sub: "inversión exclusiva",
             icon: Sparkles,
-            accent: "text-violet-600 bg-violet-50",
+            accent: "text-premium bg-premium/10",
           },
           {
             label: "Retorno estimado",
             value: formatCurrency(totalReturn, enriched[0]?.currency ?? "PEN"),
             sub: "ROI premium",
             icon: TrendingUp,
-            accent: "text-emerald-600 bg-emerald-50",
+            accent: "text-success bg-success/10",
           },
         ].map((s, i) => (
           <motion.div
@@ -120,7 +120,7 @@ export function PremiumInvestmentsTab() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
-            className="rounded-xl border border-amber-200/60 bg-gradient-to-br from-amber-50/30 to-white px-4 py-3"
+            className="rounded-xl border border-premium/20 bg-gradient-to-br from-premium/10 to-card px-4 py-3"
           >
             <div className="flex items-center justify-between gap-2">
               <div>
@@ -136,10 +136,10 @@ export function PremiumInvestmentsTab() {
         ))}
       </div>
 
-      <div className="rounded-xl border border-amber-200/60 bg-white overflow-hidden">
+      <div className="rounded-xl border border-premium/20 bg-card overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="bg-amber-50/50 hover:bg-amber-50/50">
+            <TableRow className="bg-premium/10 hover:bg-premium/10">
               <TableHead className="text-xs">Propiedad</TableHead>
               <TableHead className="text-xs">Inversión</TableHead>
               <TableHead className="text-xs">Participación</TableHead>
@@ -155,7 +155,7 @@ export function PremiumInvestmentsTab() {
               return (
                 <TableRow
                   key={inv.id}
-                  className="cursor-pointer hover:bg-amber-50/30 border-l-4 border-l-amber-400"
+                  className="cursor-pointer hover:bg-premium/10 border-l-4 border-l-premium"
                   onClick={() => openDetail(inv)}
                 >
                   <TableCell>
@@ -171,15 +171,15 @@ export function PremiumInvestmentsTab() {
                     {formatCurrency(inv.amount, inv.currency)}
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-bold text-amber-700">{inv.ownershipPercent}%</span>
+                    <span className="text-sm font-bold text-premium">{inv.ownershipPercent}%</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-bold text-amber-700 flex items-center gap-0.5">
+                    <span className="text-sm font-bold text-premium flex items-center gap-0.5">
                       <TrendingUp className="size-3" />
                       {inv.premiumRoi}%
                     </span>
                   </TableCell>
-                  <TableCell className="text-sm font-bold text-emerald-600">
+                  <TableCell className="text-sm font-bold text-success">
                     {formatCurrency(inv.estimatedReturn, inv.currency)}
                   </TableCell>
                   <TableCell>

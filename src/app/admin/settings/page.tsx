@@ -104,7 +104,7 @@ export default function AdminSettingsPage() {
                 </div>
               </div>
               <div className="rounded-xl bg-muted/40 p-4 flex items-center gap-3">
-                <CheckCircle2 className="size-5 text-green-600 shrink-0" />
+                <CheckCircle2 className="size-5 text-success shrink-0" />
                 <div>
                   <p className="text-sm font-medium">Último acceso</p>
                   <p className="text-xs text-muted-foreground">{formatDate(account.lastLogin)} · Lima, PE</p>
@@ -222,12 +222,12 @@ export default function AdminSettingsPage() {
                   </Button>
                 </div>
 
-                <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex items-start gap-3">
-                  <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="rounded-xl bg-warning/10 border border-warning/20 p-4 flex items-start gap-3">
+                  <AlertTriangle className="size-5 text-warning shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-amber-800">Sesiones activas</p>
-                    <p className="text-xs text-amber-700 mt-0.5">Tienes 2 sesiones activas. Cierra sesiones no reconocidas.</p>
-                    <Button variant="link" className="text-xs text-amber-800 p-0 h-auto mt-1" onClick={() => toast.info("Sesiones cerradas")}>
+                    <p className="text-sm font-medium text-warning">Sesiones activas</p>
+                    <p className="text-xs text-warning/80 mt-0.5">Tienes 2 sesiones activas. Cierra sesiones no reconocidas.</p>
+                    <Button variant="link" className="text-xs text-warning p-0 h-auto mt-1" onClick={() => toast.info("Sesiones cerradas")}>
                       Cerrar otras sesiones
                     </Button>
                   </div>

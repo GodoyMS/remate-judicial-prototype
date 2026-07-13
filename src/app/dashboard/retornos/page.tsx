@@ -36,27 +36,27 @@ const typeConfig: Record<RetornoType, { label: string; icon: typeof TrendingUp; 
   roi_return: {
     label: "Retorno ROI",
     icon: TrendingUp,
-    color: "text-emerald-600",
-    bg: "bg-emerald-50 border-emerald-200",
+    color: "text-success",
+    bg: "bg-success/10 border-success/20",
   },
   refund: {
     label: "Reembolso",
     icon: RotateCcw,
-    color: "text-blue-600",
-    bg: "bg-blue-50 border-blue-200",
+    color: "text-info",
+    bg: "bg-info/10 border-info/20",
   },
   goal_not_reached: {
     label: "Devolución",
     icon: Target,
-    color: "text-amber-600",
-    bg: "bg-amber-50 border-amber-200",
+    color: "text-warning",
+    bg: "bg-warning/10 border-warning/20",
   },
 };
 
 const ticketStatusConfig: Record<TicketStatus, { label: string; color: string }> = {
-  flagged: { label: "En observación", color: "border-amber-200 bg-amber-50 text-amber-700" },
-  in_review: { label: "En revisión", color: "border-blue-200 bg-blue-50 text-blue-700" },
-  resolved: { label: "Resuelto", color: "border-emerald-200 bg-emerald-50 text-emerald-700" },
+  flagged: { label: "En observación", color: "border-warning/20 bg-warning/10 text-warning" },
+  in_review: { label: "En revisión", color: "border-info/20 bg-info/10 text-info" },
+  resolved: { label: "Resuelto", color: "border-success/20 bg-success/10 text-success" },
 };
 
 export default function DashboardRetornosPage() {
@@ -136,10 +136,10 @@ export default function DashboardRetornosPage() {
       {/* Summary */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          { label: "Total", value: retornos.length, sub: "retornos", icon: ArrowDownToLine, color: "text-blue-600 bg-blue-50" },
-          { label: "ROI", value: stats.roi, sub: "ganancias", icon: TrendingUp, color: "text-emerald-600 bg-emerald-50" },
-          { label: "Reembolsos", value: stats.refund, sub: "recibidos", icon: RotateCcw, color: "text-violet-600 bg-violet-50" },
-          { label: "Devoluciones", value: retornos.filter((r) => r.type === "goal_not_reached").length, sub: "procesadas", icon: Target, color: "text-amber-600 bg-amber-50" },
+          { label: "Total", value: retornos.length, sub: "retornos", icon: ArrowDownToLine, color: "text-primary bg-primary/10" },
+          { label: "ROI", value: stats.roi, sub: "ganancias", icon: TrendingUp, color: "text-success bg-success/10" },
+          { label: "Reembolsos", value: stats.refund, sub: "recibidos", icon: RotateCcw, color: "text-info bg-info/10" },
+          { label: "Devoluciones", value: retornos.filter((r) => r.type === "goal_not_reached").length, sub: "procesadas", icon: Target, color: "text-warning bg-warning/10" },
         ].map((s, i) => (
           <motion.div
             key={s.label}
@@ -228,7 +228,7 @@ export default function DashboardRetornosPage() {
                     <p className="text-lg font-bold text-foreground">
                       {formatCurrency(r.amount, r.currency)}
                     </p>
-                    <div className="mt-1 flex items-center justify-end gap-1.5 text-xs text-emerald-600">
+                    <div className="mt-1 flex items-center justify-end gap-1.5 text-xs text-success">
                       <CheckCircle2 className="size-3" />
                       Confirmado
                     </div>
@@ -252,7 +252,7 @@ export default function DashboardRetornosPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-7 rounded-lg gap-1 px-2.5 text-xs border-amber-200 text-amber-700 hover:bg-amber-50"
+                        className="h-7 rounded-lg gap-1 px-2.5 text-xs border-warning/20 text-warning hover:bg-warning/10"
                         onClick={() => openTicket(r)}
                       >
                         <Flag className="size-3" />

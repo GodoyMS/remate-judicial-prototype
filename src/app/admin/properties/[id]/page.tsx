@@ -148,14 +148,14 @@ export default function AdminPropertyDetailPage({
         />
         <KpiCard
           icon={CheckCircle2}
-          iconClass="text-emerald-600"
+          iconClass="text-success"
           label="Confirmado"
           value={formatCurrency(confirmedAmount, property.currency)}
           sub={`${formatCurrency(remaining, property.currency)} disponible`}
         />
         <KpiCard
           icon={Clock}
-          iconClass={pendingCount > 0 ? "text-amber-600" : undefined}
+          iconClass={pendingCount > 0 ? "text-warning" : undefined}
           label="Verificación pendiente"
           value={String(pendingCount)}
           sub={pendingCount > 0 ? "Requiere acción" : "Al día"}
@@ -184,7 +184,7 @@ export default function AdminPropertyDetailPage({
                     {property.region} · ROI proyectado
                   </p>
                   <p className="text-white text-lg font-bold mt-0.5 flex items-center gap-1.5">
-                    <TrendingUp className="size-4 text-green-400" />
+                    <TrendingUp className="size-4 text-success" />
                     +{property.roi}%
                   </p>
                   <p className="text-white/80 text-[10px] mt-1">
@@ -200,7 +200,7 @@ export default function AdminPropertyDetailPage({
               <div className="space-y-2">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Progreso de captación</span>
-                  <span className="font-semibold text-emerald-600">{progress}%</span>
+                  <span className="font-semibold text-success">{progress}%</span>
                 </div>
                 <Progress value={progress} className="h-2" />
               </div>
@@ -223,7 +223,7 @@ export default function AdminPropertyDetailPage({
             <CardContent className="space-y-4">
               <ControlRow
                 icon={Star}
-                iconClass="text-amber-500"
+                iconClass="text-warning"
                 label="Destacada"
                 control={
                   <Switch
@@ -238,7 +238,7 @@ export default function AdminPropertyDetailPage({
               <Separator />
               <ControlRow
                 icon={CheckCircle2}
-                iconClass="text-green-600"
+                iconClass="text-success"
                 label="Publicada"
                 control={
                   <Switch
@@ -341,7 +341,7 @@ function StatPill({
       <p
         className={cn(
           "text-sm font-bold flex items-center gap-1 shrink-0",
-          highlight && "text-emerald-600"
+          highlight && "text-success"
         )}
       >
         {Icon && <Icon className="size-3.5" />}

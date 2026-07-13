@@ -111,7 +111,7 @@ function RoleForm({ role, canEdit, onSave, onClose }: RoleFormProps) {
             </Badge>
           )}
           {isProtected && (
-            <Badge variant="outline" className="text-[9px] h-4 font-medium border-violet-200 bg-violet-50 text-violet-700">
+            <Badge variant="outline" className="text-[9px] h-4 font-medium border-info/20 bg-info/10 text-info">
               <Lock className="size-2.5 mr-0.5" />
               Protegido
             </Badge>

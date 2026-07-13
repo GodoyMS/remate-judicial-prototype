@@ -47,12 +47,12 @@ export function PremiumPropertyCard({
       className={cn(
         "group rounded-2xl border overflow-hidden shadow-sm transition-all duration-300",
         caughtByMe
-          ? "border-amber-300 bg-gradient-to-br from-amber-50/50 to-white ring-1 ring-amber-200"
+          ? "border-premium/40 bg-gradient-to-br from-premium/10 to-card ring-1 ring-premium/30"
           : caughtByOther
             ? "border-border/40 bg-muted/30 opacity-90"
             : isAvailable
-              ? "border-amber-200/60 bg-white hover:shadow-xl hover:-translate-y-1"
-              : "border-border/60 bg-white"
+              ? "border-premium/20 bg-card hover:shadow-xl hover:-translate-y-1"
+              : "border-border/60 bg-card"
       )}
     >
       <Link href={`/dashboard/premium-properties/${property.id}`} className="block">
@@ -72,19 +72,19 @@ export function PremiumPropertyCard({
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
             <PremiumExclusiveBadge />
             {caughtByMe && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500 text-white">
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-success text-success-foreground">
                 <CheckCircle2 className="size-2.5" />
                 Capturada por ti
               </span>
             )}
             {caughtByOther && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-700 text-white">
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-foreground text-background">
                 <XCircle className="size-2.5" />
                 Ya capturada
               </span>
             )}
             {isConverted && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-600 text-white">
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-info text-info-foreground">
                 Ahora estándar
               </span>
             )}
@@ -124,16 +124,16 @@ export function PremiumPropertyCard({
               {formatCurrency(property.totalValue, property.currency)}
             </p>
           </div>
-          <div className="py-2 px-1 bg-amber-50/50">
-            <p className="text-[9px] text-amber-700">ROI Premium</p>
-            <p className="text-[10px] font-bold text-amber-700 mt-0.5 flex items-center justify-center gap-0.5">
+          <div className="py-2 px-1 bg-premium/10">
+            <p className="text-[9px] text-premium">ROI Premium</p>
+            <p className="text-[10px] font-bold text-premium mt-0.5 flex items-center justify-center gap-0.5">
               <TrendingUp className="size-2.5" />
               {property.premiumRoi}%
             </p>
           </div>
           <div className="py-2 px-1">
             <p className="text-[9px] text-muted-foreground">Ganancia est.</p>
-            <p className="text-[10px] font-bold text-emerald-600 mt-0.5">
+            <p className="text-[10px] font-bold text-success mt-0.5">
               {formatCurrency(estimatedReturn, property.currency)}
             </p>
           </div>
@@ -156,7 +156,7 @@ export function PremiumPropertyCard({
                 <Button
                   asChild
                   size="sm"
-                  className="flex-1 h-9 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-semibold shadow-sm"
+                  className="flex-1 h-9 rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground text-xs font-semibold shadow-sm"
                 >
                   <Link href={`/dashboard/premium-invest?property=${property.id}`}>
                     <Crown className="size-3.5 mr-1" />
@@ -169,7 +169,7 @@ export function PremiumPropertyCard({
                   asChild
                   size="sm"
                   variant="outline"
-                  className="flex-1 h-9 rounded-xl border-amber-300 text-amber-800 text-xs font-semibold"
+                  className="flex-1 h-9 rounded-xl border-premium/40 text-premium text-xs font-semibold"
                 >
                   <Link href={`/dashboard/premium-properties/${property.id}`}>
                     Ver mi inversión
@@ -201,7 +201,7 @@ export function PremiumPropertyCard({
             <Button
               asChild
               size="sm"
-              className="flex-1 h-9 rounded-xl bg-[#163300] text-[#9FE870] hover:bg-[#163300]/90 text-xs font-semibold"
+              className="flex-1 h-9 rounded-xl bg-premium text-premium-foreground hover:bg-premium/90 text-xs font-semibold"
             >
               <Link href="/dashboard/account?section=premium">
                 <Crown className="size-3.5 mr-1" />

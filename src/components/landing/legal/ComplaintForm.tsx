@@ -74,22 +74,22 @@ export function ComplaintForm() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-2xl border border-[#9FE870]/30 bg-[#9FE870]/10 p-8 sm:p-12 text-center"
+        className="rounded-2xl border border-success/30 bg-success/10 p-8 sm:p-12 text-center"
       >
-        <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-[#9FE870]/30">
-          <CheckCircle2 className="size-8 text-[#163300]" />
+        <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-success/30">
+          <CheckCircle2 className="size-8 text-success" />
         </div>
-        <h3 className="text-2xl font-bold text-[#163300]">¡Reclamación registrada!</h3>
-        <p className="mt-3 text-[#163300]/65">
+        <h3 className="text-2xl font-bold text-foreground">¡Reclamación registrada!</h3>
+        <p className="mt-3 text-muted-foreground">
           Hemos recibido tu solicitud. Te responderemos al correo{" "}
-          <strong className="text-[#163300]">{form.email}</strong> en un plazo máximo de 15 días
+          <strong className="text-foreground">{form.email}</strong> en un plazo máximo de 15 días
           hábiles.
         </p>
-        <div className="mt-6 inline-flex items-center gap-2 rounded-xl border border-[#163300]/10 bg-white px-5 py-3">
-          <FileWarning className="size-4 text-[#163300]/50" />
-          <span className="text-sm text-[#163300]/60">
+        <div className="mt-6 inline-flex items-center gap-2 rounded-xl border border-foreground/10 bg-white px-5 py-3">
+          <FileWarning className="size-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
             N° de seguimiento:{" "}
-            <strong className="font-mono text-[#163300]">{trackingId}</strong>
+            <strong className="font-mono text-foreground">{trackingId}</strong>
           </span>
         </div>
         <Button
@@ -120,11 +120,11 @@ export function ComplaintForm() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-[#163300]/8 bg-white p-6 sm:p-8 shadow-sm"
+      className="rounded-2xl border border-foreground/8 bg-white p-6 sm:p-8 shadow-sm"
     >
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-[#163300]">Formulario de reclamación</h3>
-        <p className="mt-1 text-sm text-[#163300]/60">
+        <h3 className="text-xl font-bold text-foreground">Formulario de reclamación</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
           Campos marcados con * son obligatorios. Tu información será tratada de forma confidencial.
         </p>
       </div>
@@ -137,7 +137,7 @@ export function ComplaintForm() {
             placeholder="Ej. Juan Pérez García"
             value={form.fullName}
             onChange={(e) => update("fullName", e.target.value)}
-            className="rounded-xl border-[#163300]/10"
+            className="rounded-xl border-foreground/10"
             required
           />
         </div>
@@ -150,7 +150,7 @@ export function ComplaintForm() {
             placeholder="tu@correo.com"
             value={form.email}
             onChange={(e) => update("email", e.target.value)}
-            className="rounded-xl border-[#163300]/10"
+            className="rounded-xl border-foreground/10"
             required
           />
         </div>
@@ -162,7 +162,7 @@ export function ComplaintForm() {
             placeholder="+51 999 888 777"
             value={form.phone}
             onChange={(e) => update("phone", e.target.value)}
-            className="rounded-xl border-[#163300]/10"
+            className="rounded-xl border-foreground/10"
           />
         </div>
 
@@ -172,7 +172,7 @@ export function ComplaintForm() {
             value={form.documentType}
             onValueChange={(v) => update("documentType", v)}
           >
-            <SelectTrigger className="rounded-xl border-[#163300]/10">
+            <SelectTrigger className="rounded-xl border-foreground/10">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -192,14 +192,14 @@ export function ComplaintForm() {
             placeholder="12345678"
             value={form.documentNumber}
             onChange={(e) => update("documentNumber", e.target.value)}
-            className="rounded-xl border-[#163300]/10"
+            className="rounded-xl border-foreground/10"
           />
         </div>
 
         <div className="space-y-2 sm:col-span-2">
           <Label>Tipo de solicitud *</Label>
           <Select value={form.type} onValueChange={(v) => update("type", v)}>
-            <SelectTrigger className="rounded-xl border-[#163300]/10">
+            <SelectTrigger className="rounded-xl border-foreground/10">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -219,7 +219,7 @@ export function ComplaintForm() {
             placeholder="Resumen breve de tu reclamación"
             value={form.subject}
             onChange={(e) => update("subject", e.target.value)}
-            className="rounded-xl border-[#163300]/10"
+            className="rounded-xl border-foreground/10"
             required
           />
         </div>
@@ -232,20 +232,20 @@ export function ComplaintForm() {
             rows={5}
             value={form.description}
             onChange={(e) => update("description", e.target.value)}
-            className="rounded-xl border-[#163300]/10 resize-none"
+            className="rounded-xl border-foreground/10 resize-none"
             required
           />
         </div>
       </div>
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-[#163300]/45">
+        <p className="text-xs text-muted-foreground">
           Conforme a la Ley N° 29571 — Código de Protección y Defensa del Consumidor
         </p>
         <Button
           type="submit"
           disabled={loading}
-          className="rounded-full bg-[#163300] px-8 font-semibold text-white hover:bg-[#163300]/90"
+          className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90"
         >
           <Send className="mr-2 size-4" />
           {loading ? "Enviando..." : "Enviar reclamación"}

@@ -111,7 +111,7 @@ export function AdminUserMenu() {
           aria-label="Menú de administrador"
         >
           {getInitials(account.name)}
-          <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-500 border-2 border-background" />
+          <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-success border-2 border-background" />
         </button>
       </DropdownMenuTrigger>
 
@@ -159,7 +159,7 @@ export function AdminUserMenu() {
                   Invertido
                 </span>
               </div>
-              <p className="text-sm font-bold text-emerald-600 mt-0.5">
+              <p className="text-sm font-bold text-success mt-0.5">
                 S/ 2.8M
               </p>
             </div>
@@ -185,7 +185,7 @@ export function AdminUserMenu() {
                   </p>
                 </div>
                 {item.showBadge && unreadCount > 0 ? (
-                  <span className="size-5 flex items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shrink-0">
+                  <span className="size-5 flex items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white shrink-0">
                     {unreadCount}
                   </span>
                 ) : (
@@ -217,7 +217,7 @@ export function AdminUserMenu() {
             onClick={handleLogout}
             className={cn(
               "rounded-xl px-2.5 py-2.5 cursor-pointer",
-              "text-red-600 focus:text-red-600 focus:bg-red-50"
+              "text-destructive focus:text-destructive focus:bg-destructive/10"
             )}
           >
             <LogOut className="size-4" />

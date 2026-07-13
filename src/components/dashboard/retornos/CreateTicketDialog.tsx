@@ -100,7 +100,7 @@ export function CreateTicketDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Flag className="size-4 text-amber-500" />
+            <Flag className="size-4 text-warning" />
             Abrir observación
           </DialogTitle>
           <DialogDescription>

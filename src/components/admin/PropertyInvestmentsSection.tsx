@@ -252,7 +252,7 @@ export function PropertyInvestmentsSection({
                 <span
                   className={cn(
                     "tabular-nums",
-                    counts.pending > 0 ? "text-amber-600 font-semibold" : "opacity-70"
+                    counts.pending > 0 ? "text-warning font-semibold" : "opacity-70"
                   )}
                 >
                   ({counts.pending})
@@ -564,7 +564,7 @@ function InvestmentSummary({
           {tab === "confirmed" && inv.confirmedAt && (
             <>
               <span className="hidden sm:inline">·</span>
-              <span className="text-emerald-600/90">
+              <span className="text-success/90">
                 Confirmado {formatDate(inv.confirmedAt)}
               </span>
             </>

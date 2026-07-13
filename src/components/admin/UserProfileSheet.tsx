@@ -79,7 +79,7 @@ export function UserProfileSheet({
                     {user.status === "active" ? "Activo" : "Bloqueado"}
                   </Badge>
                   {user.verified && (
-                    <Badge variant="outline" className="text-[10px] text-green-700 border-green-200 bg-green-50">
+                    <Badge variant="outline" className="text-[10px] text-success border-success/20 bg-success/10">
                       <CheckCircle2 className="size-3 mr-0.5" />
                       Verificado
                     </Badge>
@@ -106,7 +106,7 @@ export function UserProfileSheet({
               </div>
               <div className="rounded-xl border border-border/60 p-3">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Ganancias</p>
-                <p className="text-lg font-bold mt-1 text-green-600">{formatCurrency(user.totalGains)}</p>
+                <p className="text-lg font-bold mt-1 text-success">{formatCurrency(user.totalGains)}</p>
               </div>
             </div>
 
@@ -165,10 +165,10 @@ export function UserProfileSheet({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium flex items-center gap-1.5">
-                    <TrendingUp className="size-4 text-green-600" />
+                    <TrendingUp className="size-4 text-success" />
                     Retorno acumulado
                   </span>
-                  <span className="text-sm font-bold text-green-600">+{roiPercent}%</span>
+                  <span className="text-sm font-bold text-success">+{roiPercent}%</span>
                 </div>
                 <Progress value={Math.min(roiPercent, 100)} className="h-2" />
               </div>
@@ -188,7 +188,7 @@ export function UserProfileSheet({
                 className={cn(
                   "w-full rounded-xl border p-4 text-left transition-all hover:shadow-sm",
                   user.tier === "premium"
-                    ? "border-amber-200/80 bg-amber-50/50 hover:bg-amber-50"
+                    ? "border-premium/20 bg-premium/10 hover:bg-premium/15"
                     : "border-border/60 bg-muted/20 hover:bg-muted/30"
                 )}
               >
@@ -198,7 +198,7 @@ export function UserProfileSheet({
                       className={cn(
                         "size-10 rounded-xl flex items-center justify-center shrink-0",
                         user.tier === "premium"
-                          ? "bg-amber-100 text-amber-700"
+                          ? "bg-premium/15 text-premium"
                           : "bg-muted text-muted-foreground"
                       )}
                     >
@@ -237,7 +237,7 @@ export function UserProfileSheet({
                 variant={user.tier === "premium" ? "outline" : "default"}
                 className={cn(
                   "flex-1 rounded-xl",
-                  user.tier !== "premium" && "bg-amber-600 hover:bg-amber-700 text-white"
+                  user.tier !== "premium" && "bg-premium hover:bg-premium/90 text-premium-foreground"
                 )}
                 onClick={() => onManageTier(user)}
               >

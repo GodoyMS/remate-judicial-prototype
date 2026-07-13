@@ -69,44 +69,35 @@ function FeatureCard({
       className={cn(
         "group flex h-full min-h-[220px] flex-col gap-5 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-0.5 sm:min-h-[200px]",
         highlight
-          ? "border-[#9FE870]/30 bg-[#163300] shadow-lg shadow-[#163300]/10 hover:shadow-xl"
-          : "border-[#163300]/8 bg-white hover:border-[#9FE870]/40 hover:shadow-md"
+          ? "border-primary/30 bg-gradient-to-br from-accent to-card shadow-lg shadow-primary/5 hover:shadow-xl"
+          : "border-foreground/8 bg-white hover:border-primary/40 hover:shadow-md"
       )}
     >
       <div
         className={cn(
           "flex size-11 shrink-0 items-center justify-center rounded-xl transition-transform group-hover:scale-105",
           highlight
-            ? "bg-[#9FE870]/20 ring-1 ring-[#9FE870]/30"
-            : "bg-[#9FE870]/20 ring-1 ring-[#9FE870]/25"
+            ? "bg-primary/20 ring-1 ring-primary/30"
+            : "bg-primary/20 ring-1 ring-primary/25"
         )}
       >
-        <Icon
-          className={cn("size-5", highlight ? "text-[#9FE870]" : "text-[#163300]")}
-        />
+        <Icon className="size-5 text-primary" />
       </div>
 
       <div className="flex flex-1 flex-col gap-2">
         <h3
           className={cn(
             "font-semibold leading-snug",
-            highlight ? "text-base text-white" : "text-sm text-[#163300]"
+            highlight ? "text-base text-foreground" : "text-sm text-foreground"
           )}
         >
           {title}
         </h3>
-        <p
-          className={cn(
-            "text-sm leading-relaxed",
-            highlight ? "text-white/65" : "text-[#163300]/55"
-          )}
-        >
-          {desc}
-        </p>
+        <p className="text-sm leading-relaxed text-muted-foreground">{desc}</p>
       </div>
 
       {highlight && (
-        <div className="flex shrink-0 items-center gap-2 rounded-full bg-[#9FE870]/15 px-3 py-1.5 text-xs font-medium text-[#9FE870]">
+        <div className="flex shrink-0 items-center gap-2 rounded-full bg-primary/15 px-3 py-1.5 text-xs font-medium text-primary">
           <ShieldCheck className="size-3.5 shrink-0" />
           Garantía legal en cada operación
         </div>
@@ -122,7 +113,7 @@ export function Features() {
         className="pointer-events-none absolute inset-0 opacity-30"
         aria-hidden
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(22,51,0,0.05) 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--foreground) 5%, transparent) 1px, transparent 0)`,
           backgroundSize: "28px 28px",
         }}
       />
@@ -134,17 +125,17 @@ export function Features() {
           viewport={{ once: true }}
           className="mx-auto mb-14 flex max-w-2xl flex-col items-center text-center sm:mb-16"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#163300]/15 bg-[#E2F6D5] px-4 py-1.5">
-            <Sparkles className="size-3.5 text-[#163300]" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#163300]">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-accent px-4 py-1.5">
+            <Sparkles className="size-3.5 text-accent-foreground" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-accent-foreground">
               Por qué Remata
             </span>
           </div>
-          <h2 className="text-balance text-4xl font-bold tracking-tight text-[#163300] sm:text-5xl">
+          <h2 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Todo lo que necesitas para invertir de forma{" "}
-            <span className="text-[#5a8f3c]">inteligente</span>
+            <span className="text-primary">inteligente</span>
           </h2>
-          <p className="mt-4 text-lg leading-relaxed text-[#163300]/60">
+          <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
             Combinamos tecnología financiera con experiencia legal para darte la
             ventaja en cada subasta.
           </p>

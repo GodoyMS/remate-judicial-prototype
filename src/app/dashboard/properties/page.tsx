@@ -160,7 +160,7 @@ export default function PropertiesPage() {
                   <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
                     <CurrencyBadge currency={p.currency} />
                     <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 ${
-                      p.status === "Activo" ? "bg-green-600 text-white" : "bg-amber-500 text-white"
+                      p.status === "Activo" ? "bg-success text-success-foreground" : "bg-warning text-warning-foreground"
                     }`}>
                       {p.status}
                     </span>
@@ -189,14 +189,14 @@ export default function PropertiesPage() {
                   </div>
                   <div className="py-2 px-1">
                     <p className="text-[9px] text-muted-foreground">ROI est.</p>
-                    <p className="text-[10px] font-bold text-green-600 mt-0.5 flex items-center justify-center gap-0.5">
+                    <p className="text-[10px] font-bold text-success mt-0.5 flex items-center justify-center gap-0.5">
                       <TrendingUp className="size-2.5" />{p.roi}
                     </p>
                   </div>
                   <div className="py-2 px-1">
                     <p className="text-[9px] text-muted-foreground">Cierra</p>
                     <p className="text-[10px] font-semibold text-foreground mt-0.5 flex items-center justify-center gap-0.5">
-                      <Clock className="size-2.5 text-amber-500" />{p.deadline}
+                      <Clock className="size-2.5 text-warning" />{p.deadline}
                     </p>
                   </div>
                 </div>
@@ -236,7 +236,7 @@ export default function PropertiesPage() {
                   <h3 className="text-sm font-semibold text-foreground truncate">{p.name}</h3>
                   <CurrencyBadge currency={p.currency} />
                   <span className={`text-[10px] font-medium rounded-full px-2 py-0.5 shrink-0 ${
-                    p.status === "Activo" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"
+                    p.status === "Activo" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
                   }`}>{p.status}</span>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
@@ -245,7 +245,7 @@ export default function PropertiesPage() {
                 </div>
                 <div className="flex items-center gap-4 mt-2">
                   <span className="text-xs font-medium text-foreground">{p.price}</span>
-                  <span className="text-xs font-bold text-green-600 flex items-center gap-0.5">
+                  <span className="text-xs font-bold text-success flex items-center gap-0.5">
                     <TrendingUp className="size-3" />{p.roi} ROI
                   </span>
                   <span className="text-xs text-muted-foreground flex items-center gap-0.5">

@@ -66,15 +66,15 @@ import {
 } from "@/components/ui/tooltip";
 
 const retornoTypeConfig: Record<RetornoType, { label: string; icon: typeof TrendingUp; color: string }> = {
-  roi_return: { label: "Retorno ROI", icon: TrendingUp, color: "text-emerald-600 bg-emerald-50 border-emerald-200" },
-  refund: { label: "Reembolso", icon: RotateCcw, color: "text-blue-600 bg-blue-50 border-blue-200" },
-  goal_not_reached: { label: "Meta no alcanzada", icon: Target, color: "text-amber-600 bg-amber-50 border-amber-200" },
+  roi_return: { label: "Retorno ROI", icon: TrendingUp, color: "text-success bg-success/10 border-success/20" },
+  refund: { label: "Reembolso", icon: RotateCcw, color: "text-info bg-info/10 border-info/20" },
+  goal_not_reached: { label: "Meta no alcanzada", icon: Target, color: "text-warning bg-warning/10 border-warning/20" },
 };
 
 const ticketStatusConfig: Record<TicketStatus, { label: string; color: string }> = {
-  flagged: { label: "Observado", color: "border-amber-200 bg-amber-50 text-amber-700" },
-  in_review: { label: "En revisión", color: "border-blue-200 bg-blue-50 text-blue-700" },
-  resolved: { label: "Resuelto", color: "border-emerald-200 bg-emerald-50 text-emerald-700" },
+  flagged: { label: "Observado", color: "border-warning/20 bg-warning/10 text-warning" },
+  in_review: { label: "En revisión", color: "border-info/20 bg-info/10 text-info" },
+  resolved: { label: "Resuelto", color: "border-success/20 bg-success/10 text-success" },
 };
 
 type FilterType = RetornoType | "all";
@@ -213,13 +213,13 @@ function RetornosTable({
                   key={r.id}
                   className={cn(
                     "group cursor-pointer border-l-[3px] transition-colors hover:bg-muted/25",
-                    isFlagged ? "border-l-amber-500" : "border-l-transparent"
+                    isFlagged ? "border-l-warning" : "border-l-transparent"
                   )}
                   onClick={() => onViewDetail(r)}
                 >
                   <TableCell className="py-3 pl-4">
                     <div className="flex items-center gap-2">
-                      {isFlagged && <Flag className="size-3.5 shrink-0 text-amber-500" />}
+                      {isFlagged && <Flag className="size-3.5 shrink-0 text-warning" />}
                       <div>
                         <p className="max-w-[160px] truncate text-sm font-medium">{r.userName}</p>
                         <p className="max-w-[180px] truncate text-[10px] text-muted-foreground">{r.userEmail}</p>
@@ -283,7 +283,7 @@ function RetornosTable({
                               <TooltipTrigger asChild>
                                 <Button
                                   size="icon-sm"
-                                  className="rounded-lg bg-emerald-600 text-white hover:bg-emerald-700"
+                                  className="rounded-lg bg-success text-success-foreground hover:bg-success/90"
                                   onClick={() => onResolve(r)}
                                 >
                                   <ShieldCheck className="size-4" />
@@ -416,10 +416,10 @@ export default function AdminRetornosPage() {
       {/* Stats */}
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { label: "Total", value: stats.total, sub: "retornos", icon: ArrowDownToLine, accent: "text-blue-600 bg-blue-50" },
-          { label: "Observados", value: stats.flagged, sub: "pendientes de acción", icon: Flag, accent: "text-amber-600 bg-amber-50" },
-          { label: "En revisión", value: stats.inReview, sub: "asignados", icon: Clock, accent: "text-violet-600 bg-violet-50" },
-          { label: "Resueltos", value: stats.resolved, sub: "tickets cerrados", icon: CheckCircle2, accent: "text-emerald-600 bg-emerald-50" },
+          { label: "Total", value: stats.total, sub: "retornos", icon: ArrowDownToLine, accent: "text-primary bg-primary/10" },
+          { label: "Observados", value: stats.flagged, sub: "pendientes de acción", icon: Flag, accent: "text-warning bg-warning/10" },
+          { label: "En revisión", value: stats.inReview, sub: "asignados", icon: Clock, accent: "text-info bg-info/10" },
+          { label: "Resueltos", value: stats.resolved, sub: "tickets cerrados", icon: CheckCircle2, accent: "text-success bg-success/10" },
         ].map((s, i) => (
           <motion.div
             key={s.label}
@@ -448,7 +448,7 @@ export default function AdminRetornosPage() {
             <Filter className="size-3.5" />
             Todos
             {flaggedCount > 0 && (
-              <span className="ml-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[9px] font-bold text-white">
+              <span className="ml-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-warning px-1 text-[9px] font-bold text-warning-foreground">
                 {flaggedCount}
               </span>
             )}

@@ -202,8 +202,8 @@ function PremiumInvestContent() {
   if (!isPremium) {
     return (
       <div className="max-w-lg mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <div className="size-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-4">
-          <Lock className="size-8 text-amber-600" />
+        <div className="size-16 rounded-2xl bg-premium/10 flex items-center justify-center mb-4">
+          <Lock className="size-8 text-premium" />
         </div>
         <h2 className="text-xl font-bold mb-2">Acceso Premium requerido</h2>
         <p className="text-sm text-muted-foreground mb-6 max-w-sm">
@@ -231,14 +231,14 @@ function PremiumInvestContent() {
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 18 }}
-            className="w-full rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50/50 to-white p-6 sm:p-10 flex flex-col items-center gap-6 text-center shadow-xl"
+            className="w-full rounded-3xl border border-info/20 bg-gradient-to-br from-info/10 to-card p-6 sm:p-10 flex flex-col items-center gap-6 text-center shadow-xl"
           >
-            <div className="size-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-              <Shield className="size-10 text-white" />
+            <div className="size-20 rounded-full bg-gradient-to-br from-info to-info/80 flex items-center justify-center">
+              <Shield className="size-10 text-info-foreground" />
             </div>
             <div>
-              <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-                <div className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
+              <div className="inline-flex items-center gap-2 bg-info/10 text-info text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                <div className="size-1.5 rounded-full bg-info animate-pulse" />
                 En verificación
               </div>
               <h2 className="text-2xl font-bold text-foreground tracking-tight">
@@ -250,7 +250,7 @@ function PremiumInvestContent() {
                 Un administrador verificará los datos y confirmará tu inversión.
               </p>
             </div>
-            <div className="w-full rounded-2xl bg-white border border-blue-100 p-5 flex flex-col gap-3 text-left">
+            <div className="w-full rounded-2xl bg-card border border-info/15 p-5 flex flex-col gap-3 text-left">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Inversión enviada</span>
                 <span className="font-bold">{formatCurrency(amount, propertyCurrency)}</span>
@@ -261,22 +261,22 @@ function PremiumInvestContent() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">ROI Premium</span>
-                <span className="font-bold text-amber-700">{property.premiumRoi}%</span>
+                <span className="font-bold text-premium">{property.premiumRoi}%</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Retorno estimado</span>
-                <span className="font-bold text-emerald-600">
+                <span className="font-bold text-success">
                   {formatCurrency(estimatedReturn, propertyCurrency)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Estado</span>
-                <span className="text-blue-700 font-medium">Pendiente de aprobación</span>
+                <span className="text-info font-medium">Pendiente de aprobación</span>
               </div>
             </div>
-            <div className="w-full rounded-xl bg-amber-50 border border-amber-200 p-4 text-left text-sm">
-              <p className="font-semibold text-amber-900 mb-1">¿Qué sigue?</p>
-              <ul className="space-y-1 text-amber-800 text-xs">
+            <div className="w-full rounded-xl bg-warning/10 border border-warning/20 p-4 text-left text-sm">
+              <p className="font-semibold text-warning mb-1">¿Qué sigue?</p>
+              <ul className="space-y-1 text-warning text-xs">
                 <li>• El administrador revisará tu comprobante en 1-2 días hábiles</li>
                 <li>• La propiedad quedará reservada mientras se verifica</li>
                 <li>• Recibirás una notificación cuando sea confirmado</li>
@@ -292,7 +292,7 @@ function PremiumInvestContent() {
                 Ver propiedades Premium
               </Button>
               <Button
-                className="flex-1 rounded-xl h-11 bg-blue-500 hover:bg-blue-600 text-white"
+                className="flex-1 rounded-xl h-11 bg-info hover:bg-info/90 text-info-foreground"
                 onClick={() => router.push("/dashboard/my-investments?tab=premium")}
               >
                 Mis inversiones Premium
@@ -310,10 +310,10 @@ function PremiumInvestContent() {
           initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 18 }}
-          className="w-full rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50/50 to-white p-6 sm:p-10 flex flex-col items-center gap-6 text-center shadow-xl"
+          className="w-full rounded-3xl border border-premium/20 bg-gradient-to-br from-premium/10 to-card p-6 sm:p-10 flex flex-col items-center gap-6 text-center shadow-xl"
         >
-          <div className="size-20 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-            <Crown className="size-10 text-white" />
+          <div className="size-20 rounded-full bg-gradient-to-br from-premium to-premium/80 flex items-center justify-center">
+            <Crown className="size-10 text-premium-foreground" />
           </div>
           <div>
             <PremiumBadge size="md" className="mb-3" />
@@ -326,22 +326,22 @@ function PremiumInvestContent() {
               Eres el único inversor de esta propiedad premium.
             </p>
           </div>
-          <div className="w-full rounded-2xl bg-white border border-amber-100 p-5 flex flex-col gap-3 text-left">
+          <div className="w-full rounded-2xl bg-card border border-premium/15 p-5 flex flex-col gap-3 text-left">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Inversión total</span>
               <span className="font-bold">{formatCurrency(amount, propertyCurrency)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Participación</span>
-              <span className="font-bold text-amber-700">100%</span>
+              <span className="font-bold text-premium">100%</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">ROI Premium</span>
-              <span className="font-bold text-amber-700">{property.premiumRoi}%</span>
+              <span className="font-bold text-premium">{property.premiumRoi}%</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Retorno estimado</span>
-              <span className="font-bold text-emerald-600">
+              <span className="font-bold text-success">
                 {formatCurrency(estimatedReturn, propertyCurrency)}
               </span>
             </div>
@@ -363,7 +363,7 @@ function PremiumInvestContent() {
               Ver propiedades Premium
             </Button>
             <Button
-              className="flex-1 rounded-xl h-11 bg-amber-500 hover:bg-amber-600 text-white"
+              className="flex-1 rounded-xl h-11 bg-premium hover:bg-premium/90 text-premium-foreground"
               onClick={() => router.push("/dashboard/my-investments?tab=premium")}
             >
               Mis inversiones Premium
@@ -378,7 +378,7 @@ function PremiumInvestContent() {
     <div className="max-w-2xl mx-auto w-full">
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-2 mb-1 flex-wrap">
-          <Crown className="size-5 text-amber-600 shrink-0" />
+          <Crown className="size-5 text-premium shrink-0" />
           <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
             Captura Premium
           </h2>
@@ -396,9 +396,9 @@ function PremiumInvestContent() {
               <div
                 className={`size-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                   step > i
-                    ? "bg-amber-500 text-white"
+                    ? "bg-premium text-premium-foreground"
                     : step === i
-                      ? "bg-amber-500 text-white ring-4 ring-amber-200"
+                      ? "bg-premium text-premium-foreground ring-4 ring-premium/20"
                       : "bg-muted text-muted-foreground"
                 }`}
               >
@@ -409,7 +409,7 @@ function PremiumInvestContent() {
               </span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-1.5 sm:mx-2 mb-4 min-w-[12px] ${step > i ? "bg-amber-500" : "bg-border"}`} />
+              <div className={`flex-1 h-0.5 mx-1.5 sm:mx-2 mb-4 min-w-[12px] ${step > i ? "bg-premium" : "bg-border"}`} />
             )}
           </div>
         ))}
@@ -424,7 +424,7 @@ function PremiumInvestContent() {
             exit={{ opacity: 0, x: -24 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-amber-200/60 bg-white p-4 sm:p-6 shadow-sm">
+            <div className="rounded-2xl border border-premium/20 bg-card p-4 sm:p-6 shadow-sm">
               <h3 className="text-base font-semibold mb-4">Selecciona una propiedad disponible</h3>
               <div className="flex flex-col gap-3">
                 {availableProperties.map((p) => (
@@ -433,8 +433,8 @@ function PremiumInvestContent() {
                     onClick={() => setSelectedPropertyId(p.id)}
                     className={`flex items-center gap-4 rounded-xl border p-4 text-left transition-all ${
                       selectedPropertyId === p.id
-                        ? "border-amber-400 bg-amber-50 ring-2 ring-amber-200"
-                        : "border-border/60 hover:border-amber-300"
+                        ? "border-premium bg-premium/10 ring-2 ring-premium/20"
+                        : "border-border/60 hover:border-premium/40"
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -447,7 +447,7 @@ function PremiumInvestContent() {
                       </div>
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <CurrencyBadge currency={p.currency} />
-                        <span className="text-xs font-bold text-amber-700">{p.premiumRoi}% ROI</span>
+                        <span className="text-xs font-bold text-premium">{p.premiumRoi}% ROI</span>
                         <span className="text-xs font-medium">{formatCurrency(p.totalValue, p.currency)}</span>
                       </div>
                       <PremiumCountdown deadline={p.premiumDeadline} compact className="mt-2" />
@@ -459,7 +459,7 @@ function PremiumInvestContent() {
             <Button
               onClick={() => setStep(1)}
               disabled={!selectedPropertyId}
-              className="w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold"
+              className="w-full h-11 rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground font-semibold"
             >
               Continuar <ArrowRight className="size-4 ml-1" />
             </Button>
@@ -474,19 +474,19 @@ function PremiumInvestContent() {
             exit={{ opacity: 0, x: -24 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-amber-200/60 bg-white p-4 sm:p-6 shadow-sm">
+            <div className="rounded-2xl border border-premium/20 bg-card p-4 sm:p-6 shadow-sm">
               <div className="flex items-center gap-3 mb-6 pb-5 border-b">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={property.img} alt={property.name} className="size-14 rounded-xl object-cover" />
                 <div>
                   <p className="text-sm font-semibold">{property.name}</p>
-                  <p className="text-xs text-amber-700 font-bold">{property.premiumRoi}% ROI Premium</p>
+                  <p className="text-xs text-premium font-bold">{property.premiumRoi}% ROI Premium</p>
                 </div>
               </div>
 
               <h3 className="text-base font-semibold mb-4">Revisión de captura al 100%</h3>
 
-              <div className="rounded-xl bg-amber-50 border border-amber-100 p-4 space-y-3 mb-4">
+              <div className="rounded-xl bg-premium/10 border border-premium/15 p-4 space-y-3 mb-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Valor de la propiedad</span>
                   <span className="font-bold">{formatCurrency(amount, propertyCurrency)}</span>
@@ -496,14 +496,14 @@ function PremiumInvestContent() {
                     <Percent className="size-3.5" />
                     Tu participación
                   </span>
-                  <span className="font-bold text-amber-700">100% — Único inversor</span>
+                  <span className="font-bold text-premium">100% — Único inversor</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <TrendingUp className="size-3.5" />
                     Retorno estimado
                   </span>
-                  <span className="font-bold text-emerald-600">
+                  <span className="font-bold text-success">
                     {formatCurrency(estimatedReturn, propertyCurrency)}
                   </span>
                 </div>
@@ -530,7 +530,7 @@ function PremiumInvestContent() {
               </Button>
               <Button
                 onClick={goToPaymentStep}
-                className="flex-1 rounded-xl h-11 bg-amber-500 hover:bg-amber-600 text-white font-semibold"
+                className="flex-1 rounded-xl h-11 bg-premium hover:bg-premium/90 text-premium-foreground font-semibold"
               >
                 Proceder al pago <ArrowRight className="size-4 ml-1" />
               </Button>
@@ -546,7 +546,7 @@ function PremiumInvestContent() {
             exit={{ opacity: 0, x: -24 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-border/60 bg-white p-4 sm:p-6 shadow-sm">
+            <div className="rounded-2xl border border-border/60 bg-card p-4 sm:p-6 shadow-sm">
               <div className="rounded-xl bg-muted/30 p-3 mb-5 flex justify-between items-center gap-3 text-sm">
                 <span className="text-muted-foreground shrink-0">Monto a pagar</span>
                 <span className="font-bold text-base sm:text-lg text-right">{formatCurrency(amount, propertyCurrency)}</span>
@@ -561,12 +561,12 @@ function PremiumInvestContent() {
                     onClick={() => selectPaymentMethod(m.id)}
                     className={`flex items-center gap-3 sm:gap-4 rounded-xl border p-3.5 sm:p-4 text-left transition-all ${
                       paymentMethod === m.id
-                        ? "border-amber-400 bg-amber-50 ring-2 ring-amber-200"
-                        : "border-border/60 hover:border-amber-300"
+                        ? "border-premium bg-premium/10 ring-2 ring-premium/20"
+                        : "border-border/60 hover:border-premium/40"
                     }`}
                   >
                     <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${
-                      paymentMethod === m.id ? "bg-amber-500 text-white" : "bg-muted text-muted-foreground"
+                      paymentMethod === m.id ? "bg-premium text-premium-foreground" : "bg-muted text-muted-foreground"
                     }`}>
                       <m.icon className="size-5" />
                     </div>
@@ -575,9 +575,9 @@ function PremiumInvestContent() {
                       <p className="text-xs text-muted-foreground">{m.hint}</p>
                     </div>
                     <div className={`size-5 rounded-full border-2 shrink-0 transition-colors ${
-                      paymentMethod === m.id ? "border-amber-500 bg-amber-500" : "border-border"
+                      paymentMethod === m.id ? "border-premium bg-premium" : "border-border"
                     }`}>
-                      {paymentMethod === m.id && <CheckCircle2 className="size-full text-white" />}
+                      {paymentMethod === m.id && <CheckCircle2 className="size-full text-premium-foreground" />}
                     </div>
                   </button>
                 ))}
@@ -598,7 +598,7 @@ function PremiumInvestContent() {
             </div>
 
             {!isPaymentStepValid && paymentValidationHint && (
-              <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <div className="flex items-start gap-2 rounded-xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm text-warning">
                 <AlertCircle className="size-4 shrink-0 mt-0.5" />
                 <p>{paymentValidationHint}</p>
               </div>
@@ -611,7 +611,7 @@ function PremiumInvestContent() {
               <Button
                 onClick={() => setStep(3)}
                 disabled={!isPaymentStepValid}
-                className="flex-1 rounded-xl h-11 bg-amber-500 hover:bg-amber-600 text-white font-semibold disabled:opacity-50"
+                className="flex-1 rounded-xl h-11 bg-premium hover:bg-premium/90 text-premium-foreground font-semibold disabled:opacity-50"
               >
                 Revisar y confirmar <ArrowRight className="size-4 ml-1" />
               </Button>
@@ -627,7 +627,7 @@ function PremiumInvestContent() {
             exit={{ opacity: 0, x: -24 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50/30 to-white p-4 sm:p-6 shadow-sm">
+            <div className="rounded-2xl border border-premium/20 bg-gradient-to-br from-premium/10 to-card p-4 sm:p-6 shadow-sm">
               <h3 className="text-base font-semibold mb-4">Confirmar captura Premium</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -644,15 +644,15 @@ function PremiumInvestContent() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Participación</span>
-                  <span className="font-bold text-amber-700">100%</span>
+                  <span className="font-bold text-premium">100%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">ROI Premium</span>
-                  <span className="font-bold text-amber-700">{property.premiumRoi}%</span>
+                  <span className="font-bold text-premium">{property.premiumRoi}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Retorno estimado</span>
-                  <span className="font-bold text-emerald-600">{formatCurrency(estimatedReturn, propertyCurrency)}</span>
+                  <span className="font-bold text-success">{formatCurrency(estimatedReturn, propertyCurrency)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Método</span>
@@ -668,11 +668,11 @@ function PremiumInvestContent() {
               <Button
                 onClick={handleConfirm}
                 disabled={confirming}
-                className="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold h-11 sm:h-12"
+                className="flex-1 rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold h-11 sm:h-12"
               >
                 {confirming ? (
                   <span className="flex items-center gap-2">
-                    <div className="size-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    <div className="size-4 border-2 border-premium-foreground/40 border-t-premium-foreground rounded-full animate-spin" />
                     Procesando captura...
                   </span>
                 ) : (

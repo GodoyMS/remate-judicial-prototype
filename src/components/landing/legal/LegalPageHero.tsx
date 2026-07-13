@@ -39,24 +39,24 @@ export function LegalPageHero({
 }: LegalPageHeroProps) {
   const BadgeIcon: LucideIcon = badgeIcons[badgeIcon];
   return (
-    <section className="relative overflow-hidden bg-[#F5F9F2] py-20 sm:py-24">
+    <section className="relative overflow-hidden bg-muted py-20 sm:py-24">
       <div
         className="pointer-events-none absolute inset-0 opacity-40"
         aria-hidden
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(22,51,0,0.06) 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 0)`,
           backgroundSize: "28px 28px",
         }}
       />
-      <div className="pointer-events-none absolute -left-32 top-0 size-80 rounded-full bg-[#9FE870]/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-32 bottom-0 size-64 rounded-full bg-[#163300]/5 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 top-0 size-80 rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 size-64 rounded-full bg-foreground/5 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl section-padding">
         {breadcrumbs.length > 0 && (
           <motion.nav
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-[#163300]/50"
+            className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground"
             aria-label="Breadcrumb"
           >
             {breadcrumbs.map((crumb, i) => (
@@ -65,12 +65,12 @@ export function LegalPageHero({
                 {crumb.href ? (
                   <Link
                     href={crumb.href}
-                    className="hover:text-[#163300] transition-colors"
+                    className="hover:text-foreground transition-colors"
                   >
                     {crumb.label}
                   </Link>
                 ) : (
-                  <span className="font-medium text-[#163300]/80">{crumb.label}</span>
+                  <span className="font-medium text-foreground">{crumb.label}</span>
                 )}
               </span>
             ))}
@@ -83,16 +83,16 @@ export function LegalPageHero({
           transition={{ delay: 0.05 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#163300]/15 bg-[#9FE870]/20 px-4 py-1.5">
-            <BadgeIcon className="size-3.5 text-[#163300]" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#163300]">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-accent px-4 py-1.5">
+            <BadgeIcon className="size-3.5 text-accent-foreground" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-accent-foreground">
               {badge}
             </span>
           </div>
-          <h1 className="text-balance text-4xl font-bold tracking-tight text-[#163300] sm:text-5xl">
+          <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             {title}
           </h1>
-          <p className="mt-5 text-lg leading-relaxed text-[#163300]/65">{description}</p>
+          <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{description}</p>
         </motion.div>
       </div>
     </section>

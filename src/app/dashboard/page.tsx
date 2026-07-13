@@ -26,7 +26,7 @@ const summaryCards = [
     change: "+S/ 2,300 este mes",
     changePositive: true,
     icon: Wallet,
-    color: "bg-blue-50 text-blue-600",
+    color: "bg-info/10 text-info",
   },
   {
     label: "Inversiones activas",
@@ -34,7 +34,7 @@ const summaryCards = [
     change: "2 en proceso de subasta",
     changePositive: null,
     icon: Building2,
-    color: "bg-amber-50 text-amber-600",
+    color: "bg-warning/10 text-warning",
   },
   {
     label: "Retornos generados",
@@ -42,7 +42,7 @@ const summaryCards = [
     change: "+22.7% retorno acumulado",
     changePositive: true,
     icon: TrendingUp,
-    color: "bg-green-50 text-green-600",
+    color: "bg-success/10 text-success",
   },
 ];
 
@@ -54,7 +54,7 @@ const activeInvestments = [
     invested: "S/ 3,500",
     roi: "+21%",
     status: "Subasta activa",
-    statusColor: "text-green-600 bg-green-50",
+    statusColor: "text-success bg-success/10",
     deadline: "8 días",
     img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=80&h=80&fit=crop",
   },
@@ -65,7 +65,7 @@ const activeInvestments = [
     invested: "S/ 5,000",
     roi: "+17%",
     status: "En revisión legal",
-    statusColor: "text-amber-600 bg-amber-50",
+    statusColor: "text-warning bg-warning/10",
     deadline: "15 días",
     img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=80&h=80&fit=crop",
   },
@@ -87,7 +87,7 @@ const activeInvestments = [
     invested: "S/ 1,500",
     roi: "+18%",
     status: "Subasta activa",
-    statusColor: "text-green-600 bg-green-50",
+    statusColor: "text-success bg-success/10",
     deadline: "22 días",
     img: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=80&h=80&fit=crop",
   },
@@ -96,15 +96,15 @@ const activeInvestments = [
 const activityFeed = [
   {
     icon: CheckCircle2,
-    color: "text-green-600",
-    bg: "bg-green-50",
+    color: "text-success",
+    bg: "bg-success/10",
     message: "Inversión confirmada en Casa Los Olivos",
     time: "hace 2 horas",
   },
   {
     icon: AlertCircle,
-    color: "text-amber-600",
-    bg: "bg-amber-50",
+    color: "text-warning",
+    bg: "bg-warning/10",
     message: "Nuevo documento disponible: Penthouse Miraflores",
     time: "hace 5 horas",
   },
@@ -117,8 +117,8 @@ const activityFeed = [
   },
   {
     icon: Building2,
-    color: "text-blue-600",
-    bg: "bg-blue-50",
+    color: "text-info",
+    bg: "bg-info/10",
     message: "Nueva subasta disponible en Surco",
     time: "hace 2 días",
   },
@@ -153,11 +153,11 @@ export default function DashboardPage() {
           <p className="text-sm text-muted-foreground mt-1">
             {isPremium ? (
               <>
-                Tienes <strong className="text-amber-700">{availablePremium.length} oportunidades Premium</strong> disponibles para captura al 100%.
+                Tienes <strong className="text-premium">{availablePremium.length} oportunidades Premium</strong> disponibles para captura al 100%.
               </>
             ) : (
               <>
-                Tu portafolio está rindiendo un <strong className="text-green-600">+22.7%</strong> este año.
+                Tu portafolio está rindiendo un <strong className="text-success">+22.7%</strong> este año.
               </>
             )}
           </p>
@@ -166,7 +166,7 @@ export default function DashboardPage() {
           {isPremium && (
             <Button
               asChild
-              className="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold"
+              className="rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold"
             >
               <Link href="/dashboard/premium-properties">
                 <Crown className="size-4 mr-1" />
@@ -194,12 +194,12 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 rounded-2xl border border-amber-200/60 bg-gradient-to-r from-amber-50/80 to-white p-5"
+          className="mb-8 rounded-2xl border border-premium/20 bg-gradient-to-r from-premium/10 to-white p-5"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-start gap-3">
-              <div className="size-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                <Crown className="size-5 text-amber-700" />
+              <div className="size-10 rounded-xl bg-premium/15 flex items-center justify-center shrink-0">
+                <Crown className="size-5 text-premium" />
               </div>
               <div>
                 <p className="text-sm font-semibold">Oportunidades Premium activas</p>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
                 </p>
               </div>
             </div>
-            <Button asChild variant="outline" className="rounded-xl border-amber-300 text-amber-800 shrink-0">
+            <Button asChild variant="outline" className="rounded-xl border-premium/40 text-premium shrink-0">
               <Link href="/dashboard/premium-properties">
                 Ver oportunidades
                 <ArrowRight className="size-4 ml-1" />
@@ -239,9 +239,9 @@ export default function DashboardPage() {
               <p
                 className={`text-xs mt-1 flex items-center gap-1 ${
                   c.changePositive === true
-                    ? "text-green-600"
+                    ? "text-success"
                     : c.changePositive === false
-                    ? "text-red-600"
+                    ? "text-destructive"
                     : "text-muted-foreground"
                 }`}
               >
@@ -302,7 +302,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-sm font-semibold text-foreground">{inv.invested}</p>
-                  <p className="text-xs font-medium text-green-600">{inv.roi} est.</p>
+                  <p className="text-xs font-medium text-success">{inv.roi} est.</p>
                 </div>
               </motion.div>
             ))}

@@ -93,7 +93,7 @@ export default function TerminosDeUsoPage() {
               electrónico con al menos 15 días de anticipación ante cambios materiales. El uso
               continuado de la plataforma constituye aceptación de los nuevos términos.
             </p>
-            <p className="text-sm text-[#163300]/50">
+            <p className="text-sm text-muted-foreground">
               Última actualización: 1 de junio de 2026
             </p>
           </LegalContentBlock>

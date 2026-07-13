@@ -65,8 +65,8 @@ export const PERMISSION_LABELS = {
 
 export const PERMISSION_COLORS = {
   none: "bg-muted text-muted-foreground",
-  read: "bg-sky-50 text-sky-700 border-sky-200",
-  write: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  read: "bg-info/10 text-info border-info/20",
+  write: "bg-success/10 text-success border-success/20",
 } as const;
 
 export function createEmptyPermissions(): ModulePermissions {

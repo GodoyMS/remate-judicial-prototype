@@ -17,21 +17,21 @@ const DEMO_ACCOUNTS = [
     password: "superadmin1234",
     label: "Super Admin",
     description: "Acceso total sin restricciones",
-    color: "border-violet-300/40 bg-violet-500/10 text-violet-200",
+    color: "border-sidebar-primary/40 bg-sidebar-primary/10 text-sidebar-primary",
   },
   {
     email: "admin@remata.com",
     password: "admin1234",
     label: "Administrador",
     description: "Acceso completo a módulos operativos",
-    color: "border-blue-300/40 bg-blue-500/10 text-blue-200",
+    color: "border-info/40 bg-info/10 text-info",
   },
   {
     email: "analysist@remata.com",
     password: "analyst1234",
     label: "Analista",
     description: "Solo lectura en módulos asignados",
-    color: "border-cyan-300/40 bg-cyan-500/10 text-cyan-200",
+    color: "border-sidebar-foreground/30 bg-sidebar-foreground/10 text-sidebar-foreground/70",
   },
 ];
 

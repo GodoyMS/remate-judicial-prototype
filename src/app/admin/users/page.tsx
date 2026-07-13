@@ -101,13 +101,13 @@ const statusConfig: Record<
 > = {
   active: {
     label: "Activo",
-    rowBorder: "border-l-emerald-500",
-    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    rowBorder: "border-l-success",
+    badge: "bg-success/10 text-success border-success/20",
   },
   blocked: {
     label: "Bloqueado",
-    rowBorder: "border-l-red-400",
-    badge: "bg-red-50 text-red-600 border-red-200",
+    rowBorder: "border-l-destructive",
+    badge: "bg-destructive/10 text-destructive border-destructive/20",
   },
 };
 
@@ -484,28 +484,28 @@ export default function AdminUsersPage() {
               value: String(stats.total),
               sub: "KYC aprobado",
               icon: Users,
-              accent: "text-blue-600 bg-blue-50",
+              accent: "text-info bg-info/10",
             },
             {
               label: "Pendientes",
               value: String(stats.pendientes),
               sub: "por revisar",
               icon: Clock,
-              accent: "text-amber-600 bg-amber-50",
+              accent: "text-warning bg-warning/10",
             },
             {
               label: "Rechazados",
               value: String(stats.rechazados),
               sub: "verificación denegada",
               icon: XCircle,
-              accent: "text-red-600 bg-red-50",
+              accent: "text-destructive bg-destructive/10",
             },
             {
               label: "Premium",
               value: String(stats.premium),
               sub: "suscripción activa",
               icon: Crown,
-              accent: "text-violet-600 bg-violet-50",
+              accent: "text-premium bg-premium/10",
             },
           ].map((s, i) => (
             <motion.div
@@ -562,7 +562,7 @@ export default function AdminUsersPage() {
             >
               Pendientes
               {pendientes.length > 0 && (
-                <span className="ml-1.5 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white px-1">
+                <span className="ml-1.5 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-warning text-[10px] font-bold text-warning-foreground px-1">
                   {pendientes.length}
                 </span>
               )}
@@ -571,14 +571,14 @@ export default function AdminUsersPage() {
               value="rechazados"
             >
               Rechazados
-              <span className="ml-1.5 text-[10px] tabular-nums text-white bg-red-400  min-w-[18px] h-[18px] flex items-center justify-center rounded-full">
+              <span className="ml-1.5 text-[10px] tabular-nums text-white bg-destructive  min-w-[18px] h-[18px] flex items-center justify-center rounded-full">
                 {rechazados.length}
               </span>
             </TabsTrigger>
             <TabsTrigger value="upgrades">
               Solicitudes Premium
               {pendingUpgradeRequests.length > 0 && (
-                <span className="ml-1.5 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white px-1">
+                <span className="ml-1.5 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-warning text-[10px] font-bold text-warning-foreground px-1">
                   {pendingUpgradeRequests.length}
                 </span>
               )}
@@ -772,11 +772,11 @@ export default function AdminUsersPage() {
                     plan Premium?
                   </p>
                   {upgradeApproveDialog && (
-                    <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3 text-left text-xs text-amber-900">
+                    <div className="rounded-xl border border-premium/20 bg-premium/10 p-3 text-left text-xs text-premium">
                       <p>
                         Invertido: {formatCurrency(upgradeApproveDialog.totalInvested, "PEN")}
                       </p>
-                      <p className="mt-1 text-amber-700">
+                      <p className="mt-1 text-premium/80">
                         El usuario obtendrá acceso inmediato a propiedades exclusivas y captura al
                         100%.
                       </p>
@@ -788,7 +788,7 @@ export default function AdminUsersPage() {
             <AlertDialogFooter>
               <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
               <AlertDialogAction
-                className="rounded-xl bg-emerald-600 hover:bg-emerald-700"
+                className="rounded-xl bg-success hover:bg-success/90 text-success-foreground"
                 onClick={() =>
                   upgradeApproveDialog && handleApproveUpgrade(upgradeApproveDialog)
                 }
@@ -831,7 +831,7 @@ export default function AdminUsersPage() {
             <AlertDialogFooter>
               <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
               <AlertDialogAction
-                className="rounded-xl bg-red-600 hover:bg-red-700"
+                className="rounded-xl bg-destructive hover:bg-destructive/90"
                 disabled={!rejectReason.trim() || rejectReason.trim().length > 500}
                 onClick={() => upgradeRejectDialog && handleRejectUpgrade(upgradeRejectDialog)}
               >
@@ -918,7 +918,7 @@ function UsersTable({
                           {u.name}
                         </p>
                         {u.verified && (
-                          <Shield className="size-3 text-emerald-600 shrink-0" />
+                          <Shield className="size-3 text-success shrink-0" />
                         )}
                       </div>
                       <p className="text-[10px] text-muted-foreground truncate max-w-[180px]">
@@ -944,7 +944,7 @@ function UsersTable({
                   </p>
                 </TableCell>
                 <TableCell className="py-3 whitespace-nowrap hidden sm:table-cell">
-                  <p className="text-sm font-semibold text-emerald-600 tabular-nums">
+                  <p className="text-sm font-semibold text-success tabular-nums">
                     {formatCurrency(u.totalGains)}
                   </p>
                 </TableCell>
@@ -1052,10 +1052,10 @@ function VerificationsTable({
             const name = getVerificationFullName(v);
             const borderColor =
               v.status === "resolicitado"
-                ? "border-l-sky-500"
+                ? "border-l-info"
                 : v.status === "rejected"
-                  ? "border-l-red-400"
-                  : "border-l-amber-400";
+                  ? "border-l-destructive"
+                  : "border-l-warning";
 
             return (
               <TableRow
@@ -1067,7 +1067,7 @@ function VerificationsTable({
               >
                 <TableCell className="pl-4 py-3">
                   <div className="flex items-center gap-3 min-w-[180px]">
-                    <div className="size-10 rounded-full bg-amber-500/15 flex items-center justify-center text-xs font-bold text-amber-800 shrink-0">
+                    <div className="size-10 rounded-full bg-warning/15 flex items-center justify-center text-xs font-bold text-warning shrink-0">
                       {v.firstName[0]}
                       {v.lastName[0]?.[0] ?? ""}
                     </div>
@@ -1105,7 +1105,7 @@ function VerificationsTable({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-auto py-1 px-2 text-xs text-sky-700 hover:text-sky-800 hover:bg-sky-50 rounded-lg justify-start font-normal"
+                        className="h-auto py-1 px-2 text-xs text-info hover:text-info/80 hover:bg-info/10 rounded-lg justify-start font-normal"
                         onClick={() => onViewMessage(v, "resolicit")}
                       >
                         <MessageSquareText className="size-3.5 mr-1.5 shrink-0" />
@@ -1124,7 +1124,7 @@ function VerificationsTable({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-auto py-1 px-2 text-xs text-red-700 hover:text-red-800 hover:bg-red-50 rounded-lg justify-start font-normal"
+                        className="h-auto py-1 px-2 text-xs text-destructive hover:text-destructive/80 hover:bg-destructive/10 rounded-lg justify-start font-normal"
                         onClick={() => onViewMessage(v, "rejection")}
                       >
                         <FileWarning className="size-3.5 mr-1.5 shrink-0" />
@@ -1252,7 +1252,7 @@ function UpgradeRequestsTable({
           <div key={req.id} className="p-4">
             {/* Summary row */}
             <div className="flex items-center gap-4">
-              <div className="size-10 rounded-full bg-amber-100 flex items-center justify-center text-sm font-bold text-amber-800 shrink-0">
+              <div className="size-10 rounded-full bg-premium/10 flex items-center justify-center text-sm font-bold text-premium shrink-0">
                 {initials}
               </div>
               <div className="flex-1 min-w-0">
@@ -1278,7 +1278,7 @@ function UpgradeRequestsTable({
                   <>
                     <Button
                       size="sm"
-                      className="rounded-lg h-8 bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
+                      className="rounded-lg h-8 bg-success hover:bg-success/90 text-success-foreground text-xs"
                       onClick={() => onApprove(req)}
                     >
                       <CheckCircle2 className="size-3.5 mr-1" />
@@ -1287,7 +1287,7 @@ function UpgradeRequestsTable({
                     <Button
                       size="sm"
                       variant="outline"
-                      className="rounded-lg h-8 text-red-600 border-red-200 hover:bg-red-50 text-xs"
+                      className="rounded-lg h-8 text-destructive border-destructive/20 hover:bg-destructive/10 text-xs"
                       onClick={() => onReject(req)}
                     >
                       <XCircle className="size-3.5 mr-1" />
@@ -1300,7 +1300,7 @@ function UpgradeRequestsTable({
 
             {/* Expanded profile details */}
             {isExpanded && (
-              <div className="mt-4 ml-14 rounded-xl border border-amber-200 bg-amber-50/40 p-4 grid sm:grid-cols-2 gap-4 text-sm">
+              <div className="mt-4 ml-14 rounded-xl border border-premium/20 bg-premium/10 p-4 grid sm:grid-cols-2 gap-4 text-sm">
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                     Información del usuario
@@ -1326,7 +1326,7 @@ function UpgradeRequestsTable({
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                     Actividad de inversión
                   </p>
-                  <div className="rounded-lg bg-white border border-amber-100 p-3">
+                  <div className="rounded-lg bg-white border border-premium/20 p-3">
                     <p className="text-xs text-muted-foreground">Total invertido</p>
                     <p className="text-lg font-bold text-foreground">
                       {formatCurrency(req.totalInvested, "PEN")}

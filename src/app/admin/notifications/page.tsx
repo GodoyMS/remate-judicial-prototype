@@ -73,7 +73,7 @@ export default function AdminNotificationsPage() {
               {urgentCount > 0 && (
                 <Badge
                   variant="outline"
-                  className="rounded-lg border-orange-300/60 bg-orange-50 text-orange-700"
+                  className="rounded-lg border-warning/20 bg-warning/10 text-warning"
                 >
                   {urgentCount} urgentes
                 </Badge>

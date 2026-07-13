@@ -24,9 +24,9 @@ import { formatDateTime, formatCurrency } from "@/lib/admin/formatters";
 import type { Retorno } from "@/lib/retornos/types";
 
 const retornoTypeConfig = {
-  roi_return: { label: "Retorno de inversión", icon: TrendingUp, color: "border-emerald-200 bg-emerald-50 text-emerald-700" },
-  refund: { label: "Reembolso", icon: RotateCcw, color: "border-blue-200 bg-blue-50 text-blue-700" },
-  goal_not_reached: { label: "Meta no alcanzada", icon: Target, color: "border-amber-200 bg-amber-50 text-amber-700" },
+  roi_return: { label: "Retorno de inversión", icon: TrendingUp, color: "border-success/20 bg-success/10 text-success" },
+  refund: { label: "Reembolso", icon: RotateCcw, color: "border-info/20 bg-info/10 text-info" },
+  goal_not_reached: { label: "Meta no alcanzada", icon: Target, color: "border-warning/20 bg-warning/10 text-warning" },
 };
 
 interface RetornoDetailSheetProps {
@@ -66,7 +66,7 @@ export function RetornoDetailSheet({ retorno, open, onOpenChange }: RetornoDetai
               <typeConfig.icon className="size-3.5" />
               {typeConfig.label}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-success/20 bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
               <CheckCircle2 className="size-3.5" />
               Confirmado
             </span>

@@ -381,7 +381,7 @@ export default function ForgotPasswordPage() {
                         isExpired
                           ? "text-destructive"
                           : timeLeft <= 60
-                          ? "text-amber-600"
+                          ? "text-warning"
                           : "text-primary"
                       )}
                     >
@@ -395,7 +395,7 @@ export default function ForgotPasswordPage() {
                         isExpired
                           ? "bg-destructive"
                           : timeLeft <= 60
-                          ? "bg-amber-500"
+                          ? "bg-warning"
                           : "bg-primary"
                       )}
                       animate={{ width: `${timerProgress}%` }}
@@ -628,10 +628,10 @@ export default function ForgotPasswordPage() {
                                     ? strength <= 1
                                       ? "bg-destructive"
                                       : strength <= 2
-                                      ? "bg-amber-500"
+                                      ? "bg-warning"
                                       : strength <= 3
                                       ? "bg-primary"
-                                      : "bg-green-500"
+                                      : "bg-success"
                                     : "bg-border"
                                 )}
                               />
@@ -662,7 +662,7 @@ export default function ForgotPasswordPage() {
                         className={cn(
                           "h-11 rounded-xl border-border/80 bg-muted/30 text-sm pr-10",
                           passwordError && confirmPassword && password !== confirmPassword && "border-destructive focus-visible:ring-destructive/30",
-                          confirmPassword && password === confirmPassword && "border-green-500/50 focus-visible:ring-green-500/20"
+                          confirmPassword && password === confirmPassword && "border-success/50 focus-visible:ring-success/20"
                         )}
                         required
                       />
@@ -678,7 +678,7 @@ export default function ForgotPasswordPage() {
                       <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="text-xs text-green-600 flex items-center gap-1"
+                        className="text-xs text-success flex items-center gap-1"
                       >
                         <CheckCircle2 className="size-3" />
                         Las contraseñas coinciden

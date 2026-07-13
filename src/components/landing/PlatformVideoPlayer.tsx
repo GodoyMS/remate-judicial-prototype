@@ -57,11 +57,11 @@ function PlayButton({ onClick }: { onClick: () => void }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.3, type: "spring", stiffness: 260 }}
     >
-      <span className="absolute inset-0 animate-ping rounded-full bg-[#9FE870]/20" />
-      <span className="absolute inset-[-12px] rounded-full border border-[#9FE870]/30" />
-      <span className="absolute inset-[-24px] rounded-full border border-[#9FE870]/15" />
-      <span className="relative flex size-full items-center justify-center rounded-full bg-[#9FE870] shadow-2xl shadow-[#9FE870]/40 ring-4 ring-[#9FE870]/30 transition-shadow group-hover:shadow-[#9FE870]/60">
-        <Play className="ml-1.5 size-10 fill-[#163300] text-[#163300] sm:size-12" />
+      <span className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
+      <span className="absolute inset-[-12px] rounded-full border border-primary/30" />
+      <span className="absolute inset-[-24px] rounded-full border border-primary/15" />
+      <span className="relative flex size-full items-center justify-center rounded-full bg-primary shadow-2xl shadow-primary/40 ring-4 ring-primary/30 transition-shadow group-hover:shadow-primary/60">
+        <Play className="ml-1.5 size-10 fill-primary-foreground text-primary-foreground sm:size-12" />
       </span>
     </motion.button>
   );
@@ -182,8 +182,8 @@ export function PlatformVideoPlayer() {
       onMouseLeave={() => isPlaying && setShowControls(false)}
       className={cn(
         "group/player relative aspect-video w-full overflow-hidden rounded-3xl",
-        "bg-[#0d1f00] shadow-2xl shadow-[#163300]/20",
-        "ring-1 ring-[#163300]/10",
+        "bg-foreground shadow-2xl shadow-foreground/20",
+        "ring-1 ring-border",
         isFullscreen && "rounded-none"
       )}
     >
@@ -206,11 +206,11 @@ export function PlatformVideoPlayer() {
       />
 
       {hasError && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#0d1f00] p-6 text-center">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-foreground p-6 text-center">
           <p className="text-sm font-semibold text-white">Video no disponible</p>
           <p className="max-w-sm text-xs text-white/60">
             Coloca tu archivo en{" "}
-            <span className="font-mono text-[#9FE870]">public/videos/landing-demo.mp4</span>
+            <span className="font-mono text-primary">public/videos/landing-demo.mp4</span>
           </p>
         </div>
       )}
@@ -219,7 +219,7 @@ export function PlatformVideoPlayer() {
         className={cn(
           "pointer-events-none absolute inset-0 transition-opacity duration-500",
           !hasStarted
-            ? "bg-gradient-to-t from-[#163300]/90 via-[#163300]/40 to-[#163300]/20"
+            ? "bg-gradient-to-t from-foreground/90 via-foreground/40 to-foreground/20"
             : "bg-gradient-to-t from-black/70 via-transparent to-black/30",
           hasStarted && !showControls && "opacity-0"
         )}
@@ -255,7 +255,7 @@ export function PlatformVideoPlayer() {
             >
               {(() => {
                 const Icon = CHAPTER_ICONS[chapterIndex] ?? Search;
-                return <Icon className="size-3.5 text-[#9FE870]" />;
+                return <Icon className="size-3.5 text-primary" />;
               })()}
               <span className="text-xs font-semibold text-white">
                 {LANDING_DEMO_CHAPTERS[chapterIndex]?.label}
@@ -284,7 +284,7 @@ export function PlatformVideoPlayer() {
               aria-label="Progreso del video"
             >
               <div
-                className="absolute inset-y-0 left-0 rounded-full bg-[#9FE870]"
+                className="absolute inset-y-0 left-0 rounded-full bg-primary"
                 style={{ width: `${progress}%` }}
               />
               {hasChapters &&
@@ -297,13 +297,13 @@ export function PlatformVideoPlayer() {
                       e.stopPropagation();
                       handleChapterClick(ch.start);
                     }}
-                    className="absolute top-1/2 z-10 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/60 bg-[#163300] transition-transform hover:scale-150 hover:border-[#9FE870]"
+                    className="absolute top-1/2 z-10 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/60 bg-foreground transition-transform hover:scale-150 hover:border-primary"
                     style={{ left: `${(ch.start / duration) * 100}%` }}
                     aria-label={`Ir a ${ch.label}`}
                   />
                 ))}
               <div
-                className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#9FE870] opacity-0 shadow-lg ring-2 ring-white/50 transition-opacity group-hover/progress:opacity-100"
+                className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary opacity-0 shadow-lg ring-2 ring-white/50 transition-opacity group-hover/progress:opacity-100"
                 style={{ left: `${progress}%` }}
               />
             </div>
@@ -342,7 +342,7 @@ export function PlatformVideoPlayer() {
                       className={cn(
                         "rounded-full px-2.5 py-1 text-[10px] font-semibold transition-colors",
                         i === chapterIndex
-                          ? "bg-[#9FE870]/20 text-[#9FE870]"
+                          ? "bg-primary/20 text-primary"
                           : "text-white/40 hover:text-white/70"
                       )}
                     >
@@ -378,7 +378,7 @@ export function PlatformVideoPlayer() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-[#163300]/80 backdrop-blur-sm"
+          className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-foreground/80 backdrop-blur-sm"
         >
           <p className="text-lg font-bold text-white">¡Listo para invertir!</p>
           <PlayButton onClick={() => void handlePlay()} />
