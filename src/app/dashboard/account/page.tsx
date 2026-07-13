@@ -203,7 +203,7 @@ function AccountPageContent() {
                           {item.done ? (
                             <CheckCircle2 className="size-3 text-primary-foreground" />
                           ) : (
-                            <div className="size-2 rounded-full bg-white/60" />
+                            <div className="size-2 rounded-full bg-muted-foreground/40" />
                           )}
                         </div>
                         <span className={`text-sm ${item.done ? "text-foreground" : "text-muted-foreground"}`}>
@@ -466,7 +466,7 @@ function AccountPageContent() {
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer shrink-0">
                         <input type="checkbox" defaultChecked={item.on} className="sr-only peer" />
-                        <div className="w-9 h-5 bg-muted peer-checked:bg-primary rounded-full transition-colors peer-focus:ring-2 peer-focus:ring-primary/30 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:size-4 after:transition-transform peer-checked:after:translate-x-4" />
+                        <div className="w-9 h-5 bg-muted peer-checked:bg-primary rounded-full transition-colors peer-focus:ring-2 peer-focus:ring-primary/30 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-background after:rounded-full after:size-4 after:transition-transform peer-checked:after:translate-x-4" />
                       </label>
                     </div>
                   ))}

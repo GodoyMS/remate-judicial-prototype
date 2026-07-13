@@ -229,7 +229,7 @@ export function TestimonialVideoModal({
             </div>
 
             {/* Details panel */}
-            <div className="flex flex-col gap-5 bg-white p-6 lg:col-span-2 lg:p-8">
+            <div className="flex flex-col gap-5 bg-card p-6 lg:col-span-2 lg:p-8">
               <div className="flex items-center gap-2">
                 <Sparkles className="size-3.5 text-primary" />
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">

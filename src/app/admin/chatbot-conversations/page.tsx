@@ -405,7 +405,7 @@ export default function AdminChatbotConversationsPage() {
                   transition={{ duration: 0.22, ease: "easeOut" }}
                   className="flex h-full min-h-0 flex-col"
                 >
-                  <div className="shrink-0 border-b border-border/60 bg-white px-4 py-4 sm:px-6">
+                  <div className="shrink-0 border-b border-border/60 bg-card px-4 py-4 sm:px-6">
                     {isMobile && (
                       <Button
                         variant="ghost"

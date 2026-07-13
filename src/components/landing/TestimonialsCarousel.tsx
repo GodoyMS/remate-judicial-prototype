@@ -35,7 +35,7 @@ function TestimonialCard({
   return (
     <div
       className={cn(
-        "group relative flex h-full flex-col gap-5 rounded-2xl border border-foreground/8 bg-white p-6 shadow-sm",
+        "group relative flex h-full flex-col gap-5 rounded-2xl border border-foreground/8 bg-card p-6 shadow-sm",
         "transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
       )}
     >
@@ -228,7 +228,7 @@ export function TestimonialsCarousel() {
           <button
             type="button"
             onClick={scrollPrev}
-            className="flex size-10 items-center justify-center rounded-full border border-foreground/15 bg-white text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
+            className="flex size-10 items-center justify-center rounded-full border border-foreground/15 bg-card text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
             aria-label="Testimonio anterior"
           >
             <ChevronLeft className="size-5" />
@@ -254,7 +254,7 @@ export function TestimonialsCarousel() {
           <button
             type="button"
             onClick={scrollNext}
-            className="flex size-10 items-center justify-center rounded-full border border-foreground/15 bg-white text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
+            className="flex size-10 items-center justify-center rounded-full border border-foreground/15 bg-card text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
             aria-label="Siguiente testimonio"
           >
             <ChevronRight className="size-5" />

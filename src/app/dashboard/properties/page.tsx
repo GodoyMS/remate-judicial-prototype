@@ -84,7 +84,7 @@ export default function PropertiesPage() {
             placeholder="Buscar por nombre o dirección..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-10 rounded-xl border-border/80 bg-white text-sm"
+            className="pl-9 h-10 rounded-xl border-border/80 bg-card text-sm"
           />
         </div>
 
@@ -93,7 +93,7 @@ export default function PropertiesPage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="h-10 pl-9 pr-4 rounded-xl border border-border/80 bg-white text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 appearance-none cursor-pointer"
+            className="h-10 pl-9 pr-4 rounded-xl border border-border/80 bg-card text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 appearance-none cursor-pointer"
           >
             <option value="roi">Mayor ROI</option>
             <option value="price">Menor precio</option>
@@ -101,7 +101,7 @@ export default function PropertiesPage() {
           </select>
         </div>
 
-        <div className="flex items-center gap-1 rounded-xl border border-border/80 bg-white p-1">
+        <div className="flex items-center gap-1 rounded-xl border border-border/80 bg-card p-1">
           <button
             onClick={() => setView("grid")}
             className={`p-1.5 rounded-lg transition-colors ${view === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
@@ -125,7 +125,7 @@ export default function PropertiesPage() {
             className={`text-xs font-medium px-3.5 py-1.5 rounded-full border transition-all ${
               district === d
                 ? "bg-primary text-primary-foreground border-primary"
-                : "border-border/80 text-muted-foreground hover:border-primary/50 hover:text-foreground bg-white"
+                : "border-border/80 text-muted-foreground hover:border-primary/50 hover:text-foreground bg-card"
             }`}
           >
             {d}
@@ -141,7 +141,7 @@ export default function PropertiesPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06, duration: 0.4 }}
-              className="group rounded-2xl border border-border/60 bg-white overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="group rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
               <Link href={`/dashboard/properties/${p.id}`} className="block">
                 <div className="relative overflow-hidden aspect-[16/9]">
@@ -223,7 +223,7 @@ export default function PropertiesPage() {
               initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05, duration: 0.4 }}
-              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-white p-4 hover:shadow-md transition-all group"
+              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 hover:shadow-md transition-all group"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

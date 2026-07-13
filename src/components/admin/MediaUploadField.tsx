@@ -189,7 +189,7 @@ export function MediaUploadField({
               <button
                 type="button"
                 onClick={openPicker}
-                className="inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[10px] font-semibold text-foreground shadow-sm hover:bg-white"
+                className="inline-flex items-center gap-1 rounded-lg bg-card/90 px-2 py-1 text-[10px] font-semibold text-foreground shadow-sm hover:bg-card"
               >
                 <RefreshCw className="size-3" />
                 Cambiar

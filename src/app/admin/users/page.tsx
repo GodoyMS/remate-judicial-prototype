@@ -585,7 +585,7 @@ export default function AdminUsersPage() {
             </TabsTrigger>
           </TabsList>
 
-          <div className="rounded-xl border border-border/60 bg-white overflow-hidden">
+          <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
             <div className="flex flex-row justify-between items-center gap-3 p-4 border-b border-border/40 bg-muted/15">
               <div className="relative flex-1 min-w-0 max-w-xs">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -1326,7 +1326,7 @@ function UpgradeRequestsTable({
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                     Actividad de inversión
                   </p>
-                  <div className="rounded-lg bg-white border border-premium/20 p-3">
+                  <div className="rounded-lg bg-card border border-premium/20 p-3">
                     <p className="text-xs text-muted-foreground">Total invertido</p>
                     <p className="text-lg font-bold text-foreground">
                       {formatCurrency(req.totalInvested, "PEN")}

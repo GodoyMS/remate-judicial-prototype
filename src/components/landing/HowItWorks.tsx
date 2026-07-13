@@ -79,7 +79,7 @@ export function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="group relative flex flex-col gap-5 rounded-2xl border border-foreground/8 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-foreground/5"
+              className="group relative flex flex-col gap-5 rounded-2xl border border-foreground/8 bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-foreground/5"
             >
               <div className="flex items-start justify-between">
                 <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10  transition-transform group-hover:scale-105">

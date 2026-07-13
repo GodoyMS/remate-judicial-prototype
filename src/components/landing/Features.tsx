@@ -70,7 +70,7 @@ function FeatureCard({
         "group flex h-full min-h-[220px] flex-col gap-5 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-0.5 sm:min-h-[200px]",
         highlight
           ? "border-primary/30 bg-gradient-to-br from-accent to-card shadow-lg shadow-primary/5 hover:shadow-xl"
-          : "border-foreground/8 bg-white hover:border-primary/40 hover:shadow-md"
+          : "border-foreground/8 bg-card hover:border-primary/40 hover:shadow-md"
       )}
     >
       <div
@@ -108,7 +108,7 @@ function FeatureCard({
 
 export function Features() {
   return (
-    <section id="nosotros" className="relative overflow-hidden bg-white py-24">
+    <section id="nosotros" className="relative overflow-hidden bg-card py-24">
       <div
         className="pointer-events-none absolute inset-0 opacity-30"
         aria-hidden

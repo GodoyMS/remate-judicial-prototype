@@ -186,7 +186,7 @@ function InvestPageContent() {
           initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 18 }}
-          className="w-full rounded-3xl border border-border/60 bg-white p-10 flex flex-col items-center gap-6 text-center shadow-xl"
+          className="w-full rounded-3xl border border-border/60 bg-card p-10 flex flex-col items-center gap-6 text-center shadow-xl"
         >
           <div className="size-20 rounded-full bg-accent flex items-center justify-center">
             <CheckCircle2 className="size-10 text-accent-foreground" />
@@ -278,7 +278,7 @@ function InvestPageContent() {
             transition={{ duration: 0.3 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
               <h3 className="text-base font-semibold text-foreground mb-4">Selecciona una propiedad</h3>
               <div className="flex flex-col gap-3">
                 {properties.map((p) => (
@@ -340,7 +340,7 @@ function InvestPageContent() {
             transition={{ duration: 0.3 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
               {/* Selected property summary */}
               <div className="flex items-center gap-3 mb-6 pb-5 border-b border-border/60">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -384,7 +384,7 @@ function InvestPageContent() {
                     className={`flex-1 h-8 rounded-lg text-xs font-medium border transition-colors ${
                       amount === String(q)
                         ? "bg-primary text-primary-foreground border-primary"
-                        : "border-border/80 text-muted-foreground hover:border-primary/50 hover:text-foreground bg-white"
+                        : "border-border/80 text-muted-foreground hover:border-primary/50 hover:text-foreground bg-card"
                     }`}
                   >
                     {q >= 1000 ? `${q / 1000}K` : q}
@@ -436,7 +436,7 @@ function InvestPageContent() {
             transition={{ duration: 0.3 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
               <h3 className="text-base font-semibold text-foreground mb-4">Método de pago</h3>
 
               <div className="flex flex-col gap-3 mb-6">
@@ -525,7 +525,7 @@ function InvestPageContent() {
             transition={{ duration: 0.3 }}
             className="flex flex-col gap-4"
           >
-            <div className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
               <h3 className="text-base font-semibold text-foreground mb-5">Resumen de inversión</h3>
 
               {/* Property */}

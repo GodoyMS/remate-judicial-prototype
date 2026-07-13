@@ -102,7 +102,7 @@ export function AdminPropertyGallery({
                 type="button"
                 variant="secondary"
                 size="icon-sm"
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full size-8 bg-white/90 hover:bg-white shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 rounded-full size-8 bg-card/90 hover:bg-card shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={(e) => {
                   e.stopPropagation();
                   goPrev();
@@ -115,7 +115,7 @@ export function AdminPropertyGallery({
                 type="button"
                 variant="secondary"
                 size="icon-sm"
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full size-8 bg-white/90 hover:bg-white shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full size-8 bg-card/90 hover:bg-card shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={(e) => {
                   e.stopPropagation();
                   goNext();
@@ -132,7 +132,7 @@ export function AdminPropertyGallery({
                     className={cn(
                       "h-1.5 rounded-full transition-all duration-300",
                       i === activeIndex
-                        ? "w-5 bg-white"
+                        ? "w-5 bg-card"
                         : "w-1.5 bg-white/50"
                     )}
                   />

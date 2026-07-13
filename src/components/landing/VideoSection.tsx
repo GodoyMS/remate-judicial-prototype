@@ -88,7 +88,7 @@ export function VideoSection() {
           {highlights.map((item) => (
             <div
               key={item.label}
-              className="flex flex-col items-center gap-1 rounded-2xl border border-foreground/8 bg-white/60 px-3 py-4 text-center backdrop-blur-sm sm:px-5"
+              className="flex flex-col items-center gap-1 rounded-2xl border border-foreground/8 bg-card/60 px-3 py-4 text-center backdrop-blur-sm sm:px-5"
             >
               <span className="text-lg font-extrabold text-foreground sm:text-xl">
                 {item.value}

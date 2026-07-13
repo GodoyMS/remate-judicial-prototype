@@ -226,7 +226,7 @@ export function CreatePropertyDialog({ open, onOpenChange }: CreatePropertyDialo
               <MapPin className="size-8 text-muted-foreground/40" />
               <p className="text-xs text-muted-foreground">Vista previa de Google Maps</p>
               <p className="text-[10px] text-muted-foreground/60">-12.0964, -77.0428 · San Isidro, Lima</p>
-              <Badge variant="outline" className="absolute top-2 right-2 text-[10px] bg-white/80">
+              <Badge variant="outline" className="absolute top-2 right-2 text-[10px] bg-card/80">
                 Mapa simulado
               </Badge>
             </div>

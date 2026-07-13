@@ -41,7 +41,7 @@ export default function LibroDeReclamacionesPage() {
         ]}
       />
 
-      <section className="border-b border-border bg-white py-10">
+      <section className="border-b border-border bg-card py-10">
         <div className="mx-auto max-w-3xl section-padding">
           <div className="grid gap-4 sm:grid-cols-3">
             {infoCards.map((card) => (

@@ -218,7 +218,7 @@ export function YapePaymentForm({ defaultAmount, currency = "PEN", value, onChan
       {/* Step 1 — Phone */}
       <section
         className={cn(
-          "rounded-2xl border bg-white p-5 shadow-sm transition-colors",
+          "rounded-2xl border bg-card p-5 shadow-sm transition-colors",
           activeStep === 1 ? "border-[#742284]/30 ring-2 ring-[#742284]/10" : "border-border/60"
         )}
       >
@@ -262,7 +262,7 @@ export function YapePaymentForm({ defaultAmount, currency = "PEN", value, onChan
       {/* Step 2 — Approval code */}
       <section
         className={cn(
-          "rounded-2xl border bg-white p-5 shadow-sm transition-colors",
+          "rounded-2xl border bg-card p-5 shadow-sm transition-colors",
           activeStep === 2 ? "border-[#742284]/30 ring-2 ring-[#742284]/10" : "border-border/60",
           !phoneComplete && "opacity-60"
         )}

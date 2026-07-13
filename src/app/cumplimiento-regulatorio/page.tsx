@@ -55,7 +55,7 @@ export default function CumplimientoRegulatorioPage() {
         ]}
       />
 
-      <section className="border-b border-border bg-white py-12">
+      <section className="border-b border-border bg-card py-12">
         <div className="mx-auto max-w-7xl section-padding">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {compliancePillars.map((pillar, i) => (

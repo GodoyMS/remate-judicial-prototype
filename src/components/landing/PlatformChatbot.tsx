@@ -86,7 +86,7 @@ function TypingIndicator() {
       <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
         <Bot className="size-4 text-primary" />
       </div>
-      <div className="rounded-2xl rounded-tl-md border border-border/60 bg-white px-4 py-3 shadow-sm">
+      <div className="rounded-2xl rounded-tl-md border border-border/60 bg-card px-4 py-3 shadow-sm">
         <div className="flex items-center gap-1">
           {[0, 1, 2].map((i) => (
             <motion.span
@@ -123,7 +123,7 @@ function QuickReplyChips({
           type="button"
           disabled={disabled}
           onClick={() => onSelect(question)}
-          className="max-w-[90%] rounded-2xl rounded-tr-md border border-foreground/15 bg-white px-3 py-2 text-left text-xs font-medium text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 active:scale-[0.98] disabled:opacity-50"
+          className="max-w-[90%] rounded-2xl rounded-tr-md border border-foreground/15 bg-card px-3 py-2 text-left text-xs font-medium text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 active:scale-[0.98] disabled:opacity-50"
         >
           {question}
         </button>
@@ -422,9 +422,9 @@ export function PlatformChatbot() {
               transition={{ delay: 0.5 }}
               className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden sm:block"
             >
-              <div className="whitespace-nowrap rounded-xl border border-border/60 bg-white px-4 py-2 text-sm font-medium text-foreground shadow-lg">
+              <div className="whitespace-nowrap rounded-xl border border-border/60 bg-card px-4 py-2 text-sm font-medium text-foreground shadow-lg">
                 ¿Tienes dudas? Pregúntame
-                <div className="absolute top-1/2 -right-1.5 size-3 -translate-y-1/2 rotate-45 border-r border-t border-border/60 bg-white" />
+                <div className="absolute top-1/2 -right-1.5 size-3 -translate-y-1/2 rotate-45 border-r border-t border-border/60 bg-card" />
               </div>
             </motion.div>
           </motion.div>
@@ -441,7 +441,7 @@ export function PlatformChatbot() {
             transition={{ type: "spring", stiffness: 380, damping: 30 }}
             layout={false}
             className={cn(
-              "fixed z-50 flex flex-col overflow-hidden border border-border/60 bg-white shadow-2xl shadow-black/20",
+              "fixed z-50 flex flex-col overflow-hidden border border-border/60 bg-card shadow-2xl shadow-black/20",
               "bottom-0 right-0 left-0 rounded-t-3xl sm:bottom-6 sm:left-auto sm:right-6 sm:w-[420px] sm:rounded-3xl",
               isMinimized ? "h-auto" : "h-[min(88vh,720px)] sm:h-[min(82vh,680px)]"
             )}
@@ -556,7 +556,7 @@ export function PlatformChatbot() {
                 </ScrollArea>
 
                 {/* Input */}
-                <div className="shrink-0 border-t border-border/60 bg-white p-4">
+                <div className="shrink-0 border-t border-border/60 bg-card p-4">
                   <div className="flex items-end gap-2 rounded-2xl border border-border/80 bg-muted/30 p-2 focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/20">
                     <textarea
                       ref={inputRef}

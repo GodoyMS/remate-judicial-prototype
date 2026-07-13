@@ -201,7 +201,7 @@ export default function AdminDashboardPage() {
                 >
                   <Link
                     href={`/admin/properties/${p.id}`}
-                    className="flex items-center gap-4 rounded-2xl border border-border/60 bg-white p-4 hover:shadow-md transition-all group"
+                    className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 hover:shadow-md transition-all group"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.image} alt={p.title} className="size-14 rounded-xl object-cover shrink-0" />

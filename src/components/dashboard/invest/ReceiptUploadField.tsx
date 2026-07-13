@@ -106,10 +106,10 @@ export function ReceiptUploadField({
             <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[10px] font-medium text-muted-foreground shadow-sm">
+            <span className="inline-flex items-center gap-1 rounded-full bg-card px-2.5 py-1 text-[10px] font-medium text-muted-foreground shadow-sm">
               <ImageIcon className="size-3" /> Foto
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[10px] font-medium text-muted-foreground shadow-sm">
+            <span className="inline-flex items-center gap-1 rounded-full bg-card px-2.5 py-1 text-[10px] font-medium text-muted-foreground shadow-sm">
               <FileText className="size-3" /> PDF
             </span>
           </div>
@@ -119,7 +119,7 @@ export function ReceiptUploadField({
         <p className="text-xs text-destructive font-medium">{fileError}</p>
       )}
       {value ? (
-        <div className="overflow-hidden rounded-xl border border-border/60 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm">
           <div className="flex items-center gap-3 p-3">
             {preview ? (
               // eslint-disable-next-line @next/next/no-img-element

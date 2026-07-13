@@ -316,7 +316,7 @@ function MyInvestmentsContent() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
-            className="rounded-xl border border-border/60 bg-white bg-background px-4 py-3"
+            className="rounded-xl border border-border/60 bg-card bg-background px-4 py-3"
           >
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
@@ -342,7 +342,7 @@ function MyInvestmentsContent() {
       </div>
 
       {/* Filters toolbar */}
-      <div className="rounded-xl border border-border/60 b bg-white mb-4 overflow-hidden">
+      <div className="rounded-xl border border-border/60 b bg-card mb-4 overflow-hidden">
         <div className="flex flex-col gap-3 p-4 border-b border-border/40 bg-muted/15">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             <div className="relative flex-1 min-w-0 max-w-xs">

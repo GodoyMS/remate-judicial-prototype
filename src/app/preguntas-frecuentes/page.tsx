@@ -130,12 +130,12 @@ export default function PreguntasFrecuentesPage() {
               placeholder="Buscar en preguntas frecuentes..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-14 rounded-2xl border-border bg-white pl-12 text-base shadow-sm focus-visible:ring-primary"
+              className="h-14 rounded-2xl border-border bg-card pl-12 text-base shadow-sm focus-visible:ring-primary"
             />
           </motion.div>
 
           {filteredCategories.length === 0 ? (
-            <div className="rounded-2xl border border-border bg-white p-12 text-center">
+            <div className="rounded-2xl border border-border bg-card p-12 text-center">
               <HelpCircle className="mx-auto mb-4 size-10 text-muted-foreground" />
               <p className="font-medium text-foreground">No encontramos resultados</p>
               <p className="mt-2 text-sm text-muted-foreground">
@@ -159,7 +159,7 @@ export default function PreguntasFrecuentesPage() {
                     <BookOpen className="size-4" />
                     {category.label}
                   </h2>
-                  <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+                  <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
                     <Accordion type="single" collapsible>
                       {category.questions.map((item, i) => (
                         <AccordionItem

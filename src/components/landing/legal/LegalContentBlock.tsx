@@ -62,7 +62,7 @@ export function LegalContentBlock({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ delay: index * 0.05 }}
-      className="rounded-2xl border border-foreground/8 bg-white p-6 sm:p-8 shadow-sm"
+      className="rounded-2xl border border-foreground/8 bg-card p-6 sm:p-8 shadow-sm"
     >
       <div className="mb-4 flex items-center gap-3">
         <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/25">

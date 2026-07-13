@@ -29,7 +29,7 @@ export function SocialProof() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="relative overflow-hidden rounded-2xl border border-foreground/8 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+              className="relative overflow-hidden rounded-2xl border border-foreground/8 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
             >
               <div className="pointer-events-none absolute -right-4 -top-4 size-20 rounded-full bg-primary/15" />
               <span className="relative text-3xl font-bold tracking-tight text-foreground sm:text-4xl">

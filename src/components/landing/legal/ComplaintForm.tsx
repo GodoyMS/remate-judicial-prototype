@@ -85,7 +85,7 @@ export function ComplaintForm() {
           <strong className="text-foreground">{form.email}</strong> en un plazo máximo de 15 días
           hábiles.
         </p>
-        <div className="mt-6 inline-flex items-center gap-2 rounded-xl border border-foreground/10 bg-white px-5 py-3">
+        <div className="mt-6 inline-flex items-center gap-2 rounded-xl border border-foreground/10 bg-card px-5 py-3">
           <FileWarning className="size-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
             N° de seguimiento:{" "}
@@ -120,7 +120,7 @@ export function ComplaintForm() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-foreground/8 bg-white p-6 sm:p-8 shadow-sm"
+      className="rounded-2xl border border-foreground/8 bg-card p-6 sm:p-8 shadow-sm"
     >
       <div className="mb-6">
         <h3 className="text-xl font-bold text-foreground">Formulario de reclamación</h3>

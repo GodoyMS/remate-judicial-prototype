@@ -66,7 +66,7 @@ export function BankTransferForm({ defaultAmount, currency = "PEN", value, onCha
               placeholder="Ej. 193-09876543-0-45"
               value={value.accountNumber}
               onChange={(e) => onChange({ ...value, accountNumber: e.target.value })}
-              className="h-12 rounded-xl border-border/80 bg-white font-mono text-sm shadow-sm"
+              className="h-12 rounded-xl border-border/80 bg-card font-mono text-sm shadow-sm"
             />
             <p className="text-[11px] text-muted-foreground">Cuenta desde la que realizaste el envío</p>
           </div>
@@ -80,7 +80,7 @@ export function BankTransferForm({ defaultAmount, currency = "PEN", value, onCha
               placeholder="Código o referencia de la operación"
               value={value.transferNumber}
               onChange={(e) => onChange({ ...value, transferNumber: e.target.value })}
-              className="h-12 rounded-xl border-border/80 bg-white text-sm shadow-sm"
+              className="h-12 rounded-xl border-border/80 bg-card text-sm shadow-sm"
             />
           </div>
 
@@ -99,7 +99,7 @@ export function BankTransferForm({ defaultAmount, currency = "PEN", value, onCha
                 placeholder={defaultAmount || "0.00"}
                 value={value.amount}
                 onChange={(e) => onChange({ ...value, amount: e.target.value })}
-                className="h-12 rounded-xl border-border/80 bg-white pl-10 text-lg font-semibold shadow-sm"
+                className="h-12 rounded-xl border-border/80 bg-card pl-10 text-lg font-semibold shadow-sm"
               />
             </div>
           </div>

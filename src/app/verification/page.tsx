@@ -69,7 +69,7 @@ export default function VerificationPage() {
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col">
       {/* Top bar */}
-      <header className="bg-white border-b border-border/60 px-4 sm:px-6 h-16 flex items-center justify-between">
+      <header className="bg-card border-b border-border/60 px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="size-8 rounded-lg bg-primary flex items-center justify-center">
             <Gavel className="size-4 text-primary-foreground" />
@@ -129,7 +129,7 @@ export default function VerificationPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -24 }}
                 transition={{ duration: 0.35, ease: "easeInOut" }}
-                className="rounded-3xl bg-white border border-border/60 shadow-xl shadow-foreground/5 p-8"
+                className="rounded-3xl bg-card border border-border/60 shadow-xl shadow-foreground/5 p-8"
               >
                 <div className="mb-6">
                   <h2 className="text-xl font-bold text-foreground tracking-tight">Datos personales</h2>
@@ -226,7 +226,7 @@ export default function VerificationPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -24 }}
                 transition={{ duration: 0.35, ease: "easeInOut" }}
-                className="rounded-3xl bg-white border border-border/60 shadow-xl shadow-foreground/5 p-8"
+                className="rounded-3xl bg-card border border-border/60 shadow-xl shadow-foreground/5 p-8"
               >
                 <div className="mb-6">
                   <h2 className="text-xl font-bold text-foreground tracking-tight">Sube tu documento</h2>
@@ -267,7 +267,7 @@ export default function VerificationPage() {
                                 onClick={() =>
                                   side === "front" ? setFrontFile(null) : setBackFile(null)
                                 }
-                                className="rounded-full bg-white/90 p-2 text-foreground hover:bg-white transition-colors"
+                                className="rounded-full bg-card/90 p-2 text-foreground hover:bg-card transition-colors"
                               >
                                 <X className="size-4" />
                               </button>
@@ -341,7 +341,7 @@ export default function VerificationPage() {
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4 }}
-                className="rounded-3xl bg-white border border-border/60 shadow-xl shadow-foreground/5 p-8 flex flex-col items-center text-center gap-6"
+                className="rounded-3xl bg-card border border-border/60 shadow-xl shadow-foreground/5 p-8 flex flex-col items-center text-center gap-6"
               >
                 {/* Success icon */}
                 <div className="size-20 rounded-full bg-accent flex items-center justify-center">
@@ -379,9 +379,9 @@ export default function VerificationPage() {
                         {item.done ? (
                           <CheckCircle2 className="size-3 text-primary-foreground" />
                         ) : item.active ? (
-                          <div className="size-2 rounded-full bg-white animate-pulse" />
+                          <div className="size-2 rounded-full bg-card animate-pulse" />
                         ) : (
-                          <div className="size-2 rounded-full bg-white/60" />
+                          <div className="size-2 rounded-full bg-card/60" />
                         )}
                       </div>
                       <span

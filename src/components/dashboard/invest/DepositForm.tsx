@@ -73,7 +73,7 @@ export function DepositForm({ defaultAmount, currency = "PEN", value, onChange }
               placeholder="Ej. VCH-2024-001234"
               value={value.voucherNumber}
               onChange={(e) => onChange({ ...value, voucherNumber: e.target.value })}
-              className="h-12 rounded-xl border-border/80 bg-white text-sm shadow-sm"
+              className="h-12 rounded-xl border-border/80 bg-card text-sm shadow-sm"
             />
           </div>
 
@@ -87,7 +87,7 @@ export function DepositForm({ defaultAmount, currency = "PEN", value, onChange }
                   type="button"
                   variant="outline"
                   className={cn(
-                    "h-12 w-full justify-start rounded-xl border-border/80 bg-white font-normal shadow-sm",
+                    "h-12 w-full justify-start rounded-xl border-border/80 bg-card font-normal shadow-sm",
                     !value.voucherDate && "text-muted-foreground"
                   )}
                 >
@@ -118,7 +118,7 @@ export function DepositForm({ defaultAmount, currency = "PEN", value, onChange }
               placeholder="Código de la operación bancaria"
               value={value.operationNumber}
               onChange={(e) => onChange({ ...value, operationNumber: e.target.value })}
-              className="h-12 rounded-xl border-border/80 bg-white text-sm shadow-sm"
+              className="h-12 rounded-xl border-border/80 bg-card text-sm shadow-sm"
             />
           </div>
 
@@ -137,7 +137,7 @@ export function DepositForm({ defaultAmount, currency = "PEN", value, onChange }
                 placeholder={defaultAmount || "0.00"}
                 value={value.amount}
                 onChange={(e) => onChange({ ...value, amount: e.target.value })}
-                className="h-12 rounded-xl border-border/80 bg-white pl-10 text-lg font-semibold shadow-sm"
+                className="h-12 rounded-xl border-border/80 bg-card pl-10 text-lg font-semibold shadow-sm"
               />
             </div>
           </div>

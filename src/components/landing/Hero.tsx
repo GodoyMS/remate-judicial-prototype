@@ -115,7 +115,7 @@ function FloatingPill({
 }
 
 /* ─── Main hero ─── */
-export function Hero() {
+export function   Hero() {
   const countdown = useCountdown(1, 47, 23);
   const investedCount = useCounter(48, 2.0, 0.6);
   const investorCount = useCounter(3200, 2.2, 0.7);
@@ -278,7 +278,7 @@ export function Hero() {
               ].map((s) => (
                 <div
                   key={s.label}
-                  className="flex flex-col gap-0.5 rounded-2xl border border-border/60 bg-white/70 backdrop-blur-sm px-4 py-3"
+                  className="flex flex-col gap-0.5 rounded-2xl border border-border/60 bg-card/70 backdrop-blur-sm px-4 py-3"
                 >
                   <span className="text-xl font-black text-foreground tabular-nums">{s.value}</span>
                   <span className="text-xs text-muted-foreground">{s.label}</span>
@@ -297,7 +297,7 @@ export function Hero() {
             className="relative"
           >
             {/* ── Main auction card ── */}
-            <div className="relative rounded-3xl bg-white border border-border/60 shadow-2xl shadow-foreground/10 overflow-hidden">
+            <div className="relative rounded-3xl bg-card border border-border/60 shadow-2xl shadow-foreground/10 overflow-hidden">
 
               {/* Property hero image */}
               <div className="relative h-56 overflow-hidden">
@@ -313,8 +313,8 @@ export function Hero() {
                 {/* LIVE badge */}
                 <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-destructive text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
                   <span className="relative flex size-1.5">
-                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-white opacity-75" />
-                    <span className="relative inline-flex size-1.5 rounded-full bg-white" />
+                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-card opacity-75" />
+                    <span className="relative inline-flex size-1.5 rounded-full bg-card" />
                   </span>
                   EN VIVO
                 </div>
@@ -450,7 +450,7 @@ export function Hero() {
               floatY={8}
               className="absolute -left-8 top-24 hidden xl:block z-10"
             >
-              <div className="rounded-2xl bg-white border border-border/60 shadow-2xl p-4 w-52">
+              <div className="rounded-2xl bg-card border border-border/60 shadow-2xl p-4 w-52">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="size-7 rounded-lg bg-success flex items-center justify-center">
                     <TrendingUp className="size-3.5 text-white" />
@@ -483,7 +483,7 @@ export function Hero() {
               floatY={6}
               className="absolute -right-6 -bottom-6 hidden lg:block z-10"
             >
-              <div className="rounded-2xl bg-white border border-border/60 shadow-2xl p-3 flex items-center gap-3 w-56">
+              <div className="rounded-2xl bg-card border border-border/60 shadow-2xl p-3 flex items-center gap-3 w-56">
                 <div className="size-10 rounded-xl overflow-hidden shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -509,7 +509,7 @@ export function Hero() {
               floatY={9}
               className="absolute -top-5 right-12 hidden lg:block z-10"
             >
-              <div className="rounded-2xl bg-white border border-border/60 shadow-2xl px-4 py-3">
+              <div className="rounded-2xl bg-card border border-border/60 shadow-2xl px-4 py-3">
                 <div className="flex items-center gap-2">
                   {/* Stacked avatars */}
                   <div className="flex -space-x-2">
@@ -538,16 +538,16 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.6 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 divide-x divide-border/60 rounded-2xl border border-border/60 bg-white/80 backdrop-blur-sm overflow-hidden shadow-sm"
+          className="mt-16 grid grid-cols-2 md:grid-cols-4 divide-x divide-border/60 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm overflow-hidden shadow-sm"
         >
           {[
-            { icon: <HomeIcon className="text-secondary"/>, value: `S/${investedCount}M+`, label: "en propiedades subastadas" },
-            { icon: <UsersIcon className="text-secondary"/>, value: `${investorCount.toLocaleString()}+`, label: "inversores activos" },
-            { icon:<ChartBarIcon className="text-secondary"/>, value: "22% anual", label: "retorno promedio" },
-            { icon: <ScaleIcon className="text-secondary"/>, value: "100% legal", label: "verificado judicialmente" },
+            { icon: <HomeIcon className="text-foreground"/>, value: `S/${investedCount}M+`, label: "en propiedades subastadas" },
+            { icon: <UsersIcon className="text-foreground"/>, value: `${investorCount.toLocaleString()}+`, label: "inversores activos" },
+            { icon:<ChartBarIcon className="text-foreground"/>, value: "22% anual", label: "retorno promedio" },
+            { icon: <ScaleIcon className="text-foreground"/>, value: "100% legal", label: "verificado judicialmente" },
           ].map((s) => (
             <div key={s.label} className="flex flex-col sm:flex-row items-center sm:items-start gap-3 py-5 px-4 sm:px-6">
-              <span className="bg-accent p-2 rounded-full">{s.icon}</span>
+              <span className="bg-accent text-foreground p-2 rounded-full">{s.icon}</span>
               <div>
                 <p className="text-xl font-black text-foreground tabular-nums">{s.value}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>

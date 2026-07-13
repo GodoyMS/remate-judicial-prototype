@@ -139,7 +139,7 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
         </motion.div>
 
         {amount && (
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-border/60 bg-white px-4 py-1.5 text-xs font-semibold text-foreground shadow-md">
+          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-border/60 bg-card px-4 py-1.5 text-xs font-semibold text-foreground shadow-md">
             Total: {currencySymbol} {parseFloat(amount).toLocaleString()}
           </div>
         )}
@@ -171,7 +171,7 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
               onChange={(e) =>
                 onChange({ ...value, cardNumber: formatCardNumber(e.target.value) })
               }
-              className="h-12 rounded-xl border-border/80 bg-white font-mono text-base tracking-wider shadow-sm"
+              className="h-12 rounded-xl border-border/80 bg-card font-mono text-base tracking-wider shadow-sm"
             />
           </div>
 
@@ -187,7 +187,7 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
               onFocus={() => setFocused("name")}
               onBlur={() => setFocused(null)}
               onChange={(e) => onChange({ ...value, cardholder: e.target.value.toUpperCase() })}
-              className="h-12 rounded-xl border-border/80 bg-white text-sm uppercase shadow-sm"
+              className="h-12 rounded-xl border-border/80 bg-card text-sm uppercase shadow-sm"
             />
           </div>
 
@@ -205,7 +205,7 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
                 onFocus={() => setFocused("expiry")}
                 onBlur={() => setFocused(null)}
                 onChange={(e) => onChange({ ...value, expiry: formatExpiry(e.target.value) })}
-                className="h-12 rounded-xl border-border/80 bg-white font-mono text-sm shadow-sm"
+                className="h-12 rounded-xl border-border/80 bg-card font-mono text-sm shadow-sm"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -225,7 +225,7 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
                 onChange={(e) =>
                   onChange({ ...value, cvv: e.target.value.replace(/\D/g, "").slice(0, 4) })
                 }
-                className="h-12 rounded-xl border-border/80 bg-white font-mono text-sm shadow-sm"
+                className="h-12 rounded-xl border-border/80 bg-card font-mono text-sm shadow-sm"
               />
             </div>
           </div>
@@ -240,7 +240,7 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
             {(["VISA", "MC", "AMEX"] as const).map((label) => (
               <span
                 key={label}
-                className="rounded-md border border-border/70 bg-white px-2 py-0.5 text-[9px] font-bold tracking-wide text-muted-foreground"
+                className="rounded-md border border-border/70 bg-card px-2 py-0.5 text-[9px] font-bold tracking-wide text-muted-foreground"
               >
                 {label}
               </span>

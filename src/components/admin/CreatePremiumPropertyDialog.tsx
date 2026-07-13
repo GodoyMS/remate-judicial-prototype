@@ -458,7 +458,7 @@ export function CreatePremiumPropertyDialog({
             <div className="aspect-[16/6] bg-muted/40 flex flex-col items-center justify-center gap-2 relative">
               <MapPin className="size-8 text-muted-foreground/40" />
               <p className="text-xs text-muted-foreground">Vista previa de ubicación</p>
-              <Badge variant="outline" className="absolute top-2 right-2 text-[10px] bg-white/80">
+              <Badge variant="outline" className="absolute top-2 right-2 text-[10px] bg-card/80">
                 Mapa simulado
               </Badge>
             </div>

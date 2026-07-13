@@ -117,7 +117,7 @@ export default function PropertyDetailPage({
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-white shadow-sm">
+            <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-card shadow-sm">
               <Carousel className="w-full">
                 <CarouselContent>
                   {property.images.map((img, i) => (
@@ -139,12 +139,12 @@ export default function PropertyDetailPage({
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-3 bg-white/90 hover:bg-white border-0 shadow-md" />
-                <CarouselNext className="right-3 bg-white/90 hover:bg-white border-0 shadow-md" />
+                <CarouselPrevious className="left-3 bg-card/90 hover:bg-card border-0 shadow-md" />
+                <CarouselNext className="right-3 bg-card/90 hover:bg-card border-0 shadow-md" />
               </Carousel>
 
               <div className="absolute top-4 left-4 flex gap-2 z-10 pointer-events-none">
-                <Badge className="bg-white/90 text-foreground backdrop-blur-sm text-[10px]">
+                <Badge className="bg-card/90 text-foreground backdrop-blur-sm text-[10px]">
                   {property.images.length} fotos
                 </Badge>
               </div>

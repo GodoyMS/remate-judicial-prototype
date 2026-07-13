@@ -138,8 +138,8 @@ export default function PremiumPropertyDetailPage({
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-3 bg-white/90 hover:bg-white border-0 shadow-md" />
-                <CarouselNext className="right-3 bg-white/90 hover:bg-white border-0 shadow-md" />
+                <CarouselPrevious className="left-3 bg-card/90 hover:bg-card border-0 shadow-md" />
+                <CarouselNext className="right-3 bg-card/90 hover:bg-card border-0 shadow-md" />
               </Carousel>
             </div>
           </motion.div>
