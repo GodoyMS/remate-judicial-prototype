@@ -167,8 +167,9 @@
   --popover: oklch(from var(--brand) 0.175 calc(c * 0.07) h);
   --popover-foreground: oklch(from var(--brand) 0.93 calc(c * 0.02) h);
 
-  /* Brightened so the brand reads against dark surfaces */
-  --primary: oklch(from var(--brand) clamp(0.6, calc(l + 0.1), 0.82) min(c, 0.23) h);
+  /* Same normalization as light mode — the picked color is preserved
+     exactly across modes; only surfaces and tints change */
+  --primary: oklch(from var(--brand) clamp(0.38, l, 0.72) c h);
   --primary-foreground: oklch(
     from var(--primary) clamp(0.1, calc((0.66 - l) * 1000), 0.985) min(c, 0.02) h
   );
