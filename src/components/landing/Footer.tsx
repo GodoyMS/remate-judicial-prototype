@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Gavel } from "lucide-react";
+import { Logo } from "@/components/brand/Logo";
 
 const columns = [
   {
@@ -38,13 +38,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="flex flex-col gap-4">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-accent">
-                <Gavel className="size-4 text-accent-foreground" />
-              </div>
-              <span className="text-lg font-bold tracking-tight text-background">
-                remata
-              </span>
+            <Link href="/" className="flex items-center">
+              <Logo className="text-2xl text-background" />
             </Link>
             <p className="text-sm text-background/60 leading-relaxed max-w-xs">
               La plataforma líder de inversión en remates judiciales inmobiliarios en Perú.

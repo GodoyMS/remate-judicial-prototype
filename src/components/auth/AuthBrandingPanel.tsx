@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { CheckCircle2, Gavel } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { Logo } from "@/components/brand/Logo";
 
 const benefits = [
   "Inversión desde S/ 500",
@@ -16,11 +17,8 @@ export function AuthBrandingPanel() {
         <div className="absolute -bottom-40 -left-20 size-[300px] rounded-full bg-primary/5 blur-3xl" />
       </div>
 
-      <Link href="/" className="relative flex items-center gap-2.5">
-        <div className="size-9 rounded-lg bg-accent flex items-center justify-center">
-          <Gavel className="size-4 text-accent-foreground" />
-        </div>
-        <span className="text-xl font-bold tracking-tight text-primary">remata</span>
+      <Link href="/" className="relative flex items-center">
+        <Logo className="text-2xl text-primary" />
       </Link>
 
       <div className="relative flex flex-col gap-8">

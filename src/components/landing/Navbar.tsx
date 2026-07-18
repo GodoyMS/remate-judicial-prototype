@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, Gavel } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -20,13 +21,8 @@ export function Navbar() {
       <div className="mx-auto max-w-7xl section-padding">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary">
-              <Gavel className="size-4 text-primary-foreground" />
-            </div>
-            <span className="text-lg font-bold tracking-tight text-foreground">
-              remata
-            </span>
+          <Link href="/" className="flex items-center group">
+            <Logo className="text-2xl text-primary" />
           </Link>
 
           {/* Desktop nav */}

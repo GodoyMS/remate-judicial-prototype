@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
-  Gavel,
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
@@ -14,6 +13,7 @@ import {
   CreditCard,
   Shield,
 } from "lucide-react";
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -70,11 +70,8 @@ export default function VerificationPage() {
     <div className="min-h-screen bg-muted/30 flex flex-col">
       {/* Top bar */}
       <header className="bg-card border-b border-border/60 px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="size-8 rounded-lg bg-primary flex items-center justify-center">
-            <Gavel className="size-4 text-primary-foreground" />
-          </div>
-          <span className="text-base font-bold tracking-tight text-foreground">remata</span>
+        <Link href="/" className="flex items-center">
+          <Logo className="text-xl text-primary" />
         </Link>
         <span className="text-sm text-muted-foreground">Verificación de identidad</span>
       </header>

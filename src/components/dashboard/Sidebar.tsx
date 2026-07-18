@@ -7,7 +7,6 @@ import {
   Building2,
   TrendingUp,
   Settings,
-  Gavel,
   LogOut,
   ChevronRight,
   History,
@@ -15,6 +14,7 @@ import {
   ArrowDownToLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/brand/Logo";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { useCurrentUser } from "@/contexts/user-context";
 
@@ -34,11 +34,8 @@ export function Sidebar() {
 
   return (
     <aside className="hidden lg:flex flex-col w-64 bg-sidebar border-r border-sidebar-border min-h-screen shrink-0">
-      <div className="flex items-center gap-2.5 px-6 h-16 border-b border-sidebar-border shrink-0">
-        <div className="size-8 rounded-lg bg-sidebar-primary flex items-center justify-center">
-          <Gavel className="size-4 text-sidebar-primary-foreground" />
-        </div>
-        <span className="text-base font-bold tracking-tight text-sidebar-foreground">remata</span>
+      <div className="flex items-center px-6 h-16 border-b border-sidebar-border shrink-0">
+        <Logo className="text-xl text-sidebar-primary" />
       </div>
 
       <nav className="flex-1 flex flex-col gap-1 px-3 py-4">

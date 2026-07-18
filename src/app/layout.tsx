@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import { BrandThemeProvider } from "@/components/theme/BrandThemeProvider";
+import { Geist, Fredoka } from "next/font/google";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ThemeSwitcherFab } from "@/components/theme/ThemeSwitcherFab";
 import {
-  BRAND_THEME_STORAGE_KEY,
-  DEFAULT_BRAND_THEME,
-} from "@/lib/brand-themes";
+  BRAND_COLOR_STORAGE_KEY,
+  LOGO_SCALE_STORAGE_KEY,
+  MAX_LOGO_SCALE,
+  MIN_LOGO_SCALE,
+  THEME_MODE_STORAGE_KEY,
+} from "@/lib/theme";
 import "./globals.css";
 
 const geist = Geist({
@@ -14,24 +17,46 @@ const geist = Geist({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
+const fredoka = Fredoka({
+  variable: "--font-logo",
+  subsets: ["latin"],
+  weight: ["500", "600"],
+});
+
 export const metadata: Metadata = {
-  title: "Remata — Invierte en remates judiciales",
+  title: "Rematto — Invierte en remates judiciales",
   description:
     "La plataforma más segura para invertir en propiedades inmobiliarias en remate judicial en Perú. Verificadas legalmente, retornos atractivos.",
 };
 
-const brandThemeInitScript = `
+/**
+ * Applies the persisted brand color and dark mode before first paint to
+ * avoid a flash of the default theme. Mirrors the logic in ThemeProvider.
+ */
+const themeInitScript = `
 (function () {
+  var root = document.documentElement;
   try {
-    var key = ${JSON.stringify(BRAND_THEME_STORAGE_KEY)};
-    var fallback = ${JSON.stringify(DEFAULT_BRAND_THEME)};
-    var stored = localStorage.getItem(key);
-    var valid = ["classic","blue-field","green-field","green-navy","teal-ink","mint-field"];
-    var theme = valid.indexOf(stored) !== -1 ? stored : fallback;
-    document.documentElement.setAttribute("data-brand-theme", theme);
-  } catch (e) {
-    document.documentElement.setAttribute("data-brand-theme", ${JSON.stringify(DEFAULT_BRAND_THEME)});
-  }
+    var color = localStorage.getItem(${JSON.stringify(BRAND_COLOR_STORAGE_KEY)});
+    if (color && /^#[0-9a-fA-F]{6}$/.test(color)) {
+      root.style.setProperty("--brand", color);
+    }
+  } catch (e) {}
+  try {
+    var scale = parseFloat(localStorage.getItem(${JSON.stringify(LOGO_SCALE_STORAGE_KEY)}));
+    if (isFinite(scale) && scale >= ${MIN_LOGO_SCALE} && scale <= ${MAX_LOGO_SCALE}) {
+      root.style.setProperty("--logo-scale", String(scale));
+    }
+  } catch (e) {}
+  try {
+    var mode = localStorage.getItem(${JSON.stringify(THEME_MODE_STORAGE_KEY)});
+    if (mode !== "light" && mode !== "dark") mode = "system";
+    var dark =
+      mode === "dark" ||
+      (mode === "system" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    root.classList.toggle("dark", dark);
+  } catch (e) {}
 })();
 `;
 
@@ -44,18 +69,17 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      data-brand-theme={DEFAULT_BRAND_THEME}
-      className={`${geist.variable} h-full antialiased`}
+      className={`${geist.variable} ${fredoka.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: brandThemeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <BrandThemeProvider>
+        <ThemeProvider>
           {children}
           <ThemeSwitcherFab />
-        </BrandThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

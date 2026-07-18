@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Gavel,
   LayoutDashboard,
   Building2,
   TrendingUp,
@@ -16,6 +15,7 @@ import {
   ArrowDownToLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo, LogoMark } from "@/components/brand/Logo";
 import { NotificationsPopover } from "@/components/dashboard/NotificationsPopover";
 import { UserMenu } from "@/components/dashboard/UserMenu";
 
@@ -63,9 +63,12 @@ export function Topbar() {
               >
                 <Menu className="size-5 text-muted-foreground" />
               </button>
-              <div className="size-7 rounded-lg bg-primary flex items-center justify-center">
-                <Gavel className="size-3.5 text-primary-foreground" />
-              </div>
+              <span
+                className="inline-flex text-primary"
+                style={{ fontSize: "calc(1.75rem * var(--logo-scale, 1))" }}
+              >
+                <LogoMark className="size-[1em]" />
+              </span>
             </div>
             <h1 className="text-sm sm:text-base font-semibold text-foreground truncate">
               {title}
@@ -87,13 +90,8 @@ export function Topbar() {
           />
           <aside className="relative w-[min(18rem,85vw)] bg-sidebar flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-5 h-16 border-b border-sidebar-border">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="size-8 rounded-lg bg-sidebar-primary flex items-center justify-center shrink-0">
-                  <Gavel className="size-4 text-sidebar-primary-foreground" />
-                </div>
-                <span className="text-base font-bold tracking-tight text-sidebar-foreground truncate">
-                  remata
-                </span>
+              <div className="flex items-center min-w-0">
+                <Logo className="text-xl text-sidebar-primary" />
               </div>
               <button
                 onClick={() => setMobileOpen(false)}

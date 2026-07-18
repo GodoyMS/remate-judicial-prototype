@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Shield, LogOut, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/brand/Logo";
 import { Badge } from "@/components/ui/badge";
 import { useAdminAuth } from "@/contexts/admin-auth-context";
 import { ADMIN_NAV_ITEMS } from "@/lib/admin/nav-config";
@@ -27,8 +28,8 @@ export function AdminSidebar() {
           <Shield className="size-4 text-sidebar-primary-foreground" />
         </div>
         <div className="flex flex-col">
-          <span className="text-base font-bold tracking-tight text-sidebar-foreground">remata</span>
-          <span className="text-[10px] text-sidebar-foreground/50 -mt-0.5">Admin Panel</span>
+          <Logo className="text-lg text-sidebar-foreground" />
+          <span className="text-[10px] text-sidebar-foreground/50 mt-0.5">Admin Panel</span>
         </div>
       </div>
 

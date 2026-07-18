@@ -5,6 +5,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Shield, ArrowRight, Lock, User, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -91,8 +92,8 @@ export default function LoginAdminPage() {
               <Shield className="size-5 text-sidebar-primary-foreground" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight text-sidebar-foreground">remata</span>
-              <span className="text-[10px] text-sidebar-foreground/50 -mt-0.5">Panel de administración</span>
+              <Logo className="text-xl text-sidebar-foreground" />
+              <span className="text-[10px] text-sidebar-foreground/50 mt-0.5">Panel de administración</span>
             </div>
           </Link>
           <Badge variant="outline" className="border-sidebar-primary/30 text-sidebar-primary bg-sidebar-primary/10">
