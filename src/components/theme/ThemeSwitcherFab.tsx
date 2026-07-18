@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Check,
   Monitor,
@@ -17,6 +17,7 @@ import {
   DEFAULT_LOGO_SCALE,
   MAX_LOGO_SCALE,
   MIN_LOGO_SCALE,
+  normalizeHexColor,
   type ThemeMode,
 } from "@/lib/theme";
 import { useTheme } from "@/components/theme/ThemeProvider";
@@ -33,10 +34,27 @@ export function ThemeSwitcherFab() {
   const { brandColor, setBrandColor, mode, setMode, logoScale, setLogoScale } =
     useTheme();
   const [open, setOpen] = useState(false);
+  const [hexDraft, setHexDraft] = useState(brandColor);
   const colorInputRef = useRef<HTMLInputElement>(null);
 
   const isDefault = brandColor.toUpperCase() === DEFAULT_BRAND_COLOR;
   const isDefaultScale = logoScale === DEFAULT_LOGO_SCALE;
+  const hexDraftValid = normalizeHexColor(hexDraft) !== null;
+
+  // Keep the hex field in sync when the color changes via picker/presets
+  useEffect(() => {
+    setHexDraft(brandColor);
+  }, [brandColor]);
+
+  function commitHexDraft() {
+    const normalized = normalizeHexColor(hexDraft);
+    if (normalized) {
+      setBrandColor(normalized);
+      setHexDraft(normalized);
+    } else {
+      setHexDraft(brandColor);
+    }
+  }
 
   return (
     <div className="pointer-events-none fixed bottom-6 left-6 z-60 flex flex-col items-start gap-3">
@@ -94,58 +112,81 @@ export function ThemeSwitcherFab() {
             })}
           </div>
 
-          {/* Free color picker */}
-          <button
-            type="button"
-            onClick={() => colorInputRef.current?.click()}
-            className={cn(
-              "group relative mb-3 flex w-full items-center gap-3 rounded-xl border border-border/60 bg-card p-3 text-left transition-all duration-150 outline-none",
-              "hover:border-foreground/25 focus-visible:ring-[3px] focus-visible:ring-ring/40"
-            )}
-          >
-            <span
-              className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-black/10 shadow-inner"
+          {/* Free color picker + manual hex input */}
+          <div className="relative mb-3 flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3">
+            <button
+              type="button"
+              onClick={() => colorInputRef.current?.click()}
+              aria-label="Elegir color primario con el selector"
+              title="Abrir selector de color"
+              className={cn(
+                "group flex size-10 shrink-0 items-center justify-center rounded-lg border border-black/10 shadow-inner transition-transform outline-none",
+                "hover:scale-105 focus-visible:ring-[3px] focus-visible:ring-ring/40"
+              )}
               style={{ backgroundColor: brandColor }}
             >
-              <Pipette className="size-4 text-white opacity-0 mix-blend-difference transition-opacity group-hover:opacity-100" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-xs font-medium">Color primario</span>
-              <span className="block font-mono text-[11px] uppercase tracking-wide text-muted-foreground">
-                {brandColor}
-              </span>
-            </span>
-            {!isDefault && (
-              <span
-                role="button"
-                tabIndex={0}
-                aria-label="Restaurar Azul clásico"
-                title="Restaurar Azul clásico"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setBrandColor(DEFAULT_BRAND_COLOR);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    setBrandColor(DEFAULT_BRAND_COLOR);
+              <Pipette className="size-4 text-white opacity-0 mix-blend-difference transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
+            </button>
+            <div className="min-w-0 flex-1">
+              <label
+                htmlFor="brand-hex-input"
+                className="block text-xs font-medium"
+              >
+                Color primario
+              </label>
+              <input
+                id="brand-hex-input"
+                type="text"
+                inputMode="text"
+                autoComplete="off"
+                spellCheck={false}
+                maxLength={7}
+                placeholder={DEFAULT_BRAND_COLOR}
+                value={hexDraft}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setHexDraft(next);
+                  if (/^#?[0-9a-fA-F]{6}$/.test(next.trim())) {
+                    setBrandColor(next);
                   }
                 }}
+                onBlur={commitHexDraft}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    commitHexDraft();
+                  }
+                }}
+                aria-label="Código hexadecimal del color primario"
+                aria-invalid={!hexDraftValid}
+                className={cn(
+                  "mt-0.5 w-full rounded-md bg-transparent font-mono text-[11px] uppercase tracking-wide outline-none transition-colors",
+                  "focus-visible:bg-muted/60 focus-visible:px-1.5 focus-visible:py-0.5",
+                  hexDraftValid ? "text-muted-foreground" : "text-destructive"
+                )}
+              />
+            </div>
+            {!isDefault && (
+              <button
+                type="button"
+                aria-label="Restaurar Azul clásico"
+                title="Restaurar Azul clásico"
+                onClick={() => setBrandColor(DEFAULT_BRAND_COLOR)}
                 className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 <RotateCcw className="size-3.5" />
-              </span>
+              </button>
             )}
             <input
               ref={colorInputRef}
               type="color"
-              value={brandColor}
+              value={normalizeHexColor(brandColor) ?? DEFAULT_BRAND_COLOR}
               onChange={(event) => setBrandColor(event.target.value)}
               aria-label="Elegir color primario"
+              tabIndex={-1}
               className="absolute bottom-0 left-3 size-0 opacity-0"
             />
-          </button>
+          </div>
 
           {/* Curated presets */}
           <div
