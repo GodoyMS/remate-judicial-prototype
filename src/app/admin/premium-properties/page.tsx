@@ -113,7 +113,7 @@ export default function AdminPremiumPropertiesPage() {
     usePagination(filtered, { pageSize, resetDeps: [search, statusFilter, pageSize] });
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 pb-10">
+    <div className="w-full max-w-[1400px] mx-auto space-y-6 pb-10">
       <ReadOnlyBanner module="premium_properties" />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

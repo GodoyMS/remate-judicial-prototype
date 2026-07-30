@@ -137,7 +137,7 @@ export default function AdminPremiumPropertyDetailPage({
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 pb-10">
+    <div className="w-full max-w-[1400px] mx-auto space-y-6 pb-10">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3 min-w-0">
           <Button asChild variant="ghost" size="icon-sm" className="rounded-xl shrink-0 mt-0.5">

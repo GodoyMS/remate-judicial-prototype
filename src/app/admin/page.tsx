@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
   const recentUsers = adminUsers.slice(0, 4);
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full max-w-[1400px] mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

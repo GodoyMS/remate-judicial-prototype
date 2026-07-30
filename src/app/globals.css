@@ -265,4 +265,51 @@ html {
   .section-padding {
     @apply px-4 sm:px-6 lg:px-8;
   }
+  .trust-progress-fill {
+    transform-origin: left center;
+    transform: scaleX(0);
+    animation: trust-progress-fill var(--trust-progress-ms, 5500ms) linear forwards;
+  }
+  .trust-progress-fill.is-paused {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes trust-progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Final CTA — smooth house rain */
+@keyframes house-rain-fall {
+  0% {
+    transform: translate3d(0, -30%, 0) rotate(var(--house-rotate, 0deg));
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--house-drift, 0px), 118vh, 0)
+      rotate(calc(var(--house-rotate, 0deg) + 10deg));
+    opacity: 0;
+  }
+}
+
+.house-rain-tile {
+  animation: house-rain-fall var(--house-duration, 30s) linear infinite;
+  animation-delay: var(--house-delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .house-rain-tile {
+    animation: none;
+  }
 }

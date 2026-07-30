@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
@@ -13,14 +14,58 @@ const links = [
   { label: "Nosotros", href: "#nosotros" },
 ];
 
+/** Which page surface sits under the fixed navbar band. */
+function getToneUnderNav(): "dark" | "light" {
+  const probeY = 32; // mid navbar
+  const sections = document.querySelectorAll<HTMLElement>("[data-nav-tone]");
+  for (const el of sections) {
+    const rect = el.getBoundingClientRect();
+    if (rect.top <= probeY && rect.bottom > probeY) {
+      return el.dataset.navTone === "dark" ? "dark" : "light";
+    }
+  }
+  return "light";
+}
+
 export function Navbar() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [overDark, setOverDark] = useState(false);
+
+  const isLanding = pathname === "/";
+  // Solid bar when the mobile sheet is open, or on non-landing pages
+  const solid = open || !isLanding;
+  // Light text only when the glass bar sits over a dark surface
+  const lightText = !solid && overDark;
+
+  useEffect(() => {
+    if (!isLanding) {
+      setOverDark(false);
+      return;
+    }
+
+    const update = () => setOverDark(getToneUnderNav() === "dark");
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [isLanding]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50  backdrop-blur-md ">
-      <div className="mx-auto max-w-7xl section-padding">
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow,color] duration-300",
+        solid
+          ? "border-b border-border/60 bg-background/90 shadow-sm backdrop-blur-md"
+          : "border-b border-transparent bg-transparent backdrop-blur-md",
+      )}
+    >
+      <div className="mx-auto max-w-[1400px] section-padding">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
+          {/* Logo — always brand primary */}
           <Link href="/" className="flex items-center group">
             <Logo className="text-2xl text-primary" />
           </Link>
@@ -30,25 +75,34 @@ export function Navbar() {
             {links.map((l) => (
               <Button
                 variant="ghost"
-                className="font-medium hover:bg-accent! text-base"
+                className={cn(
+                  "font-medium text-base transition-colors",
+                  lightText
+                    ? "text-white/90 hover:bg-white/10 hover:text-white"
+                    : "text-foreground hover:bg-accent!",
+                )}
                 size="sm"
                 key={l.href}
-
                 asChild
               >
-                <a
-                  href={l.href}
-                  className="  hover:text-foreground transition-colors"
-                >
-                  {l.label}
-                </a>
+                <a href={l.href}>{l.label}</a>
               </Button>
             ))}
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" className="font-semibold text-base" size="lg" asChild>
+            <Button
+              variant="ghost"
+              className={cn(
+                "font-semibold text-base transition-colors",
+                lightText
+                  ? "text-white/90 hover:bg-white/10 hover:text-white"
+                  : "text-foreground",
+              )}
+              size="lg"
+              asChild
+            >
               <Link href="/login">Iniciar sesión</Link>
             </Button>
             <Button
@@ -62,7 +116,12 @@ export function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+            className={cn(
+              "md:hidden p-2 rounded-lg transition-colors",
+              lightText
+                ? "text-white hover:bg-white/10"
+                : "text-foreground hover:bg-muted",
+            )}
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >

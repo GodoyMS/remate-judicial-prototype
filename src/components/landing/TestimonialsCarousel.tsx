@@ -26,17 +26,22 @@ const AUTOPLAY_INTERVAL = 5000;
 function TestimonialCard({
   testimonial,
   onOpen,
+  onMedia,
 }: {
   testimonial: AdminTestimonial;
   onOpen: (t: AdminTestimonial) => void;
+  onMedia?: boolean;
 }) {
   const hasVideo = Boolean(testimonial.videoUrl);
 
   return (
     <div
       className={cn(
-        "group relative flex h-full flex-col gap-5 rounded-2xl border border-foreground/8 bg-card p-6 shadow-sm",
-        "transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
+        "group relative flex h-full flex-col gap-5 rounded-2xl p-6",
+        "transition-all duration-300 hover:-translate-y-0.5",
+        onMedia
+          ? "border border-white/15 bg-white/95 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.55)] backdrop-blur-md hover:border-primary/50 hover:shadow-[0_24px_60px_-18px_rgba(0,0,0,0.65)]"
+          : "border border-foreground/8 bg-card shadow-sm hover:border-primary/40 hover:shadow-lg"
       )}
     >
       {hasVideo && (
@@ -128,7 +133,12 @@ function TestimonialCard({
   );
 }
 
-export function TestimonialsCarousel() {
+export function TestimonialsCarousel({
+  tone = "default",
+}: {
+  tone?: "default" | "onMedia";
+}) {
+  const onMedia = tone === "onMedia";
   const testimonials = getPublishedTestimonials();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
@@ -216,7 +226,11 @@ export function TestimonialsCarousel() {
                   transition={{ delay: (i % 3) * 0.08, duration: 0.5 }}
                   className="h-full"
                 >
-                  <TestimonialCard testimonial={t} onOpen={openTestimonial} />
+                  <TestimonialCard
+                    testimonial={t}
+                    onOpen={openTestimonial}
+                    onMedia={onMedia}
+                  />
                 </motion.div>
               </CarouselItem>
             ))}
@@ -228,7 +242,12 @@ export function TestimonialsCarousel() {
           <button
             type="button"
             onClick={scrollPrev}
-            className="flex size-10 items-center justify-center rounded-full border border-foreground/15 bg-card text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
+            className={cn(
+              "flex size-10 items-center justify-center rounded-full shadow-sm transition-all",
+              onMedia
+                ? "border border-white/25 bg-white/15 text-white backdrop-blur-md hover:border-primary/60 hover:bg-white/25"
+                : "border border-foreground/15 bg-card text-foreground hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
+            )}
             aria-label="Testimonio anterior"
           >
             <ChevronLeft className="size-5" />
@@ -244,7 +263,9 @@ export function TestimonialsCarousel() {
                   "h-1.5 rounded-full transition-all duration-300",
                   i === current
                     ? "w-6 bg-primary"
-                    : "w-1.5 bg-foreground/20 hover:bg-foreground/35"
+                    : onMedia
+                      ? "w-1.5 bg-white/35 hover:bg-white/55"
+                      : "w-1.5 bg-foreground/20 hover:bg-foreground/35"
                 )}
                 aria-label={`Ir al grupo ${i + 1}`}
               />
@@ -254,14 +275,24 @@ export function TestimonialsCarousel() {
           <button
             type="button"
             onClick={scrollNext}
-            className="flex size-10 items-center justify-center rounded-full border border-foreground/15 bg-card text-foreground shadow-sm transition-all hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
+            className={cn(
+              "flex size-10 items-center justify-center rounded-full shadow-sm transition-all",
+              onMedia
+                ? "border border-white/25 bg-white/15 text-white backdrop-blur-md hover:border-primary/60 hover:bg-white/25"
+                : "border border-foreground/15 bg-card text-foreground hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
+            )}
             aria-label="Siguiente testimonio"
           >
             <ChevronRight className="size-5" />
           </button>
         </div>
 
-        <p className="mt-4 text-center text-xs text-muted-foreground">
+        <p
+          className={cn(
+            "mt-4 text-center text-xs",
+            onMedia ? "text-white/55" : "text-muted-foreground"
+          )}
+        >
           {testimonials.length} historias de inversores · Desliza o usa las flechas
         </p>
       </div>

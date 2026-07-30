@@ -33,8 +33,8 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="bg-foreground text-background">
-      <div className="mx-auto max-w-7xl section-padding py-16">
+    <footer data-nav-tone="dark" className="bg-foreground text-background">
+      <div className="mx-auto max-w-[1400px] section-padding py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="flex flex-col gap-4">

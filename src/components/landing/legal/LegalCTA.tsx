@@ -29,7 +29,7 @@ export function LegalCTA({
         <div className="absolute -right-20 bottom-0 size-72 rounded-full bg-primary/10 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl section-padding">
+      <div className="relative mx-auto max-w-[1400px] section-padding">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}

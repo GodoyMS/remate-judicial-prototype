@@ -51,7 +51,7 @@ export function LegalPageHero({
       <div className="pointer-events-none absolute -left-32 top-0 size-80 rounded-full bg-primary/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-32 bottom-0 size-64 rounded-full bg-foreground/5 blur-3xl" />
 
-      <div className="relative mx-auto max-w-7xl section-padding">
+      <div className="relative mx-auto max-w-[1400px] section-padding">
         {breadcrumbs.length > 0 && (
           <motion.nav
             initial={{ opacity: 0, y: -8 }}

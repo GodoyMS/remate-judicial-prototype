@@ -35,6 +35,7 @@ export function PropertyPreview() {
   return (
     <section
       id="propiedades"
+      data-nav-tone="light"
       className="relative overflow-hidden bg-muted/40 py-24 text-foreground"
     >
       <div
@@ -47,7 +48,7 @@ export function PropertyPreview() {
       />
       <div className="pointer-events-none absolute -bottom-24 left-1/2 size-[500px] -translate-x-1/2 rounded-full bg-primary/8 blur-3xl" />
 
-      <div className="relative mx-auto max-w-7xl section-padding">
+      <div className="relative mx-auto max-w-[1400px] section-padding">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}

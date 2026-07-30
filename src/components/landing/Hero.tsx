@@ -14,32 +14,9 @@ import {
   Zap,
   ChevronUp,
   Star,
-  HomeIcon,
-  UsersIcon,
-  ChartBarIcon,
-  ScaleIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-/* ─── Animated counter hook ─── */
-function useCounter(to: number, duration = 1.8, delay = 0.4) {
-  const [val, setVal] = useState(0);
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const start = Date.now();
-      const tick = () => {
-        const elapsed = (Date.now() - start) / 1000;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        setVal(Math.round(eased * to));
-        if (progress < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    }, delay * 1000);
-    return () => clearTimeout(timeout);
-  }, [to, duration, delay]);
-  return val;
-}
+import { LANDING_HERO_VIDEO_SRC } from "@/lib/landing/media";
 
 /* ─── Live countdown timer ─── */
 function useCountdown(hours: number, minutes: number, seconds: number) {
@@ -67,23 +44,6 @@ const INVESTORS = [
   { name: "Sofía T.", amount: "S/ 800",   ago: "hace 6 min", avatar: "ST", color: "bg-chart-3" },
   { name: "Diego M.", amount: "S/ 5,000", ago: "hace 9 min", avatar: "DM", color: "bg-chart-4" },
 ];
-
-/* ─── Background grid ─── */
-function GridBackground() {
-  return (
-    <svg
-      className="absolute inset-0 size-full opacity-[0.04] pointer-events-none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-          <path d="M 48 0 L 0 0 0 48" fill="none" stroke="currentColor" strokeWidth="1" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grid)" />
-    </svg>
-  );
-}
 
 /* ─── Floating pill ─── */
 function FloatingPill({
@@ -115,11 +75,8 @@ function FloatingPill({
 }
 
 /* ─── Main hero ─── */
-export function   Hero() {
+export function Hero() {
   const countdown = useCountdown(1, 47, 23);
-  const investedCount = useCounter(48, 2.0, 0.6);
-  const investorCount = useCounter(3200, 2.2, 0.7);
-  const successCount = useCounter(94, 1.6, 0.8);
 
   const [feedIndex, setFeedIndex] = useState(0);
   useEffect(() => {
@@ -138,19 +95,31 @@ export function   Hero() {
   }, [bidProgress]);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden pt-16 bg-background">
-      {/* ── Rich background ── */}
-      <GridBackground />
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Warm gradient blob top-right */}
-        <div className="absolute -top-32 -right-32 size-[700px] rounded-full bg-accent/25 blur-[120px]" />
-        {/* Cool gradient blob bottom-left */}
-        <div className="absolute bottom-0 -left-48 size-[600px] rounded-full bg-primary/10 blur-[100px]" />
-        {/* Center subtle glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[400px] rounded-full bg-accent/10 blur-[80px]" />
-      </div>
+    <section
+      data-nav-tone="light"
+      className="relative min-h-screen flex items-center overflow-hidden pt-16"
+    >
+      {/* ── Video background ── */}
+      <video
+        className="absolute inset-0 size-full object-cover pointer-events-none"
+        src={LANDING_HERO_VIDEO_SRC}
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden
+      />
+      {/* Scrim keeps copy readable over any frame of the video */}
+      <div
+        className="absolute inset-0 pointer-events-none bg-background/80 dark:bg-background/75"
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0 pointer-events-none bg-linear-to-b from-background/40 via-transparent to-background/70"
+        aria-hidden
+      />
 
-      <div className="relative mx-auto max-w-7xl section-padding py-20 lg:py-28">
+      <div className="relative mx-auto max-w-[1400px] section-padding py-20 lg:py-28">
         <div className="grid lg:grid-cols-[1fr_1.1fr] gap-12 xl:gap-20 items-center">
 
           {/* ══════════════════════════════════════
@@ -158,50 +127,19 @@ export function   Hero() {
           ══════════════════════════════════════ */}
           <div className="flex flex-col gap-7">
 
-            {/* Live badge */}
-            <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-3"
-            >
-              <div className="inline-flex items-center gap-2 rounded-full bg-accent/20 border border-accent/40 px-4 py-1.5">
-                <span className="relative flex size-2">
-                  <span className="animate-ping absolute inline-flex size-full rounded-full bg-success opacity-75" />
-                  <span className="relative inline-flex size-2 rounded-full bg-success" />
-                </span>
-                <span className="text-xs font-semibold text-foreground">
-                  12 subastas activas ahora mismo
-                </span>
-              </div>
-              <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
-                <span>🇵🇪</span>
-                <span>Regulado · SBS Perú</span>
-              </div>
-            </motion.div>
-
             {/* Headline */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <h1 className="text-5xl xl:text-[3.75rem] font-extrabold leading-[1.07] tracking-tight text-foreground">
+              <h1 className="text-5xl xl:text-[3.75rem] font-extrabold leading-[1.07] tracking-tight text-foreground drop-shadow-sm">
                 El mercado de{" "}
-                <span className="relative whitespace-nowrap">
-                  <span className="relative z-10">propiedades</span>
-                  <motion.span
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 0.8, duration: 0.6, ease: "easeOut" }}
-                    style={{ originX: 0 }}
-                    className="absolute -bottom-1 left-0 right-0 h-3.5 bg-accent/60 -z-10 rounded-sm"
-                  />
-                </span>
+                <span className="text-primary">propiedades</span>
                 <br />
-                en remate más
+                <span className="text-primary">en remate</span> más
                 <br />
-                <span className="text-primary">transparente del Perú.</span>
+                <span className="text-primary">seguro</span> del Perú.
               </h1>
             </motion.div>
 
@@ -239,7 +177,7 @@ export function   Hero() {
                 size="lg"
                 variant="outline"
                 asChild
-                className="rounded-full h-13 px-8 font-semibold text-base border-border/80 hover:bg-muted/60"
+                className="rounded-full h-13 px-8 font-semibold text-base border-border/80 bg-background/60 backdrop-blur-sm hover:bg-muted/60"
               >
                 <Link href="#como-funciona">¿Cómo funciona?</Link>
               </Button>
@@ -260,28 +198,6 @@ export function   Hero() {
                 <div key={label} className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <Icon className="size-3.5 text-primary" />
                   <span>{label}</span>
-                </div>
-              ))}
-            </motion.div>
-
-            {/* Live animated stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="grid grid-cols-3 gap-3 pt-2"
-            >
-              {[
-                { value: `S/${investedCount}M+`, label: "subastados" },
-                { value: `${investorCount.toLocaleString()}+`, label: "inversores" },
-                { value: `${successCount}%`, label: "éxito" },
-              ].map((s) => (
-                <div
-                  key={s.label}
-                  className="flex flex-col gap-0.5 rounded-2xl border border-border/60 bg-card/70 backdrop-blur-sm px-4 py-3"
-                >
-                  <span className="text-xl font-black text-foreground tabular-nums">{s.value}</span>
-                  <span className="text-xs text-muted-foreground">{s.label}</span>
                 </div>
               ))}
             </motion.div>
@@ -532,29 +448,6 @@ export function   Hero() {
           </motion.div>
 
         </div>
-
-        {/* ── Bottom stats bar ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.6 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 divide-x divide-border/60 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm overflow-hidden shadow-sm"
-        >
-          {[
-            { icon: <HomeIcon className="text-foreground"/>, value: `S/${investedCount}M+`, label: "en propiedades subastadas" },
-            { icon: <UsersIcon className="text-foreground"/>, value: `${investorCount.toLocaleString()}+`, label: "inversores activos" },
-            { icon:<ChartBarIcon className="text-foreground"/>, value: "22% anual", label: "retorno promedio" },
-            { icon: <ScaleIcon className="text-foreground"/>, value: "100% legal", label: "verificado judicialmente" },
-          ].map((s) => (
-            <div key={s.label} className="flex flex-col sm:flex-row items-center sm:items-start gap-3 py-5 px-4 sm:px-6">
-              <span className="bg-accent text-foreground p-2 rounded-full">{s.icon}</span>
-              <div>
-                <p className="text-xl font-black text-foreground tabular-nums">{s.value}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
-              </div>
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );

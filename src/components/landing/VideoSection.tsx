@@ -1,19 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { PlayCircle, Sparkles } from "lucide-react";
 import { PlatformVideoPlayer } from "@/components/landing/PlatformVideoPlayer";
-
-const highlights = [
-  { value: "4 pasos", label: "Del registro al retorno" },
-  { value: "S/ 500", label: "Inversión mínima" },
-  { value: "100%", label: "Propiedades verificadas" },
-];
 
 export function VideoSection() {
   return (
     <section
       id="demo"
+      data-nav-tone="light"
       className="relative overflow-hidden bg-background py-20 sm:py-28"
     >
       {/* Background accents */}
@@ -29,7 +23,7 @@ export function VideoSection() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-7xl section-padding">
+      <div className="relative mx-auto max-w-[1400px] section-padding">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -37,23 +31,16 @@ export function VideoSection() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-12 flex max-w-3xl flex-col items-center text-center sm:mb-14"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-accent px-4 py-1.5">
-            <PlayCircle className="size-3.5 text-accent-foreground" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-accent-foreground">
-              Demo en vivo
-            </span>
-          </div>
-
           <h2 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            Descubre cómo{" "}
+            Descubre cómo invertir en
+            <br />
             <span className="relative inline-block">
-              <span className="relative z-10">invertir en remates</span>
+              <span className="relative z-10">remates en minutos</span>
               <span className="absolute -bottom-1 left-0 h-3 w-full bg-primary/40 -skew-x-3" />
-            </span>{" "}
-            en minutos
+            </span>
           </h2>
 
-          <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
             Mira el recorrido completo: desde explorar propiedades verificadas
             hasta recibir tus retornos. Sin complicaciones, sin sorpresas.
           </p>
@@ -76,41 +63,6 @@ export function VideoSection() {
 
           <PlatformVideoPlayer />
         </motion.div>
-
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mx-auto mt-10 grid max-w-3xl grid-cols-3 gap-4 sm:mt-12 sm:gap-6"
-        >
-          {highlights.map((item) => (
-            <div
-              key={item.label}
-              className="flex flex-col items-center gap-1 rounded-2xl border border-foreground/8 bg-card/60 px-3 py-4 text-center backdrop-blur-sm sm:px-5"
-            >
-              <span className="text-lg font-extrabold text-foreground sm:text-xl">
-                {item.value}
-              </span>
-              <span className="text-[10px] leading-tight text-muted-foreground sm:text-xs">
-                {item.label}
-              </span>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Bottom hint */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 flex items-center justify-center gap-2 text-xs text-muted-foreground"
-        >
-          <Sparkles className="size-3.5 text-primary" />
-          <span>Presiona play o usa la barra de capítulos para saltar entre secciones</span>
-        </motion.p>
       </div>
     </section>
   );
