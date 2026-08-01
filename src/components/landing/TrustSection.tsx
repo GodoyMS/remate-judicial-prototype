@@ -11,10 +11,8 @@ import {
 } from "react";
 import {
   ArrowRight,
-  BadgeCheck,
   FileCheck,
   Fingerprint,
-  Gavel,
   Landmark,
   Lock,
   Pause,
@@ -45,17 +43,6 @@ type TrustCard = {
 };
 
 const trustCards: TrustCard[] = [
-  {
-    id: "legal",
-    title: "Marco legal peruano",
-    description:
-      "Código Civil, ejecución de garantías y normativa de remates judiciales vigente. Cada operación nace en el Poder Judicial.",
-    meta: "Ley · PJ",
-    icon: Gavel,
-    image:
-      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Documentación legal y martillo de juez",
-  },
   {
     id: "tax",
     title: "Tributación en regla",
@@ -575,19 +562,14 @@ export function TrustSection() {
           transition={{ duration: 0.45 }}
           className="mx-auto mb-10 flex max-w-2xl flex-col items-center text-center sm:mb-14"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5">
-            <BadgeCheck className="size-3.5 text-primary" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-              100% legal · Perú
-            </span>
-          </div>
           <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
             Invierte con la tranquilidad de una{" "}
             <span className="text-primary">plataforma 100% legal</span>
           </h2>
-          <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Cumplimiento, custodia y trazabilidad — desliza para conocer cada
-            pilar.
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            Cada operación en Remata está alineada con entidades del Estado
+            peruano, la legislación vigente y las obligaciones fiscales del país.
+            Transparencia, trazabilidad y estándares de nivel fintech.
           </p>
         </motion.div>
       </div>
