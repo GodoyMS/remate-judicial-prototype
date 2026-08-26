@@ -57,7 +57,9 @@ export function ThemeSwitcherFab() {
   }
 
   return (
-    <div className="pointer-events-none fixed bottom-6 left-6 z-60 flex flex-col items-start gap-3">
+        /* RM-010 — pinned inside the device safe area and tightened on phones so
+       it cannot land on top of page content or the chat launcher. */
+    <div className="pointer-events-none fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] left-4 z-60 flex flex-col items-start gap-3 sm:bottom-6 sm:left-6">
       {open && (
         <div
           role="dialog"
@@ -281,7 +283,11 @@ export function ThemeSwitcherFab() {
         aria-expanded={open}
         aria-label={open ? "Cerrar personalización" : "Personalizar apariencia"}
         className={cn(
-          "pointer-events-auto flex size-12 items-center justify-center rounded-full border border-border/60 bg-primary text-primary-foreground shadow-lg shadow-black/20 transition-all duration-150",
+          /* RM-010 — smaller on phones, and translucent until hovered or opened,
+             so it does not sit opaquely on top of links and CTAs as they
+             scroll past underneath it. */
+          "pointer-events-auto flex size-10 items-center justify-center rounded-full border border-border/60 bg-primary text-primary-foreground shadow-lg shadow-black/20 transition-all duration-150 sm:size-12",
+          "opacity-70 hover:opacity-100 focus-visible:opacity-100",
           "hover:scale-105 hover:shadow-xl active:scale-95",
           "focus-visible:ring-[3px] focus-visible:ring-ring/40 outline-none",
           open && "ring-[3px] ring-ring/30"

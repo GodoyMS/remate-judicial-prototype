@@ -174,7 +174,7 @@ export default function AdminChatbotConversationsPage() {
               )}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              Historial de consultas del asistente Remata AI en la landing page
+              Historial de consultas del asistente Rematto AI en la landing page
             </p>
           </div>
         </div>
@@ -490,7 +490,7 @@ export default function AdminChatbotConversationsPage() {
                     </p>
                     <p className="mt-1 max-w-xs text-sm text-muted-foreground">
                       Explora las dudas y necesidades de los visitantes que
-                      interactuaron con Remata AI
+                      interactuaron con Rematto AI
                     </p>
                   </div>
                 </motion.div>

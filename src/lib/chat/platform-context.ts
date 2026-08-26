@@ -1,5 +1,5 @@
 /**
- * Remata — Platform knowledge base for the AI chatbot.
+ * Rematto — Platform knowledge base for the AI chatbot.
  * This file centralizes all factual context about the platform so it can be
  * injected into the system prompt. Update this file when product copy changes.
  */
@@ -28,7 +28,7 @@ export const HUMAN_SUPPORT_CONTACTS = [
 ] as const;
 
 export const SUGGESTED_QUESTIONS = [
-  "¿Qué es Remata y cómo funciona?",
+  "¿Qué es Rematto y cómo funciona?",
   "¿Es legítimo y está regulado?",
   "¿Cuál es la inversión mínima?",
   "¿Qué retornos puedo esperar?",
@@ -52,8 +52,8 @@ const propertySummaries = dashboardProperties.slice(0, 6).map((p) => ({
 
 export const platformContext = {
   brand: {
-    name: "Remata",
-    legalName: "Remata S.A.C.",
+    name: "Rematto",
+    legalName: "Rematto S.A.C.",
     tagline: "El mercado de propiedades en remate más transparente del Perú",
     country: "Perú",
     city: "Lima",
@@ -64,9 +64,9 @@ export const platformContext = {
 
   whatIsRemata: {
     summary:
-      "Remata es una plataforma digital que permite a personas naturales invertir en participaciones de inmuebles adjudicados o en proceso de remate judicial en Perú, sin necesidad de comprar una propiedad completa.",
+      "Rematto es una plataforma digital que permite a personas naturales invertir en participaciones de inmuebles adjudicados o en proceso de remate judicial en Perú, sin necesidad de comprar una propiedad completa.",
     businessModel:
-      "Remata democratiza el acceso a remates judiciales inmobiliarios mediante inversión fraccionada (crowdfunding inmobiliario regulado). Los usuarios registran una cuenta, completan verificación KYC, eligen propiedades auditadas y aportan capital en soles (PEN) o dólares (USD). Al adjudicarse la propiedad en el proceso judicial, los inversores reciben retornos proporcionales a su participación.",
+      "Rematto democratiza el acceso a remates judiciales inmobiliarios mediante inversión fraccionada (crowdfunding inmobiliario regulado). Los usuarios registran una cuenta, completan verificación KYC, eligen propiedades auditadas y aportan capital en soles (PEN) o dólares (USD). Al adjudicarse la propiedad en el proceso judicial, los inversores reciben retornos proporcionales a su participación.",
     targetUsers:
       "Inversores retail en Perú que buscan diversificar con activos inmobiliarios, retornos superiores a instrumentos tradicionales y ciclos de inversión de mediano plazo.",
     differentiators: [
@@ -80,11 +80,11 @@ export const platformContext = {
 
   legitimacyAndRegulation: {
     isLegit:
-      "Sí. Remata opera como plataforma de inversión inmobiliaria alineada con el marco legal peruano para remates judiciales y estándares del ecosistema financiero nacional. Cada propiedad listada pasa por auditoría documental y revisión legal antes de publicarse.",
+      "Sí. Rematto opera como plataforma de inversión inmobiliaria alineada con el marco legal peruano para remates judiciales y estándares del ecosistema financiero nacional. Cada propiedad listada pasa por auditoría documental y revisión legal antes de publicarse.",
     regulatoryEntities: [
       { name: "Poder Judicial (PJ)", role: "Origen y marco de las subastas judiciales" },
       { name: "SUNARP", role: "Registro de propiedades y titularidad" },
-      { name: "SBS", role: "Supervisión y estándares del sector financiero" },
+      { name: "SUNAT", role: "Administración de las obligaciones tributarias" },
       { name: "SUNAT", role: "Cumplimiento tributario y comprobantes electrónicos" },
       { name: "INDECOPI", role: "Protección al consumidor" },
       { name: "Colegio Notarial (CNL)", role: "Escrituras y legalización" },
@@ -111,7 +111,7 @@ export const platformContext = {
       "Red legal certificada con estudios jurídicos inmobiliarios",
     ],
     riskDisclaimer:
-      "Las inversiones en remates judiciales conllevan riesgos, incluyendo demoras en el proceso judicial, variación del precio de adjudicación y liquidez limitada hasta la resolución del remate. Remata informa transparentemente sobre cada propiedad, pero no garantiza retornos fijos.",
+      "Las inversiones en remates judiciales conllevan riesgos, incluyendo demoras en el proceso judicial, variación del precio de adjudicación y liquidez limitada hasta la resolución del remate. Rematto informa transparentemente sobre cada propiedad, pero no garantiza retornos fijos.",
   },
 
   investments: {
@@ -132,7 +132,7 @@ export const platformContext = {
       "Plin",
     ],
     howReturnsWork:
-      "Una vez adjudicada la propiedad en el proceso judicial, Remata distribuye el retorno proporcional a cada inversor según su participación en la subasta, descontando costos legales y operativos aplicables. Los fondos se acreditan en la cuenta Remata del inversor.",
+      "Una vez adjudicada la propiedad en el proceso judicial, Rematto distribuye el retorno proporcional a cada inversor según su participación en la subasta, descontando costos legales y operativos aplicables. Los fondos se acreditan en la cuenta Rematto del inversor.",
     fractionalInvestment:
       "No necesitas comprar el inmueble completo. Compras una participación (porcentaje) del monto total de la subasta. Puedes diversificar invirtiendo en múltiples propiedades simultáneamente.",
   },
@@ -161,14 +161,14 @@ export const platformContext = {
         step: 4,
         title: "Recibe tus retornos",
         description:
-          "Al adjudicarse la propiedad, recibes tu retorno proporcional en tu cuenta Remata.",
+          "Al adjudicarse la propiedad, recibes tu retorno proporcional en tu cuenta Rematto.",
       },
     ],
     estimatedTime: "Menos de 10 minutos desde el registro hasta la primera inversión",
   },
 
   registrationAndKyc: {
-    registration: "Gratuito en remata.pe — no requiere tarjeta de crédito para registrarse",
+    registration: "Gratuito en rematto.pe — no requiere tarjeta de crédito para registrarse",
     requiredDocuments: [
       "DNI (documento nacional de identidad) vigente",
       "Selfie de verificación",
@@ -203,7 +203,7 @@ export const platformContext = {
 
   support: {
     chatbotScope:
-      "Este asistente responde exclusivamente preguntas sobre Remata: la plataforma, inversiones, regulación, propiedades, registro, KYC, pagos y procesos legales.",
+      "Este asistente responde exclusivamente preguntas sobre Rematto: la plataforma, inversiones, regulación, propiedades, registro, KYC, pagos y procesos legales.",
   },
 
   humanSupport: HUMAN_SUPPORT_CONTACTS,
@@ -244,7 +244,7 @@ export function buildPlatformContextPrompt(): string {
 - Propósito: ${ctx.brand.websitePurpose}
 - Eslogan: "${ctx.brand.tagline}"
 
-## ¿Qué es Remata?
+## ¿Qué es Rematto?
 ${ctx.whatIsRemata.summary}
 
 Modelo de negocio: ${ctx.whatIsRemata.businessModel}

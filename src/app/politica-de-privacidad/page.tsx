@@ -4,9 +4,9 @@ import { LegalContentBlock } from "@/components/landing/legal/LegalContentBlock"
 import { LegalCTA } from "@/components/landing/legal/LegalCTA";
 
 export const metadata = {
-  title: "Política de privacidad | Remata",
+  title: "Política de privacidad | Rematto",
   description:
-    "Cómo Remata recopila, usa y protege tu información personal conforme a la Ley de Protección de Datos Personales del Perú.",
+    "Cómo Rematto recopila, usa y protege tu información personal conforme a la Ley de Protección de Datos Personales del Perú.",
 };
 
 export default function PoliticaDePrivacidadPage() {
@@ -81,8 +81,8 @@ export default function PoliticaDePrivacidadPage() {
             </ul>
             <p>
               Para ejercer estos derechos, escríbenos a{" "}
-              <a href="mailto:privacidad@remata.pe" className="font-medium text-primary underline">
-                privacidad@remata.pe
+              <a href="mailto:privacidad@rematto.pe" className="font-medium text-primary underline">
+                privacidad@rematto.pe
               </a>
             </p>
           </LegalContentBlock>

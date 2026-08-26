@@ -71,7 +71,7 @@ export function InvestmentDetailSheet({
 </head>
 <body>
   <h1>CERTIFICADO DE INVERSIÓN</h1>
-  <p class="subtitle">Remata — Plataforma de Inversión en Remates Judiciales</p>
+  <p class="subtitle">Rematto — Plataforma de Inversión en Remates Judiciales</p>
   <div style="text-align:center"><div class="cert-id">${investment.certificateId}</div></div>
   <div class="seal">⚖️</div>
   <p style="text-align:center;line-height:1.8">Se certifica que <strong>Ana Sofía Torres</strong> (DNI: 72345678)<br>
@@ -91,7 +91,7 @@ export function InvestmentDetailSheet({
   </div>
   <div class="footer">
     Documento generado el ${new Date().toLocaleDateString("es-PE")} · Válido como comprobante legal de participación<br>
-    Remata S.A.C. · RUC 20601234567 · Lima, Perú
+    Rematto S.A.C. · RUC 20601234567 · Lima, Perú
   </div>
 </body>
 </html>`;

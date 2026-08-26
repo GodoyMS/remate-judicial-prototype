@@ -4,9 +4,9 @@ import { LegalContentBlock } from "@/components/landing/legal/LegalContentBlock"
 import { LegalCTA } from "@/components/landing/legal/LegalCTA";
 
 export const metadata = {
-  title: "Términos de uso | Remata",
+  title: "Términos de uso | Rematto",
   description:
-    "Conoce los términos y condiciones que rigen el uso de la plataforma Remata para inversión en remates judiciales.",
+    "Conoce los términos y condiciones que rigen el uso de la plataforma Rematto para inversión en remates judiciales.",
 };
 
 export default function TerminosDeUsoPage() {
@@ -27,18 +27,18 @@ export default function TerminosDeUsoPage() {
         <div className="mx-auto max-w-3xl section-padding space-y-6">
           <LegalContentBlock icon="Gavel" title="1. Aceptación de los términos" index={0}>
             <p>
-              Al acceder o utilizar Remata, aceptas estos Términos de Uso y nuestra Política de
+              Al acceder o utilizar Rematto, aceptas estos Términos de Uso y nuestra Política de
               Privacidad. Si no estás de acuerdo, por favor no utilices la plataforma.
             </p>
             <p>
-              Remata S.A.C. es una empresa registrada en Perú, supervisada por la Superintendencia
-              de Banca, Seguros y AFP (SBS), dedicada a facilitar la inversión colectiva en remates
+              Rematto S.A.C. es una sociedad constituida y registrada en Perú,
+              dedicada a facilitar la inversión colectiva en remates
               judiciales inmobiliarios.
             </p>
           </LegalContentBlock>
 
           <LegalContentBlock icon="Users" title="2. Elegibilidad y registro" index={1}>
-            <p>Para usar Remata debes:</p>
+            <p>Para usar Rematto debes:</p>
             <ul>
               <li>Ser mayor de 18 años y tener capacidad legal plena</li>
               <li>Residir en Perú o contar con documentación válida para invertir</li>
@@ -58,14 +58,14 @@ export default function TerminosDeUsoPage() {
               garantizan resultados futuros.
             </p>
             <p>
-              Remata actúa como intermediario tecnológico que facilita la participación en
+              Rematto actúa como intermediario tecnológico que facilita la participación en
               subastas judiciales. No somos asesores financieros ni garantizamos adjudicaciones
               específicas.
             </p>
           </LegalContentBlock>
 
           <LegalContentBlock icon="Shield" title="4. Obligaciones del usuario" index={3}>
-            <p>Como usuario de Remata te comprometes a:</p>
+            <p>Como usuario de Rematto te comprometes a:</p>
             <ul>
               <li>Usar la plataforma únicamente para fines legales</li>
               <li>No realizar operaciones de lavado de activos ni financiamiento del terrorismo</li>
@@ -77,7 +77,7 @@ export default function TerminosDeUsoPage() {
 
           <LegalContentBlock icon="AlertTriangle" title="5. Limitación de responsabilidad" index={4}>
             <p>
-              Remata no se hace responsable por decisiones de inversión del usuario, demoras en
+              Rematto no se hace responsable por decisiones de inversión del usuario, demoras en
               procesos judiciales, cambios normativos o eventos de fuerza mayor que afecten las
               subastas o adjudicaciones.
             </p>

@@ -13,16 +13,16 @@ import { LegalContentBlock } from "@/components/landing/legal/LegalContentBlock"
 import { LegalCTA } from "@/components/landing/legal/LegalCTA";
 
 export const metadata = {
-  title: "Cumplimiento regulatorio AML & KYC | Remata",
+  title: "Cumplimiento regulatorio AML & KYC | Rematto",
   description:
-    "Conoce cómo Remata cumple con las normativas de prevención de lavado de activos (AML) y verificación de identidad (KYC) en Perú.",
+    "Conoce cómo Rematto cumple con las normativas de prevención de lavado de activos (AML) y verificación de identidad (KYC) en Perú.",
 };
 
 const compliancePillars = [
   {
     icon: Building2,
-    title: "Supervisión SBS",
-    desc: "Registrados y supervisados por la Superintendencia de Banca, Seguros y AFP del Perú.",
+    title: "Custodia de fondos separada",
+    desc: "Los aportes se mantienen en cuentas de custodia, separadas del patrimonio de la empresa, hasta que la operación se ejecuta.",
   },
   {
     icon: UserCheck,
@@ -37,7 +37,7 @@ const compliancePillars = [
   {
     icon: Scale,
     title: "Marco legal",
-    desc: "Cumplimiento de la Ley N° 27693, Resoluciones SBS y estándares FATF/GAFI.",
+    desc: "Programa de prevención alineado a la Ley N° 27693 y a los estándares GAFI/FATF aplicables.",
   },
 ];
 
@@ -103,7 +103,7 @@ export default function CumplimientoRegulatorioPage() {
 
           <LegalContentBlock icon="AlertOctagon" title="Prevención AML (Anti-Money Laundering)" index={1}>
             <p>
-              Remata implementa un programa integral de prevención de lavado de activos y
+              Rematto implementa un programa integral de prevención de lavado de activos y
               financiamiento del terrorismo (PLAFT) que incluye:
             </p>
             <ul>
@@ -117,7 +117,7 @@ export default function CumplimientoRegulatorioPage() {
 
           <LegalContentBlock icon="BadgeCheck" title="Due diligence en propiedades" index={2}>
             <p>
-              Cada propiedad listada en Remata pasa por un proceso de due diligence legal que
+              Cada propiedad listada en Rematto pasa por un proceso de due diligence legal que
               verifica:
             </p>
             <ul>
@@ -131,13 +131,13 @@ export default function CumplimientoRegulatorioPage() {
           <LegalContentBlock icon="ShieldCheck" title="Oficial de cumplimiento" index={3}>
             <p>
               Contamos con un Oficial de Cumplimiento designado, responsable de supervisar la
-              implementación del programa PLAFT y servir como punto de contacto con la SBS y la
+              implementación del programa PLAFT y servir como punto de contacto con la
               UIF-Perú.
             </p>
             <p>
               Para consultas de cumplimiento:{" "}
-              <a href="mailto:compliance@remata.pe" className="font-medium text-primary underline">
-                compliance@remata.pe
+              <a href="mailto:compliance@rematto.pe" className="font-medium text-primary underline">
+                compliance@rematto.pe
               </a>
             </p>
             <p className="text-sm text-muted-foreground">

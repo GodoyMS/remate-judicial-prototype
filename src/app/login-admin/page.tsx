@@ -111,7 +111,7 @@ export default function LoginAdminPage() {
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-sidebar-foreground tracking-tight">Iniciar sesión admin</h1>
             <p className="text-sm text-sidebar-foreground/60 mt-1.5">
-              Accede al backoffice de Remata con tus credenciales de administrador.
+              Accede al backoffice de Rematto con tus credenciales de administrador.
             </p>
           </div>
 
@@ -209,7 +209,7 @@ export default function LoginAdminPage() {
           </div>
 
           <p className="mt-6 text-center text-xs text-sidebar-foreground/40">
-            Este panel es exclusivo para personal autorizado de Remata.
+            Este panel es exclusivo para personal autorizado de Rematto.
           </p>
         </motion.div>
 

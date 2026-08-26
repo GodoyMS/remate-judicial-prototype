@@ -127,7 +127,7 @@ export async function POST(request: Request) {
     if (isLikelyOffTopic(lastUserMessage.content)) {
       return NextResponse.json({
         message: sanitizeAssistantMessage(
-          "Solo puedo ayudarte con preguntas sobre **Remata** y nuestras inversiones en remates judiciales. ¿Tienes alguna duda sobre la plataforma, cómo invertir, regulación o nuestras propiedades?"
+          "Solo puedo ayudarte con preguntas sobre **Rematto** y nuestras inversiones en remates judiciales. ¿Tienes alguna duda sobre la plataforma, cómo invertir, regulación o nuestras propiedades?"
         ),
         offTopic: true,
       });

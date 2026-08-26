@@ -2473,7 +2473,7 @@ export const userActivities: UserActivity[] = [
 export const currentAdmin: AdminProfile = {
   id: "admin1",
   name: "Valentina Ríos",
-  email: "admin@remata.pe",
+  email: "admin@rematto.pe",
   role: "super_admin",
   lastLogin: "2026-05-22T07:00:00",
   twoFactorEnabled: true,
@@ -2524,7 +2524,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     role: "Empresario, Lima",
     avatar: "CR",
     review:
-      "Llevo 8 meses en Remata y ya tengo 4 inversiones activas. La plataforma es intuitiva, la documentación siempre está disponible y los retornos superan cualquier instrumento bancario.",
+      "Llevo 8 meses en Rematto y ya tengo 4 inversiones activas. La plataforma es intuitiva, la documentación siempre está disponible y los retornos superan cualquier instrumento bancario.",
     stars: 5,
     amount: "S/ 45,000 invertido",
     published: true,
@@ -2538,7 +2538,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     role: "Consultora financiera",
     avatar: "AT",
     review:
-      "Como asesora financiera, recomiendo Remata a mis clientes que buscan diversificación. El marco legal es sólido, los procesos son claros y el equipo siempre responde.",
+      "Como asesora financiera, recomiendo Rematto a mis clientes que buscan diversificación. El marco legal es sólido, los procesos son claros y el equipo siempre responde.",
     stars: 5,
     amount: "S/ 78,000 gestionado",
     videoUrl:
@@ -2570,7 +2570,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     role: "Médica, Miraflores",
     avatar: "LF",
     review:
-      "Con mi agenda ocupada necesitaba algo 100% digital. Remata me permite invertir en minutos y seguir mis activos desde el celular. La transparencia es lo que más valoro.",
+      "Con mi agenda ocupada necesitaba algo 100% digital. Rematto me permite invertir en minutos y seguir mis activos desde el celular. La transparencia es lo que más valoro.",
     stars: 5,
     amount: "S/ 35,000 invertido",
     videoUrl:
@@ -2602,7 +2602,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     role: "Contadora, San Borja",
     avatar: "PS",
     review:
-      "Revisé cada cláusula antes de invertir y quedé impresionada con el rigor legal. Remata no es una moda pasajera: es infraestructura seria para el mercado peruano.",
+      "Revisé cada cláusula antes de invertir y quedé impresionada con el rigor legal. Rematto no es una moda pasajera: es infraestructura seria para el mercado peruano.",
     stars: 5,
     amount: "S/ 19,500 invertido",
     published: true,
@@ -2662,7 +2662,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     role: "Abogada corporativa",
     avatar: "VR",
     review:
-      "El marco de remates judiciales puede intimidar, pero Remata lo traduce a un flujo digital comprensible. Recomiendo la plataforma a colegas que buscan activos alternativos.",
+      "El marco de remates judiciales puede intimidar, pero Rematto lo traduce a un flujo digital comprensible. Recomiendo la plataforma a colegas que buscan activos alternativos.",
     stars: 5,
     amount: "S/ 94,000 gestionado",
     published: true,
@@ -2676,7 +2676,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     role: "Comerciante, Cusco",
     avatar: "MP",
     review:
-      "Invertir desde provincia era mi mayor duda. Todo el proceso es remoto, con firma digital y seguimiento en tiempo real. Ya recomendé Remata a mi círculo de negocios.",
+      "Invertir desde provincia era mi mayor duda. Todo el proceso es remoto, con firma digital y seguimiento en tiempo real. Ya recomendé Rematto a mi círculo de negocios.",
     stars: 5,
     amount: "S/ 16,400 invertido",
     videoUrl:
@@ -2694,7 +2694,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     role: "Diseñadora UX",
     avatar: "SD",
     review:
-      "Como diseñadora, aprecio cuando un producto financiero no sacrifica la experiencia. Remata se siente moderno, confiable y pensado para personas reales.",
+      "Como diseñadora, aprecio cuando un producto financiero no sacrifica la experiencia. Rematto se siente moderno, confiable y pensado para personas reales.",
     stars: 5,
     amount: "S/ 11,000 invertido",
     published: false,
@@ -2722,7 +2722,7 @@ export const adminTestimonials: AdminTestimonial[] = [
     role: "Profesora universitaria",
     avatar: "GO",
     review:
-      "Usé Remata para enseñar sobre inversión inmobiliaria a mis alumnos. La plataforma demuestra que la tecnología puede democratizar un mercado tradicionalmente cerrado.",
+      "Usé Rematto para enseñar sobre inversión inmobiliaria a mis alumnos. La plataforma demuestra que la tecnología puede democratizar un mercado tradicionalmente cerrado.",
     stars: 5,
     amount: "S/ 27,600 invertido",
     published: true,
