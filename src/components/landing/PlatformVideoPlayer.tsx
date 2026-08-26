@@ -176,7 +176,7 @@ export function PlatformVideoPlayer() {
       ref={containerRef}
       tabIndex={0}
       role="application"
-      aria-label="Reproductor de demostración de Remata"
+      aria-label="Reproductor de demostración de Rematto"
       onKeyDown={handleKeyDown}
       onMouseMove={resetHideTimer}
       onMouseLeave={() => isPlaying && setShowControls(false)}
@@ -235,7 +235,7 @@ export function PlatformVideoPlayer() {
             className="text-center"
           >
             <p className="text-sm font-semibold text-white sm:text-base">
-              Ver cómo funciona Remata
+              Ver cómo funciona Rematto
             </p>
             <p className="mt-1 text-xs text-white/60">
               {duration > 0 ? formatTime(duration) : "Demo"} · Recorrido de la plataforma

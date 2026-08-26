@@ -46,7 +46,7 @@ const RESPONSE_TEMPLATES = [
   },
   {
     label: "Cierre cordial",
-    html: "<p><br></p><p>Quedamos atentos a cualquier consulta adicional.</p><p>Saludos cordiales,<br>Equipo de Atención al Cliente — Remata</p>",
+    html: "<p><br></p><p>Quedamos atentos a cualquier consulta adicional.</p><p>Saludos cordiales,<br>Equipo de Atención al Cliente — Rematto</p>",
   },
 ] as const;
 

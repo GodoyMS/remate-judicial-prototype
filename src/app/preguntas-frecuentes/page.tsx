@@ -21,12 +21,12 @@ const faqCategories = [
     label: "General",
     questions: [
       {
-        q: "¿Qué es Remata?",
-        a: "Remata es una plataforma fintech peruana que permite invertir en remates judiciales inmobiliarios de forma colectiva. Puedes participar con montos desde S/ 500 y diversificar tu portafolio en propiedades verificadas legalmente.",
+        q: "¿Qué es Rematto?",
+        a: "Rematto es una plataforma fintech peruana que permite invertir en remates judiciales inmobiliarios de forma colectiva. Puedes participar con montos desde S/ 500 y diversificar tu portafolio en propiedades verificadas legalmente.",
       },
       {
         q: "¿Es seguro invertir en remates judiciales?",
-        a: "Toda inversión conlleva riesgos. Sin embargo, Remata mitiga estos riesgos mediante due diligence legal exhaustivo en cada propiedad, supervisión de la SBS y un proceso de verificación riguroso. Los retornos históricos promedian entre 15% y 25% anual, pero no garantizan resultados futuros.",
+        a: "No. Toda inversión en remates judiciales conlleva riesgo de pérdida parcial o total del capital, y los plazos dependen de procesos judiciales que no controlamos. Lo que sí hacemos es reducir riesgos evitables: estudio de títulos de cada expediente, revisión de cargas en SUNARP y publicación del expediente judicial para que puedas verificarlo. Los retornos históricos no garantizan resultados futuros. Lee la política de riesgos antes de invertir.",
       },
       {
         q: "¿Cuál es el monto mínimo de inversión?",
@@ -66,7 +66,53 @@ const faqCategories = [
       },
       {
         q: "¿Qué pasa si la subasta no se adjudica?",
-        a: "Si la subasta se declara desierta o no se alcanza el precio base, tu inversión se devuelve íntegramente a tu cuenta Remata, sin comisiones.",
+        a: "Si la subasta se declara desierta, o si otro postor supera el techo de puja definido para la operación, se devuelve el 100% de tu aporte sin comisiones, en un máximo de 10 días hábiles.",
+      },
+      {
+        q: "¿Y si el pool no llega a completarse?",
+        a: "Si el capital objetivo no se reúne antes del cierre de la convocatoria, la operación no se ejecuta y se devuelve el 100% de tu aporte, sin comisión, en un máximo de 5 días hábiles. No cobramos por operaciones que no llegaron a ejecutarse.",
+      },
+      {
+        q: "¿Qué pasa si el proceso judicial se suspende?",
+        a: "El juzgado puede suspender, reprogramar o anular un remate — por ejemplo si el deudor paga la deuda, aparece una tercería o se apela una resolución. Tu capital permanece íntegro en la cuenta de custodia y puedes elegir entre esperar la reprogramación o solicitar la devolución. Una reprogramación suele añadir entre 1 y 6 meses.",
+      },
+      {
+        q: "¿Qué pasa si la propiedad se vende por debajo de lo estimado?",
+        a: "El retorno es menor al proyectado y puede ser negativo: es posible recuperar menos de lo aportado. El resultado, positivo o negativo, se reparte a prorrata entre todos los participantes del pool. Los porcentajes publicados son estimaciones referenciales, no una garantía.",
+      },
+      {
+        q: "¿Qué pasa si la venta demora más de lo previsto?",
+        a: "El capital permanece invertido en el activo y el retorno anualizado baja, porque el mismo margen se reparte en más meses. La causa más común de demora es la entrega de la posesión cuando el inmueble está ocupado, que requiere un lanzamiento judicial.",
+      },
+      {
+        q: "¿Puedo retirar mi dinero antes de que termine la operación?",
+        a: "Antes de la adjudicación, sí: puedes solicitar la devolución de tu aporte. Después no. Es una inversión ilíquida y hoy no existe un mercado secundario donde vender tu participación. Invierte solo capital que no vayas a necesitar durante el plazo estimado.",
+      },
+      {
+        q: "¿Cuánto dura una operación de principio a fin?",
+        a: "Entre 12 y 24 meses en un caso típico: apertura del pool, remate, inscripción de la adjudicación, entrega de la posesión, comercialización y liquidación. Los plazos dependen de tiempos judiciales que no controlamos.",
+      },
+    ],
+  },
+  {
+    id: "custodia",
+    label: "Tu dinero y tus documentos",
+    questions: [
+      {
+        q: "¿Dónde está mi dinero mientras la operación avanza?",
+        a: "Antes de la subasta, en una cuenta de custodia separada del patrimonio de Rematto. Durante el remate, comprometido como respaldo de la puja. Tras la adjudicación, representado en tu participación sobre el inmueble. Al cierre, se descuentan gastos y comisiones y el saldo se transfiere a tu cuenta bancaria.",
+      },
+      {
+        q: "¿Qué documento respalda mi participación?",
+        a: "Un contrato de inversión con validez legal peruana, firmado electrónicamente, que identifica la operación, el expediente judicial, tu monto aportado y el porcentaje de participación que te corresponde. Queda disponible para descarga en tu panel.",
+      },
+      {
+        q: "¿Qué pasa con mi inversión si Rematto deja de operar?",
+        a: "Los aportes se mantienen en cuentas de custodia separadas del patrimonio de la empresa, y tu participación sobre un inmueble adjudicado está respaldada por el contrato de inversión y el título de adjudicación. Ante cualquier duda sobre este punto antes de invertir, escríbenos y lo revisamos contigo.",
+      },
+      {
+        q: "¿Puedo invertir montos altos? ¿Hay límites?",
+        a: "No hay un tope por inversor, pero sí un capital objetivo por operación: cuando se completa, la convocatoria se cierra. Para montos elevados recomendamos hablar con el equipo antes, para revisar diversificación entre operaciones y la documentación aplicable.",
       },
     ],
   },
@@ -75,16 +121,46 @@ const faqCategories = [
     label: "Legal y regulación",
     questions: [
       {
-        q: "¿Remata está regulado?",
-        a: "Sí, estamos registrados y supervisados por la SBS (Superintendencia de Banca, Seguros y AFP). Cumplimos con las normativas AML/KYC y reportamos a la UIF-Perú cuando corresponde.",
+        q: "¿Rematto está regulado?",
+        a: "Operamos como sociedad constituida en Perú y aplicamos procedimientos de verificación de identidad (KYC) y prevención de lavado de activos conforme a la normativa peruana vigente. Ninguna entidad del Estado patrocina, respalda ni garantiza las inversiones ofrecidas en la plataforma. Consulta la sección de cumplimiento regulatorio para el detalle del marco aplicable.",
       },
       {
         q: "¿Cómo se aplican los impuestos?",
-        a: "Los retornos están sujetos a retención del 5% de impuesto a la renta. Remata emite certificados de retención anuales para tu declaración tributaria.",
+        a: "Los retornos están sujetos a retención del 5% de impuesto a la renta. Rematto emite certificados de retención anuales para tu declaración tributaria.",
       },
       {
         q: "¿Dónde presento un reclamo?",
-        a: "Puedes usar nuestro Libro de Reclamaciones virtual en cualquier momento. También puedes contactar a soporte@remata.pe o llamar al (01) 700-REMATA.",
+        a: "Puedes usar nuestro Libro de Reclamaciones virtual en cualquier momento. También puedes escribir a soporte@rematto.pe o llamar al +51 1 700 8000, de lunes a viernes de 9:00 a 18:00.",
+      },
+    ],
+  },
+  {
+    id: "datos",
+    label: "Tus datos personales",
+    questions: [
+      {
+        q: "¿Qué información mía guardan?",
+        a: "Tus datos de registro (nombre, correo, teléfono), los documentos de verificación de identidad (foto del DNI y selfie), tus datos bancarios para transferirte los retornos y el historial de tus operaciones en la plataforma.",
+      },
+      {
+        q: "¿Quién puede ver mis documentos?",
+        a: "Solo el personal del área de verificación, y únicamente mientras revisa tu identidad. Nadie más dentro de la empresa accede a tu DNI o tu selfie, y esos accesos quedan registrados. Los otros inversores de un pool nunca ven tu identidad.",
+      },
+      {
+        q: "¿Para qué usan mis datos?",
+        a: "Para verificar que eres quien dices ser (obligación legal de toda plataforma financiera en Perú), para transferirte tus retornos y para comunicarnos contigo sobre tus operaciones. No vendemos ni cedemos tus datos a terceros con fines comerciales.",
+      },
+      {
+        q: "¿Cuánto tiempo los conservan?",
+        a: "Mientras tu cuenta esté activa, y después durante el plazo que exige la normativa de prevención de lavado de activos. Cumplido ese plazo, se eliminan.",
+      },
+      {
+        q: "¿Cómo los protegen, en simple?",
+        a: "Tu información viaja cifrada entre tu dispositivo y la plataforma, y se guarda cifrada en nuestros servidores. En la práctica: aunque alguien accediera al archivo, no podría leerlo. El personal accede solo a lo que su función requiere, con doble factor de autenticación.",
+      },
+      {
+        q: "¿Puedo pedir que borren mis datos?",
+        a: "Sí. Puedes solicitar acceso, rectificación o eliminación escribiendo a privacidad@rematto.pe. Si tienes operaciones en curso o dentro del plazo legal de conservación, te explicaremos qué parte podemos eliminar y cuándo el resto.",
       },
     ],
   },
@@ -211,11 +287,15 @@ export default function PreguntasFrecuentesPage() {
         </div>
       </section>
 
+      {/* RM-025 — the closing CTA sent people to another document instead of
+          to a person. The secondary action is now the contact channel. */}
       <LegalCTA
-        title="Empieza a invertir hoy"
-        description="Crea tu cuenta gratis y explora propiedades verificadas en remate judicial."
-        secondaryLabel="Ver cumplimiento regulatorio"
-        secondaryHref="/cumplimiento-regulatorio"
+        title="¿No encontraste tu respuesta?"
+        description="Escríbenos por WhatsApp, teléfono o correo. Resolvemos dudas antes de que crees una cuenta."
+        primaryLabel="Hablar con el equipo"
+        primaryHref="/contacto"
+        secondaryLabel="Leer la política de riesgos"
+        secondaryHref="/politica-de-riesgos"
       />
     </LegalPageLayout>
   );

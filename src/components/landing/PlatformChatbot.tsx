@@ -44,7 +44,7 @@ const WELCOME_MESSAGE: ChatMessage = {
   id: "welcome",
   role: "assistant",
   content:
-    "¡Hola! Soy **Remata AI**, tu asistente sobre inversiones en remates judiciales.\n\nAntes de empezar, ¿cómo te llamas?",
+    "¡Hola! Soy **Rematto AI**, tu asistente sobre inversiones en remates judiciales.\n\nAntes de empezar, ¿cómo te llamas?",
   createdAt: new Date().toISOString(),
   isOnboarding: true,
 };
@@ -256,7 +256,7 @@ export function PlatformChatbot() {
         updateUserProfile({ name, email });
         setOnboardingStep("complete");
         appendAssistantMessage(
-          `¡Perfecto! Ya puedo ayudarte con todo sobre Remata.\n\nEstas son algunas preguntas frecuentes — elige una o escribe la tuya:`,
+          `¡Perfecto! Ya puedo ayudarte con todo sobre Rematto.\n\nEstas son algunas preguntas frecuentes — elige una o escribe la tuya:`,
           { isOnboarding: true }
         );
         setShowQuickReplies(true);
@@ -387,7 +387,7 @@ export function PlatformChatbot() {
       ? "Escribe tu nombre..."
       : onboardingStep === "email"
         ? "Escribe tu correo electrónico..."
-        : "Escribe tu pregunta sobre Remata...";
+        : "Escribe tu pregunta sobre Rematto...";
 
   return (
     <>
@@ -399,17 +399,21 @@ export function PlatformChatbot() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="fixed bottom-6 right-6 z-50"
+            /* RM-010 — the launcher was a 64px disc with a permanently pulsing
+               halo, pinned at a fixed 24px offset. It sat over page content on
+               small screens and competed with the CTAs for attention. It is now
+               smaller on phones, respects the device safe area, and holds still
+               until the user touches it. */
+            className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] right-4 z-50 sm:bottom-6 sm:right-6"
           >
             <button
               type="button"
               onClick={openChat}
-              aria-label="Abrir asistente Remata"
-              className="group relative flex size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition-transform hover:scale-105 active:scale-95"
+              aria-label="Abrir asistente Rematto"
+              className="group relative flex size-13 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition-transform hover:scale-105 active:scale-95 sm:size-15"
             >
-              <span className="absolute inset-0 rounded-full bg-white/20 animate-ping opacity-60" />
               <span className="absolute inset-0 rounded-full bg-linear-to-br from-white/20 to-transparent" />
-              <MessageCircle className="relative size-7" />
+              <MessageCircle className="relative size-6 sm:size-7" />
               {hasUnread && (
                 <span className="absolute -top-0.5 -right-0.5 flex size-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white ring-2 ring-card">
                   1
@@ -420,7 +424,7 @@ export function PlatformChatbot() {
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden sm:block"
+              className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden lg:block"
             >
               <div className="whitespace-nowrap rounded-xl border border-border/60 bg-card px-4 py-2 text-sm font-medium text-foreground shadow-lg">
                 ¿Tienes dudas? Pregúntame
@@ -442,7 +446,7 @@ export function PlatformChatbot() {
             layout={false}
             className={cn(
               "fixed z-50 flex flex-col overflow-hidden border border-border/60 bg-card shadow-2xl shadow-black/20",
-              "bottom-0 right-0 left-0 rounded-t-3xl sm:bottom-6 sm:left-auto sm:right-6 sm:w-[420px] sm:rounded-3xl",
+              "bottom-0 right-0 left-0 rounded-t-3xl pb-[env(safe-area-inset-bottom,0px)] sm:bottom-6 sm:left-auto sm:right-6 sm:w-[420px] sm:rounded-3xl sm:pb-0",
               isMinimized ? "h-auto" : "h-[min(88vh,720px)] sm:h-[min(82vh,680px)]"
             )}
           >
@@ -466,7 +470,7 @@ export function PlatformChatbot() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-primary-foreground">Remata AI</h3>
+                      <h3 className="text-base font-bold text-primary-foreground">Rematto AI</h3>
                       <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
                         En línea
                       </span>
@@ -504,7 +508,7 @@ export function PlatformChatbot() {
                 <div className="relative mt-3 flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-2">
                   <Shield className="size-3.5 shrink-0 text-primary-foreground" />
                   <p className="text-[11px] leading-snug text-primary-foreground/80">
-                    Respuestas basadas en información oficial de Remata. Solo temas de la plataforma.
+                    Respuestas basadas en información oficial de Rematto. Solo temas de la plataforma.
                   </p>
                 </div>
               )}
@@ -583,7 +587,7 @@ export function PlatformChatbot() {
                     </Button>
                   </div>
                   <p className="mt-2 text-center text-[10px] text-muted-foreground">
-                    Solo respondo preguntas sobre Remata · Inversiones con riesgo
+                    Solo respondo preguntas sobre Rematto · Inversiones con riesgo
                   </p>
                 </div>
               </>

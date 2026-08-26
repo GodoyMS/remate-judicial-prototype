@@ -110,7 +110,7 @@ export function ChatbotConversationThread({
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-medium text-muted-foreground">
-                        {isUser ? conversation.userName : "Remata AI"}
+                        {isUser ? conversation.userName : "Rematto AI"}
                       </span>
                       {message.isOnboarding && (
                         <span className="rounded-md bg-info/10 px-1.5 py-0.5 text-[9px] font-semibold text-info">

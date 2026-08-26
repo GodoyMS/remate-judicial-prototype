@@ -39,7 +39,7 @@ type YapePaymentFormProps = {
   onChange: (data: YapeFormData) => void;
 };
 
-const YAPE_MERCHANT_NAME = "Remata S.A.C.";
+const YAPE_MERCHANT_NAME = "Rematto S.A.C.";
 const STEPS = [
   { id: 1, label: "Teléfono", hint: "Tu número Yape" },
   { id: 2, label: "Código", hint: "6 dígitos de aprobación" },

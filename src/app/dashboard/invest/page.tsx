@@ -561,7 +561,7 @@ function InvestPageContent() {
               <div className="mt-5 rounded-xl bg-muted/30 border border-border/60 p-3 flex items-start gap-2">
                 <Info className="size-4 text-muted-foreground shrink-0 mt-0.5" />
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Al confirmar, aceptas los Términos de inversión de Remata. Los retornos son estimados y pueden variar según el resultado de la subasta.
+                  Al confirmar, aceptas los Términos de inversión de Rematto. Los retornos son estimados y pueden variar según el resultado de la subasta.
                 </p>
               </div>
             </div>

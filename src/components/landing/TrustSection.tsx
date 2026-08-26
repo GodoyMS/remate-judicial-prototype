@@ -1,539 +1,192 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "framer-motion";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type AnimationEvent,
-  type CSSProperties,
-} from "react";
+import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   FileCheck,
   Fingerprint,
-  Landmark,
+  Gavel,
+  Info,
   Lock,
-  Pause,
-  Play,
   Receipt,
   Scale,
-  Shield,
   type LucideIcon,
 } from "lucide-react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from "@/components/ui/carousel";
+import { BRAND_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
-/* ─── Data ─────────────────────────────────────────────────────────────── */
+/**
+ * Trust section — audit findings RM-011, RM-013, RM-019, RM-023 and RM-024.
+ *
+ * ⚠ RM-024 (Crítica) — the previous copy stated the platform was "registrada y
+ * supervisada" by the SBS and displayed the SBS, SUNAT, Poder Judicial,
+ * SUNARP, INDECOPI, UIF and the Colegio Notarial under the heading "Aliados
+ * regulatorios & institucionales". A state supervisor is not an ally, and
+ * presenting one as such implies an endorsement that has not been granted.
+ * Claims of that weight cannot ship un-evidenced on a page that asks for
+ * money, so this section no longer asserts supervision by any regulator.
+ * Institutions are now described for what they factually are — the bodies
+ * before which each operation is processed — with an explicit note that they
+ * neither sponsor nor endorse the platform. Reinstating any supervision claim
+ * requires the corresponding registration document, and the claim should then
+ * link to it. See the PR description for the full flag.
+ *
+ * · RM-023 / RM-013 — every card states what the reader can go and check, and
+ *   links to where. Assertions without a destination were removed.
+ * · RM-019 — nine cards became six; the rest of the argument lives on the
+ *   pages each card points to.
+ * · RM-011 — nine unrelated stock photographs replaced by one consistent
+ *   iconographic treatment on brand surfaces.
+ */
 
 type TrustCard = {
   id: string;
+  icon: LucideIcon;
   title: string;
   description: string;
-  meta?: string;
-  icon: LucideIcon;
-  image: string;
-  imageAlt: string;
+  /** What the reader can independently verify. */
+  verify: string;
+  href: string;
+  linkLabel: string;
 };
 
 const trustCards: TrustCard[] = [
   {
-    id: "tax",
-    title: "Tributación en regla",
+    id: "expediente",
+    icon: Gavel,
+    title: "Expediente judicial a la vista",
     description:
-      "Retenciones y reportes alineados con SUNAT. Comprobante electrónico en cada operación.",
-    meta: "SUNAT",
+      "Cada operación se publica con su número de expediente y el juzgado que lleva el proceso, antes de que inviertas.",
+    verify:
+      "Puedes consultar ese expediente en la Consulta de Expedientes Judiciales del Poder Judicial.",
+    href: "/proceso-de-inversion",
+    linkLabel: "Ver cómo se selecciona un expediente",
+  },
+  {
+    id: "titulos",
+    icon: FileCheck,
+    title: "Estudio de títulos antes de publicar",
+    description:
+      "Revisamos cargas, gravámenes y estado de ocupación en SUNARP. Si el expediente no supera la revisión, no llega a la plataforma.",
+    verify:
+      "El informe de títulos de cada propiedad está disponible en su ficha, con tu cuenta creada.",
+    href: "/proceso-de-inversion",
+    linkLabel: "Ver el proceso de auditoría",
+  },
+  {
+    id: "riesgos",
+    icon: Scale,
+    title: "Los escenarios adversos, por escrito",
+    description:
+      "Pool incompleto, subasta no adjudicada, proceso suspendido, venta demorada o por debajo de lo estimado: qué pasa con tu capital en cada caso.",
+    verify:
+      "Ocho escenarios documentados, con plazos de devolución concretos.",
+    href: "/politica-de-riesgos",
+    linkLabel: "Leer la política de riesgos",
+  },
+  {
+    id: "tarifas",
     icon: Receipt,
-    image:
-      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Documentos fiscales",
+    title: "Todas las comisiones, publicadas",
+    description:
+      "Comisiones de la plataforma y costos de terceros, con el momento exacto en que se aplican y un ejemplo con números.",
+    verify:
+      "Nada se cobra por registrarte ni por operaciones que no llegaron a ejecutarse.",
+    href: "/tarifas",
+    linkLabel: "Ver tarifas y comisiones",
   },
   {
     id: "kyc",
-    title: "KYC & PLAFT",
-    description:
-      "Verificación de identidad y monitoreo antilavado conforme a la UIF-Perú. Tu capital entra limpio y sale trazable.",
-    meta: "UIF",
     icon: Fingerprint,
-    image:
-      "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Verificación de identidad digital",
+    title: "Verificación de identidad y prevención de lavado",
+    description:
+      "Aplicamos verificación de identidad (KYC) y procedimientos de prevención de lavado de activos conforme a la normativa peruana vigente.",
+    verify:
+      "El detalle del procedimiento y la normativa aplicable está publicado.",
+    href: "/cumplimiento-regulatorio",
+    linkLabel: "Ver marco de cumplimiento",
   },
   {
-    id: "sbs",
-    title: "Supervisión financiera",
-    description:
-      "Custodia de fondos bajo estándares SBS y mejores prácticas fintech del sistema peruano.",
-    meta: "SBS",
-    icon: Landmark,
-    image:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Edificio financiero",
-  },
-  {
-    id: "encrypt",
-    title: "Encriptación bancaria",
-    description:
-      "AES-256 y comunicaciones TLS en toda tu información. El mismo estándar que usan los bancos.",
-    meta: "Seguridad · SBS",
+    id: "datos",
     icon: Lock,
-    image:
-      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Seguridad digital",
-  },
-  {
-    id: "audit",
-    title: "Expedientes auditados",
+    title: "Qué hacemos con tus datos",
     description:
-      "Cada propiedad revisada por abogados especializados en remates antes de publicarse.",
-    meta: "Legal · SUNARP",
-    icon: FileCheck,
-    image:
-      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Expediente documental",
-  },
-  {
-    id: "contracts",
-    title: "Contratos válidos en Perú",
-    description:
-      "Contratos con validez legal peruana en cada operación de inversión. Firmados, registrados y ejecutables.",
-    icon: Scale,
-    image:
-      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Contrato legal",
-  },
-  {
-    id: "trace",
-    title: "Trazabilidad total",
-    description:
-      "Seguimiento completo de cada sol invertido, del expediente al retorno. Sin cajas negras.",
-    icon: Shield,
-    image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Dashboard de trazabilidad",
-  },
-  {
-    id: "reports",
-    title: "Reportes fiscales",
-    description:
-      "Reportes fiscales descargables, listos para tu declaración anual ante SUNAT.",
-    icon: Receipt,
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Reportes financieros",
-  },
-  {
-    id: "live-audit",
-    title: "Auditoría en vivo",
-    description:
-      "Auditoría documental en tiempo real durante todo el proceso. Transparencia que se puede verificar.",
-    icon: FileCheck,
-    image:
-      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Revisión profesional",
+      "Qué información guardamos, quién puede verla, para qué y por cuánto tiempo, explicado sin tecnicismos.",
+    verify:
+      "Puedes solicitar acceso, rectificación o eliminación de tus datos cuando quieras.",
+    href: "/politica-de-privacidad",
+    linkLabel: "Ver política de privacidad",
   },
 ];
 
-type Ally = {
-  abbr: string;
-  name: string;
-  role: string;
-  logo: string;
-};
-
-const allies: Ally[] = [
+/**
+ * Institutions involved in the process. Deliberately NOT framed as partners,
+ * sponsors or supervisors — see the RM-024 note above.
+ */
+const institutions = [
   {
-    abbr: "PJ",
     name: "Poder Judicial",
-    role: "Subastas judiciales",
+    role: "Conduce el remate y emite la adjudicación",
     logo: "/images/institutions/pj.png",
   },
   {
-    abbr: "SUNARP",
     name: "SUNARP",
-    role: "Registro de propiedades",
+    role: "Registra la propiedad y sus cargas",
     logo: "/images/institutions/sunarp.png",
   },
   {
-    abbr: "SBS",
-    name: "SBS",
-    role: "Supervisión financiera",
-    logo: "/images/institutions/sbs.png",
-  },
-  {
-    abbr: "SUNAT",
     name: "SUNAT",
-    role: "Cumplimiento tributario",
+    role: "Administra las obligaciones tributarias",
     logo: "/images/institutions/sunat.png",
   },
   {
-    abbr: "INDECOPI",
-    name: "INDECOPI",
-    role: "Protección al consumidor",
-    logo: "/images/institutions/indecopi.png",
-  },
-  {
-    abbr: "CNL",
     name: "Colegio Notarial",
-    role: "Escrituras y legalización",
+    role: "Interviene en escrituras y legalizaciones",
     logo: "/images/institutions/cnl.png",
   },
   {
-    abbr: "UIF",
-    name: "UIF-Perú",
-    role: "Prevención LA/FT",
-    logo: "/images/institutions/uif.png",
+    name: "INDECOPI",
+    role: "Recibe reclamos de consumidores",
+    logo: "/images/institutions/indecopi.png",
   },
 ];
 
-const AUTOPLAY_MS = 5500;
-
-/** Matches max-w-[1400px] + section-padding so slide 1 lines up with the header. */
-const CAROUSEL_INSET =
-  "max(1rem,calc((100vw - min(100vw,1400px)) / 2 + 1rem))";
-const CAROUSEL_INSET_SM =
-  "max(1.5rem,calc((100vw - min(100vw,1400px)) / 2 + 1.5rem))";
-const CAROUSEL_INSET_LG =
-  "max(2rem,calc((100vw - min(100vw,1400px)) / 2 + 2rem))";
-
-/**
- * Even → secondary (light grey / dark-mode elevated).
- * Odd  → always-dark brand surface so light text stays readable in both themes.
- */
-const cardTone = {
-  even: {
-    shell: "bg-secondary text-secondary-foreground",
-    title: "text-secondary-foreground",
-    body: "text-secondary-foreground/75",
-    chip: "bg-foreground/8 text-secondary-foreground ring-foreground/10",
-  },
-  odd: {
-    shell:
-      "bg-[oklch(from_var(--brand)_0.2_calc(c*0.1)_h)] text-[oklch(0.97_0_0)] dark:bg-[oklch(from_var(--brand)_0.28_calc(c*0.12)_h)] dark:text-[oklch(0.96_0_0)]",
-    title: "text-[oklch(0.97_0_0)] dark:text-[oklch(0.96_0_0)]",
-    body: "text-[oklch(from_var(--brand)_0.78_calc(c*0.04)_h)] dark:text-[oklch(from_var(--brand)_0.8_calc(c*0.05)_h)]",
-    chip: "bg-white/10 text-[oklch(0.95_0_0)] ring-white/15",
-  },
-} as const;
-
-/* ─── Trust card — 2 columns ───────────────────────────────────────────── */
-
-function TrustFeatureCard({
-  card,
-  index,
-  active,
-}: {
-  card: TrustCard;
-  index: number;
-  active: boolean;
-}) {
+function TrustFeatureCard({ card }: { card: TrustCard }) {
   const Icon = card.icon;
-  const tone = index % 2 === 0 ? cardTone.even : cardTone.odd;
-
   return (
     <article
       className={cn(
-        "group grid h-[420px] w-full grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] overflow-hidden rounded-3xl sm:h-[500px] sm:rounded-4xl lg:h-[560px]",
-        "transition-[transform,opacity,box-shadow] duration-500 ease-out",
-        tone.shell,
-        active
-          ? "scale-100 opacity-100 shadow-lg shadow-foreground/8"
-          : "scale-[0.985] opacity-80"
+        "flex flex-col rounded-3xl border border-border/60 bg-card p-6 shadow-sm",
+        "transition-shadow duration-300 hover:shadow-md sm:p-8"
       )}
     >
-      {/* Col 1 — copy, vertically centered */}
-      <div className="flex flex-col justify-center px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
-        {card.meta && (
-          <span
-            className={cn(
-              "mb-4 inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide ring-1",
-              tone.chip
-            )}
-          >
-            <Icon className="size-3 shrink-0" aria-hidden />
-            {card.meta}
-          </span>
-        )}
-        <h3
-          className={cn(
-            "text-balance text-xl font-bold leading-[1.15] tracking-tight sm:text-2xl lg:text-3xl",
-            tone.title
-          )}
-        >
-          {card.title}
-        </h3>
-        <p
-          className={cn(
-            "mt-3 max-w-sm text-sm leading-relaxed sm:mt-4 sm:text-[15px]",
-            tone.body
-          )}
-        >
-          {card.description}
-        </p>
-      </div>
+      <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20">
+        <Icon className="size-5.5" strokeWidth={2.1} />
+      </span>
 
-      {/* Col 2 — flush to card edges; left corners rounded against copy */}
-      <div className="relative min-h-0 overflow-hidden rounded-l-3xl sm:rounded-l-4xl">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={card.image}
-          alt={card.imageAlt}
-          className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
+      <h3 className="type-h3 mt-5 text-balance text-foreground">
+        {card.title}
+      </h3>
+      <p className="type-body mt-3 text-pretty text-muted-foreground">
+        {card.description}
+      </p>
+
+      <p className="type-caption mt-4 flex items-start gap-2 rounded-xl bg-muted/60 p-3 text-muted-foreground">
+        <Info className="mt-0.5 size-3.5 shrink-0 text-primary" />
+        <span>{card.verify}</span>
+      </p>
+
+      <Link
+        href={card.href}
+        className="group type-body mt-5 inline-flex items-center gap-1.5 font-semibold text-primary hover:underline"
+      >
+        {card.linkLabel}
+        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+      </Link>
     </article>
   );
 }
-
-/* ─── Full-bleed peek carousel (content-left / edge-right) ─────────────── */
-
-function TrustCardsCarousel() {
-  const reduceMotion = useReducedMotion();
-  const rootRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(rootRef, { amount: 0.35, margin: "0px" });
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    if (!api) return;
-
-    const sync = () => {
-      setCount(api.scrollSnapList().length);
-      setCurrent(api.selectedScrollSnap());
-    };
-
-    sync();
-    api.on("reInit", sync);
-    api.on("select", sync);
-    return () => {
-      api.off("reInit", sync);
-      api.off("select", sync);
-    };
-  }, [api]);
-
-  const playing = Boolean(inView && !isPaused && !reduceMotion);
-
-  const scrollNext = useCallback(() => api?.scrollNext(), [api]);
-
-  const handleProgressComplete = useCallback(
-    (event: AnimationEvent<HTMLSpanElement>) => {
-      if (event.animationName !== "trust-progress-fill") return;
-      if (!playing) return;
-      api?.scrollNext();
-    },
-    [api, playing]
-  );
-
-  return (
-    <div ref={rootRef} className="relative w-full">
-      <Carousel
-        setApi={setApi}
-        opts={{
-          align: "start",
-          loop: true,
-          skipSnaps: false,
-          containScroll: false,
-        }}
-        className={cn(
-          "w-full",
-          /* Left inset = content column; right stays open to the viewport edge */
-          "[&_[data-slot=carousel-content]]:pl-[var(--trust-inset)]",
-          "sm:[&_[data-slot=carousel-content]]:pl-[var(--trust-inset-sm)]",
-          "lg:[&_[data-slot=carousel-content]]:pl-[var(--trust-inset-lg)]"
-        )}
-        style={
-          {
-            "--trust-inset": CAROUSEL_INSET,
-            "--trust-inset-sm": CAROUSEL_INSET_SM,
-            "--trust-inset-lg": CAROUSEL_INSET_LG,
-          } as CSSProperties
-        }
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onFocusCapture={() => setIsPaused(true)}
-        onBlurCapture={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-            setIsPaused(false);
-          }
-        }}
-      >
-        <CarouselContent className="-ml-3 sm:-ml-4 lg:-ml-5">
-          {trustCards.map((card, i) => (
-            <CarouselItem
-              key={card.id}
-              className="basis-[88%] pl-3 sm:basis-[85%] sm:pl-4 md:basis-[78%] lg:basis-[72%] lg:pl-5 xl:basis-[68%]"
-            >
-              <TrustFeatureCard
-                card={card}
-                index={i}
-                active={i === current}
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
-
-      {/* Controls — centered under the content column */}
-      <div
-        className="mx-auto mt-8 flex max-w-[1400px] items-center justify-center gap-4 section-padding sm:mt-10 sm:gap-5"
-      >
-        <button
-          type="button"
-          onClick={() => setIsPaused((p) => !p)}
-          className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition-all duration-200 hover:border-primary/40 hover:bg-primary hover:text-primary-foreground"
-          aria-label={isPaused ? "Reproducir carrusel" : "Pausar carrusel"}
-        >
-          {isPaused ? (
-            <Play className="ml-0.5 size-4 fill-current" />
-          ) : (
-            <Pause className="size-4 fill-current" />
-          )}
-        </button>
-
-        <div
-          className="flex items-center gap-2"
-          role="tablist"
-          aria-label="Diapositivas"
-        >
-          {Array.from({ length: count }).map((_, i) => {
-            const isActive = i === current;
-            return (
-              <button
-                key={i}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => api?.scrollTo(i)}
-                className={cn(
-                  "relative cursor-pointer overflow-hidden rounded-full transition-all duration-300 ease-out",
-                  isActive
-                    ? "h-2 w-8 bg-foreground/20 sm:w-10"
-                    : "size-2 bg-foreground/20 hover:bg-foreground/40"
-                )}
-                aria-label={`Ir a ${trustCards[i]?.title ?? `tarjeta ${i + 1}`}`}
-              >
-                {isActive && !reduceMotion && (
-                  <span
-                    key={current}
-                    className={cn(
-                      "trust-progress-fill absolute inset-y-0 left-0 w-full rounded-full bg-foreground",
-                      !playing && "is-paused"
-                    )}
-                    style={
-                      {
-                        "--trust-progress-ms": `${AUTOPLAY_MS}ms`,
-                      } as CSSProperties
-                    }
-                    onAnimationEnd={handleProgressComplete}
-                  />
-                )}
-                {isActive && reduceMotion && (
-                  <span className="absolute inset-0 rounded-full bg-foreground" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={scrollNext}
-          className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition-all duration-200 hover:border-primary/40 hover:bg-primary hover:text-primary-foreground"
-          aria-label="Siguiente"
-        >
-          <ArrowRight className="size-4" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Allies sponsor marquee ───────────────────────────────────────────── */
-
-function AllyChip({ ally }: { ally: Ally }) {
-  return (
-    <div
-      className={cn(
-        "group flex h-[76px] w-[236px] shrink-0 items-center gap-3 rounded-2xl border border-border/70 bg-card px-3.5 py-3",
-        "shadow-sm transition-all duration-300",
-        "hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md"
-      )}
-      title={`${ally.name} — ${ally.role}`}
-    >
-      <span className="flex h-12 w-[88px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-card ring-1 ring-border">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={ally.logo}
-          alt={`Logo ${ally.name}`}
-          width={88}
-          height={44}
-          className="h-10 w-[76px] object-contain"
-          loading="lazy"
-          decoding="async"
-        />
-      </span>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-xs font-semibold text-foreground">
-          {ally.name}
-        </p>
-        <p className="truncate text-[10px] text-muted-foreground">{ally.role}</p>
-      </div>
-    </div>
-  );
-}
-
-function AlliesMarquee() {
-  const reduceMotion = useReducedMotion();
-  const [paused, setPaused] = useState(false);
-  const track = [...allies, ...allies, ...allies];
-
-  return (
-    <div
-      className="relative"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-          setPaused(false);
-        }
-      }}
-    >
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-linear-to-r from-background to-transparent sm:w-16" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-linear-to-l from-background to-transparent sm:w-16" />
-
-      <div className="overflow-hidden py-1">
-        <motion.div
-          className="flex w-max gap-3"
-          animate={
-            reduceMotion || paused ? undefined : { x: ["0%", "-33.333%"] }
-          }
-          transition={{
-            duration: 28,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
-          {track.map((ally, i) => (
-            <AllyChip key={`${ally.abbr}-${i}`} ally={ally} />
-          ))}
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Section ──────────────────────────────────────────────────────────── */
 
 export function TrustSection() {
   const reduceMotion = useReducedMotion();
@@ -542,7 +195,7 @@ export function TrustSection() {
     <section
       id="confianza"
       data-nav-tone="light"
-      className="relative overflow-hidden bg-background py-20 text-foreground sm:py-24"
+      className="relative overflow-hidden bg-background py-16 text-foreground sm:py-20 lg:py-24"
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.35]"
@@ -560,41 +213,84 @@ export function TrustSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
-          className="mx-auto mb-10 flex max-w-2xl flex-col items-center text-center sm:mb-14"
+          className="mx-auto mb-12 flex max-w-2xl flex-col items-center text-center sm:mb-14"
         >
-          <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Invierte con la tranquilidad de una{" "}
-            <span className="text-primary">plataforma 100% legal</span>
+          <h2 className="type-h2 text-balance">
+            No te pedimos que confíes.{" "}
+            <span className="text-primary">Te decimos qué verificar.</span>
           </h2>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Cada operación en Remata está alineada con entidades del Estado
-            peruano, la legislación vigente y las obligaciones fiscales del país.
-            Transparencia, trazabilidad y estándares de nivel fintech.
+          <p className="type-lead mt-4 text-pretty text-muted-foreground">
+            Seis cosas que puedes comprobar por tu cuenta antes de invertir un
+            sol en {BRAND_NAME}.
           </p>
         </motion.div>
-      </div>
 
-      <motion.div
-        initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="relative mb-14 w-full sm:mb-16"
-      >
-        <TrustCardsCarousel />
-      </motion.div>
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          {trustCards.map((card, i) => (
+            <motion.div
+              key={card.id}
+              initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.45, delay: reduceMotion ? 0 : i * 0.05 }}
+              className="flex"
+            >
+              <TrustFeatureCard card={card} />
+            </motion.div>
+          ))}
+        </div>
 
-      <div className="relative mx-auto max-w-[1400px] section-padding">
+        {/* Institutions — described factually, with the endorsement disclaimer
+            stated in the same block rather than in fine print elsewhere. */}
         <motion.div
           initial={reduceMotion ? false : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
+          className="mt-14 rounded-3xl border border-border/60 bg-muted/40 p-6 sm:mt-16 sm:p-8"
         >
-          <p className="mb-5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Aliados regulatorios &amp; institucionales
+          <h3 className="type-label text-muted-foreground">
+            Entidades que intervienen en el proceso
+          </h3>
+
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {institutions.map((institution) => (
+              <li
+                key={institution.name}
+                className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3"
+              >
+                <span className="flex h-11 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-card ring-1 ring-border">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={institution.logo}
+                    alt={`Logo ${institution.name}`}
+                    width={80}
+                    height={40}
+                    className="h-9 w-[68px] object-contain"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+                <div className="min-w-0">
+                  <p className="type-body font-semibold text-foreground">
+                    {institution.name}
+                  </p>
+                  <p className="type-caption text-muted-foreground">
+                    {institution.role}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <p className="type-caption mt-6 border-t border-border/70 pt-5 text-muted-foreground">
+            Estas son las instituciones ante las que se tramita cada operación.{" "}
+            <strong className="font-semibold text-foreground">
+              Ninguna de ellas patrocina, respalda ni supervisa a {BRAND_NAME}
+            </strong>
+            , y su mención no implica autorización, garantía ni recomendación
+            alguna sobre las inversiones ofrecidas.
           </p>
-          <AlliesMarquee />
         </motion.div>
       </div>
     </section>

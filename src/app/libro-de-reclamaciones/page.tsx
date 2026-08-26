@@ -4,9 +4,9 @@ import { LegalPageHero } from "@/components/landing/legal/LegalPageHero";
 import { ComplaintForm } from "@/components/landing/legal/ComplaintForm";
 
 export const metadata = {
-  title: "Libro de reclamaciones | Remata",
+  title: "Libro de reclamaciones | Rematto",
   description:
-    "Presenta tu reclamo, queja o sugerencia a través del Libro de Reclamaciones virtual de Remata.",
+    "Presenta tu reclamo, queja o sugerencia a través del Libro de Reclamaciones virtual de Rematto.",
 };
 
 const infoCards = [
@@ -23,7 +23,7 @@ const infoCards = [
   {
     icon: Phone,
     title: "Otros canales",
-    desc: "También puedes llamar al (01) 700-REMATA o escribir a soporte@remata.pe",
+    desc: "También puedes llamar al (01) 700-REMATA o escribir a soporte@rematto.pe",
   },
 ];
 

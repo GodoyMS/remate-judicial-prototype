@@ -29,7 +29,7 @@ const initialConversations: ChatbotConversation[] = [
       msg(
         "m1",
         "assistant",
-        "¡Hola! Soy **Remata AI**, tu asistente sobre inversiones en remates judiciales.\n\nAntes de empezar, ¿cómo te llamas?",
+        "¡Hola! Soy **Rematto AI**, tu asistente sobre inversiones en remates judiciales.\n\nAntes de empezar, ¿cómo te llamas?",
         "2026-06-08T09:12:00",
         { isOnboarding: true }
       ),
@@ -49,7 +49,7 @@ const initialConversations: ChatbotConversation[] = [
       msg(
         "m5",
         "assistant",
-        "¡Perfecto! Ya puedo ayudarte con todo sobre Remata.",
+        "¡Perfecto! Ya puedo ayudarte con todo sobre Rematto.",
         "2026-06-08T09:13:01",
         { isOnboarding: true }
       ),
@@ -62,7 +62,7 @@ const initialConversations: ChatbotConversation[] = [
       msg(
         "m7",
         "assistant",
-        "En Remata, los retornos históricos promedian entre **12% y 18% anual**, según el tipo de inmueble y el ciclo del remate. Cada propiedad muestra su ROI estimado antes de invertir. ¿Te gustaría saber cómo se calcula?",
+        "En Rematto, los retornos históricos promedian entre **12% y 18% anual**, según el tipo de inmueble y el ciclo del remate. Cada propiedad muestra su ROI estimado antes de invertir. ¿Te gustaría saber cómo se calcula?",
         "2026-06-08T09:14:05"
       ),
       msg(
@@ -74,7 +74,7 @@ const initialConversations: ChatbotConversation[] = [
       msg(
         "m9",
         "assistant",
-        "Es una pregunta muy válida. Remata opera bajo supervisión de la **SBS** y todos los remates son judiciales con respaldo legal. Puedes verificar cada propiedad en SUNARP. La inversión conlleva riesgo, pero no es una estafa — somos una plataforma regulada.",
+        "Es una pregunta muy válida. Rematto opera bajo supervisión de la **SBS** y todos los remates son judiciales con respaldo legal. Puedes verificar cada propiedad en SUNARP. La inversión conlleva riesgo, pero no es una estafa — somos una plataforma regulada.",
         "2026-06-08T09:16:08"
       ),
       msg(
@@ -105,7 +105,7 @@ const initialConversations: ChatbotConversation[] = [
       msg(
         "m1",
         "assistant",
-        "¡Hola! Soy **Remata AI**...",
+        "¡Hola! Soy **Rematto AI**...",
         "2026-06-07T16:45:00",
         { isOnboarding: true }
       ),
@@ -142,7 +142,7 @@ const initialConversations: ChatbotConversation[] = [
       msg(
         "m8",
         "user",
-        "¿Remata está regulado por alguna entidad?",
+        "¿Rematto está regulado por alguna entidad?",
         "2026-06-07T16:52:00"
       ),
       msg(
@@ -164,7 +164,7 @@ const initialConversations: ChatbotConversation[] = [
     source: "landing",
     topics: ["Pagos", "Proceso"],
     messages: [
-      msg("m1", "assistant", "¡Hola! Soy **Remata AI**...", "2026-06-07T11:20:00", {
+      msg("m1", "assistant", "¡Hola! Soy **Rematto AI**...", "2026-06-07T11:20:00", {
         isOnboarding: true,
       }),
       msg("m2", "user", "Lucía Vargas", "2026-06-07T11:20:30", {
@@ -222,7 +222,7 @@ const initialConversations: ChatbotConversation[] = [
     source: "landing",
     topics: ["Propiedades", "Inversiones"],
     messages: [
-      msg("m1", "assistant", "¡Hola! Soy **Remata AI**...", "2026-06-06T14:00:00", {
+      msg("m1", "assistant", "¡Hola! Soy **Rematto AI**...", "2026-06-06T14:00:00", {
         isOnboarding: true,
       }),
       msg("m2", "user", "Andrés Castillo", "2026-06-06T14:00:30", {
@@ -280,7 +280,7 @@ const initialConversations: ChatbotConversation[] = [
     source: "landing",
     topics: ["Soporte"],
     messages: [
-      msg("m1", "assistant", "¡Hola! Soy **Remata AI**...", "2026-06-06T09:30:00", {
+      msg("m1", "assistant", "¡Hola! Soy **Rematto AI**...", "2026-06-06T09:30:00", {
         isOnboarding: true,
       }),
       msg("m2", "user", "Valeria Quispe", "2026-06-06T09:30:30", {
@@ -326,7 +326,7 @@ const initialConversations: ChatbotConversation[] = [
     source: "landing",
     topics: [],
     messages: [
-      msg("m1", "assistant", "¡Hola! Soy **Remata AI**...", "2026-06-05T18:15:00", {
+      msg("m1", "assistant", "¡Hola! Soy **Rematto AI**...", "2026-06-05T18:15:00", {
         isOnboarding: true,
       }),
       msg("m2", "user", "Ricardo Morales", "2026-06-05T18:15:30", {
@@ -339,7 +339,7 @@ const initialConversations: ChatbotConversation[] = [
       msg(
         "m5",
         "assistant",
-        "Solo puedo ayudarte con preguntas sobre **Remata** y nuestras inversiones en remates judiciales.",
+        "Solo puedo ayudarte con preguntas sobre **Rematto** y nuestras inversiones en remates judiciales.",
         "2026-06-05T18:17:00",
         { offTopic: true }
       ),

@@ -58,7 +58,7 @@
 }
 
 /*
- * Remata design system — single dynamic theme.
+ * Rematto design system — single dynamic theme.
  *
  * Layer 1 (primitive): --brand is the ONLY hand-set color. The runtime color
  * picker overwrites it inline on <html>; default is Azul clásico #2D45DC
@@ -221,6 +221,16 @@
 }
 
 @layer base {
+  :root {
+    /* Vertical room reserved at the bottom of the viewport for floating
+       controls (chat launcher / appearance FAB). See .floating-safe-bottom. */
+    --floating-safe-space: 5.5rem;
+  }
+  @media (min-width: 640px) {
+    :root {
+      --floating-safe-space: 6.5rem;
+    }
+  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -264,6 +274,56 @@ html {
   }
   .section-padding {
     @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ───────────────────────────────────────────────────────────────────
+     Typographic scale (audit RM-017)
+
+     The landing had grown a long tail of ad-hoc sizes/weights, which made
+     it hard to tell title from datum at a glance. These are the only
+     type roles the marketing surfaces should use. Each role fixes size,
+     weight, leading and tracking together so a heading always looks like
+     the same heading, section to section.
+
+       .type-display  — page/hero headline (one per page)
+       .type-h2       — section headline
+       .type-h3       — card or sub-section headline
+       .type-lead     — supporting paragraph directly under a headline
+       .type-body     — default running text
+       .type-metric   — large financial figure (tabular)
+       .type-label    — eyebrow / uppercase label above a headline
+       .type-caption  — legal notes, helper text, footnotes
+     ─────────────────────────────────────────────────────────────────── */
+  .type-display {
+    @apply text-[2rem] leading-[1.1] font-extrabold tracking-tight sm:text-5xl lg:text-[3.5rem];
+  }
+  .type-h2 {
+    @apply text-2xl leading-[1.15] font-bold tracking-tight sm:text-4xl lg:text-[2.75rem];
+  }
+  .type-h3 {
+    @apply text-lg leading-snug font-bold tracking-tight sm:text-xl;
+  }
+  .type-lead {
+    @apply text-base leading-relaxed sm:text-lg;
+  }
+  .type-body {
+    @apply text-sm leading-relaxed sm:text-base;
+  }
+  .type-metric {
+    @apply text-3xl leading-none font-black tracking-tight tabular-nums sm:text-4xl;
+  }
+  .type-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.16em];
+  }
+  .type-caption {
+    @apply text-xs leading-relaxed;
+  }
+
+  /* Safe area for floating controls (audit RM-010) — reserves the bottom
+     strip occupied by the chat launcher and the appearance FAB so page
+     content and CTAs never end up underneath them. */
+  .floating-safe-bottom {
+    padding-bottom: calc(var(--floating-safe-space) + env(safe-area-inset-bottom, 0px));
   }
   .trust-progress-fill {
     transform-origin: left center;

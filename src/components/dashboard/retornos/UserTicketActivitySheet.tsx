@@ -47,7 +47,7 @@ function ActivityItem({ item }: { item: TicketActivity }) {
           </time>
         </div>
         <p className="text-xs text-muted-foreground">
-          {item.byRole === "admin" ? "Equipo Remata" : "Tú"}
+          {item.byRole === "admin" ? "Equipo Rematto" : "Tú"}
         </p>
         {isMessage && item.description && (
           <div className={cn(

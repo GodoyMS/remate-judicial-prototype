@@ -87,7 +87,7 @@ export function AdminUserMenu() {
   const handleHelp = () => {
     toast.message("Soporte interno", {
       description:
-        "Canal #backoffice en Slack o escribe a ops@remata.pe para incidencias urgentes.",
+        "Canal #backoffice en Slack o escribe a ops@rematto.pe para incidencias urgentes.",
     });
   };
 

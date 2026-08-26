@@ -8,10 +8,17 @@ import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+/**
+ * Audit finding RM-033: "Nosotros" pointed at `#nosotros`, an anchor that did
+ * not exist on the page, so the item silently did nothing. Every entry now has
+ * a real destination, and the in-page anchors are absolute (`/#…`) so they
+ * still work from the legal pages, which share this navbar.
+ */
 const links = [
-  { label: "Cómo funciona", href: "#como-funciona" },
-  { label: "Propiedades", href: "#propiedades" },
-  { label: "Nosotros", href: "#nosotros" },
+  { label: "Cómo funciona", href: "/#como-funciona" },
+  { label: "Propiedades", href: "/#propiedades" },
+  { label: "Tarifas", href: "/tarifas" },
+  { label: "Nosotros", href: "/nosotros" },
 ];
 
 /** Which page surface sits under the fixed navbar band. */
@@ -31,20 +38,32 @@ export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [overDark, setOverDark] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const isLanding = pathname === "/";
   // Solid bar when the mobile sheet is open, or on non-landing pages
   const solid = open || !isLanding;
+  /**
+   * RM-010 — the bar used to stay fully transparent over every light section,
+   * so section headings scrolled straight through the nav labels and both
+   * became hard to read. Past the hero it now carries a translucent surface,
+   * which keeps the glass look while giving the labels a ground to sit on.
+   */
+  const scrim = !solid && scrolled;
   // Light text only when the glass bar sits over a dark surface
   const lightText = !solid && overDark;
 
   useEffect(() => {
     if (!isLanding) {
       setOverDark(false);
+      setScrolled(false);
       return;
     }
 
-    const update = () => setOverDark(getToneUnderNav() === "dark");
+    const update = () => {
+      setOverDark(getToneUnderNav() === "dark");
+      setScrolled(window.scrollY > 24);
+    };
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update, { passive: true });
@@ -60,7 +79,11 @@ export function Navbar() {
         "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow,color] duration-300",
         solid
           ? "border-b border-border/60 bg-background/90 shadow-sm backdrop-blur-md"
-          : "border-b border-transparent bg-transparent backdrop-blur-md",
+          : scrim
+            ? overDark
+              ? "border-b border-white/10 bg-black/35 backdrop-blur-md"
+              : "border-b border-border/40 bg-background/80 shadow-sm backdrop-blur-md"
+            : "border-b border-transparent bg-transparent backdrop-blur-md",
       )}
     >
       <div className="mx-auto max-w-[1400px] section-padding">
@@ -85,32 +108,38 @@ export function Navbar() {
                 key={l.href}
                 asChild
               >
-                <a href={l.href}>{l.label}</a>
+                <Link href={l.href}>{l.label}</Link>
               </Button>
             ))}
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
+            {/* RM-012 — "Iniciar sesión" was a transparent ghost button in small,
+                low-contrast type. It now carries a visible outlined container at
+                the same height as the primary CTA, so it reads as an action
+                without competing with it for emphasis. */}
             <Button
-              variant="ghost"
-              className={cn(
-                "font-semibold text-base transition-colors",
-                lightText
-                  ? "text-white/90 hover:bg-white/10 hover:text-white"
-                  : "text-foreground",
-              )}
+              variant="outline"
               size="lg"
               asChild
+              className={cn(
+                "rounded-full border px-5 text-base font-semibold transition-colors",
+                lightText
+                  ? "border-white/50 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                  : "border-foreground/25 bg-background/70 text-foreground hover:bg-muted",
+              )}
             >
               <Link href="/login">Iniciar sesión</Link>
             </Button>
+            {/* RM-014 — one label for the primary action, used identically in
+                the navbar, the hero, "Cómo funciona" and the closing CTA. */}
             <Button
               size="lg"
               asChild
               className="rounded-full text-base font-semibold px-5 bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              <Link href="/register">Crear cuenta</Link>
+              <Link href="/register">Crear cuenta gratis</Link>
             </Button>
           </div>
 
@@ -134,30 +163,34 @@ export function Navbar() {
       <div
         className={cn(
           "md:hidden border-t border-border/60 bg-background overflow-hidden transition-all duration-300",
-          open ? "max-h-64" : "max-h-0",
+          open ? "max-h-96" : "max-h-0",
         )}
       >
         <div className="section-padding py-4 flex flex-col gap-4">
-          {links.map((l) => (
-            <a
+          {[...links, { label: "Contacto", href: "/contacto" }].map((l) => (
+            <Link
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="text-base font-medium text-foreground hover:text-primary transition-colors"
               onClick={() => setOpen(false)}
             >
               {l.label}
-            </a>
+            </Link>
           ))}
           <div className="flex flex-col gap-2 pt-2 border-t border-border/60">
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/login">Iniciar sesión</Link>
+            <Button variant="outline" size="lg" asChild className="rounded-full">
+              <Link href="/login" onClick={() => setOpen(false)}>
+                Iniciar sesión
+              </Link>
             </Button>
             <Button
-              size="sm"
+              size="lg"
               asChild
               className="rounded-full bg-primary text-primary-foreground"
             >
-              <Link href="/register">Crear cuenta gratis</Link>
+              <Link href="/register" onClick={() => setOpen(false)}>
+                Crear cuenta gratis
+              </Link>
             </Button>
           </div>
         </div>

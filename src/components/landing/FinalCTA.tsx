@@ -184,14 +184,53 @@ export function FinalCTA() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="relative w-full max-w-2xl rounded-2xl border border-background/10 bg-background/8 px-6 py-10 shadow-xl shadow-foreground/40 backdrop-blur-xl sm:px-12 sm:py-12"
         >
+          {/* RM-022 — the close used to repeat the return promise and the
+              investor count. Someone who has read the whole page already knows
+              both; what still stops them is not knowing what happens next. So
+              the close removes friction instead of selling again. */}
           <h2 className="text-balance text-3xl font-bold leading-[1.15] tracking-tight text-background sm:text-4xl lg:text-5xl">
-            Empieza a generar{" "}
-            <span className="text-primary">retornos desde hoy mismo</span>
+            Crear tu cuenta{" "}
+            <span className="text-primary">no te obliga a invertir</span>
           </h2>
-          <p className="mx-auto mt-5 max-w-lg text-pretty text-base leading-relaxed text-background/60 sm:text-lg">
-            Únete a más de 3,200 inversores que ya están aprovechando las
-            mejores oportunidades en remates judiciales del Perú.
+          <p className="mx-auto mt-5 max-w-lg text-pretty text-base leading-relaxed text-background/70 sm:text-lg">
+            Regístrate para ver el expediente, los plazos y las comisiones de
+            cada operación abierta. Decides después, o no decides.
           </p>
+
+          <ol className="mx-auto mt-8 grid max-w-xl gap-3 text-left sm:grid-cols-3">
+            {[
+              {
+                step: "1",
+                title: "Te registras",
+                detail: "Correo y contraseña. Toma un minuto.",
+              },
+              {
+                step: "2",
+                title: "Verificamos tu identidad",
+                detail: "Hasta 24 horas hábiles, como exige la ley.",
+              },
+              {
+                step: "3",
+                title: "Exploras sin compromiso",
+                detail: "Ves todo el detalle. Inviertes solo si quieres.",
+              },
+            ].map((item) => (
+              <li
+                key={item.step}
+                className="rounded-xl border border-background/10 bg-background/5 p-4"
+              >
+                <span className="type-label text-primary">
+                  Paso {item.step}
+                </span>
+                <p className="mt-1.5 text-sm font-semibold text-background">
+                  {item.title}
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-background/60">
+                  {item.detail}
+                </p>
+              </li>
+            ))}
+          </ol>
         </motion.div>
 
         <motion.div
@@ -206,10 +245,28 @@ export function FinalCTA() {
             className="group h-13 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/30 hover:bg-primary/90"
           >
             <Link href="/register">
-              Crear tu cuenta gratis
+              Crear cuenta gratis
               <ArrowRight className="ml-1 size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </Button>
+
+          <p className="mt-5 text-xs leading-relaxed text-background/55">
+            Las inversiones en remates judiciales conllevan riesgo de pérdida.{" "}
+            <Link
+              href="/politica-de-riesgos"
+              className="font-medium text-background/80 underline underline-offset-2 hover:text-background"
+            >
+              Lee la política de riesgos
+            </Link>{" "}
+            o{" "}
+            <Link
+              href="/contacto"
+              className="font-medium text-background/80 underline underline-offset-2 hover:text-background"
+            >
+              habla con el equipo
+            </Link>{" "}
+            antes de decidir.
+          </p>
         </motion.div>
       </div>
     </section>

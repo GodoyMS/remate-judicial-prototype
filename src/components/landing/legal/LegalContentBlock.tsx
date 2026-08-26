@@ -18,6 +18,15 @@ import {
   AlertOctagon,
   BadgeCheck,
   ShieldCheck,
+  Clock,
+  Coins,
+  Headset,
+  HeartHandshake,
+  Landmark,
+  Receipt,
+  Route,
+  TrendingDown,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 
@@ -38,6 +47,15 @@ const contentIcons = {
   AlertOctagon,
   BadgeCheck,
   ShieldCheck,
+  Clock,
+  Coins,
+  Headset,
+  HeartHandshake,
+  Landmark,
+  Receipt,
+  Route,
+  TrendingDown,
+  Wallet,
 } as const;
 
 type ContentIconName = keyof typeof contentIcons;

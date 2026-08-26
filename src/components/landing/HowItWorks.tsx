@@ -26,14 +26,28 @@ type Step = {
   imageAlt: string;
 };
 
+/**
+ * Audit findings RM-004, RM-007 and RM-029.
+ *
+ * · RM-007 — the copy leaned on terms this audience may be meeting for the
+ *   first time (KYC, pool, adjudicación, retorno). Each step now leads in
+ *   everyday language and names the technical term only afterwards, so the
+ *   vocabulary is available without being a prerequisite.
+ * · RM-004 — the section promised "tu primera inversión en menos de 10
+ *   minutos" while the compliance page states verification takes up to 24
+ *   business hours. The durations below are what each step actually takes.
+ * · RM-029 — step 4 used to jump straight from paying to collecting, hiding
+ *   the months of judicial process in between. It now says so, and links to
+ *   the stage-by-stage breakdown.
+ */
 const STEPS: Step[] = [
   {
     icon: UserCheck,
     step: "01",
     action: "Regístrate",
-    duration: "2 min",
-    title: "Crea tu cuenta y verifica tu identidad",
-    desc: "Regístrate en minutos. Sube tu DNI y completa la verificación KYC para acceder a todas las subastas disponibles.",
+    duration: "5 minutos",
+    title: "Crea tu cuenta y confirma quién eres",
+    desc: "Te registras con tu correo y subes una foto de tu DNI y una selfie. Es la verificación de identidad que exige la ley peruana a toda plataforma financiera (se le llama KYC).",
     image: "/images/how-it-works/step-01.jpg",
     imageAlt: "Persona creando su cuenta desde el laptop",
   },
@@ -41,9 +55,9 @@ const STEPS: Step[] = [
     icon: Search,
     step: "02",
     action: "Explora",
-    duration: "3 min",
-    title: "Explora propiedades verificadas",
-    desc: "Navega nuestro catálogo de propiedades en remate judicial. Cada una auditada legalmente con documentos disponibles.",
+    duration: "Verificación: hasta 24 h hábiles",
+    title: "Revisa las propiedades disponibles",
+    desc: "Mientras aprobamos tu verificación, ya puedes mirar las subastas abiertas. Cada propiedad muestra su número de expediente judicial, su precio base y qué se estima obtener de ella.",
     image: "/images/how-it-works/step-02.jpg",
     imageAlt: "Propiedad moderna verificada lista para explorar",
   },
@@ -51,19 +65,19 @@ const STEPS: Step[] = [
     icon: Banknote,
     step: "03",
     action: "Invierte",
-    duration: "2 min",
-    title: "Invierte desde S/ 500",
-    desc: "Elige el monto a invertir. Procesamos tu pago de forma segura y registramos tu participación en la subasta.",
+    duration: "2 minutos",
+    title: "Eliges cuánto pones, desde S/ 500",
+    desc: "Tu dinero se junta con el de otros inversores para llegar al monto que la subasta requiere. Hasta que ese monto se completa, tu aporte permanece en una cuenta aparte y puede devolverse.",
     image: "/images/how-it-works/step-03.jpg",
     imageAlt: "Pago móvil seguro para invertir en segundos",
   },
   {
     icon: Trophy,
     step: "04",
-    action: "Recibe",
-    duration: "1 min",
-    title: "Recibe tus retornos",
-    desc: "Una vez adjudicada la propiedad, recibes tu retorno proporcional directamente en tu cuenta Remata.",
+    action: "Esperas y cobras",
+    duration: "Entre 12 y 24 meses",
+    title: "El proceso judicial sigue su curso, y luego cobras",
+    desc: "Aquí está la parte que toma tiempo: ganar la subasta, inscribir la propiedad, tomar posesión y venderla. Recién entonces se reparte el resultado. Puedes seguir cada etapa desde tu panel.",
     image: "/images/how-it-works/step-04.jpg",
     imageAlt: "Crecimiento de retornos sobre la inversión",
   },
@@ -98,23 +112,34 @@ export function HowItWorks() {
           <div className="relative px-5 py-10 sm:px-8 sm:py-12 lg:px-12 lg:py-14">
             {/* Header */}
             <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
-              <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
-                De cero a tu primera inversión en{" "}
-                <span className="text-primary">menos de 10 minutos</span>
+              <h2 className="type-h2 text-balance text-foreground">
+                Abrir tu cuenta toma minutos.{" "}
+                <span className="text-primary">
+                  La operación, meses.
+                </span>
               </h2>
-              <p className="mt-4 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Cuatro pasos simples. Haz clic en cada uno para ver cómo funciona.
+              <p className="mt-4 max-w-lg type-lead text-pretty text-muted-foreground">
+                Cuatro pasos, en orden y con sus tiempos reales. Toca cada uno
+                para ver el detalle.
               </p>
-              <Button
-                asChild
-                size="lg"
-                className="mt-7 h-12 rounded-full px-7 font-bold shadow-lg shadow-primary/20"
-              >
-                <Link href="/register">
-                  Crear cuenta gratis
-                  <ArrowRight className="ml-1.5 size-4" />
+              <div className="mt-7 flex flex-col items-center gap-4 sm:flex-row">
+                <Button
+                  asChild
+                  size="lg"
+                  className="h-12 rounded-full px-7 font-bold shadow-lg shadow-primary/20"
+                >
+                  <Link href="/register">
+                    Crear cuenta gratis
+                    <ArrowRight className="ml-1.5 size-4" />
+                  </Link>
+                </Button>
+                <Link
+                  href="/proceso-de-inversion"
+                  className="type-body font-semibold text-foreground underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary"
+                >
+                  Ver las 8 etapas en detalle
                 </Link>
-              </Button>
+              </div>
             </div>
 
             {/* Interactive process */}
@@ -141,13 +166,13 @@ export function HowItWorks() {
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                         isActive
                           ? "bg-card p-5 shadow-md shadow-foreground/5 ring-1 ring-border/60 sm:p-6"
-                          : "px-5 py-4 opacity-45 hover:opacity-70 sm:px-6"
+                          : "px-5 py-4 hover:bg-card/60 sm:px-6"
                       )}
                     >
                       <p
                         className={cn(
                           "text-sm font-semibold transition-colors duration-300",
-                          isActive ? "text-primary" : "text-muted-foreground"
+                          isActive ? "text-primary" : "text-foreground/70"
                         )}
                       >
                         Paso {i + 1}
@@ -155,7 +180,7 @@ export function HowItWorks() {
                       <p
                         className={cn(
                           "mt-1 text-lg font-bold tracking-tight transition-colors duration-300 sm:text-xl",
-                          isActive ? "text-foreground" : "text-muted-foreground"
+                          isActive ? "text-foreground" : "text-foreground/80"
                         )}
                       >
                         {step.title}
@@ -235,8 +260,11 @@ export function HowItWorks() {
                             {current.action}
                           </p>
                         </div>
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
-                          <Clock3 className="size-3.5" />
+                        {/* Durations vary in length now that they are honest
+                            ("2 minutos" vs "Entre 12 y 24 meses"), so the pill
+                            wraps instead of overflowing on narrow screens. */}
+                        <span className="inline-flex max-w-[55%] shrink items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-right text-xs font-semibold text-white backdrop-blur-md">
+                          <Clock3 className="size-3.5 shrink-0" />
                           {current.duration}
                         </span>
                       </div>

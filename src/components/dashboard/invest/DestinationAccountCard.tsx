@@ -12,14 +12,14 @@ const bankDetailsByCurrency: Record<
     { label: "Banco", value: "BCP" },
     { label: "Cuenta corriente (PEN)", value: "193-12345678-0-01", copy: true },
     { label: "CCI", value: "002-193-001234567801-52", copy: true },
-    { label: "Titular", value: "Remata S.A.C." },
+    { label: "Titular", value: "Rematto S.A.C." },
     { label: "RUC", value: "20123456789" },
   ],
   USD: [
     { label: "Banco", value: "BCP" },
     { label: "Cuenta corriente (USD)", value: "194-98765432-1-56", copy: true },
     { label: "CCI", value: "002-194-009876543256-78", copy: true },
-    { label: "Titular", value: "Remata S.A.C." },
+    { label: "Titular", value: "Rematto S.A.C." },
     { label: "RUC", value: "20123456789" },
   ],
 };
@@ -47,7 +47,7 @@ export function DestinationAccountCard({ currency = "PEN" }: DestinationAccountC
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground">
-              Cuenta destino — Remata ({currency === "USD" ? "USD" : "PEN"})
+              Cuenta destino — Rematto ({currency === "USD" ? "USD" : "PEN"})
             </p>
             <p className="text-xs text-muted-foreground">Realiza la transferencia o depósito a esta cuenta</p>
           </div>

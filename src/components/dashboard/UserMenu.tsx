@@ -69,7 +69,7 @@ export function UserMenu() {
   const handleHelp = () => {
     toast.message("Centro de ayuda", {
       description:
-        "Escríbenos a soporte@remata.pe — respondemos en menos de 2 horas hábiles.",
+        "Escríbenos a soporte@rematto.pe — respondemos en menos de 2 horas hábiles.",
     });
   };
 

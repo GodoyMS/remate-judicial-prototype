@@ -49,7 +49,7 @@ export function AuthBrandingPanel() {
 
         <div className="rounded-2xl bg-card p-5 border border-border shadow-sm">
           <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-            &ldquo;Remata me permitió diversificar mi portafolio con propiedades reales.
+            &ldquo;Rematto me permitió diversificar mi portafolio con propiedades reales.
             Mi primera inversión de S/ 2,000 generó S/ 420 en 4 meses.&rdquo;
           </p>
           <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ export function AuthBrandingPanel() {
       </div>
 
       <p className="relative text-xs text-secondary-foreground/60">
-        © {new Date().getFullYear()} Remata S.A.C. Regulado por la SBS.
+        © {new Date().getFullYear()} Rematto S.A.C. · Lima, Perú
       </p>
     </div>
   );

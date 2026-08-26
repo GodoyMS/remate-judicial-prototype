@@ -49,3 +49,63 @@ export function sumByCurrency<T extends { amount: number; currency: PropertyCurr
     return acc;
   }, {});
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Display standard for money and rates (audit RM-016)
+
+   The landing mixed hand-typed strings ("S/ 280,000", "S/ 165K", "S/ 48M+")
+   with `Intl`-formatted values, so the same kind of number looked different
+   from one block to the next. Every monetary or percentage value rendered
+   on a marketing surface must go through one of the helpers below.
+
+   Rules:
+   - symbol first, then a non-breaking space, then the amount: `S/ 1,500`
+   - thousands separated with `,`; no decimals unless the value needs them
+   - abbreviations use uppercase K / M with a non-breaking space: `S/ 48 M`
+   - percentages use no space before `%`: `22%`
+   ───────────────────────────────────────────────────────────────────────── */
+
+/** Non-breaking space — keeps the symbol glued to its amount on wrap. */
+const NBSP = " ";
+
+/** `S/ 1,500` — the canonical exact form. */
+export function formatMoney(
+  amount: number,
+  currency: PropertyCurrency = "PEN"
+): string {
+  const digits = new Intl.NumberFormat("es-PE", {
+    maximumFractionDigits: 0,
+  }).format(amount);
+  return `${getCurrencySymbol(currency)}${NBSP}${digits}`;
+}
+
+/** `S/ 48 M` — for headline figures where precision is not the point. */
+export function formatMoneyCompact(
+  amount: number,
+  currency: PropertyCurrency = "PEN"
+): string {
+  const symbol = getCurrencySymbol(currency);
+  const abs = Math.abs(amount);
+  if (abs >= 1_000_000) {
+    const value = trimZero(amount / 1_000_000);
+    return `${symbol}${NBSP}${value}${NBSP}M`;
+  }
+  if (abs >= 1_000) {
+    const value = trimZero(amount / 1_000);
+    return `${symbol}${NBSP}${value}${NBSP}K`;
+  }
+  return formatMoney(amount, currency);
+}
+
+/** `22%` — percentages never carry a space before the sign. */
+export function formatPercent(value: number, fractionDigits = 0): string {
+  return `${value.toFixed(fractionDigits).replace(".", ",")}%`;
+}
+
+/** One decimal at most, and no trailing `,0`. */
+function trimZero(value: number): string {
+  return value
+    .toFixed(1)
+    .replace(/\.0$/, "")
+    .replace(".", ",");
+}
