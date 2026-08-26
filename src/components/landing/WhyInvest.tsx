@@ -43,6 +43,8 @@ type Pillar = {
   desc: string;
   proofLabel: string;
   proofHref: string;
+  image: string;
+  imageAlt: string;
 };
 
 const PILLARS: Pillar[] = [
@@ -54,6 +56,11 @@ const PILLARS: Pillar[] = [
     desc: "Postular a un remate judicial por tu cuenta exige el precio íntegro del inmueble en pocos días. Aquí el monto se reúne entre varios inversores y participas con un ticket pequeño.",
     proofLabel: "Por qué no ir directo al remate",
     proofHref: "/nosotros#por-que-rematto",
+    /* Acceso — a residential block: the asset a single buyer could not reach
+       alone and a pool can. */
+    image:
+      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=900&fit=crop&auto=format&q=80",
+    imageAlt: "Edificio residencial en una zona urbana consolidada",
   },
   {
     id: "legal",
@@ -63,6 +70,10 @@ const PILLARS: Pillar[] = [
     desc: "Publicamos el número de expediente y el juzgado de cada propiedad, para que puedas contrastarlo en la fuente pública. Antes de publicarse, el expediente pasa por estudio de títulos y revisión de cargas en SUNARP.",
     proofLabel: "Ver el proceso completo",
     proofHref: "/proceso-de-inversion",
+    /* Rigor legal — the court record itself. */
+    image:
+      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&h=900&fit=crop&auto=format&q=80",
+    imageAlt: "Documentación judicial junto al mazo de un juez",
   },
   {
     id: "risk",
@@ -72,6 +83,10 @@ const PILLARS: Pillar[] = [
     desc: "Pool incompleto, subasta no adjudicada, proceso suspendido, venta demorada o por debajo de lo estimado: los ocho escenarios adversos están escritos, con lo que ocurre con tu capital en cada uno.",
     proofLabel: "Leer la política de riesgos",
     proofHref: "/politica-de-riesgos",
+    /* Transparencia — reading the terms before signing anything. */
+    image:
+      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&h=900&fit=crop&auto=format&q=80",
+    imageAlt: "Persona revisando las condiciones de una operación",
   },
   {
     id: "fees",
@@ -81,6 +96,10 @@ const PILLARS: Pillar[] = [
     desc: "Registrarte y explorar no cuesta nada. La comisión de éxito se aplica solo sobre la ganancia: si la operación cierra sin ella, esa comisión es cero.",
     proofLabel: "Ver todas las tarifas",
     proofHref: "/tarifas",
+    /* Costos claros — the arithmetic of what a deal actually leaves. */
+    image:
+      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&h=900&fit=crop&auto=format&q=80",
+    imageAlt: "Cálculo de comisiones sobre documentos financieros",
   },
 ];
 
@@ -157,27 +176,52 @@ export function WhyInvest() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.45, delay: reduceMotion ? 0 : i * 0.07 }}
-                className="flex flex-col rounded-3xl border border-border/60 bg-card p-6 shadow-sm transition-shadow hover:shadow-md sm:p-8"
+                className="group flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition-shadow hover:shadow-md"
               >
-                <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20">
-                  <Icon className="size-5.5" strokeWidth={2.1} />
-                </span>
+                {/* Image band — one photograph per pillar, chosen for that
+                    pillar's meaning, and all four carry the same crop ratio and
+                    brand grade so they read as a set rather than a stock grab
+                    bag (RM-011). */}
+                <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={pillar.image}
+                    alt={pillar.imageAlt}
+                    className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div
+                    className="absolute inset-0 bg-linear-to-t from-card via-card/25 to-transparent"
+                    aria-hidden
+                  />
+                  <div
+                    className="absolute inset-0 bg-linear-to-tr from-primary/25 via-transparent to-transparent mix-blend-multiply"
+                    aria-hidden
+                  />
 
-                <p className="type-label mt-5 text-primary">{pillar.eyebrow}</p>
-                <h3 className="type-h3 mt-2 text-balance text-foreground">
-                  {pillar.title}
-                </h3>
-                <p className="type-body mt-3 text-pretty text-muted-foreground">
-                  {pillar.desc}
-                </p>
+                  <span className="absolute bottom-4 left-6 flex size-12 items-center justify-center rounded-2xl bg-card text-primary shadow-md ring-1 ring-primary/20">
+                    <Icon className="size-5.5" strokeWidth={2.1} />
+                  </span>
+                </div>
 
-                <Link
-                  href={pillar.proofHref}
-                  className="group type-body mt-6 inline-flex items-center gap-1.5 font-semibold text-primary hover:underline"
-                >
-                  {pillar.proofLabel}
-                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
+                <div className="flex flex-1 flex-col p-6 pt-5 sm:p-8 sm:pt-6">
+                  <p className="type-label text-primary">{pillar.eyebrow}</p>
+                  <h3 className="type-h3 mt-2 text-balance text-foreground">
+                    {pillar.title}
+                  </h3>
+                  <p className="type-body mt-3 text-pretty text-muted-foreground">
+                    {pillar.desc}
+                  </p>
+
+                  <Link
+                    href={pillar.proofHref}
+                    className="type-body mt-6 inline-flex w-fit items-center gap-1.5 font-semibold text-primary hover:underline"
+                  >
+                    {pillar.proofLabel}
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                </div>
               </motion.article>
             );
           })}
