@@ -86,7 +86,7 @@ const RISKS: RiskItem[] = [
   {
     id: "no-adjudicacion",
     question: "¿Y si otro postor gana la subasta?",
-    what: "Otro participante ofrece más que el techo de puja fijado para la operación. Ese techo se define antes de abrir el pool y no se sube durante el remate.",
+    what: "Otro participante ofrece más que el techo de puja fijado para la operación. Ese techo se define antes de abrir el capital colectivo y no se sube durante el remate.",
     capital: "Se devuelve el 100% de tu aporte, sin comisión.",
     timing: "Máximo 10 días hábiles desde el acto de remate.",
     outcome: "refund",
@@ -334,7 +334,10 @@ export function RiskPolicyContent() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-6">
+            <div
+              id="cuando-no-invertir"
+              className="scroll-mt-24 rounded-2xl border border-border bg-card p-6"
+            >
               <h3 className="type-h3 text-foreground">
                 Cuándo no invertir aquí
               </h3>

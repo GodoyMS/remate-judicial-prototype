@@ -12,8 +12,10 @@ import {
   AlertTriangle,
   Building2,
   Headset,
+  Lock,
   Receipt,
   Route,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -26,8 +28,10 @@ const badgeIcons = {
   AlertTriangle,
   Building2,
   Headset,
+  Lock,
   Receipt,
   Route,
+  Users,
 } as const;
 
 type BadgeIconName = keyof typeof badgeIcons;

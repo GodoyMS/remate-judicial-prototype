@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LegalPageLayout } from "@/components/landing/LegalPageLayout";
 import { LegalPageHero } from "@/components/landing/legal/LegalPageHero";
 import { LegalContentBlock } from "@/components/landing/legal/LegalContentBlock";
@@ -52,20 +53,25 @@ export default function PoliticaDePrivacidadPage() {
               <li>Procesar inversiones y gestionar tu cuenta</li>
               <li>Enviarte notificaciones sobre tus inversiones y la plataforma</li>
               <li>Prevenir fraude y actividades ilícitas</li>
-              <li>Cumplir con requerimientos de la SBS y autoridades competentes</li>
+              <li>Atender requerimientos de autoridades competentes cuando la ley lo exige</li>
               <li>Mejorar nuestros servicios mediante análisis agregados y anónimos</li>
             </ul>
           </LegalContentBlock>
 
           <LegalContentBlock icon="Lock" title="3. Protección y seguridad" index={2}>
             <p>
-              Implementamos cifrado TLS en tránsito y AES-256 en reposo. El acceso a datos
-              personales está restringido por roles y autenticación de dos factores para el
-              personal autorizado.
+              La conexión con la plataforma va cifrada con TLS y los datos personales y
+              documentos de identidad se guardan cifrados en reposo. El acceso está
+              restringido por rol, con doble factor de autenticación para el personal
+              autorizado, y cada consulta a un documento de identidad queda registrada.
             </p>
             <p>
-              Realizamos auditorías de seguridad periódicas y contamos con un plan de respuesta
-              ante incidentes conforme a estándares internacionales.
+              El detalle de los controles implementados, su alcance y lo que no
+              certificamos está publicado en la{" "}
+              <Link href="/seguridad" className="font-medium text-primary underline">
+                página de seguridad
+              </Link>
+              .
             </p>
           </LegalContentBlock>
 

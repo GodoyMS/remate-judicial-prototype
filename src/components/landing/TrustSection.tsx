@@ -12,6 +12,7 @@ import {
 } from "react";
 import {
   ArrowRight,
+  ExternalLink,
   FileCheck,
   Fingerprint,
   Gavel,
@@ -101,7 +102,7 @@ const trustCards: TrustCard[] = [
     icon: Scale,
     title: "Los escenarios adversos, por escrito",
     description:
-      "Pool incompleto, subasta no adjudicada, proceso suspendido, venta demorada o por debajo de lo estimado: qué pasa con tu capital en cada caso.",
+      "Capital colectivo incompleto, subasta no adjudicada, proceso suspendido, venta demorada o por debajo de lo estimado: qué pasa con tu capital en cada caso.",
     verify: "Ocho escenarios documentados, con plazos de devolución concretos.",
     href: "/politica-de-riesgos",
     linkLabel: "Leer la política de riesgos",
@@ -113,13 +114,13 @@ const trustCards: TrustCard[] = [
     id: "tarifas",
     meta: "Costos",
     icon: Receipt,
-    title: "Todas las comisiones, publicadas",
+    title: "Nuestros intereses también están alineados contigo",
     description:
-      "Comisiones de la plataforma y costos de terceros, con el momento exacto en que se aplican y un ejemplo con números.",
+      "La comisión de éxito solo se cobra cuando la operación genera ganancia. Las demás comisiones y los costos de terceros están publicados, con el momento exacto en que se aplican.",
     verify:
-      "Nada se cobra por registrarte ni por operaciones que no llegaron a ejecutarse.",
+      "Conoce todos los costos antes de invertir: nada se cobra por registrarte ni por operaciones que no llegaron a ejecutarse.",
     href: "/tarifas",
-    linkLabel: "Ver tarifas y comisiones",
+    linkLabel: "Conoce todos los costos antes de invertir",
     image:
       "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&h=900&fit=crop&auto=format&q=80",
     imageAlt: "Cálculo de comisiones y comprobantes",
@@ -153,6 +154,39 @@ const trustCards: TrustCard[] = [
     image:
       "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&h=900&fit=crop&auto=format&q=80",
     imageAlt: "Candado digital sobre información protegida",
+  },
+];
+
+/**
+ * Finding 1 (Crítica) — the section named the Poder Judicial and SUNARP as
+ * the places where a reader could check the claims, and then gave them no way
+ * to get there. These are the official portals, with what can be validated in
+ * each one. They open in a new tab so the reader does not lose the page.
+ */
+const officialSources = [
+  {
+    id: "pj",
+    name: "Poder Judicial",
+    logo: "/images/institutions/pj.png",
+    what: "Consulta el estado y las actuaciones de un expediente judicial con su número.",
+    href: "https://cej.pj.gob.pe/cej/forms/busquedaform.html",
+    linkLabel: "Ir a la consulta oficial",
+  },
+  {
+    id: "sunarp",
+    name: "SUNARP",
+    logo: "/images/institutions/sunarp.png",
+    what: "Consulta la información registral del inmueble: titularidad, cargas y gravámenes.",
+    href: "https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/frmIndex.faces",
+    linkLabel: "Ir al servicio oficial",
+  },
+  {
+    id: "sunat",
+    name: "SUNAT",
+    logo: "/images/institutions/sunat.png",
+    what: `Verifica el RUC y la condición del contribuyente de ${BRAND_NAME}.`,
+    href: "https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/FrameCriterioBusquedaWeb.jsp",
+    linkLabel: "Verificar RUC en SUNAT",
   },
 ];
 
@@ -536,6 +570,67 @@ export function TrustSection() {
       >
         <TrustCardsCarousel />
       </motion.div>
+
+      {/* Compruébalo por tu cuenta — the actual doors to the public sources
+          (finding 1). */}
+      <div className="relative mx-auto mb-10 max-w-[1400px] section-padding sm:mb-12">
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+          className="rounded-3xl border border-primary/20 bg-primary/5 p-6 sm:p-8"
+        >
+          <h3 className="type-h3 text-balance text-foreground">
+            Compruébalo por tu cuenta, en la fuente oficial
+          </h3>
+          <p className="mt-2 type-body text-pretty text-muted-foreground">
+            No hace falta que nos creas: estos son los portales del Estado
+            donde puedes contrastar cada dato que publicamos.
+          </p>
+
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {officialSources.map((source) => (
+              <li key={source.id} className="h-full">
+                <a
+                  href={source.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex h-full flex-col rounded-2xl border border-border/70 bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                >
+                  <span className="flex h-10 w-20 items-center justify-center overflow-hidden rounded-lg bg-card ring-1 ring-border">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={source.logo}
+                      alt={`Logo ${source.name}`}
+                      width={80}
+                      height={40}
+                      className="h-8 w-[64px] object-contain"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </span>
+                  <p className="mt-4 type-body font-semibold text-foreground">
+                    {source.name}
+                  </p>
+                  <p className="mt-1.5 flex-1 text-pretty text-sm leading-relaxed text-muted-foreground">
+                    {source.what}
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+                    {source.linkLabel}
+                    <ExternalLink className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <p className="type-caption mt-5 text-muted-foreground">
+            Enlaces a portales de terceros. Se abren en una pestaña nueva y su
+            disponibilidad depende de cada entidad.
+          </p>
+        </motion.div>
+      </div>
 
       {/* Institutions — described factually, with the non-endorsement note in
           the same block rather than in fine print elsewhere. */}

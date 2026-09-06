@@ -234,7 +234,7 @@ export function CardPaymentForm({ amount, currency = "PEN", value, onChange }: C
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border/50 pt-4">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Lock className="size-3.5 text-primary" />
-            <span>Pago seguro con encriptación SSL 256-bit</span>
+            <span>Conexión cifrada (TLS). No almacenamos el número completo de tu tarjeta.</span>
           </div>
           <div className="flex items-center gap-1.5">
             {(["VISA", "MC", "AMEX"] as const).map((label) => (

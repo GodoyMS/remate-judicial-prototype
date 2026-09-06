@@ -2,11 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronDown, Mail, MessageCircle, Phone } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  Mail,
+  MessageCircle,
+  Phone,
+  ShieldAlert,
+} from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import {
   BRAND_LEGAL_NAME,
-  BRAND_NAME,
   CONTACT,
   MAILTO_SALES,
   WHATSAPP_URL,
@@ -30,14 +36,22 @@ import { cn } from "@/lib/utils";
  *   claim cannot ship without the registration document to back it.
  */
 
+/**
+ * Finding 11 — "Libro de reclamaciones" appeared under both Legal and
+ * Soporte, and "Cumplimiento regulatorio" / "Cumplimiento AML & KYC" were two
+ * labels for the same page. Each destination appears exactly once: the formal
+ * channels live under Legal, and Soporte keeps only the two ways of asking a
+ * question.
+ */
 const columns = [
   {
     title: "Plataforma",
     links: [
       { label: "Cómo funciona", href: "/#como-funciona" },
-      { label: "Propiedades", href: "/#propiedades" },
+      { label: "Propiedades", href: "/propiedades" },
       { label: "Proceso de inversión", href: "/proceso-de-inversion" },
       { label: "Tarifas", href: "/tarifas" },
+      { label: "Premium", href: "/premium" },
       { label: "Nosotros", href: "/nosotros" },
     ],
   },
@@ -47,8 +61,9 @@ const columns = [
       { label: "Política de riesgos", href: "/politica-de-riesgos" },
       { label: "Términos de uso", href: "/terminos-de-uso" },
       { label: "Política de privacidad", href: "/politica-de-privacidad" },
-      { label: "Cumplimiento regulatorio", href: "/cumplimiento-regulatorio" },
+      { label: "Cumplimiento / AML & KYC", href: "/cumplimiento-regulatorio" },
       { label: "Libro de reclamaciones", href: "/libro-de-reclamaciones" },
+      { label: "Seguridad", href: "/seguridad" },
     ],
   },
   {
@@ -56,11 +71,10 @@ const columns = [
     links: [
       { label: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
       { label: "Contacto", href: "/contacto" },
-      { label: "Libro de reclamaciones", href: "/libro-de-reclamaciones" },
-      { label: "Cumplimiento AML & KYC", href: "/cumplimiento-regulatorio" },
     ],
   },
 ];
+
 
 function LinkList({ links }: { links: { label: string; href: string }[] }) {
   return (
@@ -135,6 +149,24 @@ export function Footer() {
               judiciales en Perú.
             </p>
 
+            {/* Finding 12 — the footer read as a link dump. It now opens with
+                an invitation, so the last thing on the page is a person to
+                talk to rather than a list of documents. */}
+            <div className="max-w-sm rounded-2xl border border-background/12 bg-background/8 p-5">
+              <p className="text-lg font-bold leading-snug tracking-tight text-background sm:text-xl">
+                ¿Tienes alguna pregunta?
+                <br />
+                <span className="text-primary">Nosotros estamos para ti.</span>
+              </p>
+              <Link
+                href="/contacto"
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-background underline decoration-primary/50 underline-offset-4 transition-colors hover:text-primary"
+              >
+                Contáctanos
+                <ArrowRight className="size-4" />
+              </Link>
+            </div>
+
             <div className="flex flex-col gap-2.5">
               <a
                 href={WHATSAPP_URL}
@@ -177,20 +209,17 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Risk warning — a real link, not a suggestion to go looking (RM-032) */}
-        <div className="mt-12 rounded-2xl border border-background/10 bg-background/5 p-5">
-          <p className="text-xs leading-relaxed text-background/70">
-            <strong className="font-semibold text-background">
-              Advertencia de riesgo:
-            </strong>{" "}
-            invertir en remates judiciales conlleva riesgo de pérdida total o
-            parcial del capital. Los retornos publicados son estimaciones
-            referenciales y no constituyen una garantía de rendimiento. Los
-            plazos dependen de procesos judiciales ajenos a {BRAND_NAME}. Antes
-            de invertir, lee la{" "}
+        {/* Finding 13 — the closing risk warning ran five lines and nobody
+            reads a legal paragraph at the bottom of a page. The full text
+            lives on the risk policy; what stays here is the instruction to
+            go and read it. */}
+        <div className="mt-12 flex flex-col gap-2 border-t border-background/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex items-center gap-2 text-sm text-background/70">
+            <ShieldAlert className="size-4 shrink-0 text-primary" />
+            Antes de invertir, lee la{" "}
             <Link
               href="/politica-de-riesgos"
-              className="font-semibold text-background underline underline-offset-2"
+              className="font-semibold text-background underline underline-offset-2 hover:text-primary"
             >
               política de riesgos
             </Link>{" "}

@@ -1,12 +1,12 @@
 import { Clock, Shield, Phone } from "lucide-react";
+import { BRAND_NAME, CONTACT } from "@/lib/brand";
 import { LegalPageLayout } from "@/components/landing/LegalPageLayout";
 import { LegalPageHero } from "@/components/landing/legal/LegalPageHero";
 import { ComplaintForm } from "@/components/landing/legal/ComplaintForm";
 
 export const metadata = {
-  title: "Libro de reclamaciones | Rematto",
-  description:
-    "Presenta tu reclamo, queja o sugerencia a través del Libro de Reclamaciones virtual de Rematto.",
+  title: `Libro de reclamaciones | ${BRAND_NAME}`,
+  description: `Presenta tu reclamo, queja o sugerencia a través del Libro de Reclamaciones virtual de ${BRAND_NAME}.`,
 };
 
 const infoCards = [
@@ -23,7 +23,14 @@ const infoCards = [
   {
     icon: Phone,
     title: "Otros canales",
-    desc: "También puedes llamar al (01) 700-REMATA o escribir a soporte@rematto.pe",
+    /**
+     * Finding 40 — this card published "(01) 700-REMATA", a number that
+     * appears nowhere else and does not match the one in Contacto and the
+     * footer. Escalating a complaint through a channel that does not exist is
+     * the worst place to lose someone, so both values now come from the
+     * single contact record.
+     */
+    desc: `También puedes llamar al ${CONTACT.phone} o escribir a ${CONTACT.supportEmail}`,
   },
 ];
 

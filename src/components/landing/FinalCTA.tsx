@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { dashboardProperties } from "@/lib/dashboard/mock-data";
 import { cn } from "@/lib/utils";
@@ -197,40 +197,27 @@ export function FinalCTA() {
             cada operación abierta. Decides después, o no decides.
           </p>
 
-          <ol className="mx-auto mt-8 grid max-w-xl gap-3 text-left sm:grid-cols-3">
+          {/* Finding 17 — the close used a second numbered sequence right
+              after the four-step process (which itself links to eight
+              stages). Three checks say the same thing without pretending to
+              be another process. */}
+          <ul className="mx-auto mt-8 flex max-w-xl flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-x-5">
             {[
-              {
-                step: "1",
-                title: "Te registras",
-                detail: "Correo y contraseña. Toma un minuto.",
-              },
-              {
-                step: "2",
-                title: "Verificamos tu identidad",
-                detail: "Hasta 24 horas hábiles, como exige la ley.",
-              },
-              {
-                step: "3",
-                title: "Exploras sin compromiso",
-                detail: "Ves todo el detalle. Inviertes solo si quieres.",
-              },
+              "Registro en ~1 min",
+              "Verificación de identidad",
+              "Explora sin compromiso",
             ].map((item) => (
               <li
-                key={item.step}
-                className="rounded-xl border border-background/10 bg-background/5 p-4"
+                key={item}
+                className="flex items-center gap-2 text-sm font-medium text-background/85"
               >
-                <span className="type-label text-primary">
-                  Paso {item.step}
+                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/25 text-primary">
+                  <Check className="size-3" strokeWidth={3} />
                 </span>
-                <p className="mt-1.5 text-sm font-semibold text-background">
-                  {item.title}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-background/60">
-                  {item.detail}
-                </p>
+                {item}
               </li>
             ))}
-          </ol>
+          </ul>
         </motion.div>
 
         <motion.div
@@ -239,31 +226,41 @@ export function FinalCTA() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
         >
-          <Button
-            size="lg"
-            asChild
-            className="group h-13 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/30 hover:bg-primary/90"
-          >
-            <Link href="/register">
-              Crear cuenta gratis
-              <ArrowRight className="ml-1 size-4 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-          </Button>
+          {/* Finding 9 — the close only offered registration, with no route
+              for someone whose remaining blocker is a question. Two paths:
+              create the account, or talk to a person first. */}
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Button
+              size="lg"
+              asChild
+              className="group h-13 w-full rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/30 hover:bg-primary/90 sm:w-auto"
+            >
+              <Link href="/register">
+                Crear cuenta gratis
+                <ArrowRight className="ml-1 size-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </Button>
+            <Button
+              size="lg"
+              asChild
+              variant="outline"
+              className="h-auto min-h-13 w-full whitespace-normal rounded-full border-background/30 bg-background/10 px-7 py-3 text-center text-base font-semibold leading-snug text-background backdrop-blur-sm hover:bg-background/20 hover:text-background sm:w-auto"
+            >
+              <Link href="/contacto">
+                <MessageCircle className="mr-1.5 size-4" />
+                Hablar con un asesor antes de registrarme
+              </Link>
+            </Button>
+          </div>
 
           <p className="mt-5 text-xs leading-relaxed text-background/55">
-            Las inversiones en remates judiciales conllevan riesgo de pérdida.{" "}
+            Crear tu cuenta es gratis y no te obliga a invertir. Las inversiones
+            en remates judiciales conllevan riesgo de pérdida.{" "}
             <Link
               href="/politica-de-riesgos"
               className="font-medium text-background/80 underline underline-offset-2 hover:text-background"
             >
               Lee la política de riesgos
-            </Link>{" "}
-            o{" "}
-            <Link
-              href="/contacto"
-              className="font-medium text-background/80 underline underline-offset-2 hover:text-background"
-            >
-              habla con el equipo
             </Link>{" "}
             antes de decidir.
           </p>

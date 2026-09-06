@@ -69,8 +69,8 @@ const faqCategories = [
         a: "Si la subasta se declara desierta, o si otro postor supera el techo de puja definido para la operación, se devuelve el 100% de tu aporte sin comisiones, en un máximo de 10 días hábiles.",
       },
       {
-        q: "¿Y si el pool no llega a completarse?",
-        a: "Si el capital objetivo no se reúne antes del cierre de la convocatoria, la operación no se ejecuta y se devuelve el 100% de tu aporte, sin comisión, en un máximo de 5 días hábiles. No cobramos por operaciones que no llegaron a ejecutarse.",
+        q: "¿Y si el capital colectivo no llega a completarse?",
+        a: "El capital colectivo (lo que en el sector se llama pool) es la suma de los aportes de todos los participantes. Si no se reúne antes del cierre de la convocatoria, la operación no se ejecuta y se devuelve el 100% de tu aporte, sin comisión, en un máximo de 5 días hábiles. No cobramos por operaciones que no llegaron a ejecutarse.",
       },
       {
         q: "¿Qué pasa si el proceso judicial se suspende?",
@@ -78,7 +78,7 @@ const faqCategories = [
       },
       {
         q: "¿Qué pasa si la propiedad se vende por debajo de lo estimado?",
-        a: "El retorno es menor al proyectado y puede ser negativo: es posible recuperar menos de lo aportado. El resultado, positivo o negativo, se reparte a prorrata entre todos los participantes del pool. Los porcentajes publicados son estimaciones referenciales, no una garantía.",
+        a: "El retorno es menor al proyectado y puede ser negativo: es posible recuperar menos de lo aportado. El resultado, positivo o negativo, se reparte a prorrata entre todos los participantes de la operación. Los porcentajes publicados son estimaciones referenciales, no una garantía.",
       },
       {
         q: "¿Qué pasa si la venta demora más de lo previsto?",
@@ -90,7 +90,33 @@ const faqCategories = [
       },
       {
         q: "¿Cuánto dura una operación de principio a fin?",
-        a: "Entre 12 y 24 meses en un caso típico: apertura del pool, remate, inscripción de la adjudicación, entrega de la posesión, comercialización y liquidación. Los plazos dependen de tiempos judiciales que no controlamos.",
+        a: "Entre 12 y 24 meses en un caso típico: apertura del capital colectivo, remate, inscripción de la adjudicación, entrega de la posesión, comercialización y liquidación. Los plazos dependen de tiempos judiciales que no controlamos.",
+      },
+    ],
+  },
+  {
+    id: "que-recibes",
+    label: "Qué recibes cuando inviertes",
+    questions: [
+      {
+        q: "Cuando invierto S/ 500, ¿estoy comprando un porcentaje del inmueble?",
+        a: "No. Tu aporte te otorga un derecho contractual de contenido económico sobre el resultado de esa operación, proporcional a lo aportado. No adquieres una cuota de copropiedad sobre el inmueble ni un valor negociable, y recibes el resultado proporcional cuando la operación se liquida.",
+      },
+      {
+        q: "¿Quién adquiere el inmueble y aparece en SUNARP?",
+        a: "El vehículo de la operación: una sociedad constituida para esa operación concreta y administrada por Rematto S.A.C. Es quien postula en el remate, recibe la adjudicación e inscribe la transferencia. Tu nombre no figura en la partida registral del inmueble.",
+      },
+      {
+        q: "¿Cómo se calcula mi porcentaje de participación?",
+        a: "Tu aporte dividido entre el capital colectivo total de la operación. El porcentaje queda fijado cuando el capital se completa y no varía después, salvo devolución.",
+      },
+      {
+        q: "¿Quién puede vender el inmueble?",
+        a: "El vehículo de la operación, a través de Rematto como administrador y dentro de los parámetros de precio y plazo pactados en el contrato de participación. Ninguna participación individual puede disponer del inmueble por su cuenta.",
+      },
+      {
+        q: "¿Qué documento demuestra mi derecho?",
+        a: "El contrato de participación firmado electrónicamente, la constancia de inscripción de la adjudicación y, al cierre, el detalle de liquidación. Los tres quedan disponibles para descarga en tu cuenta.",
       },
     ],
   },
@@ -99,16 +125,20 @@ const faqCategories = [
     label: "Tu dinero y tus documentos",
     questions: [
       {
+        q: "¿Dónde está mi dinero antes del remate?",
+        a: "En una cuenta de custodia abierta en una empresa del sistema financiero peruano, identificada como cuenta de terceros y separada de las cuentas operativas de Rematto. No se usa para gastos de la empresa. La entidad concreta y los datos de titularidad se muestran en la ficha de cada operación antes de que confirmes tu aporte.",
+      },
+      {
         q: "¿Dónde está mi dinero mientras la operación avanza?",
-        a: "Antes de la subasta, en una cuenta de custodia separada del patrimonio de Rematto. Durante el remate, comprometido como respaldo de la puja. Tras la adjudicación, representado en tu participación sobre el inmueble. Al cierre, se descuentan gastos y comisiones y el saldo se transfiere a tu cuenta bancaria.",
+        a: "Antes de la subasta, en la cuenta de custodia. Durante el remate, comprometido como respaldo de la puja hasta el techo aprobado. Tras la adjudicación, aplicado al pago del precio del inmueble, que queda a nombre del vehículo de la operación. Al cierre, se descuentan gastos y comisiones y el saldo se transfiere a tu cuenta bancaria.",
       },
       {
         q: "¿Qué documento respalda mi participación?",
-        a: "Un contrato de inversión con validez legal peruana, firmado electrónicamente, que identifica la operación, el expediente judicial, tu monto aportado y el porcentaje de participación que te corresponde. Queda disponible para descarga en tu panel.",
+        a: "Un contrato de participación con validez legal peruana, firmado electrónicamente, que identifica la operación, el expediente judicial, tu monto aportado y el porcentaje que te corresponde. Queda disponible para descarga en tu panel.",
       },
       {
         q: "¿Qué pasa con mi inversión si Rematto deja de operar?",
-        a: "Los aportes se mantienen en cuentas de custodia separadas del patrimonio de la empresa, y tu participación sobre un inmueble adjudicado está respaldada por el contrato de inversión y el título de adjudicación. Ante cualquier duda sobre este punto antes de invertir, escríbenos y lo revisamos contigo.",
+        a: "Los aportes se mantienen en cuentas de custodia separadas del patrimonio de la empresa, y el inmueble adjudicado pertenece al vehículo de la operación, no a Rematto. El contrato de participación prevé la sustitución del administrador para que la operación continúe hasta su liquidación. Ante cualquier duda sobre este punto antes de invertir, escríbenos y lo revisamos contigo.",
       },
       {
         q: "¿Puedo invertir montos altos? ¿Hay límites?",
@@ -144,7 +174,7 @@ const faqCategories = [
       },
       {
         q: "¿Quién puede ver mis documentos?",
-        a: "Solo el personal del área de verificación, y únicamente mientras revisa tu identidad. Nadie más dentro de la empresa accede a tu DNI o tu selfie, y esos accesos quedan registrados. Los otros inversores de un pool nunca ven tu identidad.",
+        a: "Solo el personal del área de verificación, y únicamente mientras revisa tu identidad. Nadie más dentro de la empresa accede a tu DNI o tu selfie, y esos accesos quedan registrados. Los demás participantes de una operación nunca ven tu identidad.",
       },
       {
         q: "¿Para qué usan mis datos?",
@@ -216,7 +246,7 @@ export default function PreguntasFrecuentesPage() {
               <p className="font-medium text-foreground">No encontramos resultados</p>
               <p className="mt-2 text-sm text-muted-foreground">
                 Prueba con otras palabras o{" "}
-                <Link href="/libro-de-reclamaciones" className="font-medium underline">
+                <Link href="/contacto" className="font-medium underline">
                   contáctanos directamente
                 </Link>
               </p>
@@ -226,6 +256,8 @@ export default function PreguntasFrecuentesPage() {
               {filteredCategories.map((category, catIndex) => (
                 <motion.div
                   key={category.id}
+                  id={category.id}
+                  className="scroll-mt-24"
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -277,10 +309,10 @@ export default function PreguntasFrecuentesPage() {
                 </div>
               </div>
               <Link
-                href="/libro-de-reclamaciones"
+                href="/contacto"
                 className="inline-flex shrink-0 items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Libro de reclamaciones
+                Hablar con el equipo
               </Link>
             </div>
           </motion.div>

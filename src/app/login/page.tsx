@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowRight, Crown, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Crown, Eye, EyeOff, User } from "lucide-react";
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -83,8 +83,17 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
       >
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Bienvenido de vuelta</h1>
-          <p className="text-sm text-muted-foreground mt-1.5">
+          <Link
+            href="/"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+          >
+            <ArrowLeft className="size-3.5" />
+            Volver al inicio
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Bienvenido de vuelta
+          </h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
             Ingresa tu correo y contraseña para continuar.
           </p>
         </div>
@@ -200,11 +209,21 @@ export default function LoginPage() {
           </Link>
         </p>
 
-        <p className="mt-4 text-center text-xs text-muted-foreground leading-relaxed">
-          Al ingresar, aceptas nuestros{" "}
-          <Link href="#" className="underline hover:text-foreground">Términos de uso</Link>{" "}
+<p className="mt-4 text-center text-xs leading-relaxed text-muted-foreground">
+          Al iniciar sesión, aceptas nuestros{" "}
+          <Link
+            href="/terminos-de-uso"
+            className="underline hover:text-foreground"
+          >
+            Términos de uso
+          </Link>{" "}
           y{" "}
-          <Link href="#" className="underline hover:text-foreground">Política de privacidad</Link>
+          <Link
+            href="/politica-de-privacidad"
+            className="underline hover:text-foreground"
+          >
+            Política de privacidad
+          </Link>
         </p>
       </motion.div>
     </AuthSplitLayout>

@@ -14,9 +14,14 @@ import { cn } from "@/lib/utils";
  * a real destination, and the in-page anchors are absolute (`/#…`) so they
  * still work from the legal pages, which share this navbar.
  */
+/**
+ * Second review, finding 4: "Propiedades" in the main menu did not open a
+ * catalogue — it scrolled to a three-card teaser whose only action was
+ * account creation. It now points at the public catalogue.
+ */
 const links = [
   { label: "Cómo funciona", href: "/#como-funciona" },
-  { label: "Propiedades", href: "/#propiedades" },
+  { label: "Propiedades", href: "/propiedades" },
   { label: "Tarifas", href: "/tarifas" },
   { label: "Nosotros", href: "/nosotros" },
 ];

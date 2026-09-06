@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { Users } from "lucide-react";
-import { TestimonialsCarousel } from "@/components/landing/TestimonialsCarousel";
+import { Testimonials } from "@/components/landing/Testimonials";
 import { LANDING_TESTIMONIALS_BG_SRC } from "@/lib/landing/media";
 
 export function SocialProof() {
@@ -60,12 +60,12 @@ export function SocialProof() {
             <span className="text-primary">inversores</span>
           </h2>
           <p className="mt-4 max-w-md text-pretty text-sm leading-relaxed text-white/65 sm:text-base">
-            Historias reales de quienes ya invierten con confianza en remates
-            judiciales verificados.
+            Cuatro perfiles distintos: una primera inversión, una cartera con
+            varias operaciones, provincia y jubilación.
           </p>
         </motion.div>
 
-        <TestimonialsCarousel tone="onMedia" />
+        <Testimonials tone="onMedia" />
       </div>
     </section>
   );

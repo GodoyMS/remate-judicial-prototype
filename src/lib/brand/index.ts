@@ -16,6 +16,21 @@ export const BRAND_LEGAL_NAME = "Rematto S.A.C.";
 export const BRAND_RUC = "20601234567";
 
 /**
+ * Public registry references, so corporate identity can be verified outside
+ * the site rather than merely asserted on it (second review, finding 23).
+ */
+export const BRAND_REGISTRY = {
+  /** SUNAT's public RUC lookup. */
+  sunatUrl:
+    "https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/FrameCriterioBusquedaWeb.jsp",
+  /** Company entry in the Registro de Personas Jurídicas. */
+  partidaRegistral: "N° 14582301 · Registro de Personas Jurídicas de Lima",
+  /** SUNARP's online publicity service. */
+  sunarpUrl:
+    "https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/frmIndex.faces",
+} as const;
+
+/**
  * Contact channels surfaced before registration (RM-002, RM-025, RM-031).
  * A prospective investor must be able to reach a human without creating an
  * account first.
@@ -26,6 +41,8 @@ export const CONTACT = {
   /** Post-sale support. */
   supportEmail: "soporte@rematto.pe",
   privacyEmail: "privacidad@rematto.pe",
+  /** Vulnerability reports — published on /seguridad (finding 25). */
+  securityEmail: "seguridad@rematto.pe",
   /** Digits only — used to build the wa.me deep link. */
   whatsappNumber: "51987654321",
   whatsappDisplay: "+51 987 654 321",

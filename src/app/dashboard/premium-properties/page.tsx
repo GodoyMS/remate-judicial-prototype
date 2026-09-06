@@ -67,7 +67,7 @@ export default function PremiumPropertiesPage() {
             <Sparkles className="size-4 text-premium" />
             <div>
               <p className="text-[10px] text-premium font-medium">Tu ventaja Premium</p>
-              <p className="text-xs font-bold text-premium">ROI hasta 52% · Comisión 0.5%</p>
+              <p className="text-xs font-bold text-premium">Acceso anticipado · Comisión 0.5%</p>
             </div>
           </motion.div>
         )}
