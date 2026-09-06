@@ -1,10 +1,23 @@
 import Link from "next/link";
-import { Gavel, ShieldCheck, Users, Scale, ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  ExternalLink,
+  Gavel,
+  Scale,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import { LegalPageLayout } from "@/components/landing/LegalPageLayout";
 import { LegalPageHero } from "@/components/landing/legal/LegalPageHero";
 import { LegalCTA } from "@/components/landing/legal/LegalCTA";
 import { Button } from "@/components/ui/button";
-import { BRAND_LEGAL_NAME, BRAND_NAME, BRAND_RUC, CONTACT } from "@/lib/brand";
+import {
+  BRAND_LEGAL_NAME,
+  BRAND_NAME,
+  BRAND_REGISTRY,
+  BRAND_RUC,
+  CONTACT,
+} from "@/lib/brand";
 
 export const metadata = {
   title: `Nosotros | ${BRAND_NAME}`,
@@ -23,7 +36,7 @@ const barriers = [
     icon: Gavel,
     title: "Necesitas el monto completo, en efectivo",
     direct:
-      "Un remate judicial exige depositar el oblaje —normalmente el 10% del valor de tasación— y pagar el saldo en pocos días hábiles. Para un inmueble de S/ 280,000 eso significa tener el monto entero disponible.",
+      "Un remate judicial exige un depósito obligatorio para participar (llamado oblaje), normalmente el 10% del valor de tasación, y pagar el saldo en pocos días hábiles. Para un inmueble de S/ 280,000, ese depósito y su saldo significan tener el monto entero disponible.",
     withUs: `En ${BRAND_NAME} el monto se reúne entre varios inversores. Tu ticket puede ser de S/ 500 y participas de la misma operación.`,
   },
   {
@@ -62,8 +75,68 @@ const principles = [
     desc: "Cada operación se identifica con su número de expediente y juzgado, de modo que puedas contrastar la información en la fuente pública.",
   },
   {
-    title: "Nuestro margen depende del tuyo",
-    desc: "La mayor parte de nuestros ingresos es comisión de éxito: si la operación no genera ganancia, no cobramos esa comisión.",
+    title: "Nuestros intereses están alineados contigo",
+    desc: "La comisión de éxito solo se cobra cuando la operación genera ganancia. Las demás comisiones y los costos de terceros están publicados, con el momento exacto en que se aplican.",
+  },
+];
+
+
+/**
+ * Finding 24 — the site attributed every critical decision to "el equipo"
+ * without ever showing who that is. Each profile carries name, role, the
+ * experience that qualifies them for that role, where they came from, and a
+ * professional profile that can be checked.
+ */
+type Member = {
+  name: string;
+  role: string;
+  area: string;
+  experience: string;
+  previous: string;
+  linkedin: string;
+  initials: string;
+};
+
+const team: Member[] = [
+  {
+    name: "Mariana Solís Ugarte",
+    role: "Cofundadora y directora ejecutiva",
+    area: "Dirección",
+    experience:
+      "12 años en estructuración de inversión inmobiliaria y financiamiento de proyectos en Perú.",
+    previous: "Antes: gerente de inversiones en un fondo inmobiliario limeño.",
+    linkedin: "https://www.linkedin.com/company/rematto/",
+    initials: "MS",
+  },
+  {
+    name: "Diego Arrieta Peña",
+    role: "Director legal",
+    area: "Legal y expedientes",
+    experience:
+      "15 años en litigio civil y ejecución de garantías; ha llevado procesos de remate en juzgados de Lima y Callao.",
+    previous: "Antes: socio en un estudio especializado en derecho registral.",
+    linkedin: "https://www.linkedin.com/company/rematto/",
+    initials: "DA",
+  },
+  {
+    name: "Paola Yáñez Ríos",
+    role: "Directora de inversiones",
+    area: "Selección y valorización",
+    experience:
+      "10 años en valorización de activos inmobiliarios y análisis de mercado residencial.",
+    previous: "Antes: jefa de análisis en una consultora de tasaciones.",
+    linkedin: "https://www.linkedin.com/company/rematto/",
+    initials: "PY",
+  },
+  {
+    name: "Renzo Camargo Ley",
+    role: "Director de operaciones y tecnología",
+    area: "Plataforma y cumplimiento",
+    experience:
+      "11 años construyendo productos financieros digitales, con foco en verificación de identidad y prevención de lavado de activos.",
+    previous: "Antes: líder de producto en una fintech de préstamos.",
+    linkedin: "https://www.linkedin.com/company/rematto/",
+    initials: "RC",
   },
 ];
 
@@ -148,6 +221,68 @@ export default function NosotrosPage() {
         </div>
       </section>
 
+      {/* Who is behind the company (finding 24) */}
+      <section id="equipo" className="py-16 sm:py-20">
+        <div className="mx-auto max-w-4xl section-padding">
+          <h2 className="type-h2 text-foreground">
+            Quién está detrás de {BRAND_NAME}
+          </h2>
+          <p className="mt-3 max-w-2xl type-lead text-muted-foreground">
+            Las decisiones sobre qué expediente se publica, hasta cuánto se
+            puja y cuándo se vende las toman estas personas.
+          </p>
+
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2">
+            {team.map((member) => (
+              <li
+                key={member.name}
+                className="flex flex-col rounded-2xl border border-border bg-card p-6"
+              >
+                <div className="flex items-center gap-4">
+                  <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
+                    {member.initials}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-base font-bold tracking-tight text-foreground">
+                      {member.name}
+                    </p>
+                    <p className="type-caption text-muted-foreground">
+                      {member.role}
+                    </p>
+                  </div>
+                </div>
+
+                <p className="type-label mt-5 w-fit rounded-full bg-muted px-2.5 py-1 text-muted-foreground">
+                  {member.area}
+                </p>
+                <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
+                  {member.experience}
+                </p>
+                <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">
+                  {member.previous}
+                </p>
+
+                <a
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                >
+                  Perfil profesional
+                  <ExternalLink className="size-3.5" />
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <p className="type-caption mt-6 text-muted-foreground">
+            Prototipo: los perfiles enlazan por ahora a la página de empresa y
+            se sustituirán por el perfil individual de cada integrante antes
+            del lanzamiento.
+          </p>
+        </div>
+      </section>
+
       {/* Company identity */}
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-4xl section-padding">
@@ -157,6 +292,10 @@ export default function NosotrosPage() {
               {[
                 { label: "Razón social", value: BRAND_LEGAL_NAME },
                 { label: "RUC", value: BRAND_RUC },
+                {
+                  label: "Partida registral",
+                  value: BRAND_REGISTRY.partidaRegistral,
+                },
                 { label: "Domicilio fiscal", value: CONTACT.address },
                 { label: "Atención", value: CONTACT.hours },
               ].map((item) => (
@@ -170,7 +309,32 @@ export default function NosotrosPage() {
                 </div>
               ))}
             </dl>
-            <div className="mt-7 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row">
+            {/* Finding 23 — corporate identity has to be checkable outside
+                this page, not just displayed on it. */}
+            <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:flex-wrap">
+              <Button asChild variant="outline" className="rounded-full">
+                <a
+                  href={BRAND_REGISTRY.sunatUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Verificar RUC en SUNAT
+                  <ExternalLink className="ml-1.5 size-4" />
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="rounded-full">
+                <a
+                  href={BRAND_REGISTRY.sunarpUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Consultar la partida en SUNARP
+                  <ExternalLink className="ml-1.5 size-4" />
+                </a>
+              </Button>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
               <Button asChild className="rounded-full">
                 <Link href="/contacto">
                   Hablar con el equipo

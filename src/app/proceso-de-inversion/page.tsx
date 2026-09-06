@@ -37,11 +37,11 @@ const stages: Stage[] = [
   },
   {
     phase: "Antes de invertir",
-    title: "Apertura del pool",
+    title: "Apertura del capital colectivo",
     duration: "1 a 3 semanas",
-    what: "La operación se publica con su expediente, su precio base, el techo de puja y el capital objetivo. Los inversores aportan hasta completarlo.",
+    what: "La operación se publica con su expediente, su precio base, el techo de puja y el capital objetivo. Los inversionistas aportan hasta completar el capital colectivo de la operación (lo que en el sector se llama pool).",
     yours: "Eliges el monto y confirmas tu participación. Tu aporte queda en cuenta de custodia, sin aplicarse aún.",
-    risk: "Si el pool no se completa antes del cierre, se devuelve el 100% del aporte sin comisión.",
+    risk: "Si el capital colectivo no se completa antes del cierre, se devuelve el 100% del aporte sin comisión.",
   },
   {
     phase: "El remate",
@@ -56,7 +56,7 @@ const stages: Stage[] = [
     title: "Adjudicación y pago del saldo",
     duration: "3 a 10 días hábiles",
     what: "Ganado el remate, se paga el saldo del precio dentro del plazo legal y el juzgado emite el auto de adjudicación.",
-    yours: "Tu participación queda registrada sobre el inmueble adjudicado.",
+    yours: "El inmueble queda inscrito a nombre del vehículo de la operación y tu contrato de participación pasa a referirse a ese activo. Tu nombre no figura en la partida registral: lo que tienes es un derecho contractual de contenido económico sobre el resultado.",
     risk: "El proceso puede suspenderse por apelación, tercería o pago del deudor. En ese caso tu capital sigue íntegro y puedes esperar o pedir la devolución.",
   },
   {
@@ -86,7 +86,7 @@ const stages: Stage[] = [
     phase: "El retorno",
     title: "Liquidación y transferencia",
     duration: "5 a 15 días hábiles desde la venta",
-    what: "Se descuentan gastos, impuestos y comisiones, y el saldo se reparte a prorrata entre los participantes del pool.",
+    what: "Se descuentan gastos, impuestos y comisiones, y el saldo se reparte a prorrata entre los participantes de la operación.",
     yours: "Recibes la transferencia a tu cuenta bancaria y el detalle de la liquidación para tu declaración anual.",
   },
 ];

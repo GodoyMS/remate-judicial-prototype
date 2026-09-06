@@ -137,7 +137,7 @@ export default function LoginAdminPage() {
                   Contraseña
                 </Label>
                 <Link
-                  href="#"
+                  href="/forgot-password"
                   className="text-xs font-medium text-sidebar-primary hover:text-sidebar-primary/80 transition-colors"
                 >
                   ¿Olvidaste tu contraseña?

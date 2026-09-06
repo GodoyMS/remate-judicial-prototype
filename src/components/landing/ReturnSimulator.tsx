@@ -6,90 +6,41 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Calculator, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { dashboardProperties } from "@/lib/dashboard/mock-data";
+import {
+  FEES,
+  SCENARIOS,
+  openOpportunities,
+  simulate,
+} from "@/lib/landing/opportunities";
 import { formatMoney, formatPercent, type PropertyCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
 /**
- * Return simulator — audit finding RM-021.
+ * Return simulator — second review, findings 8, 27, 28, 37 and 44.
  *
- * "Incorporar un resumen comercial por oportunidad: valor estimado." The
- * property cards state a percentage; this turns that percentage into the only
- * question a reader actually has, which is what their own money would do.
- *
- * Two design decisions worth stating, because they are what keep this from
- * becoming the thing the audit warned about:
- *
- * 1. It shows three outcomes, not one. A simulator that renders only the
- *    favourable number is a sales device dressed as a tool — the exact
- *    "vender rentabilidad sin hablar del downside" pattern flagged in RM-018.
- *    The adverse column is a real loss, computed on the same basis, and it is
- *    given the same visual weight as the others.
- * 2. Fees are inside the arithmetic, not a footnote. The figure shown is what
- *    would land in the reader's account, after the commissions published on
- *    /tarifas — so the number here and the number there can never diverge.
+ * · 28 — the operation picker offered an opportunity the landing itself marks
+ *   "Próximo" while claiming to list only open ones. It now reads from
+ *   `openOpportunities()`, the same query the grid above uses.
+ * · 27 — the arithmetic lives in `lib/landing/opportunities`, so the figure
+ *   here and the figure on a property page are the same computation and
+ *   cannot drift apart.
+ * · 8 — "los tres escenarios posibles" presented three outcomes as if they
+ *   exhausted the space. They are reference scenarios, and the copy says so.
+ * · 37 — each fee is shown as concept · rate, then the amount for this
+ *   scenario, then the condition as a separate helper, instead of merging the
+ *   condition into the number.
+ * · 44 — the closing action is contextual (open this operation's file, or
+ *   talk to someone) rather than a fourth "crear cuenta gratis".
  */
 
-/* Commission schedule — mirrors /tarifas. Kept here as one constant so the two
-   surfaces cannot drift apart. */
-const FEES = {
-  /** One-off, on the invested capital, when the pool closes. */
-  structuring: 0.015,
-  /** Annual, on capital, prorated over the holding period. */
-  management: 0.005,
-  /** On the gain only, and only when the gain is positive. */
-  success: 0.08,
-} as const;
-
-type Scenario = {
-  id: string;
-  label: string;
-  caption: string;
-  /** Multiplier applied to the published annual return. Negative = a loss. */
-  factor: number;
-  months: number;
-  tone: "adverse" | "base" | "favourable";
-};
-
-/**
- * The three outcomes correspond to the scenarios documented in the risk
- * policy: a below-estimate sale that also ran long, the operation performing
- * as modelled, and a clean sale ahead of schedule.
- */
-const SCENARIOS: Scenario[] = [
-  {
-    id: "adverse",
-    label: "Adverso",
-    caption: "Venta por debajo de lo estimado y con demora",
-    factor: -0.35,
-    months: 22,
-    tone: "adverse",
-  },
-  {
-    id: "base",
-    label: "Esperado",
-    caption: "La operación se comporta como fue modelada",
-    factor: 1,
-    months: 14,
-    tone: "base",
-  },
-  {
-    id: "favourable",
-    label: "Favorable",
-    caption: "Inmueble desocupado y venta antes de lo previsto",
-    factor: 1.25,
-    months: 12,
-    tone: "favourable",
-  },
-];
-
-const OPPORTUNITIES = dashboardProperties.slice(0, 3).map((p) => ({
-  id: p.id,
-  name: p.name,
-  district: p.district,
-  currency: p.currency as PropertyCurrency,
-  roi: p.roi,
-  min: p.minInvestment,
+const OPPORTUNITIES = openOpportunities().map((o) => ({
+  id: o.id,
+  slug: o.slug,
+  name: o.name,
+  district: o.district,
+  currency: o.currency,
+  roi: o.roi,
+  min: o.minTicket,
 }));
 
 /** Slider bounds, per currency, so the soles and dollars ranges both make sense. */
@@ -97,41 +48,6 @@ const RANGE: Record<PropertyCurrency, { min: number; max: number; step: number }
   PEN: { min: 500, max: 50_000, step: 500 },
   USD: { min: 500, max: 15_000, step: 250 },
 };
-
-type Result = {
-  scenario: Scenario;
-  grossGain: number;
-  fees: number;
-  net: number;
-  netGain: number;
-  annualised: number;
-};
-
-function simulate(
-  amount: number,
-  annualRoi: number,
-  scenario: Scenario
-): Result {
-  const years = scenario.months / 12;
-  const grossGain = amount * (annualRoi / 100) * years * scenario.factor;
-
-  const structuring = amount * FEES.structuring;
-  const management = amount * FEES.management * years;
-  const success = grossGain > 0 ? grossGain * FEES.success : 0;
-  const fees = structuring + management + success;
-
-  const net = amount + grossGain - fees;
-  const netGain = net - amount;
-
-  return {
-    scenario,
-    grossGain,
-    fees,
-    net,
-    netGain,
-    annualised: amount > 0 ? (netGain / amount / years) * 100 : 0,
-  };
-}
 
 const toneStyles = {
   adverse: {
@@ -176,12 +92,34 @@ export function ReturnSimulator() {
     () => SCENARIOS.map((s) => simulate(amount, opportunity.roi, s)),
     [amount, opportunity.roi]
   );
+  const expected = results[1]!;
 
   /* Bars are scaled against the largest absolute net gain on screen, so the
      adverse column is legible next to the favourable one. */
   const scale = Math.max(...results.map((r) => Math.abs(r.netGain)), 1);
 
   const money = (value: number) => formatMoney(value, opportunity.currency);
+
+  const feeRows = [
+    {
+      concept: "Estructuración",
+      rate: `${formatPercent(FEES.structuring * 100, 1)} del monto invertido`,
+      value: money(Math.round(expected.structuringFee)),
+      helper: "Se cobra al cerrarse el capital, antes de la subasta.",
+    },
+    {
+      concept: "Gestión del activo",
+      rate: `${formatPercent(FEES.management * 100, 1)} anual sobre el capital`,
+      value: money(Math.round(expected.managementFee)),
+      helper: `Prorrateado a ${expected.scenario.months} meses en este escenario.`,
+    },
+    {
+      concept: "Comisión de éxito",
+      rate: `${formatPercent(FEES.success * 100)} de la ganancia`,
+      value: money(Math.round(expected.successFee)),
+      helper: "No se cobra si no existe ganancia.",
+    },
+  ];
 
   return (
     <section
@@ -211,12 +149,15 @@ export function ReturnSimulator() {
             Simulador
           </span>
           <h2 className="type-h2 mt-5 text-balance text-foreground">
-            ¿Qué pasaría con{" "}
-            <span className="text-primary">tu dinero</span>?
+            ¿Qué pasaría con <span className="text-primary">tu dinero</span>?
           </h2>
           <p className="type-lead mt-4 text-pretty text-muted-foreground">
-            Elige una operación abierta y un monto. Verás los tres escenarios
-            posibles, ya con las comisiones descontadas.
+            Elige una operación abierta y un monto. Verás tres escenarios de
+            referencia, ya con las comisiones descontadas.
+          </p>
+          <p className="type-caption mt-2 text-pretty text-muted-foreground">
+            Son ejemplos para entender cómo cambian plazo y retorno; no
+            representan todos los resultados posibles.
           </p>
         </motion.div>
 
@@ -231,7 +172,7 @@ export function ReturnSimulator() {
           <div className="border-b border-border/60 bg-muted/30 p-6 sm:p-8">
             <fieldset>
               <legend className="type-label text-muted-foreground">
-                Operación
+                Operación abierta
               </legend>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 {OPPORTUNITIES.map((o) => {
@@ -286,10 +227,6 @@ export function ReturnSimulator() {
                 </output>
               </div>
 
-              {/* The shared Slider ships a 12px thumb on a 4px track, which is
-                  fine inside a dense dashboard form but under-sized for a
-                  primary marketing control on touch. Enlarged here to a 20px
-                  thumb with a 44px hit area. */}
               <Slider
                 id="simulator-amount"
                 className={cn(
@@ -386,49 +323,43 @@ export function ReturnSimulator() {
               })}
             </div>
 
-            {/* Fee transparency — same numbers as /tarifas, and reachable */}
-            <dl className="mt-6 grid gap-3 rounded-2xl bg-muted/50 p-5 sm:grid-cols-3">
-              <div>
-                <dt className="type-caption text-muted-foreground">
-                  Estructuración ({formatPercent(FEES.structuring * 100, 1)})
-                </dt>
-                <dd className="type-body font-semibold text-foreground">
-                  {money(Math.round(amount * FEES.structuring))}
-                </dd>
-              </div>
-              <div>
-                <dt className="type-caption text-muted-foreground">
-                  Gestión ({formatPercent(FEES.management * 100, 1)} anual)
-                </dt>
-                <dd className="type-body font-semibold text-foreground">
-                  {money(
-                    Math.round(
-                      amount * FEES.management * (results[1]!.scenario.months / 12)
-                    )
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt className="type-caption text-muted-foreground">
-                  Éxito ({formatPercent(FEES.success * 100)} de la ganancia)
-                </dt>
-                <dd className="type-body font-semibold text-foreground">
-                  {money(Math.round(Math.max(0, results[1]!.grossGain) * FEES.success))}
-                  <span className="block type-caption font-normal text-muted-foreground">
-                    cero si no hay ganancia
-                  </span>
-                </dd>
-              </div>
-            </dl>
+            {/* Fee transparency — concept · rate, amount, then the condition
+                as its own helper line (finding 37). */}
+            <div className="mt-6 rounded-2xl bg-muted/50 p-5">
+              <p className="type-label text-muted-foreground">
+                Comisiones incluidas en el escenario esperado
+              </p>
+              <dl className="mt-4 grid gap-4 sm:grid-cols-3">
+                {feeRows.map((fee) => (
+                  <div key={fee.concept} className="flex flex-col">
+                    <dt className="type-body font-semibold text-foreground">
+                      {fee.concept}
+                      <span className="block type-caption font-normal text-muted-foreground">
+                        {fee.rate}
+                      </span>
+                    </dt>
+                    <dd className="mt-2 text-lg font-bold tabular-nums text-foreground">
+                      {fee.value}
+                      <span className="block type-caption font-normal text-muted-foreground">
+                        en este escenario
+                      </span>
+                    </dd>
+                    <p className="type-caption mt-2 border-t border-border/60 pt-2 text-muted-foreground">
+                      {fee.helper}
+                    </p>
+                  </div>
+                ))}
+              </dl>
+            </div>
 
             <p className="type-caption mt-5 flex items-start gap-2 text-muted-foreground">
               <Info className="mt-0.5 size-3.5 shrink-0 text-primary" />
               <span>
                 Cifras referenciales antes de impuestos, calculadas sobre el
                 retorno estimado de la operación y los plazos típicos de cada
-                escenario. No son una proyección ni una garantía: el resultado
-                real depende del precio de venta final y del tiempo que tome
-                cerrarla.{" "}
+                escenario de referencia. No son una proyección ni una garantía:
+                el resultado real depende del precio de venta final y del tiempo
+                que tome cerrarla.{" "}
                 <Link
                   href="/politica-de-riesgos"
                   className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
@@ -448,12 +379,12 @@ export function ReturnSimulator() {
 
             <div className="mt-7 flex flex-col items-center gap-4 border-t border-border/60 pt-6 sm:flex-row sm:justify-between">
               <p className="type-body text-center text-muted-foreground sm:text-left">
-                Crear tu cuenta es gratis y no te obliga a invertir.
+                ¿Te interesa esta operación? Abre su ficha completa, sin cuenta.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="rounded-full font-semibold">
-                  <Link href="/register">
-                    Crear cuenta gratis
+                  <Link href={`/propiedades/${opportunity.slug}`}>
+                    Ver esta oportunidad
                     <ArrowRight className="ml-1.5 size-4" />
                   </Link>
                 </Button>
@@ -462,7 +393,7 @@ export function ReturnSimulator() {
                   variant="outline"
                   className="rounded-full font-semibold"
                 >
-                  <Link href="/contacto">Hablar con el equipo</Link>
+                  <Link href="/contacto">Hablar con un asesor</Link>
                 </Button>
               </div>
             </div>

@@ -237,7 +237,7 @@ export default function VerificationPage() {
                   <div className="flex items-start gap-3 rounded-xl bg-primary/5 border border-primary/15 p-3">
                     <Shield className="size-4 text-primary mt-0.5 shrink-0" />
                     <p className="text-xs text-foreground/75 leading-relaxed">
-                      Tus documentos se cifran con encriptación AES-256 y se eliminan automáticamente tras la verificación.
+                      Tus documentos viajan y se guardan cifrados, y solo el área de verificación puede abrirlos. Cada acceso queda registrado.
                     </p>
                   </div>
 

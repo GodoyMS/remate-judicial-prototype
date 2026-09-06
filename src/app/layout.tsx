@@ -60,6 +60,20 @@ const themeInitScript = `
 })();
 `;
 
+/**
+ * Appearance control — second review, finding 26.
+ *
+ * The floating palette button is a design tool: it lets anyone recolour the
+ * brand and resize the logotype. Useful while iterating, out of place on a
+ * public site that asks people for money, where the only floating action
+ * should be support. It is therefore off in production unless explicitly
+ * enabled, and on by default in development.
+ */
+const showAppearanceFab =
+  process.env.NEXT_PUBLIC_ENABLE_APPEARANCE_FAB === "true" ||
+  (process.env.NODE_ENV !== "production" &&
+    process.env.NEXT_PUBLIC_ENABLE_APPEARANCE_FAB !== "false");
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,7 +92,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
           {children}
-          <ThemeSwitcherFab />
+          {showAppearanceFab && <ThemeSwitcherFab />}
         </ThemeProvider>
       </body>
     </html>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,12 +28,40 @@ export default function RegisterPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Crea tu cuenta</h1>
-          <p className="text-sm text-muted-foreground mt-1.5">
-            Empieza a invertir en minutos. Es gratis.
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+          >
+            <ArrowLeft className="size-3.5" />
+            Volver al inicio
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Crea tu cuenta
+          </h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Es gratis y no te obliga a invertir.
           </p>
         </div>
+
+        {/* What actually happens after this form — the same three checks the
+            landing closes with, so the promise does not change at the door. */}
+        <ol className="mb-6 flex flex-col gap-2 rounded-2xl border border-border/70 bg-muted/40 p-4">
+          {[
+            "Creas tu cuenta con correo y contraseña · ~1 min",
+            "Verificamos tu identidad · hasta 24 h hábiles",
+            "Exploras cada operación sin compromiso",
+          ].map((step, i) => (
+            <li key={step} className="flex items-start gap-2.5 text-sm">
+              <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[11px] font-bold text-primary">
+                {i + 1}
+              </span>
+              <span className="leading-relaxed text-muted-foreground">
+                {step}
+              </span>
+            </li>
+          ))}
+        </ol>
 
         <Button
           variant="outline"
@@ -144,16 +172,38 @@ export default function RegisterPage() {
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           ¿Ya tienes cuenta?{" "}
-          <Link href="/login" className="font-semibold text-primary hover:text-primary/80 transition-colors">
+          <Link
+            href="/login"
+            className="font-semibold text-primary transition-colors hover:text-primary/80"
+          >
             Inicia sesión
           </Link>
         </p>
+        <p className="mt-2 text-center text-sm text-muted-foreground">
+          ¿Solo estás mirando?{" "}
+          <Link
+            href="/propiedades"
+            className="font-semibold text-primary transition-colors hover:text-primary/80"
+          >
+            Explora las propiedades sin cuenta
+          </Link>
+        </p>
 
-        <p className="mt-4 text-center text-xs text-muted-foreground leading-relaxed">
+        <p className="mt-4 text-center text-xs leading-relaxed text-muted-foreground">
           Al registrarte, aceptas nuestros{" "}
-          <Link href="#" className="underline hover:text-foreground">Términos de uso</Link>{" "}
+          <Link
+            href="/terminos-de-uso"
+            className="underline hover:text-foreground"
+          >
+            Términos de uso
+          </Link>{" "}
           y{" "}
-          <Link href="#" className="underline hover:text-foreground">Política de privacidad</Link>
+          <Link
+            href="/politica-de-privacidad"
+            className="underline hover:text-foreground"
+          >
+            Política de privacidad
+          </Link>
         </p>
       </motion.div>
     </AuthSplitLayout>

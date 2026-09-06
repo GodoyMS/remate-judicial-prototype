@@ -5,34 +5,34 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   Coins,
-  Receipt,
-  ScrollText,
-  ShieldAlert,
+  LayoutGrid,
+  LineChart,
+  Scale,
   type LucideIcon,
 } from "lucide-react";
 import { BRAND_NAME } from "@/lib/brand";
 import { formatMoney, formatMoneyCompact, formatPercent } from "@/lib/currency";
 
 /**
- * "¿Por qué invertir?" — audit findings RM-011, RM-019, RM-020, RM-023,
- * RM-036, RM-038.
+ * "¿Por qué invertir?" — second review, findings 18, 19, 35, 38 and 44.
  *
- * What changed and why:
- *
- * · RM-019 — the section used to lead with four vanity metrics (S/ 48M+,
- *   3,200+, 22%, 100% legal), each of them an assertion the reader has no way
- *   to check. The four commercial pillars are now the argument, and every one
- *   of them ends in a link to the page that proves it. The metrics moved down
- *   into a supporting strip that says how they are measured.
- * · RM-020 — the first pillar answers the objection nobody was addressing:
- *   why go through a platform instead of bidding at the auction yourself.
- * · RM-023 — "trust us, we're safe" became "here is where you can verify it".
- * · RM-011 — the four unrelated stock photographs are gone. Icons and brand
- *   surfaces give the block one visual language that belongs to the product.
- * · RM-036 / RM-038 — the previous implementation pinned the section and
- *   hijacked wheel and touch scrolling, which is what threw the copy out of
- *   alignment on phones. It is now an ordinary responsive grid: one column on
- *   mobile, two from `sm`, identical content and hierarchy at every width.
+ * · 18 — the four reasons were platform attributes (rigour, transparency,
+ *   clear costs) rather than things the reader gets. Each pillar now names a
+ *   concrete benefit and what it replaces: capital, judicial process,
+ *   concentration and visibility. Transparency, costs and risk stay as trust
+ *   arguments, but in the sections that actually prove them — the verification
+ *   carousel, /tarifas and /politica-de-riesgos.
+ * · 19 — "la mayor parte de lo que cobramos depende de que ganes" was not
+ *   supported by the published fee schedule (a structuring fee and an annual
+ *   management fee are charged regardless). The aligned-interests claim now
+ *   lives in the costs card of the verification section, worded to match what
+ *   /tarifas actually says.
+ * · 38 — the low ticket is argued as portfolio capability, not just as a low
+ *   barrier: it lets capital be spread across operations.
+ * · 35 — each supporting figure is its own container: number → metric name →
+ *   how it is measured, so no number floats free of its definition.
+ * · 44 — the pillar links are contextual value ("Explora las oportunidades",
+ *   "Revisa el proceso completo") instead of another "crear cuenta gratis".
  */
 
 type Pillar = {
@@ -52,70 +52,65 @@ const PILLARS: Pillar[] = [
     id: "access",
     icon: Coins,
     eyebrow: "Acceso",
-    title: `Un mercado que antes exigía el monto completo, ahora desde ${formatMoney(500)}`,
-    desc: "Postular a un remate judicial por tu cuenta exige el precio íntegro del inmueble en pocos días. Aquí el monto se reúne entre varios inversores y participas con un ticket pequeño.",
+    title: `Accede sin necesitar el capital completo de una propiedad`,
+    desc: `Postular a un remate por tu cuenta exige el precio íntegro del inmueble en pocos días hábiles. Con ${BRAND_NAME} participas desde el mínimo de cada oportunidad: ${formatMoney(500)} en las que abren en soles. Y no necesitas concentrar todo tu capital en una sola propiedad: puedes distribuirlo entre diferentes oportunidades, sujeto al mínimo y disponibilidad de cada una.`,
     proofLabel: "Por qué no ir directo al remate",
     proofHref: "/nosotros#por-que-rematto",
-    /* Acceso — a residential block: the asset a single buyer could not reach
-       alone and a pool can. */
     image:
       "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=900&fit=crop&auto=format&q=80",
     imageAlt: "Edificio residencial en una zona urbana consolidada",
   },
   {
-    id: "legal",
-    icon: ScrollText,
-    eyebrow: "Rigor legal",
-    title: "Cada operación se identifica con su expediente judicial",
-    desc: "Publicamos el número de expediente y el juzgado de cada propiedad, para que puedas contrastarlo en la fuente pública. Antes de publicarse, el expediente pasa por estudio de títulos y revisión de cargas en SUNARP.",
-    proofLabel: "Ver el proceso completo",
+    id: "managed",
+    icon: Scale,
+    eyebrow: "Gestión",
+    title: "No enfrentas solo el proceso judicial",
+    desc: `${BRAND_NAME} analiza la oportunidad antes de publicarla —expediente, cargas registrales y estado de ocupación— y gestiona las etapas que correspondan: participación en el remate, inscripción, posesión, venta y liquidación del resultado.`,
+    proofLabel: "Revisa el proceso completo",
     proofHref: "/proceso-de-inversion",
-    /* Rigor legal — the court record itself. */
     image:
       "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&h=900&fit=crop&auto=format&q=80",
     imageAlt: "Documentación judicial junto al mazo de un juez",
   },
   {
-    id: "risk",
-    icon: ShieldAlert,
-    eyebrow: "Transparencia",
-    title: "Sabes qué puede salir mal antes de poner un sol",
-    desc: "Pool incompleto, subasta no adjudicada, proceso suspendido, venta demorada o por debajo de lo estimado: los ocho escenarios adversos están escritos, con lo que ocurre con tu capital en cada uno.",
-    proofLabel: "Leer la política de riesgos",
-    proofHref: "/politica-de-riesgos",
-    /* Transparencia — reading the terms before signing anything. */
+    id: "spread",
+    icon: LayoutGrid,
+    eyebrow: "Distribución",
+    title: "Distribuye tu capital entre distintas oportunidades",
+    desc: "Puedes participar en más de una operación en lugar de concentrarte necesariamente en un solo inmueble. Cada operación tiene su propio expediente, su propio plazo y su propio resultado, independiente del de las demás.",
+    proofLabel: "Explora las oportunidades",
+    proofHref: "/propiedades",
     image:
-      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Persona revisando las condiciones de una operación",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=900&fit=crop&auto=format&q=80",
+    imageAlt: "Distintos inmuebles residenciales de una misma cartera",
   },
   {
-    id: "fees",
-    icon: Receipt,
-    eyebrow: "Costos claros",
-    title: "La mayor parte de lo que cobramos depende de que ganes",
-    desc: "Registrarte y explorar no cuesta nada. La comisión de éxito se aplica solo sobre la ganancia: si la operación cierra sin ella, esa comisión es cero.",
-    proofLabel: "Ver todas las tarifas",
-    proofHref: "/tarifas",
-    /* Costos claros — the arithmetic of what a deal actually leaves. */
+    id: "tracking",
+    icon: LineChart,
+    eyebrow: "Seguimiento",
+    title: "Sigues tu inversión de principio a fin",
+    desc: "Desde tu cuenta consultas el estado de cada operación, los documentos que respaldan tu participación, los hitos del proceso judicial y el resultado cuando se liquida. Sin llamadas ni correos para saber en qué va.",
+    proofLabel: "Ver qué gestiona el equipo por ti",
+    proofHref: "#gestion",
     image:
-      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Cálculo de comisiones sobre documentos financieros",
+      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&h=900&fit=crop&auto=format&q=80",
+    imageAlt: "Seguimiento de una operación desde el panel del inversionista",
   },
 ];
 
 /**
- * Supporting figures. Each carries the basis on which it is measured — a
- * number without a method is exactly the kind of unbacked claim RM-023 flags.
+ * Supporting figures — number, what it measures, and on what basis. A figure
+ * without its method is exactly the unbacked claim the first audit flagged.
  */
 const FIGURES = [
   {
     value: formatMoneyCompact(48_000_000),
     label: "Valor adjudicado en operaciones cerradas",
-    basis: "Acumulado histórico de la plataforma",
+    basis: "Acumulado histórico de la plataforma desde 2021",
   },
   {
     value: "3,200+",
-    label: "Inversores con al menos una operación",
+    label: "Inversionistas con al menos una operación",
     basis: "Cuentas verificadas con inversión confirmada",
   },
   {
@@ -160,12 +155,11 @@ export function WhyInvest() {
             <span className="text-primary">{BRAND_NAME}</span>
           </h2>
           <p className="mt-4 type-lead text-pretty text-muted-foreground">
-            Cada una con la página donde puedes comprobarla.
+            Lo que obtienes gracias a la plataforma, y dónde puedes comprobarlo.
           </p>
         </motion.div>
 
-        {/* Pillars — one column on mobile, two from sm. Same order, same
-            hierarchy, no layout that only works on desktop. */}
+        {/* Pillars — one column on mobile, two from sm. */}
         <div className="mt-12 grid gap-4 sm:mt-14 sm:grid-cols-2 sm:gap-5">
           {PILLARS.map((pillar, i) => {
             const Icon = pillar.icon;
@@ -178,10 +172,6 @@ export function WhyInvest() {
                 transition={{ duration: 0.45, delay: reduceMotion ? 0 : i * 0.07 }}
                 className="group flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition-shadow hover:shadow-md"
               >
-                {/* Image band — one photograph per pillar, chosen for that
-                    pillar's meaning, and all four carry the same crop ratio and
-                    brand grade so they read as a set rather than a stock grab
-                    bag (RM-011). */}
                 <div className="relative aspect-[16/9] overflow-hidden bg-muted">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -227,27 +217,29 @@ export function WhyInvest() {
           })}
         </div>
 
-        {/* Supporting figures — secondary by design, and each one says how it
-            is measured rather than standing alone as a claim. */}
+        {/* Supporting figures — one container each (finding 35). */}
         <motion.div
           initial={reduceMotion ? false : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="mt-12 rounded-3xl border border-border/60 bg-muted/40 p-6 sm:mt-14 sm:p-8"
+          className="mt-12 rounded-3xl border border-border/60 bg-muted/40 p-5 sm:mt-14 sm:p-6"
         >
-          <p className="type-label text-muted-foreground">
+          <p className="type-label px-1 text-muted-foreground">
             Las cifras, y de dónde salen
           </p>
-          <dl className="mt-6 grid gap-6 sm:grid-cols-3">
+          <dl className="mt-4 grid gap-3 sm:grid-cols-3">
             {FIGURES.map((figure) => (
-              <div key={figure.label}>
+              <div
+                key={figure.label}
+                className="flex flex-col rounded-2xl border border-border/70 bg-card p-5"
+              >
                 <dt className="type-metric text-foreground">{figure.value}</dt>
-                <dd className="mt-2">
-                  <p className="type-body font-medium text-foreground">
+                <dd className="mt-2 flex flex-1 flex-col">
+                  <p className="type-body font-semibold text-foreground">
                     {figure.label}
                   </p>
-                  <p className="type-caption mt-1 text-muted-foreground">
+                  <p className="type-caption mt-2 border-t border-border/60 pt-2 text-muted-foreground">
                     {figure.basis}
                   </p>
                 </dd>

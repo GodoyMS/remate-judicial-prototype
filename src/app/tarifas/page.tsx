@@ -17,11 +17,26 @@ export const metadata = {
  * move money through it, so the whole fee schedule lives here — including
  * the charges that are not ours.
  */
+/**
+ * Second review, findings 31 and 37.
+ *
+ * · 37 — the condition was welded to the value ("8% sobre la ganancia · cero
+ *   si no hay ganancia"), so the reader had to parse a price and a rule out
+ *   of one string. Every fee is now concept · rate, then when it applies,
+ *   then the condition as its own helper line.
+ * · 31 — the schedule was a 600px-wide table inside a horizontal scroller, so
+ *   on a phone the third column simply fell off the screen. It is now one
+ *   list that renders as cards below `md` and as a table from `md` up, with
+ *   no horizontal scrolling at any width.
+ */
 type Fee = {
   concept: string;
+  /** The rate or price itself. */
   amount: string;
   when: string;
   note: string;
+  /** The rule that decides whether it is charged at all. */
+  condition?: string;
 };
 
 const platformFees: Fee[] = [
@@ -34,14 +49,17 @@ const platformFees: Fee[] = [
   {
     concept: "Comisión de estructuración",
     amount: "1,5% del monto invertido",
-    when: "Al cerrarse el pool, antes de la subasta",
-    note: "Cubre el estudio de títulos, la auditoría legal del expediente y la estructuración de la operación. Si el pool no se cierra o la subasta no se adjudica, no se cobra.",
+    when: "Al completarse el capital colectivo, antes de la subasta",
+    note: "Cubre el estudio de títulos, la auditoría legal del expediente y la estructuración de la operación.",
+    condition:
+      "No se cobra si el capital no se completa o si la subasta no se adjudica.",
   },
   {
     concept: "Comisión de éxito",
-    amount: "8% sobre la ganancia",
+    amount: "8% de la ganancia",
     when: "Al liquidar la operación",
-    note: "Se aplica únicamente sobre el retorno positivo, nunca sobre el capital. Si la operación no genera ganancia, esta comisión es cero.",
+    note: "Se aplica únicamente sobre el retorno positivo, nunca sobre el capital aportado.",
+    condition: "No se cobra si no existe ganancia.",
   },
   {
     concept: "Gestión anual del activo",
@@ -59,7 +77,7 @@ const platformFees: Fee[] = [
     concept: "Devolución por operación no ejecutada",
     amount: "Sin costo",
     when: "—",
-    note: "Si el pool no se completa o la subasta no se adjudica, se devuelve el 100% del aporte.",
+    note: "Si el capital colectivo no se completa o la subasta no se adjudica, se devuelve el 100% del aporte.",
   },
 ];
 
@@ -68,7 +86,7 @@ const thirdPartyCosts: Fee[] = [
     concept: "Aranceles y tasas judiciales",
     amount: "Según arancel vigente",
     when: "Durante el proceso de remate",
-    note: "Fijados por el Poder Judicial. Se prorratean entre los participantes del pool y se descuentan del resultado.",
+    note: "Fijados por el Poder Judicial. Se prorratean entre los participantes de la operación y se descuentan del resultado.",
   },
   {
     concept: "Gastos notariales y registrales",
@@ -94,44 +112,64 @@ function FeeTable({ title, fees }: { title: string; fees: Fee[] }) {
   return (
     <div>
       <h2 className="type-h2 text-foreground">{title}</h2>
-      <div className="mt-6 overflow-x-auto">
-        <table className="w-full min-w-150 border-separate border-spacing-0 text-left">
-          <thead>
-            <tr>
-              {["Concepto", "Cuánto", "Cuándo se aplica"].map((header) => (
-                <th
-                  key={header}
-                  className="type-label border-b border-border pb-3 text-muted-foreground"
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {fees.map((fee) => (
-              <tr key={fee.concept} className="align-top">
-                <td className="border-b border-border/70 py-5 pr-6">
-                  <p className="type-body font-semibold text-foreground">
-                    {fee.concept}
-                  </p>
-                  <p className="mt-1.5 type-caption text-muted-foreground">
-                    {fee.note}
-                  </p>
-                </td>
-                <td className="border-b border-border/70 py-5 pr-6">
-                  <span className="type-body font-bold whitespace-nowrap text-primary">
-                    {fee.amount}
-                  </span>
-                </td>
-                <td className="border-b border-border/70 py-5 type-caption text-muted-foreground">
-                  {fee.when}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      {/* Column headers only exist where there are columns (md and up). */}
+      <div className="mt-6 hidden border-b border-border pb-3 md:grid md:grid-cols-[minmax(0,1.7fr)_minmax(0,0.8fr)_minmax(0,0.9fr)] md:gap-6">
+        {["Concepto", "Cuánto", "Cuándo se aplica"].map((header) => (
+          <p key={header} className="type-label text-muted-foreground">
+            {header}
+          </p>
+        ))}
       </div>
+
+      <ul className="mt-4 flex flex-col gap-4 md:mt-0 md:gap-0">
+        {fees.map((fee) => (
+          <li
+            key={fee.concept}
+            className={[
+              "rounded-2xl border border-border bg-card p-5",
+              "md:grid md:grid-cols-[minmax(0,1.7fr)_minmax(0,0.8fr)_minmax(0,0.9fr)] md:items-start md:gap-6",
+              "md:rounded-none md:border-0 md:border-b md:border-border/70 md:bg-transparent md:p-0 md:py-5",
+            ].join(" ")}
+          >
+            <div className="min-w-0">
+              <p className="type-body font-semibold text-foreground">
+                {fee.concept}
+              </p>
+              <p className="mt-1.5 type-caption text-pretty text-muted-foreground">
+                {fee.note}
+              </p>
+            </div>
+
+            {/* On phones the rate sits on its own row with its label, so it
+                never has to compete with the concept for width. */}
+            <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border/60 pt-3 md:mt-0 md:block md:border-0 md:pt-0">
+              <span className="type-caption text-muted-foreground md:hidden">
+                Cuánto
+              </span>
+              <span className="type-body text-right font-bold text-primary md:text-left">
+                {fee.amount}
+              </span>
+            </div>
+
+            <div className="mt-2 flex items-baseline justify-between gap-3 md:mt-0 md:block">
+              <span className="type-caption text-muted-foreground md:hidden">
+                Cuándo se aplica
+              </span>
+              <span className="type-caption text-right text-muted-foreground md:text-left">
+                {fee.when}
+              </span>
+            </div>
+
+            {/* The condition, separated from the value (finding 37). */}
+            {fee.condition && (
+              <p className="mt-3 rounded-lg bg-muted px-3 py-2 type-caption text-muted-foreground md:col-span-3 md:mt-3 md:bg-transparent md:px-0 md:py-0">
+                {fee.condition}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -191,7 +229,7 @@ export default function TarifasPage() {
               adjudica y se vende con un margen bruto del 20% en 14 meses.
             </p>
             <ul>
-              <li>Comisión de estructuración (1,5%): S/ 75, al cerrarse el pool.</li>
+              <li>Comisión de estructuración (1,5%): S/ 75, al completarse el capital colectivo.</li>
               <li>Gestión del activo (0,5% anual, 14 meses): S/ 29.</li>
               <li>Ganancia bruta atribuible: S/ 1,000.</li>
               <li>Comisión de éxito (8% de S/ 1,000): S/ 80.</li>

@@ -25,19 +25,23 @@ export function PremiumUpgradeBanner() {
               Inversiones Premium
             </span>
           </div>
+          {/* Second review, finding 29: Premium is an access tier, not a
+              yield tier. Advertising "hasta 52%" promised a return nobody can
+              commit to and contradicted the 22% published on the landing. */}
           <h3 className="text-xl md:text-2xl font-bold text-sidebar-foreground tracking-tight mb-2">
-            Captura propiedades al 100% con ROI excepcional
+            Toma la operación completa, antes que el mercado estándar
           </h3>
           <p className="text-sm text-sidebar-foreground/70 max-w-xl leading-relaxed">
-            Como usuario Premium, accede a propiedades exclusivas antes del mercado estándar.
-            Invierte el 100% y obtén retornos de hasta <strong className="text-premium">52%</strong> —
-            si nadie invierte, la propiedad pasa al mercado regular.
+            Como cuenta Premium accedes a oportunidades durante una ventana de
+            exclusividad, antes de que se abran al capital colectivo, y puedes
+            tomar el 100% del capital requerido. Si nadie la toma en esa
+            ventana, la operación pasa al mercado estándar.
           </p>
           <ul className="flex flex-wrap gap-3 mt-4">
             {[
               "Acceso anticipado exclusivo",
-              "ROI hasta 2x vs estándar",
-              "Inversión 100% — un solo inversor",
+              "Inversión 100% — un solo inversionista",
+              "Asesor asignado durante la operación",
               "Notificaciones en tiempo real",
             ].map((item) => (
               <li

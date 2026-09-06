@@ -265,7 +265,7 @@ function AccountPageContent() {
                       <ul className="grid sm:grid-cols-2 gap-3">
                         {[
                           "Captura propiedades al 100%",
-                          "ROI hasta 52% vs 24% estándar",
+                          "Ventana de exclusividad antes de la apertura",
                           "Acceso anticipado exclusivo",
                           "Comisión reducida 0.5%",
                           "Soporte prioritario 24/7",
@@ -372,7 +372,7 @@ function AccountPageContent() {
                         <p className="text-xs font-semibold text-premium uppercase mb-3">Plan Premium</p>
                         <ul className="space-y-2 text-sm text-foreground">
                           <li>• Captura al 100% exclusiva</li>
-                          <li>• ROI hasta 52%</li>
+                          <li>• Ventana de exclusividad</li>
                           <li>• Comisión 0.5%</li>
                         </ul>
                       </div>

@@ -31,18 +31,22 @@ export function VideoSection() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-12 flex max-w-3xl flex-col items-center text-center sm:mb-14"
         >
+          {/* The headline used to promise "remates en minutos", which
+              contradicts the honest timing stated two sections below (the
+              account takes minutes; the operation takes months). */}
           <h2 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            Descubre cómo invertir en
+            Así se ve la plataforma
             <br />
             <span className="relative inline-block">
-              <span className="relative z-10">remates en minutos</span>
+              <span className="relative z-10">por dentro</span>
               <span className="absolute -bottom-1 left-0 h-3 w-full bg-primary/40 -skew-x-3" />
             </span>
           </h2>
 
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Mira el recorrido completo: desde explorar propiedades verificadas
-            hasta recibir tus retornos. Sin complicaciones, sin sorpresas.
+            El recorrido completo, tal como lo verás en tu cuenta: explorar una
+            operación, revisar su expediente, aportar y seguir cada etapa hasta
+            la liquidación.
           </p>
         </motion.div>
 

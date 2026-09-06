@@ -22,12 +22,12 @@ const PREMIUM_BENEFITS = [
   {
     icon: Crown,
     title: "Captura al 100%",
-    description: "Sé el único inversor de una propiedad exclusiva",
+    description: "Sé el único inversionista de una operación Premium",
   },
   {
     icon: TrendingUp,
-    title: "ROI hasta 52%",
-    description: "Frente al 24% del plan estándar",
+    title: "Ventana de exclusividad",
+    description: "Decides antes de que la operación se abra al capital colectivo",
   },
   {
     icon: Clock,
@@ -185,7 +185,7 @@ export function PremiumUpgradeDialog({
                     Premium ✦
                   </p>
                   <ul className="space-y-1 text-xs text-foreground font-medium">
-                    <li>ROI hasta 52%</li>
+                    <li>Ventana de exclusividad</li>
                     <li>Comisión 0.5%</li>
                     <li>Acceso anticipado</li>
                   </ul>
