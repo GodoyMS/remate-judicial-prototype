@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Check, MessageCircle } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { dashboardProperties } from "@/lib/dashboard/mock-data";
 import { cn } from "@/lib/utils";
@@ -55,6 +55,24 @@ const RAIN_HOUSES: RainHouse[] = RAIN_LAYOUT.map((layout, i) => ({
   ...layout,
   src: HOUSE_IMAGES[i % HOUSE_IMAGES.length],
 }));
+
+const ONBOARDING_STEPS = [
+  {
+    step: "Paso 1",
+    title: "Te registras",
+    description: "Correo y contraseña. Toma un minuto.",
+  },
+  {
+    step: "Paso 2",
+    title: "Verificamos tu identidad",
+    description: "Tarda 24 horas hábiles, como exige la ley.",
+  },
+  {
+    step: "Paso 3",
+    title: "Exploras sin compromiso",
+    description: "Ves todo el detalle. Inviertes solo si quieres.",
+  },
+] as const;
 
 function HouseFrame({
   src,
@@ -182,25 +200,21 @@ export function FinalCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-2xl rounded-2xl border border-background/10 bg-background/8 px-6 py-10 shadow-xl shadow-foreground/40 backdrop-blur-xl sm:px-12 sm:py-12"
+          className="relative w-full max-w-3xl rounded-2xl border border-background/10 bg-background/8 px-6 py-10 shadow-xl shadow-foreground/40 backdrop-blur-xl sm:px-12 sm:py-12"
         >
           {/* RM-022 — the close used to repeat the return promise and the
               investor count. Someone who has read the whole page already knows
               both; what still stops them is not knowing what happens next. So
               the close removes friction instead of selling again. */}
-          <h2 className="text-balance text-3xl font-bold leading-[1.15] tracking-tight text-background sm:text-4xl lg:text-5xl">
+          <h2 className="mx-auto max-w-3xl text-balance text-3xl font-bold leading-[1.15] tracking-tight text-background sm:text-4xl lg:text-5xl">
             Crear tu cuenta{" "}
             <span className="text-primary">no te obliga a invertir</span>
           </h2>
-          <p className="mx-auto mt-5 max-w-lg text-pretty text-base leading-relaxed text-background/70 sm:text-lg">
+          <p className="mx-auto mt-5 max-w-2xl text-pretty text-base leading-relaxed text-background/70 sm:text-lg">
             Regístrate para ver el expediente, los plazos y las comisiones de
             cada operación abierta. Decides después, o no decides.
           </p>
 
-          {/* Finding 17 — the close used a second numbered sequence right
-              after the four-step process (which itself links to eight
-              stages). Three checks say the same thing without pretending to
-              be another process. */}
           <ul className="mx-auto mt-8 flex max-w-xl flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-x-5">
             {[
               "Registro en ~1 min",
@@ -211,26 +225,19 @@ export function FinalCTA() {
                 key={item}
                 className="flex items-center gap-2 text-sm font-medium text-background/85"
               >
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/25 text-primary">
-                  <Check className="size-3" strokeWidth={3} />
+                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary">
+                  <Check className="size-3 text-white"  strokeWidth={3} />
                 </span>
                 {item}
               </li>
             ))}
           </ul>
-        </motion.div>
 
-        <motion.div
-          initial={reducedMotion ? false : { opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-        >
           {/* Finding 9 — the close only offered registration, with no route
               for someone whose remaining blocker is a question. Two paths:
               create the account, or talk to a person first. */}
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Button
+          <div className=" mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <Button
               size="lg"
               asChild
               className="group h-13 w-full rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/30 hover:bg-primary/90 sm:w-auto"
@@ -247,23 +254,11 @@ export function FinalCTA() {
               className="h-auto min-h-13 w-full whitespace-normal rounded-full border-background/30 bg-background/10 px-7 py-3 text-center text-base font-semibold leading-snug text-background backdrop-blur-sm hover:bg-background/20 hover:text-background sm:w-auto"
             >
               <Link href="/contacto">
-                <MessageCircle className="mr-1.5 size-4" />
                 Hablar con un asesor antes de registrarme
               </Link>
             </Button>
           </div>
 
-          <p className="mt-5 text-xs leading-relaxed text-background/55">
-            Crear tu cuenta es gratis y no te obliga a invertir. Las inversiones
-            en remates judiciales conllevan riesgo de pérdida.{" "}
-            <Link
-              href="/politica-de-riesgos"
-              className="font-medium text-background/80 underline underline-offset-2 hover:text-background"
-            >
-              Lee la política de riesgos
-            </Link>{" "}
-            antes de decidir.
-          </p>
         </motion.div>
       </div>
     </section>

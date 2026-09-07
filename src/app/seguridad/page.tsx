@@ -95,7 +95,6 @@ export default function SeguridadPage() {
 
       <section className="py-14 sm:py-16">
         <div className="mx-auto max-w-4xl section-padding">
-          <h2 className="type-h2 text-foreground">Controles implementados</h2>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2">
             {CONTROLS.map((control) => {
               const Icon = control.icon;
@@ -122,22 +121,9 @@ export default function SeguridadPage() {
           </ul>
         </div>
       </section>
-
-      <section className="bg-muted/40 py-14 sm:py-16">
-        <div className="mx-auto max-w-3xl section-padding">
-          <h2 className="type-h2 text-foreground">Lo que no afirmamos</h2>
-          <ul className="mt-6 flex flex-col gap-3">
-            {NOT_CLAIMED.map((item) => (
-              <li
-                key={item}
-                className="rounded-2xl border border-border bg-card p-5 text-pretty type-body text-muted-foreground"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-8 rounded-2xl border border-primary/25 bg-primary/5 p-6">
+      <section>
+        <div className="mx-auto max-w-4xl section-padding">
+        <div className="mt-8 rounded-2xl border border-primary/25 bg-primary/5 p-6">
             <h3 className="type-h3 text-foreground">
               ¿Encontraste una vulnerabilidad?
             </h3>
@@ -165,8 +151,10 @@ export default function SeguridadPage() {
             </p>
           </div>
         </div>
+     
       </section>
 
+     
       <LegalCTA
         title="¿Dudas sobre cómo tratamos tu información?"
         description="Puedes preguntarnos antes de crear una cuenta y de entregar cualquier documento."

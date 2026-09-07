@@ -12,7 +12,11 @@ import {
   openOpportunities,
   simulate,
 } from "@/lib/landing/opportunities";
-import { formatMoney, formatPercent, type PropertyCurrency } from "@/lib/currency";
+import {
+  formatMoney,
+  formatPercent,
+  type PropertyCurrency,
+} from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
 /**
@@ -44,7 +48,10 @@ const OPPORTUNITIES = openOpportunities().map((o) => ({
 }));
 
 /** Slider bounds, per currency, so the soles and dollars ranges both make sense. */
-const RANGE: Record<PropertyCurrency, { min: number; max: number; step: number }> = {
+const RANGE: Record<
+  PropertyCurrency,
+  { min: number; max: number; step: number }
+> = {
   PEN: { min: 500, max: 50_000, step: 500 },
   USD: { min: 500, max: 15_000, step: 250 },
 };
@@ -85,12 +92,12 @@ export function ReturnSimulator() {
      the slider showing a ticket that opportunity would not accept. */
   const amount = Math.min(
     range.max,
-    Math.max(opportunity.min, amountByCurrency[opportunity.currency])
+    Math.max(opportunity.min, amountByCurrency[opportunity.currency]),
   );
 
   const results = useMemo(
     () => SCENARIOS.map((s) => simulate(amount, opportunity.roi, s)),
-    [amount, opportunity.roi]
+    [amount, opportunity.roi],
   );
   const expected = results[1]!;
 
@@ -151,14 +158,6 @@ export function ReturnSimulator() {
           <h2 className="type-h2 mt-5 text-balance text-foreground">
             ¿Qué pasaría con <span className="text-primary">tu dinero</span>?
           </h2>
-          <p className="type-lead mt-4 text-pretty text-muted-foreground">
-            Elige una operación abierta y un monto. Verás tres escenarios de
-            referencia, ya con las comisiones descontadas.
-          </p>
-          <p className="type-caption mt-2 text-pretty text-muted-foreground">
-            Son ejemplos para entender cómo cambian plazo y retorno; no
-            representan todos los resultados posibles.
-          </p>
         </motion.div>
 
         <motion.div
@@ -170,12 +169,21 @@ export function ReturnSimulator() {
         >
           {/* ── Controls ── */}
           <div className="border-b border-border/60 bg-muted/30 p-6 sm:p-8">
+            <div className="mb-4 sm:mb-6">
+              <p className="font-bold text-lg text-foreground sm:text-xl">
+                Verás tres escenarios de referencia.
+              </p>
+              <p className="type-caption  text-sm! text-pretty text-muted-foreground">
+                Son ejemplos para entender cómo cambian plazo y retorno; no
+                representan todos los resultados posibles.
+              </p>
+            </div>
             <fieldset>
               <legend className="type-label text-muted-foreground">
-                Operación abierta
+                Operación 
               </legend>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                {OPPORTUNITIES.map((o) => {
+                {OPPORTUNITIES.slice(0, 3).map((o) => {
                   const isActive = o.id === opportunity.id;
                   return (
                     <button
@@ -188,7 +196,7 @@ export function ReturnSimulator() {
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                         isActive
                           ? "border-primary bg-card shadow-sm ring-1 ring-primary/25"
-                          : "border-border bg-card/60 hover:border-primary/40 hover:bg-card"
+                          : "border-border bg-card/60 hover:border-primary/40 hover:bg-card",
                       )}
                     >
                       <p className="type-body font-semibold text-foreground">
@@ -200,7 +208,7 @@ export function ReturnSimulator() {
                       <p
                         className={cn(
                           "type-caption mt-2 font-semibold",
-                          isActive ? "text-primary" : "text-muted-foreground"
+                          isActive ? "text-primary" : "text-muted-foreground",
                         )}
                       >
                         {formatPercent(o.roi)} anual estimado
@@ -236,7 +244,7 @@ export function ReturnSimulator() {
                   "[&_[data-slot=slider-thumb]]:border-2",
                   "[&_[data-slot=slider-thumb]]:border-primary",
                   "[&_[data-slot=slider-thumb]]:shadow-md",
-                  "[&_[data-slot=slider-thumb]]:after:-inset-3"
+                  "[&_[data-slot=slider-thumb]]:after:-inset-3",
                 )}
                 value={[amount]}
                 min={opportunity.min}
@@ -276,7 +284,7 @@ export function ReturnSimulator() {
                     key={r.scenario.id}
                     className={cn(
                       "flex flex-col rounded-2xl border p-5",
-                      tone.card
+                      tone.card,
                     )}
                   >
                     <p className={cn("type-label", tone.label)}>
@@ -289,7 +297,7 @@ export function ReturnSimulator() {
                     <p
                       className={cn(
                         "mt-1.5 text-2xl font-black tracking-tight tabular-nums sm:text-[1.75rem]",
-                        tone.value
+                        tone.value,
                       )}
                     >
                       {money(Math.round(r.net))}
@@ -298,7 +306,7 @@ export function ReturnSimulator() {
                     <p
                       className={cn(
                         "type-caption mt-1 font-semibold tabular-nums",
-                        isLoss ? "text-destructive" : "text-success"
+                        isLoss ? "text-destructive" : "text-success",
                       )}
                     >
                       {isLoss ? "−" : "+"}

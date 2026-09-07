@@ -90,63 +90,7 @@ export function PropertyPreview() {
           ))}
         </div>
 
-        {/* ── Próximamente — announced, not open. Never mixed above. ── */}
-        {upcoming.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45 }}
-            className="mt-8 rounded-3xl border border-border/60 bg-card p-5 sm:mt-10 sm:p-6"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <Clock3 className="size-4 text-muted-foreground" />
-                <h3 className="text-base font-bold tracking-tight text-foreground">
-                  Próximamente
-                </h3>
-              </div>
-              <p className="type-caption text-muted-foreground">
-                Aún no aceptan aportes. Las cuentas Premium las ven antes de su
-                apertura.
-              </p>
-            </div>
-
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {upcoming.map((o) => (
-                <li key={o.id}>
-                  <Link
-                    href={`/propiedades/${o.slug}`}
-                    className={cn(
-                      "flex items-center gap-3 rounded-2xl border border-border/70 bg-muted/40 p-3 transition-colors",
-                      "hover:border-primary/30 hover:bg-muted"
-                    )}
-                  >
-                    <span className="size-14 shrink-0 overflow-hidden rounded-xl bg-muted">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={o.image}
-                        alt=""
-                        className="size-full object-cover opacity-80"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-foreground">
-                        {o.name}
-                      </span>
-                      <span className="block truncate type-caption text-muted-foreground">
-                        {o.district} · abre en {o.deadline}
-                      </span>
-                    </span>
-                    <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
+       
 
         {/* ── Risk, once, after the opportunities (finding 14) ── */}
         <motion.aside

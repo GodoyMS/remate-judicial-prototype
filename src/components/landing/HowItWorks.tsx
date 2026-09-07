@@ -75,7 +75,7 @@ const STEPS: Step[] = [
     action: "Participas",
     duration: "2 minutos",
     title: "Eliges cuánto aportas, desde S/ 500",
-    desc: "Tu aporte se suma al de otros inversionistas hasta reunir el capital colectivo de la operación (lo que en el sector se llama pool). Ese capital es el que respalda la puja en el remate.",
+    desc: "Tu aporte se suma al de otros inversionistas hasta reunir el capital colectivo de la operación. Ese capital es el que respalda la puja en el remate.",
     image: "/images/how-it-works/step-03.jpg",
     imageAlt: "Pago móvil seguro para invertir en segundos",
   },

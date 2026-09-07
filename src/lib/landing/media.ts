@@ -11,6 +11,10 @@ export const LANDING_DEMO_POSTER_SRC = "/videos/landing-demo-poster.jpg";
 /** Full-bleed hero background video (muted, looping). */
 export const LANDING_HERO_VIDEO_SRC = "/videos/file.mp4";
 
+/** Faint architectural photo behind the landing hero. */
+export const LANDING_HERO_BG_SRC =
+  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=2400&h=1400&fit=crop&auto=format&q=80";
+
 /** Full-bleed luxury residence behind the testimonials section. */
 export const LANDING_TESTIMONIALS_BG_SRC =
   "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=2400&h=1400&fit=crop&auto=format&q=80";

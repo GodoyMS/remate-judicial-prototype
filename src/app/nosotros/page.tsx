@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  ExternalLink,
+  ArrowUpRight,
   Gavel,
   Scale,
   ShieldCheck,
@@ -10,6 +10,7 @@ import {
 import { LegalPageLayout } from "@/components/landing/LegalPageLayout";
 import { LegalPageHero } from "@/components/landing/legal/LegalPageHero";
 import { LegalCTA } from "@/components/landing/legal/LegalCTA";
+import { TeamSection } from "@/components/landing/TeamSection";
 import { Button } from "@/components/ui/button";
 import {
   BRAND_LEGAL_NAME,
@@ -18,6 +19,7 @@ import {
   BRAND_RUC,
   CONTACT,
 } from "@/lib/brand";
+import { teamMembers } from "@/lib/nosotros/team";
 
 export const metadata = {
   title: `Nosotros | ${BRAND_NAME}`,
@@ -80,66 +82,6 @@ const principles = [
   },
 ];
 
-
-/**
- * Finding 24 — the site attributed every critical decision to "el equipo"
- * without ever showing who that is. Each profile carries name, role, the
- * experience that qualifies them for that role, where they came from, and a
- * professional profile that can be checked.
- */
-type Member = {
-  name: string;
-  role: string;
-  area: string;
-  experience: string;
-  previous: string;
-  linkedin: string;
-  initials: string;
-};
-
-const team: Member[] = [
-  {
-    name: "Mariana Solís Ugarte",
-    role: "Cofundadora y directora ejecutiva",
-    area: "Dirección",
-    experience:
-      "12 años en estructuración de inversión inmobiliaria y financiamiento de proyectos en Perú.",
-    previous: "Antes: gerente de inversiones en un fondo inmobiliario limeño.",
-    linkedin: "https://www.linkedin.com/company/rematto/",
-    initials: "MS",
-  },
-  {
-    name: "Diego Arrieta Peña",
-    role: "Director legal",
-    area: "Legal y expedientes",
-    experience:
-      "15 años en litigio civil y ejecución de garantías; ha llevado procesos de remate en juzgados de Lima y Callao.",
-    previous: "Antes: socio en un estudio especializado en derecho registral.",
-    linkedin: "https://www.linkedin.com/company/rematto/",
-    initials: "DA",
-  },
-  {
-    name: "Paola Yáñez Ríos",
-    role: "Directora de inversiones",
-    area: "Selección y valorización",
-    experience:
-      "10 años en valorización de activos inmobiliarios y análisis de mercado residencial.",
-    previous: "Antes: jefa de análisis en una consultora de tasaciones.",
-    linkedin: "https://www.linkedin.com/company/rematto/",
-    initials: "PY",
-  },
-  {
-    name: "Renzo Camargo Ley",
-    role: "Director de operaciones y tecnología",
-    area: "Plataforma y cumplimiento",
-    experience:
-      "11 años construyendo productos financieros digitales, con foco en verificación de identidad y prevención de lavado de activos.",
-    previous: "Antes: líder de producto en una fintech de préstamos.",
-    linkedin: "https://www.linkedin.com/company/rematto/",
-    initials: "RC",
-  },
-];
-
 export default function NosotrosPage() {
   return (
     <LegalPageLayout>
@@ -150,6 +92,8 @@ export default function NosotrosPage() {
         description="Los remates judiciales llevan décadas siendo un mercado rentable y cerrado: hace falta capital, criterio legal y tiempo. Nuestro trabajo es abrirlo sin quitarle el rigor."
         breadcrumbs={[{ label: "Inicio", href: "/" }, { label: "Nosotros" }]}
       />
+
+      <TeamSection members={teamMembers} />
 
       {/* The objection, answered head-on */}
       <section id="por-que-rematto" className="py-16 sm:py-20">
@@ -221,130 +165,97 @@ export default function NosotrosPage() {
         </div>
       </section>
 
-      {/* Who is behind the company (finding 24) */}
-      <section id="equipo" className="py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl section-padding">
-          <h2 className="type-h2 text-foreground">
-            Quién está detrás de {BRAND_NAME}
-          </h2>
-          <p className="mt-3 max-w-2xl type-lead text-muted-foreground">
-            Las decisiones sobre qué expediente se publica, hasta cuánto se
-            puja y cuándo se vende las toman estas personas.
-          </p>
-
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-            {team.map((member) => (
-              <li
-                key={member.name}
-                className="flex flex-col rounded-2xl border border-border bg-card p-6"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
-                    {member.initials}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-base font-bold tracking-tight text-foreground">
-                      {member.name}
-                    </p>
-                    <p className="type-caption text-muted-foreground">
-                      {member.role}
-                    </p>
-                  </div>
-                </div>
-
-                <p className="type-label mt-5 w-fit rounded-full bg-muted px-2.5 py-1 text-muted-foreground">
-                  {member.area}
-                </p>
-                <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
-                  {member.experience}
-                </p>
-                <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">
-                  {member.previous}
-                </p>
-
-                <a
-                  href={member.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
-                >
-                  Perfil profesional
-                  <ExternalLink className="size-3.5" />
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          <p className="type-caption mt-6 text-muted-foreground">
-            Prototipo: los perfiles enlazan por ahora a la página de empresa y
-            se sustituirán por el perfil individual de cada integrante antes
-            del lanzamiento.
-          </p>
-        </div>
-      </section>
-
       {/* Company identity */}
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-4xl section-padding">
-          <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
-            <h2 className="type-h3 text-foreground">Datos de la empresa</h2>
-            <dl className="mt-5 grid gap-5 sm:grid-cols-2">
-              {[
-                { label: "Razón social", value: BRAND_LEGAL_NAME },
-                { label: "RUC", value: BRAND_RUC },
-                {
-                  label: "Partida registral",
-                  value: BRAND_REGISTRY.partidaRegistral,
-                },
-                { label: "Domicilio fiscal", value: CONTACT.address },
-                { label: "Atención", value: CONTACT.hours },
-              ].map((item) => (
-                <div key={item.label}>
-                  <dt className="type-label text-muted-foreground">
-                    {item.label}
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+            <h2 className="text-xl font-bold tracking-tight text-foreground">
+              Datos de la empresa
+            </h2>
+
+            <dl className="mt-6 grid gap-8 sm:grid-cols-2">
+              <div className="space-y-6">
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Razón social
                   </dt>
-                  <dd className="mt-1 type-body text-foreground">
-                    {item.value}
+                  <dd className="mt-1.5 text-base text-foreground">
+                    {BRAND_LEGAL_NAME}
                   </dd>
                 </div>
-              ))}
-            </dl>
-            {/* Finding 23 — corporate identity has to be checkable outside
-                this page, not just displayed on it. */}
-            <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:flex-wrap">
-              <Button asChild variant="outline" className="rounded-full">
-                <a
-                  href={BRAND_REGISTRY.sunatUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Verificar RUC en SUNAT
-                  <ExternalLink className="ml-1.5 size-4" />
-                </a>
-              </Button>
-              <Button asChild variant="outline" className="rounded-full">
-                <a
-                  href={BRAND_REGISTRY.sunarpUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Consultar la partida en SUNARP
-                  <ExternalLink className="ml-1.5 size-4" />
-                </a>
-              </Button>
-            </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Domicilio fiscal
+                  </dt>
+                  <dd className="mt-1.5 text-base leading-relaxed text-foreground">
+                    {CONTACT.address}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Atención
+                  </dt>
+                  <dd className="mt-1.5 text-base text-foreground">
+                    {CONTACT.hours}
+                  </dd>
+                </div>
+              </div>
 
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-              <Button asChild className="rounded-full">
+              <div className="space-y-6">
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    RUC
+                  </dt>
+                  <dd className="mt-1.5 text-base text-foreground">
+                    {BRAND_RUC}
+                  </dd>
+                  <dd className="mt-2">
+                    <a
+                      href={BRAND_REGISTRY.sunatUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+                    >
+                      Verificar RUC en SUNAT
+                      <ArrowUpRight className="size-3.5" aria-hidden />
+                    </a>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Inscripción registral / Partida
+                  </dt>
+                  <dd className="mt-1.5 text-base text-foreground">
+                    Información por confirmar
+                  </dd>
+                  <dd className="mt-2">
+                    <a
+                      href={BRAND_REGISTRY.sunarpUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+                    >
+                      Consultar en SUNARP
+                      <ArrowUpRight className="size-3.5" aria-hidden />
+                    </a>
+                  </dd>
+                </div>
+              </div>
+            </dl>
+
+            <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row">
+              <Button asChild className="h-11 rounded-full px-6 font-semibold">
                 <Link href="/contacto">
                   Hablar con el equipo
                   <ArrowRight className="ml-1.5 size-4" />
                 </Link>
               </Button>
-              <Button variant="outline" asChild className="rounded-full">
-                <Link href="/cumplimiento-regulatorio">
-                  Ver marco regulatorio
-                </Link>
+              <Button
+                asChild
+                variant="secondary"
+                className="h-11 rounded-full bg-muted px-6 font-semibold text-foreground hover:bg-muted/80"
+              >
+                <Link href="/cumplimiento-regulatorio">Ver marco regulatorio</Link>
               </Button>
             </div>
           </div>

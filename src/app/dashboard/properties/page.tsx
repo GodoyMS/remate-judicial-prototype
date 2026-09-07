@@ -5,15 +5,12 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import {
   Search,
-  SlidersHorizontal,
   MapPin,
-  TrendingUp,
-  Clock,
-  Home,
   List,
   LayoutGrid,
   ArrowUpDown,
 } from "lucide-react";
+import { DashboardPropertyCard } from "@/components/dashboard/DashboardPropertyCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
@@ -43,8 +40,6 @@ export default function PropertiesPage() {
         status: p.status,
         district: p.district,
         img: p.img,
-        badge: p.badge,
-        badgeStyle: p.badgeStyle,
         investors: p.investors,
         priceValue: p.price,
       })),
@@ -105,12 +100,14 @@ export default function PropertiesPage() {
           <button
             onClick={() => setView("grid")}
             className={`p-1.5 rounded-lg transition-colors ${view === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            aria-label="Vista en cuadrícula"
           >
             <LayoutGrid className="size-4" />
           </button>
           <button
             onClick={() => setView("list")}
             className={`p-1.5 rounded-lg transition-colors ${view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            aria-label="Vista en lista"
           >
             <List className="size-4" />
           </button>
@@ -134,85 +131,9 @@ export default function PropertiesPage() {
       </div>
 
       {view === "grid" ? (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((p, i) => (
-            <motion.div
-              key={p.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06, duration: 0.4 }}
-              className="group rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            >
-              <Link href={`/dashboard/properties/${p.id}`} className="block">
-                <div className="relative overflow-hidden aspect-[16/9]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                  <div className="absolute top-3 left-3">
-                    <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 border ${p.badgeStyle} border-current/20`}>
-                      {p.badge}
-                    </span>
-                  </div>
-                  <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
-                    <CurrencyBadge currency={p.currency} />
-                    <span className={`text-[10px] font-medium rounded-full px-2.5 py-1 ${
-                      p.status === "Activo" ? "bg-success text-success-foreground" : "bg-warning text-warning-foreground"
-                    }`}>
-                      {p.status}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-4 pb-0">
-                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
-                    <Home className="size-3" />
-                    <span>{p.type} · {p.area}</span>
-                    <span className="ml-auto text-[10px] text-muted-foreground">{p.investors} inversores</span>
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground leading-snug">{p.name}</h3>
-                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
-                    <MapPin className="size-2.5" />
-                    <span className="truncate">{p.address}</span>
-                  </div>
-                </div>
-              </Link>
-
-              <div className="p-4 pt-3 flex flex-col gap-3">
-                <div className="grid grid-cols-3 divide-x divide-border/60 rounded-xl border border-border/60 overflow-hidden text-center">
-                  <div className="py-2 px-1">
-                    <p className="text-[9px] text-muted-foreground">Precio base</p>
-                    <p className="text-[10px] font-semibold text-foreground mt-0.5">{p.price}</p>
-                  </div>
-                  <div className="py-2 px-1">
-                    <p className="text-[9px] text-muted-foreground">ROI est.</p>
-                    <p className="text-[10px] font-bold text-success mt-0.5 flex items-center justify-center gap-0.5">
-                      <TrendingUp className="size-2.5" />{p.roi}
-                    </p>
-                  </div>
-                  <div className="py-2 px-1">
-                    <p className="text-[9px] text-muted-foreground">Cierra</p>
-                    <p className="text-[10px] font-semibold text-foreground mt-0.5 flex items-center justify-center gap-0.5">
-                      <Clock className="size-2.5 text-warning" />{p.deadline}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-muted-foreground">Desde {p.minInvestment}</span>
-                  <Button
-                    asChild
-                    size="sm"
-                    className="flex-1 h-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold"
-                  >
-                    <Link href={`/dashboard/invest?property=${p.id}`}>Invertir</Link>
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
+            <DashboardPropertyCard key={p.id} property={p} index={i} />
           ))}
         </div>
       ) : (
@@ -223,45 +144,64 @@ export default function PropertiesPage() {
               initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05, duration: 0.4 }}
-              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 hover:shadow-md transition-all group"
+              className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 transition-all hover:shadow-md sm:flex-row sm:items-center"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.img}
-                alt={p.name}
-                className="size-16 rounded-xl object-cover shrink-0 cursor-pointer"
-              />
-              <Link href={`/dashboard/properties/${p.id}`} className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-foreground truncate">{p.name}</h3>
-                  <CurrencyBadge currency={p.currency} />
-                  <span className={`text-[10px] font-medium rounded-full px-2 py-0.5 shrink-0 ${
-                    p.status === "Activo" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
-                  }`}>{p.status}</span>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                  <MapPin className="size-3" />
-                  <span className="truncate">{p.address}</span>
-                </div>
-                <div className="flex items-center gap-4 mt-2">
-                  <span className="text-xs font-medium text-foreground">{p.price}</span>
-                  <span className="text-xs font-bold text-success flex items-center gap-0.5">
-                    <TrendingUp className="size-3" />{p.roi} ROI
-                  </span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-0.5">
-                    <Clock className="size-3" />{p.deadline}
-                  </span>
+              <Link
+                href={`/dashboard/properties/${p.id}`}
+                className="flex min-w-0 flex-1 items-start gap-4"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.img}
+                  alt={p.name}
+                  className="size-20 shrink-0 rounded-xl object-cover sm:size-16"
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="truncate text-sm font-semibold text-foreground">
+                      {p.name}
+                    </h3>
+                    <CurrencyBadge currency={p.currency} />
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                        p.status === "Activo"
+                          ? "bg-success/10 text-success"
+                          : "bg-warning/10 text-warning"
+                      }`}
+                    >
+                      {p.status}
+                    </span>
+                  </div>
+                  <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                    <MapPin className="size-3 shrink-0" />
+                    <span className="truncate">
+                      {p.district} · {p.type} · {p.area}
+                    </span>
+                  </div>
+                  <dl className="mt-3 grid max-w-md grid-cols-3 gap-px overflow-hidden rounded-xl border border-border bg-border">
+                    <div className="bg-muted px-2 py-2 text-center">
+                      <dt className="text-[10px] text-muted-foreground">Precio base</dt>
+                      <dd className="mt-0.5 text-xs font-bold text-foreground">{p.price}</dd>
+                    </div>
+                    <div className="bg-muted px-2 py-2 text-center">
+                      <dt className="text-[10px] text-muted-foreground">ROI est.</dt>
+                      <dd className="mt-0.5 text-xs font-bold text-success">{p.roi}</dd>
+                    </div>
+                    <div className="bg-muted px-2 py-2 text-center">
+                      <dt className="text-[10px] text-muted-foreground">Cierra</dt>
+                      <dd className="mt-0.5 text-xs font-bold text-foreground">{p.deadline}</dd>
+                    </div>
+                  </dl>
                 </div>
               </Link>
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="hidden sm:flex items-center gap-1">
-                  <SlidersHorizontal className="size-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">{p.investors} inversores</span>
-                </div>
+              <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+                <p className="text-sm text-muted-foreground">
+                  Desde <span className="font-semibold text-foreground">{p.minInvestment}</span>
+                </p>
                 <Button
                   asChild
                   size="sm"
-                  className="h-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold"
+                  className="h-10 w-full rounded-xl font-semibold sm:w-32"
                 >
                   <Link href={`/dashboard/invest?property=${p.id}`}>Invertir</Link>
                 </Button>

@@ -1,107 +1,142 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import {
-  ArrowRight,
-  Coins,
-  LayoutGrid,
-  LineChart,
-  Scale,
-  type LucideIcon,
-} from "lucide-react";
 import { BRAND_NAME } from "@/lib/brand";
-import { formatMoney, formatMoneyCompact, formatPercent } from "@/lib/currency";
+import { formatMoneyCompact, formatPercent } from "@/lib/currency";
+import { cn } from "@/lib/utils";
 
-/**
- * "¿Por qué invertir?" — second review, findings 18, 19, 35, 38 and 44.
- *
- * · 18 — the four reasons were platform attributes (rigour, transparency,
- *   clear costs) rather than things the reader gets. Each pillar now names a
- *   concrete benefit and what it replaces: capital, judicial process,
- *   concentration and visibility. Transparency, costs and risk stay as trust
- *   arguments, but in the sections that actually prove them — the verification
- *   carousel, /tarifas and /politica-de-riesgos.
- * · 19 — "la mayor parte de lo que cobramos depende de que ganes" was not
- *   supported by the published fee schedule (a structuring fee and an annual
- *   management fee are charged regardless). The aligned-interests claim now
- *   lives in the costs card of the verification section, worded to match what
- *   /tarifas actually says.
- * · 38 — the low ticket is argued as portfolio capability, not just as a low
- *   barrier: it lets capital be spread across operations.
- * · 35 — each supporting figure is its own container: number → metric name →
- *   how it is measured, so no number floats free of its definition.
- * · 44 — the pillar links are contextual value ("Explora las oportunidades",
- *   "Revisa el proceso completo") instead of another "crear cuenta gratis".
- */
+type PillarIconProps = {
+  className?: string;
+};
+
+function AccesoIcon({ className }: PillarIconProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <ellipse cx="24" cy="34" rx="14" ry="4" />
+      <ellipse cx="24" cy="28" rx="14" ry="4" />
+      <ellipse cx="24" cy="22" rx="14" ry="4" />
+      <circle cx="24" cy="16" r="8" />
+      <rect x="21" y="14.5" width="6" height="5" rx="1" />
+      <path d="M24 17.5v2" />
+    </svg>
+  );
+}
+
+function GestionIcon({ className }: PillarIconProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M8 14h20l4 4v18a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2z" />
+      <path d="M28 14v4h4" />
+      <path d="M14 24h12M14 29h8" />
+      <path d="M34 30l4 4M38 30l-4 4" />
+      <path d="M30 34h8v6" />
+    </svg>
+  );
+}
+
+function DiversificacionIcon({ className }: PillarIconProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <circle cx="24" cy="12" r="5" />
+      <circle cx="12" cy="36" r="5" />
+      <circle cx="24" cy="36" r="5" />
+      <circle cx="36" cy="36" r="5" />
+      <path d="M24 17v8M24 25l-9 6M24 25l9 6" />
+    </svg>
+  );
+}
+
+function SeguimientoIcon({ className }: PillarIconProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <rect x="6" y="10" width="36" height="28" rx="3" />
+      <path d="M6 18h36" />
+      <circle cx="6" cy="14" r="1" fill="currentColor" stroke="none" />
+      <circle cx="10" cy="14" r="1" fill="currentColor" stroke="none" />
+      <circle cx="14" cy="14" r="1" fill="currentColor" stroke="none" />
+      <path d="M12 30h24" />
+      <circle cx="16" cy="30" r="3" />
+      <circle cx="28" cy="30" r="3" />
+      <circle cx="40" cy="30" r="3" />
+    </svg>
+  );
+}
 
 type Pillar = {
   id: string;
-  icon: LucideIcon;
+  Icon: React.ComponentType<PillarIconProps>;
   eyebrow: string;
   title: string;
   desc: string;
-  proofLabel: string;
-  proofHref: string;
-  image: string;
-  imageAlt: string;
 };
 
 const PILLARS: Pillar[] = [
   {
     id: "access",
-    icon: Coins,
+    Icon: AccesoIcon,
     eyebrow: "Acceso",
-    title: `Accede sin necesitar el capital completo de una propiedad`,
-    desc: `Postular a un remate por tu cuenta exige el precio íntegro del inmueble en pocos días hábiles. Con ${BRAND_NAME} participas desde el mínimo de cada oportunidad: ${formatMoney(500)} en las que abren en soles. Y no necesitas concentrar todo tu capital en una sola propiedad: puedes distribuirlo entre diferentes oportunidades, sujeto al mínimo y disponibilidad de cada una.`,
-    proofLabel: "Por qué no ir directo al remate",
-    proofHref: "/nosotros#por-que-rematto",
-    image:
-      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Edificio residencial en una zona urbana consolidada",
+    title: "Accede sin necesitar el capital completo de una propiedad",
+    desc: "Participa desde el monto mínimo definido para cada oportunidad.",
   },
   {
     id: "managed",
-    icon: Scale,
+    Icon: GestionIcon,
     eyebrow: "Gestión",
     title: "No enfrentas solo el proceso judicial",
-    desc: `${BRAND_NAME} analiza la oportunidad antes de publicarla —expediente, cargas registrales y estado de ocupación— y gestiona las etapas que correspondan: participación en el remate, inscripción, posesión, venta y liquidación del resultado.`,
-    proofLabel: "Revisa el proceso completo",
-    proofHref: "/proceso-de-inversion",
-    image:
-      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Documentación judicial junto al mazo de un juez",
+    desc: `${BRAND_NAME} analiza la oportunidad y gestiona las etapas que correspondan hasta la liquidación.`,
   },
   {
     id: "spread",
-    icon: LayoutGrid,
-    eyebrow: "Distribución",
+    Icon: DiversificacionIcon,
+    eyebrow: "Diversificación",
     title: "Distribuye tu capital entre distintas oportunidades",
-    desc: "Puedes participar en más de una operación en lugar de concentrarte necesariamente en un solo inmueble. Cada operación tiene su propio expediente, su propio plazo y su propio resultado, independiente del de las demás.",
-    proofLabel: "Explora las oportunidades",
-    proofHref: "/propiedades",
-    image:
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Distintos inmuebles residenciales de una misma cartera",
+    desc: "Puedes participar en más de una operación en lugar de concentrarte necesariamente en un solo inmueble.",
   },
   {
     id: "tracking",
-    icon: LineChart,
+    Icon: SeguimientoIcon,
     eyebrow: "Seguimiento",
-    title: "Sigues tu inversión de principio a fin",
-    desc: "Desde tu cuenta consultas el estado de cada operación, los documentos que respaldan tu participación, los hitos del proceso judicial y el resultado cuando se liquida. Sin llamadas ni correos para saber en qué va.",
-    proofLabel: "Ver qué gestiona el equipo por ti",
-    proofHref: "#gestion",
-    image:
-      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&h=900&fit=crop&auto=format&q=80",
-    imageAlt: "Seguimiento de una operación desde el panel del inversionista",
+    title: "Sigue tu inversión de principio a fin",
+    desc: "Consulta estados, documentos, hitos y resultados desde tu cuenta.",
   },
 ];
 
-/**
- * Supporting figures — number, what it measures, and on what basis. A figure
- * without its method is exactly the unbacked claim the first audit flagged.
- */
 const FIGURES = [
   {
     value: formatMoneyCompact(48_000_000),
@@ -137,10 +172,6 @@ export function WhyInvest() {
           backgroundSize: "32px 32px",
         }}
       />
-      <div
-        className="pointer-events-none absolute left-1/2 top-24 size-130 -translate-x-1/2 rounded-full bg-primary/8 blur-[120px]"
-        aria-hidden
-      />
 
       <div className="relative mx-auto max-w-[1400px] section-padding">
         <motion.div
@@ -159,71 +190,48 @@ export function WhyInvest() {
           </p>
         </motion.div>
 
-        {/* Pillars — one column on mobile, two from sm. */}
         <div className="mt-12 grid gap-4 sm:mt-14 sm:grid-cols-2 sm:gap-5">
           {PILLARS.map((pillar, i) => {
-            const Icon = pillar.icon;
+            const Icon = pillar.Icon;
             return (
               <motion.article
                 key={pillar.id}
                 initial={reduceMotion ? false : { opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.45, delay: reduceMotion ? 0 : i * 0.07 }}
-                className="group flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition-shadow hover:shadow-md"
+                transition={{
+                  duration: 0.45,
+                  delay: reduceMotion ? 0 : i * 0.07,
+                }}
+                className={cn(
+                  "flex items-start gap-5 rounded-2xl border border-border/70",
+                  "bg-card p-5 sm:gap-6 sm:p-6"
+                )}
               >
-                <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={pillar.image}
-                    alt={pillar.imageAlt}
-                    className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div
-                    className="absolute inset-0 bg-linear-to-t from-card via-card/25 to-transparent"
-                    aria-hidden
-                  />
-                  <div
-                    className="absolute inset-0 bg-linear-to-tr from-primary/25 via-transparent to-transparent mix-blend-multiply"
-                    aria-hidden
-                  />
+                <Icon className="size-14 shrink-0 text-primary sm:size-16" />
 
-                  <span className="absolute bottom-4 left-6 flex size-12 items-center justify-center rounded-2xl bg-card text-primary shadow-md ring-1 ring-primary/20">
-                    <Icon className="size-5.5" strokeWidth={2.1} />
-                  </span>
-                </div>
-
-                <div className="flex flex-1 flex-col p-6 pt-5 sm:p-8 sm:pt-6">
-                  <p className="type-label text-primary">{pillar.eyebrow}</p>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className="type-label uppercase tracking-wide text-primary">
+                    {pillar.eyebrow}
+                  </p>
                   <h3 className="type-h3 mt-2 text-balance text-foreground">
                     {pillar.title}
                   </h3>
-                  <p className="type-body mt-3 text-pretty text-muted-foreground">
+                  <p className="type-body mt-2 text-pretty text-muted-foreground">
                     {pillar.desc}
                   </p>
-
-                  <Link
-                    href={pillar.proofHref}
-                    className="type-body mt-6 inline-flex w-fit items-center gap-1.5 font-semibold text-primary hover:underline"
-                  >
-                    {pillar.proofLabel}
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
                 </div>
               </motion.article>
             );
           })}
         </div>
 
-        {/* Supporting figures — one container each (finding 35). */}
         <motion.div
           initial={reduceMotion ? false : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="mt-12 rounded-3xl border border-border/60 bg-muted/40 p-5 sm:mt-14 sm:p-6"
+          className="mt-12  py-5 sm:mt-14 sm:py-6"
         >
           <p className="type-label px-1 text-muted-foreground">
             Las cifras, y de dónde salen
