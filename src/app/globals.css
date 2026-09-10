@@ -373,3 +373,10 @@ html {
     animation: none;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-card-inner {
+    transition: opacity 200ms ease-out;
+    transform: none !important;
+  }
+}

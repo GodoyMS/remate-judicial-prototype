@@ -45,9 +45,9 @@ export function Navbar() {
   const [overDark, setOverDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const isLanding = pathname === "/";
-  // Solid bar when the mobile sheet is open, or on non-landing pages
-  const solid = open || !isLanding;
+  const isOverlayPage = pathname === "/" || pathname === "/nosotros";
+  // Solid bar when the mobile sheet is open, or on pages without an overlay hero
+  const solid = open || !isOverlayPage;
   /**
    * RM-010 — the bar used to stay fully transparent over every light section,
    * so section headings scrolled straight through the nav labels and both
@@ -59,7 +59,7 @@ export function Navbar() {
   const lightText = !solid && overDark;
 
   useEffect(() => {
-    if (!isLanding) {
+    if (!isOverlayPage) {
       setOverDark(false);
       setScrolled(false);
       return;
@@ -76,7 +76,7 @@ export function Navbar() {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [isLanding]);
+  }, [isOverlayPage]);
 
   return (
     <header

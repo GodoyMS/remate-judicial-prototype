@@ -4,13 +4,18 @@ import { PlatformChatbot } from "@/components/landing/PlatformChatbot";
 
 interface LegalPageLayoutProps {
   children: React.ReactNode;
+  /** Skip the default offset when the first section sits under a transparent nav. */
+  flushTop?: boolean;
 }
 
-export function LegalPageLayout({ children }: LegalPageLayoutProps) {
+export function LegalPageLayout({
+  children,
+  flushTop = false,
+}: LegalPageLayoutProps) {
   return (
     <>
       <Navbar />
-      <main className="pt-16">{children}</main>
+      <main className={flushTop ? undefined : "pt-16"}>{children}</main>
       <Footer />
       <PlatformChatbot />
     </>

@@ -190,35 +190,6 @@ const officialSources = [
   },
 ];
 
-/** Institutions involved in the process — never framed as partners. */
-const institutions = [
-  {
-    name: "Poder Judicial",
-    role: "Conduce el remate y emite la adjudicación",
-    logo: "/images/institutions/pj.png",
-  },
-  {
-    name: "SUNARP",
-    role: "Registra la propiedad y sus cargas",
-    logo: "/images/institutions/sunarp.png",
-  },
-  {
-    name: "SUNAT",
-    role: "Administra las obligaciones tributarias",
-    logo: "/images/institutions/sunat.png",
-  },
-  {
-    name: "Colegio Notarial",
-    role: "Interviene en escrituras y legalizaciones",
-    logo: "/images/institutions/cnl.png",
-  },
-  {
-    name: "INDECOPI",
-    role: "Recibe reclamos de consumidores",
-    logo: "/images/institutions/indecopi.png",
-  },
-];
-
 const AUTOPLAY_MS = 6500;
 
 /** Matches max-w-[1400px] + section-padding so slide 1 lines up with the header. */
@@ -627,62 +598,8 @@ export function TrustSection() {
 
           <p className="type-caption mt-5 text-muted-foreground">
             Enlaces a portales de terceros. Se abren en una pestaña nueva y su
-            disponibilidad depende de cada entidad.
-          </p>
-        </motion.div>
-      </div>
-
-      {/* Institutions — described factually, with the non-endorsement note in
-          the same block rather than in fine print elsewhere. */}
-      <div className="relative mx-auto max-w-[1400px] section-padding">
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className="rounded-3xl border border-border/60 bg-muted/40 p-6 sm:p-8"
-        >
-          <h3 className="type-label text-muted-foreground">
-            Entidades que intervienen en el proceso
-          </h3>
-
-          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {institutions.map((institution) => (
-              <li
-                key={institution.name}
-                className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card px-4 py-3"
-              >
-                <span className="flex h-11 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-card ring-1 ring-border">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={institution.logo}
-                    alt={`Logo ${institution.name}`}
-                    width={80}
-                    height={40}
-                    className="h-9 w-[68px] object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </span>
-                <div className="min-w-0">
-                  <p className="type-body font-semibold text-foreground">
-                    {institution.name}
-                  </p>
-                  <p className="type-caption text-muted-foreground">
-                    {institution.role}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <p className="type-caption mt-6 border-t border-border/70 pt-5 text-muted-foreground">
-            Estas son las instituciones ante las que se tramita cada operación.{" "}
-            <strong className="font-semibold text-foreground">
-              Ninguna de ellas patrocina, respalda ni supervisa a {BRAND_NAME}
-            </strong>
-            , y su mención no implica autorización, garantía ni recomendación
-            alguna sobre las inversiones ofrecidas.
+            disponibilidad depende de cada entidad. Su mención no implica
+            patrocinio, respaldo ni supervisión de {BRAND_NAME}.
           </p>
         </motion.div>
       </div>

@@ -53,6 +53,7 @@ const columns = [
       { label: "Tarifas", href: "/tarifas" },
       { label: "Premium", href: "/premium" },
       { label: "Nosotros", href: "/nosotros" },
+      { label: "Testimonios", href: "/testimonios" },
     ],
   },
   {
