@@ -21,7 +21,7 @@ export const DEFAULT_BRAND_COLOR = "#2D45DC";
 
 export const THEME_MODES = ["light", "dark", "system"] as const;
 export type ThemeMode = (typeof THEME_MODES)[number];
-export const DEFAULT_THEME_MODE: ThemeMode = "system";
+export const DEFAULT_THEME_MODE: ThemeMode = "light";
 
 export function isThemeMode(value: unknown): value is ThemeMode {
   return (

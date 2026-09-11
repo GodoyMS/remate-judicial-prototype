@@ -50,8 +50,10 @@ const themeInitScript = `
     }
   } catch (e) {}
   try {
+    // Default is light regardless of OS preference — only an explicit
+    // stored choice of "dark" (or "system" resolving to dark) turns it on.
     var mode = localStorage.getItem(${JSON.stringify(THEME_MODE_STORAGE_KEY)});
-    if (mode !== "light" && mode !== "dark") mode = "system";
+    if (mode !== "light" && mode !== "dark" && mode !== "system") mode = "light";
     var dark =
       mode === "dark" ||
       (mode === "system" &&
