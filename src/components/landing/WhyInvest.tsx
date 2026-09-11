@@ -62,11 +62,11 @@ export function WhyInvest() {
           transition={{ duration: 0.5 }}
           className="mx-auto max-w-2xl text-center"
         >
-          <h2 className="type-h2 text-balance text-background">
+          <h2 className="type-h2 text-balance text-inherit">
             Cuatro razones para invertir con{" "}
             <span className="text-primary">{BRAND_NAME}</span>
           </h2>
-          <p className="mt-4 type-lead text-pretty text-background/70">
+          <p className="mt-4 type-lead text-pretty dark-band-body">
             Lo que obtienes gracias a la plataforma, y dónde puedes comprobarlo.
           </p>
         </motion.div>
@@ -82,7 +82,7 @@ export function WhyInvest() {
                 duration: 0.45,
                 delay: reduceMotion ? 0 : i * 0.07,
               }}
-              className="overflow-hidden rounded-3xl border border-background/12 bg-background/8"
+              className="overflow-hidden rounded-3xl border border-white/12 bg-white/5 transition-all duration-300 hover:border-white/20 hover:bg-white/8"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -94,7 +94,7 @@ export function WhyInvest() {
                   decoding="async"
                 />
                 <div
-                  className="absolute inset-0 bg-linear-to-t from-foreground/70 via-foreground/10 to-transparent"
+                  className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent"
                   aria-hidden
                 />
                 <p className="absolute bottom-4 left-5 type-label uppercase tracking-wide text-primary">
@@ -102,10 +102,10 @@ export function WhyInvest() {
                 </p>
               </div>
               <div className="p-5 sm:p-6">
-                <h3 className="type-h3 text-balance text-background">
+                <h3 className="type-h3 text-balance text-inherit">
                   {pillar.title}
                 </h3>
-                <p className="type-body mt-2 text-pretty text-background/70">
+                <p className="type-body mt-2 text-pretty dark-band-body">
                   {pillar.desc}
                 </p>
               </div>
