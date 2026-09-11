@@ -1,4 +1,5 @@
 import type { TeamMember } from "@/components/landing/TeamSection";
+import { LANDING_PHOTOS } from "@/lib/landing/media";
 
 /** Leadership shown on /nosotros — max three profiles. */
 export const teamMembers: TeamMember[] = [
@@ -9,6 +10,7 @@ export const teamMembers: TeamMember[] = [
       "12+ años en inversión inmobiliaria y estructuración de proyectos en Perú.",
     linkedin: "https://www.linkedin.com/company/rematto/",
     initials: "MS",
+    photo: LANDING_PHOTOS.teamMariana,
     profileLabel: "Ver perfil en LinkedIn",
   },
   {
@@ -18,6 +20,7 @@ export const teamMembers: TeamMember[] = [
       "15 años en litigio civil y procesos de remate en juzgados de Lima y Callao.",
     linkedin: "https://www.linkedin.com/company/rematto/",
     initials: "DA",
+    photo: LANDING_PHOTOS.teamDiego,
     profileLabel: "Ver perfil en LinkedIn",
   },
   {
@@ -27,6 +30,7 @@ export const teamMembers: TeamMember[] = [
       "11 años en productos financieros digitales, cumplimiento y operaciones.",
     linkedin: "https://www.linkedin.com/company/rematto/",
     initials: "RC",
-    profileLabel: "Ver perfil profesional",
+    photo: LANDING_PHOTOS.teamRenzo,
+    profileLabel: "Ver perfil en LinkedIn",
   },
 ];

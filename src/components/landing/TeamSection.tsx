@@ -12,6 +12,7 @@ export type TeamMember = {
   summary: string;
   linkedin: string;
   initials: string;
+  photo?: string;
   profileLabel?: string;
 };
 
@@ -33,35 +34,48 @@ function TeamMemberCard({
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4, delay: reduceMotion ? 0 : index * 0.07 }}
       className={cn(
-        "group flex h-full gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-sm",
+        "group grid h-full overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm",
+        "grid-cols-[9rem_minmax(0,1fr)] min-h-56",
+        "lg:grid-cols-[8.5rem_minmax(0,1fr)] lg:min-h-[15.5rem]",
         "transition-all duration-300 hover:border-primary/25 hover:shadow-md"
       )}
     >
-      <span
-        className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary/8 text-base font-bold text-primary ring-1 ring-primary/15"
-        aria-hidden
-      >
-        {member.initials}
-      </span>
+      <div className="relative min-h-56 overflow-hidden bg-muted lg:min-h-full">
+        {member.photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={member.photo}
+            alt={`Retrato de ${member.name}`}
+            className="absolute inset-0 size-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <span
+            className="absolute inset-0 flex items-center justify-center text-3xl font-bold text-primary"
+            aria-hidden
+          >
+            {member.initials}
+          </span>
+        )}
+      </div>
 
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-bold uppercase tracking-wide text-foreground">
+      <div className="flex flex-col justify-center p-4 sm:p-5">
+        <p className="text-lg font-bold tracking-tight text-foreground">
           {member.name}
         </p>
-        <p className="mt-1 text-sm font-medium text-foreground/90">
-          {member.area}
-        </p>
-        <p className="mt-2 line-clamp-2 text-sm leading-snug text-muted-foreground">
+        <p className="mt-1 text-sm font-medium text-primary">{member.area}</p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           {member.summary}
         </p>
         <a
           href={member.linkedin}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+          className="mt-3 inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary hover:underline"
           aria-label={`${member.profileLabel ?? "Ver perfil profesional"} de ${member.name}`}
         >
-          {member.profileLabel ?? "Ver perfil profesional"}
+          {member.profileLabel ?? "LinkedIn"}
           <ArrowUpRight className="size-3.5 shrink-0" aria-hidden />
         </a>
       </div>
@@ -77,18 +91,9 @@ export function TeamSection({ members }: { members: TeamMember[] }) {
     <section
       id="equipo"
       data-nav-tone="light"
-      className="relative overflow-hidden bg-muted/45 py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-background py-16 sm:py-20 lg:py-24 scroll-mt-24"
     >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-50"
-        aria-hidden
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--primary) 6%, transparent) 1px, transparent 0)`,
-          backgroundSize: "28px 28px",
-        }}
-      />
-
-      <div className="relative mx-auto max-w-6xl section-padding">
+      <div className="relative mx-auto max-w-[1400px] section-padding">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -109,7 +114,7 @@ export function TeamSection({ members }: { members: TeamMember[] }) {
           </p>
         </motion.div>
 
-        <ul className="mt-12 grid gap-4 sm:mt-14 lg:grid-cols-3 lg:gap-5">
+        <ul className="mt-12 grid grid-cols-1 gap-5 sm:mt-14 lg:grid-cols-3">
           {visibleMembers.map((member, index) => (
             <TeamMemberCard
               key={member.name}

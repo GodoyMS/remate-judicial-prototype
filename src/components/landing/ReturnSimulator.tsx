@@ -19,24 +19,6 @@ import {
 } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
-/**
- * Return simulator — second review, findings 8, 27, 28, 37 and 44.
- *
- * · 28 — the operation picker offered an opportunity the landing itself marks
- *   "Próximo" while claiming to list only open ones. It now reads from
- *   `openOpportunities()`, the same query the grid above uses.
- * · 27 — the arithmetic lives in `lib/landing/opportunities`, so the figure
- *   here and the figure on a property page are the same computation and
- *   cannot drift apart.
- * · 8 — "los tres escenarios posibles" presented three outcomes as if they
- *   exhausted the space. They are reference scenarios, and the copy says so.
- * · 37 — each fee is shown as concept · rate, then the amount for this
- *   scenario, then the condition as a separate helper, instead of merging the
- *   condition into the number.
- * · 44 — the closing action is contextual (open this operation's file, or
- *   talk to someone) rather than a fourth "crear cuenta gratis".
- */
-
 const OPPORTUNITIES = openOpportunities().map((o) => ({
   id: o.id,
   slug: o.slug,
@@ -47,7 +29,6 @@ const OPPORTUNITIES = openOpportunities().map((o) => ({
   min: o.minTicket,
 }));
 
-/** Slider bounds, per currency, so the soles and dollars ranges both make sense. */
 const RANGE: Record<
   PropertyCurrency,
   { min: number; max: number; step: number }
@@ -58,24 +39,36 @@ const RANGE: Record<
 
 const toneStyles = {
   adverse: {
-    card: "border-destructive/25 bg-destructive/5",
+    card: "border-destructive/40 bg-destructive/10 shadow-sm shadow-destructive/10",
     label: "text-destructive",
     value: "text-destructive",
-    bar: "bg-destructive/60",
+    bar: "bg-destructive",
+    step: "bg-destructive text-white",
+    rail: "bg-destructive/25",
   },
   base: {
-    card: "border-primary/40 bg-primary/5 ring-1 ring-primary/20",
+    card: "border-primary bg-primary/10 ring-2 ring-primary/25 shadow-md shadow-primary/15",
     label: "text-primary",
     value: "text-foreground",
     bar: "bg-primary",
+    step: "bg-primary text-primary-foreground",
+    rail: "bg-primary/30",
   },
   favourable: {
-    card: "border-success/30 bg-success/5",
+    card: "border-success/40 bg-success/10 shadow-sm shadow-success/10",
     label: "text-success",
     value: "text-foreground",
     bar: "bg-success",
+    step: "bg-success text-white",
+    rail: "bg-success/25",
   },
 } as const;
+
+const FLOW_STEPS = [
+  { n: "01", title: "Elige", hint: "La operación" },
+  { n: "02", title: "Define", hint: "Tu monto" },
+  { n: "03", title: "Descubre", hint: "Los tres caminos" },
+] as const;
 
 export function ReturnSimulator() {
   const reduceMotion = useReducedMotion();
@@ -88,8 +81,6 @@ export function ReturnSimulator() {
     Record<PropertyCurrency, number>
   >({ PEN: 5_000, USD: 3_000 });
 
-  /* Clamped so switching to an opportunity with a higher minimum never leaves
-     the slider showing a ticket that opportunity would not accept. */
   const amount = Math.min(
     range.max,
     Math.max(opportunity.min, amountByCurrency[opportunity.currency]),
@@ -100,11 +91,7 @@ export function ReturnSimulator() {
     [amount, opportunity.roi],
   );
   const expected = results[1]!;
-
-  /* Bars are scaled against the largest absolute net gain on screen, so the
-     adverse column is legible next to the favourable one. */
   const scale = Math.max(...results.map((r) => Math.abs(r.netGain)), 1);
-
   const money = (value: number) => formatMoney(value, opportunity.currency);
 
   const feeRows = [
@@ -132,7 +119,7 @@ export function ReturnSimulator() {
     <section
       id="simulador"
       data-nav-tone="light"
-      className="relative overflow-hidden bg-background py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-background py-16 sm:py-20 lg:py-24 scroll-mt-24"
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-40"
@@ -141,6 +128,14 @@ export function ReturnSimulator() {
           backgroundImage: `radial-gradient(circle at 1px 1px, color-mix(in oklch, var(--foreground) 5%, transparent) 1px, transparent 0)`,
           backgroundSize: "32px 32px",
         }}
+      />
+      <div
+        className="pointer-events-none absolute -left-24 top-20 size-72 rounded-full bg-primary/12 blur-3xl"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -right-20 bottom-10 size-64 rounded-full bg-success/10 blur-3xl"
+        aria-hidden
       />
 
       <div className="relative mx-auto max-w-[1400px] section-padding">
@@ -158,32 +153,65 @@ export function ReturnSimulator() {
           <h2 className="type-h2 mt-5 text-balance text-foreground">
             ¿Qué pasaría con <span className="text-primary">tu dinero</span>?
           </h2>
+          <p className="mt-4 type-lead text-pretty text-muted-foreground">
+            Tres pasos. Primero eliges la operación, luego el monto, y al final
+            ves cómo cambia el resultado según el plazo y el precio de venta.
+          </p>
         </motion.div>
+
+        <ol className="mx-auto mt-10 flex max-w-xl items-center justify-between gap-2 sm:mt-12">
+          {FLOW_STEPS.map((step, i) => (
+            <li key={step.n} className="flex flex-1 items-center gap-2">
+              <div className="flex items-center gap-2.5">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-md shadow-primary/25">
+                  {step.n}
+                </span>
+                <span className="hidden sm:block">
+                  <span className="block text-sm font-bold text-foreground">
+                    {step.title}
+                  </span>
+                  <span className="block text-xs text-muted-foreground">
+                    {step.hint}
+                  </span>
+                </span>
+              </div>
+              {i < FLOW_STEPS.length - 1 ? (
+                <span
+                  className="h-px flex-1 bg-linear-to-r from-primary to-primary/20"
+                  aria-hidden
+                />
+              ) : null}
+            </li>
+          ))}
+        </ol>
 
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 22 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.55 }}
-          className="mx-auto mt-12 max-w-4xl overflow-hidden rounded-3xl border border-border/60 bg-card shadow-lg shadow-foreground/5"
+          className="mx-auto mt-10 max-w-4xl overflow-hidden rounded-3xl border border-primary/20 bg-card shadow-xl shadow-primary/8 sm:mt-12"
         >
-          {/* ── Controls ── */}
-          <div className="border-b border-border/60 bg-muted/30 p-6 sm:p-8">
-            <div className="mb-4 sm:mb-6">
-              <p className="font-bold text-lg text-foreground sm:text-xl">
-                Verás tres escenarios de referencia.
-              </p>
-              <p className="type-caption  text-sm! text-pretty text-muted-foreground">
-                Son ejemplos para entender cómo cambian plazo y retorno; no
-                representan todos los resultados posibles.
-              </p>
+          <div className="border-b border-primary/15 bg-primary/8 p-6 sm:p-8">
+            <div className="mb-6 flex items-center gap-3">
+              <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                01
+              </span>
+              <div>
+                <p className="font-bold text-lg text-foreground sm:text-xl">
+                  Elige la operación
+                </p>
+                <p className="type-caption text-sm! text-pretty text-muted-foreground">
+                  Cada ficha usa el retorno estimado publicado para esa
+                  oportunidad.
+                </p>
+              </div>
             </div>
+
             <fieldset>
-              <legend className="type-label text-muted-foreground">
-                Operación 
-              </legend>
-              <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                {OPPORTUNITIES.slice(0, 3).map((o) => {
+              <legend className="sr-only">Operación</legend>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {OPPORTUNITIES.slice(0, 3).map((o, index) => {
                   const isActive = o.id === opportunity.id;
                   return (
                     <button
@@ -195,11 +223,14 @@ export function ReturnSimulator() {
                         "cursor-pointer rounded-2xl border p-4 text-left transition-all",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                         isActive
-                          ? "border-primary bg-card shadow-sm ring-1 ring-primary/25"
+                          ? "border-primary bg-card shadow-md shadow-primary/15 ring-2 ring-primary/20"
                           : "border-border bg-card/60 hover:border-primary/40 hover:bg-card",
                       )}
                     >
-                      <p className="type-body font-semibold text-foreground">
+                      <p className="text-[11px] font-semibold uppercase tracking-widest text-primary/80">
+                        Opción {index + 1}
+                      </p>
+                      <p className="type-body mt-1 font-semibold text-foreground">
                         {o.district}
                       </p>
                       <p className="type-caption mt-0.5 truncate text-muted-foreground">
@@ -218,121 +249,174 @@ export function ReturnSimulator() {
                 })}
               </div>
             </fieldset>
+          </div>
 
-            <div className="mt-8">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <label
-                  htmlFor="simulator-amount"
-                  className="type-label text-muted-foreground"
-                >
-                  Cuánto inviertes
-                </label>
-                <output
-                  htmlFor="simulator-amount"
-                  className="type-metric text-primary"
-                >
-                  {money(amount)}
-                </output>
-              </div>
+          <div className="border-b border-border/60 bg-muted/25 p-6 sm:p-8">
+            <div className="mb-5 flex items-center gap-3">
+              <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                02
+              </span>
+              <p className="font-bold text-lg text-foreground sm:text-xl">
+                Define cuánto inviertes
+              </p>
+            </div>
 
-              <Slider
-                id="simulator-amount"
-                className={cn(
-                  "mt-5",
-                  "[&_[data-slot=slider-track]]:data-horizontal:h-2",
-                  "[&_[data-slot=slider-thumb]]:size-5",
-                  "[&_[data-slot=slider-thumb]]:border-2",
-                  "[&_[data-slot=slider-thumb]]:border-primary",
-                  "[&_[data-slot=slider-thumb]]:shadow-md",
-                  "[&_[data-slot=slider-thumb]]:after:-inset-3",
-                )}
-                value={[amount]}
-                min={opportunity.min}
-                max={range.max}
-                step={range.step}
-                aria-label="Monto a invertir"
-                aria-valuetext={money(amount)}
-                onValueChange={([next]) =>
-                  setAmountByCurrency((prev) => ({
-                    ...prev,
-                    [opportunity.currency]: next ?? opportunity.min,
-                  }))
-                }
-              />
+            <div className="flex flex-wrap items-end justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-5 py-4">
+              <label
+                htmlFor="simulator-amount"
+                className="type-label text-muted-foreground"
+              >
+                Tu aporte
+              </label>
+              <output
+                htmlFor="simulator-amount"
+                className="text-3xl font-black tracking-tight text-primary tabular-nums sm:text-4xl"
+              >
+                {money(amount)}
+              </output>
+            </div>
 
-              <div className="mt-3 flex justify-between type-caption text-muted-foreground">
-                <span>Mínimo {money(opportunity.min)}</span>
-                <span>{money(range.max)}</span>
-              </div>
+            <Slider
+              id="simulator-amount"
+              className={cn(
+                "mt-6",
+                "[&_[data-slot=slider-track]]:data-horizontal:h-2.5",
+                "[&_[data-slot=slider-range]]:bg-primary",
+                "[&_[data-slot=slider-thumb]]:size-5",
+                "[&_[data-slot=slider-thumb]]:border-2",
+                "[&_[data-slot=slider-thumb]]:border-primary",
+                "[&_[data-slot=slider-thumb]]:shadow-md",
+                "[&_[data-slot=slider-thumb]]:after:-inset-3",
+              )}
+              value={[amount]}
+              min={opportunity.min}
+              max={range.max}
+              step={range.step}
+              aria-label="Monto a invertir"
+              aria-valuetext={money(amount)}
+              onValueChange={([next]) =>
+                setAmountByCurrency((prev) => ({
+                  ...prev,
+                  [opportunity.currency]: next ?? opportunity.min,
+                }))
+              }
+            />
+
+            <div className="mt-3 flex justify-between type-caption text-muted-foreground">
+              <span>Mínimo {money(opportunity.min)}</span>
+              <span>{money(range.max)}</span>
             </div>
           </div>
 
-          {/* ── Results ── */}
           <div className="p-6 sm:p-8">
+            <div className="mb-6 flex items-center gap-3">
+              <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                03
+              </span>
+              <div>
+                <p className="font-bold text-lg text-foreground sm:text-xl">
+                  Tres caminos de referencia
+                </p>
+                <p className="type-caption text-pretty text-muted-foreground">
+                  Lee de izquierda a derecha: de un resultado adverso al más
+                  favorable. No cubren todos los desenlaces posibles.
+                </p>
+              </div>
+            </div>
+
+            <p className="mb-5 rounded-2xl border border-primary/20 bg-primary/8 px-4 py-3 text-sm leading-relaxed text-foreground">
+              Si inviertes{" "}
+              <strong className="text-primary">{money(amount)}</strong> en{" "}
+              <strong>{opportunity.name}</strong>, este es el recorrido de tu
+              capital según el plazo y el precio de venta.
+            </p>
+
             <div
-              className="grid gap-3 sm:grid-cols-3"
+              className="grid gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-stretch"
               aria-live="polite"
               aria-atomic="true"
             >
-              {results.map((r) => {
+              {results.map((r, i) => {
                 const tone = toneStyles[r.scenario.tone];
                 const width = `${Math.max(6, (Math.abs(r.netGain) / scale) * 100)}%`;
                 const isLoss = r.netGain < 0;
 
                 return (
-                  <div
-                    key={r.scenario.id}
-                    className={cn(
-                      "flex flex-col rounded-2xl border p-5",
-                      tone.card,
-                    )}
-                  >
-                    <p className={cn("type-label", tone.label)}>
-                      {r.scenario.label}
-                    </p>
-
-                    <p className="type-caption mt-1 text-muted-foreground">
-                      En {r.scenario.months} meses recibirías
-                    </p>
-                    <p
+                  <div key={r.scenario.id} className="contents">
+                    <div
                       className={cn(
-                        "mt-1.5 text-2xl font-black tracking-tight tabular-nums sm:text-[1.75rem]",
-                        tone.value,
+                        "flex flex-col rounded-2xl border p-5",
+                        tone.card,
                       )}
                     >
-                      {money(Math.round(r.net))}
-                    </p>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className={cn("type-label", tone.label)}>
+                          {r.scenario.label}
+                        </p>
+                        <span
+                          className={cn(
+                            "flex size-6 items-center justify-center rounded-full text-[10px] font-bold",
+                            tone.step,
+                          )}
+                        >
+                          {i + 1}
+                        </span>
+                      </div>
 
-                    <p
-                      className={cn(
-                        "type-caption mt-1 font-semibold tabular-nums",
-                        isLoss ? "text-destructive" : "text-success",
-                      )}
-                    >
-                      {isLoss ? "−" : "+"}
-                      {money(Math.abs(Math.round(r.netGain)))} ·{" "}
-                      {isLoss ? "−" : "+"}
-                      {formatPercent(Math.abs(r.annualised), 1)} anual
-                    </p>
+                      <p className="type-caption mt-1 text-muted-foreground">
+                        En {r.scenario.months} meses recibirías
+                      </p>
+                      <p
+                        className={cn(
+                          "mt-1.5 text-2xl font-black tracking-tight tabular-nums sm:text-[1.75rem]",
+                          tone.value,
+                        )}
+                      >
+                        {money(Math.round(r.net))}
+                      </p>
 
-                    {/* Magnitude bar — same scale across the three columns */}
-                    <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-foreground/8">
+                      <p
+                        className={cn(
+                          "type-caption mt-1 font-semibold tabular-nums",
+                          isLoss ? "text-destructive" : "text-success",
+                        )}
+                      >
+                        {isLoss ? "−" : "+"}
+                        {money(Math.abs(Math.round(r.netGain)))} ·{" "}
+                        {isLoss ? "−" : "+"}
+                        {formatPercent(Math.abs(r.annualised), 1)} anual
+                      </p>
+
                       <div
-                        className={cn("h-full rounded-full", tone.bar)}
-                        style={{ width }}
-                      />
+                        className={cn(
+                          "mt-4 h-2 overflow-hidden rounded-full",
+                          tone.rail,
+                        )}
+                      >
+                        <div
+                          className={cn("h-full rounded-full", tone.bar)}
+                          style={{ width }}
+                        />
+                      </div>
+
+                      <p className="type-caption mt-4 text-pretty text-muted-foreground">
+                        {r.scenario.caption}
+                      </p>
                     </div>
 
-                    <p className="type-caption mt-4 text-pretty text-muted-foreground">
-                      {r.scenario.caption}
-                    </p>
+                    {i < results.length - 1 ? (
+                      <div
+                        className="hidden items-center justify-center sm:flex"
+                        aria-hidden
+                      >
+                        <ArrowRight className="size-5 text-primary" />
+                      </div>
+                    ) : null}
                   </div>
                 );
               })}
             </div>
 
-            {/* Fee transparency — concept · rate, amount, then the condition
-                as its own helper line (finding 37). */}
             <div className="mt-6 rounded-2xl bg-muted/50 p-5">
               <p className="type-label text-muted-foreground">
                 Comisiones incluidas en el escenario esperado

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronDown, Play, Quote, Star } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Play, Quote, Star } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getPublishedTestimonials } from "@/lib/admin/mock-data";
 import type { AdminTestimonial } from "@/lib/admin/types";
@@ -12,8 +13,8 @@ import { TestimonialVideoModal } from "@/components/landing/TestimonialVideoModa
  * Testimonials — second review, findings 32 and 33.
  *
  * · 32 — fourteen testimonials inside the main flow is not social proof, it
- *   is a wall. Four representative profiles are shown; the rest are behind
- *   "Ver más historias" for whoever wants them.
+ *   is a wall. Four representative profiles are shown; the rest live on
+ *   /testimonios, reached from "Ver más historias".
  * · 33 — the section mixed three different card shapes (photo, initials,
  *   "Video / Ver testimonio / Historia en video"). There are now exactly two
  *   components, written and video, built on the same shell: same header, same
@@ -188,8 +189,10 @@ function TestimonialItem({
 
 export function Testimonials({
   tone = "default",
+  variant = "preview",
 }: {
   tone?: CardTone;
+  variant?: "preview" | "all";
 }) {
   const reduceMotion = useReducedMotion();
   const published = getPublishedTestimonials();
@@ -197,8 +200,8 @@ export function Testimonials({
     published.find((t) => t.id === id)
   ).filter((t): t is AdminTestimonial => Boolean(t));
   const rest = published.filter((t) => !FEATURED_IDS.includes(t.id));
+  const visible = variant === "all" ? published : featured;
 
-  const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState<AdminTestimonial | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -212,18 +215,27 @@ export function Testimonials({
     if (!open) setSelected(null);
   };
 
-  if (featured.length === 0) return null;
+  if (visible.length === 0) return null;
 
   return (
     <>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {featured.map((t, i) => (
+      <div
+        className={cn(
+          "grid gap-5 sm:grid-cols-2",
+          variant === "all" ? "lg:grid-cols-3" : "lg:grid-cols-4"
+        )}
+      >
+        {visible.map((t, i) => (
           <motion.div
             key={t.id}
-            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+            initial={
+              variant === "all" || reduceMotion
+                ? false
+                : { opacity: 0, y: 18 }
+            }
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: reduceMotion ? 0 : i * 0.07, duration: 0.45 }}
+            transition={{ delay: reduceMotion ? 0 : i * 0.05, duration: 0.45 }}
             className="h-full"
           >
             <TestimonialItem
@@ -235,36 +247,10 @@ export function Testimonials({
         ))}
       </div>
 
-      <AnimatePresence initial={false}>
-        {showAll && rest.length > 0 && (
-          <motion.div
-            key="rest"
-            initial={reduceMotion ? false : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={reduceMotion ? undefined : { opacity: 0, height: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="grid gap-5 pt-5 sm:grid-cols-2 lg:grid-cols-4">
-              {rest.map((t) => (
-                <TestimonialItem
-                  key={t.id}
-                  testimonial={t}
-                  tone={tone}
-                  onOpen={openTestimonial}
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {rest.length > 0 && (
+      {variant === "preview" && rest.length > 0 && (
         <div className="mt-8 flex flex-col items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowAll((v) => !v)}
-            aria-expanded={showAll}
+          <Link
+            href="/testimonios"
             className={cn(
               "inline-flex cursor-pointer items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors",
               tone === "onMedia"
@@ -272,17 +258,9 @@ export function Testimonials({
                 : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-primary/5"
             )}
           >
-            {showAll
-              ? "Mostrar menos"
-              : `Ver más historias (${rest.length})`}
-            <ChevronDown
-              className={cn(
-                "size-4 transition-transform",
-                showAll && "rotate-180"
-              )}
-              aria-hidden
-            />
-          </button>
+            {`Ver más historias (${rest.length})`}
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
           <p
             className={cn(
               "text-xs",
