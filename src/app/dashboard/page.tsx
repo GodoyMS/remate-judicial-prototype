@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -41,6 +41,14 @@ export default function DashboardPage() {
 
   const [selectedInvestment, setSelectedInvestment] = useState<ActiveInvestmentView | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  // "Información actualizada" solo se conoce al montar en el cliente: fijarla
+  // durante el render de servidor produciría un mismatch de hidratación,
+  // porque SSR y cliente evalúan Date.now() en instantes distintos.
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  useEffect(() => {
+    setLastUpdated(new Date().toISOString());
+  }, []);
 
   const investments = useMemo(() => getActiveInvestmentsForUser(), []);
   const inProgress = investments.filter((i) => i.status === "active" || i.status === "pending");
@@ -213,7 +221,7 @@ export default function DashboardPage() {
         ))}
       </div>
       <p className="text-[11px] text-muted-foreground mb-8">
-        Información actualizada: {formatDateTime(new Date().toISOString())}
+        {lastUpdated ? `Información actualizada: ${formatDateTime(lastUpdated)}` : " "}
       </p>
 
       {/* 4. Tus inversiones (WP-2.3) */}
