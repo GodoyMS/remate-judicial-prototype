@@ -228,7 +228,11 @@ export function Testimonials({
         {visible.map((t, i) => (
           <motion.div
             key={t.id}
-            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+            initial={
+              variant === "all" || reduceMotion
+                ? false
+                : { opacity: 0, y: 18 }
+            }
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: reduceMotion ? 0 : i * 0.05, duration: 0.45 }}

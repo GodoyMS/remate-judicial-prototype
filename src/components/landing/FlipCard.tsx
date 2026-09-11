@@ -123,17 +123,17 @@ export function FlipCard({
 
         <div className="h-full [perspective:1400px]">
           <div
-            className={cn(
-              "flip-card-inner relative h-full min-h-[280px] [transform-style:preserve-3d]",
-              !reduceMotion &&
-                "transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-              flipped && !reduceMotion && "[transform:rotateY(180deg)]"
-            )}
+      className={cn(
+        "flip-card-inner relative h-full min-h-[280px] [transform-style:preserve-3d] [transform:rotateY(0deg)]",
+        !reduceMotion &&
+          "transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        flipped && !reduceMotion && "[transform:rotateY(180deg)]"
+      )}
           >
             <div
               className={cn(
-                "absolute inset-0 overflow-hidden rounded-3xl border border-white/10",
-                "[backface-visibility:hidden]",
+                "absolute inset-0 overflow-hidden rounded-3xl border border-white/10 bg-foreground",
+                "[backface-visibility:hidden] [transform:translateZ(1px)]",
                 reduceMotion && flipped && "opacity-0"
               )}
             >
@@ -176,7 +176,7 @@ export function FlipCard({
               id={answerId}
               className={cn(
                 "absolute inset-0 overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-7",
-                "[backface-visibility:hidden] [transform:rotateY(180deg)]",
+                "[backface-visibility:hidden] [transform:rotateY(180deg)_translateZ(1px)]",
                 tone.back,
                 reduceMotion &&
                   (flipped ? "opacity-100 [transform:none]" : "pointer-events-none opacity-0 [transform:none]")

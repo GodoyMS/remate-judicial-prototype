@@ -56,7 +56,7 @@ export function WorkTimeline() {
     <section
       id="como-trabajamos"
       data-nav-tone="light"
-      className="relative overflow-hidden bg-muted/40 py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-muted/40 py-16 sm:py-20 lg:py-24 scroll-mt-24"
     >
       <div className="relative mx-auto max-w-[1400px] section-padding">
         <motion.div
@@ -94,7 +94,10 @@ export function WorkTimeline() {
                   duration: 0.4,
                   delay: reduceMotion ? 0 : i * 0.06,
                 }}
-                className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-4 lg:grid-cols-1 lg:gap-5"
+                className={cn(
+                  "relative grid grid-cols-[40px_minmax(0,1fr)] gap-4 lg:grid-cols-1 lg:gap-5",
+                  last && "lg:rounded-2xl lg:bg-primary/8 lg:p-4"
+                )}
               >
                 <div className="relative z-10 flex lg:justify-start">
                   <span

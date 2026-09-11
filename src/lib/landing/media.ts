@@ -48,7 +48,7 @@ export const LANDING_PHOTOS = {
   anotherWay:
     "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&h=1800&fit=crop&auto=format&q=80",
   forYou:
-    "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1600&h=1400&fit=crop&auto=format&q=80",
+    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1600&h=1400&fit=crop&auto=format&q=80",
   teamMariana:
     "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=1000&fit=crop&auto=format&q=80",
   teamDiego:

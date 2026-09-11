@@ -18,7 +18,7 @@ export function DarkBand({
       id={id}
       data-nav-tone="dark"
       className={cn(
-        "relative isolate overflow-hidden bg-foreground py-20 text-background sm:py-24 lg:py-28",
+        "relative isolate overflow-hidden bg-foreground py-20 text-background scroll-mt-24 sm:py-24 lg:py-28",
         className
       )}
     >

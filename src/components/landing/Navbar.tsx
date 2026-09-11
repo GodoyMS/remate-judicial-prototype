@@ -55,15 +55,13 @@ export function Navbar() {
    * which keeps the glass look while giving the labels a ground to sit on.
    */
   const scrim = !solid && scrolled;
-  // Light text only when the glass bar sits over a dark surface
-  const lightText = !solid && overDark;
+  // Overlay pages open on a dark hero. Until the probe runs (and while
+  // still at the top), keep light labels so the bar stays readable.
+  const lightText =
+    !solid && (isOverlayPage && !scrolled ? true : overDark);
 
   useEffect(() => {
-    if (!isOverlayPage) {
-      setOverDark(false);
-      setScrolled(false);
-      return;
-    }
+    if (!isOverlayPage) return;
 
     const update = () => {
       setOverDark(getToneUnderNav() === "dark");

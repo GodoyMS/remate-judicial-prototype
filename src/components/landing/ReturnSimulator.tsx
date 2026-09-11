@@ -119,7 +119,7 @@ export function ReturnSimulator() {
     <section
       id="simulador"
       data-nav-tone="light"
-      className="relative overflow-hidden bg-background py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-background py-16 sm:py-20 lg:py-24 scroll-mt-24"
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-40"

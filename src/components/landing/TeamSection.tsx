@@ -34,11 +34,12 @@ function TeamMemberCard({
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4, delay: reduceMotion ? 0 : index * 0.07 }}
       className={cn(
-        "group grid overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm sm:grid-cols-[minmax(0,0.42fr)_minmax(0,1fr)]",
+        "group grid overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm",
+        "sm:min-h-[240px] sm:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,1fr)]",
         "transition-all duration-300 hover:border-primary/25 hover:shadow-md"
       )}
     >
-      <div className="relative min-h-56 overflow-hidden bg-muted sm:min-h-full">
+      <div className="relative min-h-64 overflow-hidden bg-muted sm:min-h-full">
         {member.photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -89,7 +90,7 @@ export function TeamSection({ members }: { members: TeamMember[] }) {
     <section
       id="equipo"
       data-nav-tone="light"
-      className="relative overflow-hidden bg-background py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-background py-16 sm:py-20 lg:py-24 scroll-mt-24"
     >
       <div className="relative mx-auto max-w-6xl section-padding">
         <motion.div
