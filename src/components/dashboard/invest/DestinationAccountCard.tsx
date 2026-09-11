@@ -78,6 +78,15 @@ export function DestinationAccountCard({ currency = "PEN" }: DestinationAccountC
           </div>
         ))}
       </div>
+
+      {/* Destino de los fondos, antes de pagar (P-021). Texto a validar por Legal. */}
+      <div className="border-t border-border px-5 py-3 bg-muted/30">
+        <p className="text-[11px] text-muted-foreground leading-relaxed">
+          Los fondos se consideran recibidos cuando Rematto S.A.C. confirma el ingreso en esta
+          cuenta y verifica el comprobante. Si la operación no llega a formalizarse, el capital
+          se devuelve al medio de origen según el proceso de reembolso vigente.
+        </p>
+      </div>
     </div>
   );
 }
