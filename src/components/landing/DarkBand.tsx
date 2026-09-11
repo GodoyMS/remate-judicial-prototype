@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Full-bleed dark marketing band, matching the closing CTA surface so
- * photographic sections feel like one continuous product language.
+ * Full-bleed dark marketing band. Uses a fixed always-dark surface so light
+ * text stays readable in light mode (semantic bg-foreground/text-background
+ * invert with the theme and break contrast on tinted containers).
  */
 export function DarkBand({
   id,
@@ -18,7 +19,9 @@ export function DarkBand({
       id={id}
       data-nav-tone="dark"
       className={cn(
-        "relative isolate overflow-hidden bg-foreground py-20 text-background scroll-mt-24 sm:py-24 lg:py-28",
+        "relative isolate overflow-hidden scroll-mt-24 py-20 sm:py-24 lg:py-28",
+        "bg-[oklch(from_var(--brand)_0.2_calc(c*0.1)_h)] text-[oklch(0.97_0_0)]",
+        "dark:bg-[oklch(from_var(--brand)_0.28_calc(c*0.12)_h)] dark:text-[oklch(0.96_0_0)]",
         className
       )}
     >
