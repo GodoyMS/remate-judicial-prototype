@@ -16,7 +16,9 @@ import {
   Percent,
   Calendar,
   User,
+  Phone,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -258,7 +260,7 @@ export default function PremiumPropertyDetailPage({
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1.5">
                     <Percent className="size-3.5" />
-                    Retorno estimado
+                    Retorno estimado base
                   </span>
                   <span className="font-semibold text-premium">
                     {property.premiumRoi}%
@@ -276,7 +278,11 @@ export default function PremiumPropertyDetailPage({
                     {formatCurrency(estimatedReturn, property.currency)}
                   </span>
                 </div>
-                <RoiBreakdown roiBasis={property.roiBasis} currency={property.currency} />
+                <RoiBreakdown
+                  roiBasis={property.roiBasis}
+                  currency={property.currency}
+                  label="Ver escenarios y cálculo"
+                />
               </div>
 
               <Separator />
@@ -358,10 +364,25 @@ export default function PremiumPropertyDetailPage({
               <div className="flex items-start gap-2 rounded-xl bg-muted/50 p-3">
                 <Shield className="size-4 text-muted-foreground shrink-0 mt-0.5" />
                 <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  Inversión exclusiva: un solo inversor Premium captura el 100%.
-                  Si la ventana expira sin inversión, la propiedad pasa al mercado estándar.
+                  La oportunidad dispone inicialmente de una ventana de inversión individual.
+                  Finalizado ese periodo, puede habilitarse para participación colectiva.
                 </p>
               </div>
+
+              {isPremium && (
+                <Button
+                  variant="outline"
+                  className="w-full h-10 rounded-xl text-sm"
+                  onClick={() =>
+                    toast.message("Asesor Premium", {
+                      description: "Escríbenos a premium@rematto.pe o llama al (01) 700-3200 — un asesor te responderá en menos de 2 horas hábiles.",
+                    })
+                  }
+                >
+                  <Phone className="size-3.5 mr-1.5" />
+                  Hablar con un asesor Premium
+                </Button>
+              )}
             </CardContent>
           </Card>
 

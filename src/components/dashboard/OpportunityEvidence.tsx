@@ -111,10 +111,11 @@ export function OpportunityEvidence({ judicial, verification }: OpportunityEvide
 interface RoiBreakdownProps {
   roiBasis: RoiBasis;
   currency: PropertyCurrency;
+  label?: string;
 }
 
 /** "Ver cálculo": desglosa supuestos, costos y retorno neto (WP-3.2, cierra E-036). */
-export function RoiBreakdown({ roiBasis, currency }: RoiBreakdownProps) {
+export function RoiBreakdown({ roiBasis, currency, label = "Ver cálculo" }: RoiBreakdownProps) {
   const [open, setOpen] = useState(false);
   const totalCosts = roiBasis.costs.reduce((sum, c) => sum + c.amount, 0);
 
@@ -125,7 +126,7 @@ export function RoiBreakdown({ roiBasis, currency }: RoiBreakdownProps) {
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
       >
-        Ver cálculo
+        {label}
         <ChevronDown className={`size-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (

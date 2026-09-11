@@ -8,7 +8,7 @@ import { PremiumPropertyCard } from "@/components/dashboard/PremiumPropertyCard"
 import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { useCurrentUser } from "@/contexts/user-context";
-import { getAllPremiumProperties, premiumProperties } from "@/lib/premium/mock-data";
+import { getAllPremiumProperties, premiumProperties, isCaughtByOther } from "@/lib/premium/mock-data";
 import type { PremiumProperty } from "@/lib/premium/types";
 import { cn } from "@/lib/utils";
 
@@ -47,18 +47,26 @@ function PremiumPropertiesContent() {
     }
   }, [searchParams]);
 
+  // Las propiedades capturadas por otros usuarios se retiran de la vista de
+  // terceros (P-013/P-022): ya no se pueden capturar y exponen actividad
+  // financiera ajena de alto valor sin ningún propósito para quien mira.
+  const visibleToUser = useMemo(
+    () => properties.filter((p) => !isCaughtByOther(p, user.id)),
+    [properties, user.id]
+  );
+
   const filtered = useMemo(() => {
-    if (activeFilter === "all") return properties;
+    if (activeFilter === "all") return visibleToUser;
     if (activeFilter === "available") {
-      return properties.filter((p) => p.status === "available");
+      return visibleToUser.filter((p) => p.status === "available");
     }
     if (activeFilter === "caught") {
-      return properties.filter((p) => p.status === "caught");
+      return visibleToUser.filter((p) => p.status === "caught");
     }
-    return properties.filter(
+    return visibleToUser.filter(
       (p) => p.status === "converted" || p.status === "expired"
     );
-  }, [activeFilter, properties]);
+  }, [activeFilter, visibleToUser]);
 
   const availableCount = properties.filter((p) => p.status === "available").length;
 
