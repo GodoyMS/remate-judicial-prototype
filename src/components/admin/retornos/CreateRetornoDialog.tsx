@@ -183,6 +183,7 @@ export function CreateRetornoDialog({
     setSubmitting(true);
     await new Promise((r) => setTimeout(r, 600));
 
+    const parsedAmount = parseFloat(amount);
     addRetorno({
       type: type!,
       propertyId: selectedProperty!.id,
@@ -190,7 +191,11 @@ export function CreateRetornoDialog({
       userId: selectedUser!.id,
       userName: selectedUser!.name,
       userEmail: selectedUser!.email,
-      amount: parseFloat(amount),
+      amount: parsedAmount,
+      // "Ganancia" es la única categoría que suma al indicador de retornos
+      // generados; capital devuelto y reembolsos quedan en principalAmount (WP-4.1).
+      principalAmount: type === "roi_return" ? 0 : parsedAmount,
+      gainAmount: type === "roi_return" ? parsedAmount : 0,
       currency: (selectedProperty!.currency as "PEN" | "USD") ?? "PEN",
       paymentMethod: paymentMethod!,
       ...(paymentMethod === "card"

@@ -26,27 +26,28 @@ import {
 import { cn } from "@/lib/utils";
 import { getRetornosByUserId, subscribeRetornos } from "@/lib/retornos/store";
 import type { Retorno, RetornoType, TicketStatus } from "@/lib/retornos/types";
+import { RETORNO_CATEGORY_LABELS } from "@/lib/retornos/types";
 import { formatDateTime } from "@/lib/admin/formatters";
-import { formatCurrency } from "@/lib/currency";
+import { formatCurrency, formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
 import { useCurrentUser } from "@/contexts/user-context";
 import { RetornoDetailSheet } from "@/components/dashboard/retornos/RetornoDetailSheet";
 import { CreateTicketDialog } from "@/components/dashboard/retornos/CreateTicketDialog";
 
 const typeConfig: Record<RetornoType, { label: string; icon: typeof TrendingUp; color: string; bg: string }> = {
   roi_return: {
-    label: "Retorno ROI",
+    label: RETORNO_CATEGORY_LABELS.roi_return,
     icon: TrendingUp,
     color: "text-success",
     bg: "bg-success/10 border-success/20",
   },
   refund: {
-    label: "Reembolso",
+    label: RETORNO_CATEGORY_LABELS.refund,
     icon: RotateCcw,
     color: "text-info",
     bg: "bg-info/10 border-info/20",
   },
   goal_not_reached: {
-    label: "Devolución",
+    label: RETORNO_CATEGORY_LABELS.goal_not_reached,
     icon: Target,
     color: "text-warning",
     bg: "bg-warning/10 border-warning/20",
@@ -97,15 +98,19 @@ export default function DashboardRetornosPage() {
     });
   }, [retornos, search, typeFilter]);
 
-  const stats = useMemo(
-    () => ({
+  const stats = useMemo(() => {
+    // Ganancia, devolución de capital y reembolso son movimientos distintos
+    // (E-043): solo la ganancia real alimenta el total de "Retornos".
+    const gainByCurrency = sumByCurrency(
+      retornos.map((r) => ({ amount: r.gainAmount, currency: r.currency }))
+    );
+    return {
       total: retornos.length,
       roi: retornos.filter((r) => r.type === "roi_return").length,
       refund: retornos.filter((r) => r.type === "refund").length,
-      totalAmount: retornos.reduce((sum, r) => sum + r.amount, 0),
-    }),
-    [retornos]
-  );
+      gainLabel: formatMixedCurrencyTotals(gainByCurrency),
+    };
+  }, [retornos]);
 
   function openDetail(r: Retorno) {
     setSelected(r);
@@ -160,6 +165,16 @@ export default function DashboardRetornosPage() {
             </div>
           </motion.div>
         ))}
+      </div>
+
+      <div className="mb-6 rounded-xl border border-success/20 bg-success/5 px-4 py-3 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-medium text-success">Ganancias generadas</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">
+            Solo ganancia real. No incluye capital devuelto ni reembolsos.
+          </p>
+        </div>
+        <p className="text-lg font-bold text-success tabular-nums shrink-0">{stats.gainLabel}</p>
       </div>
 
       {/* Filters */}

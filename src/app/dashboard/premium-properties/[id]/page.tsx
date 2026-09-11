@@ -198,7 +198,7 @@ export default function PremiumPropertyDetailPage({
                   <div>
                     <p className="text-sm font-semibold text-foreground">Propiedad ya capturada</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      <strong>{property.caughtByUserName}</strong> invirtió el 100% el{" "}
+                      Otro inversionista Premium financió el 100% el{" "}
                       {new Date(property.caughtAt!).toLocaleDateString("es-PE")}.
                       Esta oportunidad ya no está disponible.
                     </p>

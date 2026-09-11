@@ -145,7 +145,7 @@ export function PremiumPropertyCard({
 
         {caughtByOther && (
           <p className="text-xs text-muted-foreground text-center py-1">
-            Capturada por <span className="font-medium text-foreground">{property.caughtByUserName}</span>
+            Ya no está disponible para captura
           </p>
         )}
 

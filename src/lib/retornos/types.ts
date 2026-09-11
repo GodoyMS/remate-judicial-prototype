@@ -59,6 +59,13 @@ export interface RetornoTicket {
   activity: TicketActivity[];
 }
 
+/** Etiqueta visible de cada categoría (WP-4.1): ganancia, capital y reembolso nunca se suman entre sí. */
+export const RETORNO_CATEGORY_LABELS: Record<RetornoType, string> = {
+  roi_return: "Ganancia",
+  refund: "Reembolso",
+  goal_not_reached: "Devolución de capital",
+};
+
 export interface Retorno {
   id: string;
   type: RetornoType;
@@ -68,6 +75,10 @@ export interface Retorno {
   userName: string;
   userEmail: string;
   amount: number;
+  /** Parte de `amount` que es capital devuelto (sin ganancia). `amount = principalAmount + gainAmount`. */
+  principalAmount: number;
+  /** Parte de `amount` que es ganancia real. Solo esta porción alimenta "Retornos generados". */
+  gainAmount: number;
   currency: PropertyCurrency;
   status: RetornoStatus;
   paymentMethod: RetornoPaymentMethod;
