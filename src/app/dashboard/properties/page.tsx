@@ -42,6 +42,7 @@ export default function PropertiesPage() {
         img: p.img,
         investors: p.investors,
         priceValue: p.price,
+        etapa: p.judicial.etapa,
       })),
     []
   );

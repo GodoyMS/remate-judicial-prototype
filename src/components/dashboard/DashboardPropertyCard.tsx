@@ -21,6 +21,8 @@ export type DashboardPropertyCardData = {
   deadline: string;
   status: string;
   img: string;
+  /** Etapa real del expediente judicial (WP-3.3): nunca una afirmación genérica de confianza. */
+  etapa: string;
 };
 
 interface DashboardPropertyCardProps {
@@ -94,8 +96,8 @@ export function DashboardPropertyCard({
         </Link>
 
         <dl>
-          <dd className=" bg-muted rounded-md p-2 text-xs text-muted-foreground">
-          Expediente en esta etapa avanzada y sin cargas registrales observadas en el estudio de titulos
+          <dd className="bg-muted rounded-md p-2 text-xs text-muted-foreground">
+            Proceso judicial: <span className="font-medium text-foreground">{p.etapa}</span>
           </dd>
         </dl>
 

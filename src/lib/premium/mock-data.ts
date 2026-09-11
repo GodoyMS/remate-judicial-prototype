@@ -72,6 +72,46 @@ export const premiumProperties: PremiumProperty[] = [
     status: "available",
     notifyPremiumUsers: true,
     createdAt: "2026-06-05",
+    judicial: {
+      expediente: "00721-2025-0-1801-JR-CI-04",
+      juzgado: "4° Juzgado Civil de Lima",
+      etapa: "Subasta convocada",
+      lastReviewedAt: "2026-06-04",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-06-04",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+        "Situación registral para operación de alto valor",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Informe de tasación", url: "#" },
+        { label: "Resolución de convocatoria a remate", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "US$ 980,000" },
+        { label: "Precio de salida en remate", value: "US$ 890,000" },
+        { label: "Plazo estimado de liquidación", value: "10 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 4450 },
+        { label: "Gastos notariales y registrales", amount: 8900 },
+        { label: "Impuestos de transferencia", amount: 17800 },
+      ],
+      grossRoi: 48,
+      netRoi: 41,
+    },
+    premiumCriteria: [
+      "Capital requerido superior a US$ 500,000",
+      "Ventana de exclusividad antes de apertura a inversión colectiva",
+      "Expediente en etapa de subasta con fecha de remate confirmada",
+    ],
   },
   {
     id: "pp-102",
@@ -100,6 +140,44 @@ export const premiumProperties: PremiumProperty[] = [
     caughtAt: "2026-06-02T14:32:00",
     notifyPremiumUsers: true,
     createdAt: "2026-05-28",
+    judicial: {
+      expediente: "01893-2025-0-1801-JR-CI-06",
+      juzgado: "6° Juzgado Civil de Lima",
+      etapa: "Adjudicada, en formalización",
+      lastReviewedAt: "2026-06-02",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-06-02",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Acta de adjudicación", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "US$ 1,580,000" },
+        { label: "Precio de adjudicación", value: "US$ 1,450,000" },
+        { label: "Plazo estimado de liquidación", value: "11 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 7250 },
+        { label: "Gastos notariales y registrales", amount: 14500 },
+        { label: "Impuestos de transferencia", amount: 29000 },
+      ],
+      grossRoi: 52,
+      netRoi: 44,
+    },
+    premiumCriteria: [
+      "Capital requerido superior a US$ 500,000",
+      "Ventana de exclusividad antes de apertura a inversión colectiva",
+      "Expediente adjudicado, en etapa de formalización",
+    ],
   },
   {
     id: "pp-103",
@@ -128,6 +206,44 @@ export const premiumProperties: PremiumProperty[] = [
     caughtAt: "2026-06-03T09:15:00",
     notifyPremiumUsers: true,
     createdAt: "2026-05-25",
+    judicial: {
+      expediente: "00347-2025-0-1801-JR-CI-08",
+      juzgado: "8° Juzgado Civil de Lima",
+      etapa: "Adjudicada, en formalización",
+      lastReviewedAt: "2026-06-03",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-06-03",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Acta de adjudicación", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "S/ 565,000" },
+        { label: "Precio de adjudicación", value: "S/ 520,000" },
+        { label: "Plazo estimado de liquidación", value: "9 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 2600 },
+        { label: "Gastos notariales y registrales", amount: 5200 },
+        { label: "Impuestos de transferencia", amount: 10400 },
+      ],
+      grossRoi: 45,
+      netRoi: 38,
+    },
+    premiumCriteria: [
+      "Capital requerido superior a S/ 500,000",
+      "Ventana de exclusividad antes de apertura a inversión colectiva",
+      "Expediente adjudicado, en etapa de formalización",
+    ],
   },
   {
     id: "pp-104",
@@ -153,6 +269,43 @@ export const premiumProperties: PremiumProperty[] = [
     status: "available",
     notifyPremiumUsers: true,
     createdAt: "2026-06-01",
+    judicial: {
+      expediente: "01204-2025-0-1801-JR-CI-11",
+      juzgado: "11° Juzgado Civil de Lima",
+      etapa: "Subasta convocada",
+      lastReviewedAt: "2026-06-01",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-06-01",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Resolución de convocatoria a remate", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "S/ 410,000" },
+        { label: "Precio de salida en remate", value: "S/ 380,000" },
+        { label: "Plazo estimado de liquidación", value: "9 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 1900 },
+        { label: "Gastos notariales y registrales", amount: 3800 },
+      ],
+      grossRoi: 42,
+      netRoi: 36,
+    },
+    premiumCriteria: [
+      "Capital requerido superior a S/ 350,000",
+      "Ventana de exclusividad antes de apertura a inversión colectiva",
+      "Expediente en etapa de subasta con fecha de remate confirmada",
+    ],
   },
   {
     id: "pp-105",
@@ -177,6 +330,38 @@ export const premiumProperties: PremiumProperty[] = [
     status: "converted",
     notifyPremiumUsers: false,
     createdAt: "2026-05-10",
+    judicial: {
+      expediente: "00889-2024-0-1801-JR-CI-02",
+      juzgado: "2° Juzgado Civil de Lima",
+      etapa: "En comercialización",
+      lastReviewedAt: "2026-05-29",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-05-29",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [{ label: "Partida registral (SUNARP)", url: "#" }],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "US$ 780,000" },
+        { label: "Precio de adjudicación", value: "US$ 720,000" },
+        { label: "Plazo estimado de liquidación", value: "12 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 3600 },
+        { label: "Gastos notariales y registrales", amount: 7200 },
+      ],
+      grossRoi: 21,
+      netRoi: 18,
+    },
+    premiumCriteria: [
+      "Ventana Premium ya finalizada — ahora en participación colectiva",
+    ],
   },
 ];
 

@@ -29,6 +29,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
+import { OpportunityEvidence, RoiBreakdown } from "@/components/dashboard/OpportunityEvidence";
 import { PremiumCountdown } from "@/components/dashboard/PremiumCountdown";
 import { PremiumExclusiveBadge, PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
@@ -154,6 +155,28 @@ export default function PremiumPropertyDetailPage({
             </CardContent>
           </Card>
 
+          {isPremium && property.premiumCriteria.length > 0 && (
+            <Card className="rounded-2xl border-border/60">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">¿Por qué esta oportunidad es Premium?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-1.5">
+                  {property.premiumCriteria.map((c) => (
+                    <li key={c} className="flex items-start gap-2 text-sm text-foreground">
+                      <CheckCircle2 className="size-3.5 text-premium shrink-0 mt-0.5" />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+
+          {isPremium && (
+            <OpportunityEvidence judicial={property.judicial} verification={property.verification} />
+          )}
+
           {caughtByMe && isPremium && (
             <Card className="rounded-2xl border-premium/20 bg-gradient-to-br from-premium/10 to-card">
               <CardHeader className="pb-3">
@@ -253,9 +276,26 @@ export default function PremiumPropertyDetailPage({
                     {formatCurrency(estimatedReturn, property.currency)}
                   </span>
                 </div>
+                <RoiBreakdown roiBasis={property.roiBasis} currency={property.currency} />
               </div>
 
               <Separator />
+
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-1.5">
+                <p className="text-xs font-semibold text-foreground">Antes de invertir</p>
+                <ul className="space-y-1 text-xs text-muted-foreground">
+                  <li>· Retorno estimado, no garantizado</li>
+                  <li>· Plazo estimado sujeto al proceso judicial</li>
+                  <li>· Posibilidad de recuperación inferior a la prevista</li>
+                  <li>· Liquidez no inmediata; capital comprometido al 100%</li>
+                </ul>
+                <Link
+                  href="/politica-de-riesgos"
+                  className="inline-block text-xs font-medium text-primary hover:underline pt-1"
+                >
+                  Ver riesgos completos
+                </Link>
+              </div>
 
               {isAvailable && isPremium && (
                 <PremiumCountdown deadline={property.premiumDeadline} />
