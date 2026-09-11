@@ -4,12 +4,13 @@ import { AuthBrandingPanel } from "@/components/auth/AuthBrandingPanel";
 
 type AuthSplitLayoutProps = {
   children: React.ReactNode;
+  variant?: "login" | "register" | "verification";
 };
 
-export function AuthSplitLayout({ children }: AuthSplitLayoutProps) {
+export function AuthSplitLayout({ children, variant }: AuthSplitLayoutProps) {
   return (
     <div className="min-h-screen bg-muted/30 flex">
-      <AuthBrandingPanel />
+      <AuthBrandingPanel variant={variant} />
 
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md">

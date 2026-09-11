@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Fredoka } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ThemeSwitcherFab } from "@/components/theme/ThemeSwitcherFab";
+import { UserProvider } from "@/contexts/user-context";
 import {
   BRAND_COLOR_STORAGE_KEY,
   LOGO_SCALE_STORAGE_KEY,
@@ -91,8 +92,13 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
-          {children}
-          {showAppearanceFab && <ThemeSwitcherFab />}
+          {/* Global: login/register need the same session context as the
+              dashboard (WP-1.4) — a page outside /dashboard can't call
+              useCurrentUser() unless the provider lives above it. */}
+          <UserProvider>
+            {children}
+            {showAppearanceFab && <ThemeSwitcherFab />}
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>
