@@ -12,17 +12,21 @@ import {
   User,
   CreditCard,
   Shield,
+  HelpCircle,
 } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { OnboardingThread } from "@/components/auth/OnboardingThread";
 
 const STEPS = [
   { id: 1, label: "Datos personales", icon: User },
   { id: 2, label: "Documento de identidad", icon: CreditCard },
   { id: 3, label: "Verificación lista", icon: Shield },
 ];
+
+const MAX_FILE_SIZE_MB = 8;
 
 type UploadedFile = { name: string; preview: string } | null;
 
@@ -32,10 +36,19 @@ export default function VerificationPage() {
   const [backFile, setBackFile] = useState<UploadedFile>(null);
   const [dragOver, setDragOver] = useState<"front" | "back" | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const handleFile = useCallback(
     (file: File, side: "front" | "back") => {
       if (!file.type.startsWith("image/")) return;
+      // Validar tamaño antes de leer el archivo (WP-1.4, cierra L-036): una
+      // foto de celular puede pesar varios MB y no debe descubrirse recién
+      // al enviar.
+      if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        setFileError(`El archivo supera el máximo de ${MAX_FILE_SIZE_MB} MB. Selecciona otro archivo.`);
+        return;
+      }
+      setFileError(null);
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = { name: file.name, preview: e.target?.result as string };
@@ -69,11 +82,15 @@ export default function VerificationPage() {
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col">
       {/* Top bar */}
-      <header className="bg-card border-b border-border/60 px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center">
-          <Logo className="text-xl text-primary" />
-        </Link>
-        <span className="text-sm text-muted-foreground">Verificación de identidad</span>
+      <header className="bg-card border-b border-border/60 px-4 sm:px-6 py-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div className="flex items-center justify-between sm:justify-start gap-4">
+          <Link href="/" className="flex items-center">
+            <Logo className="text-xl text-primary" />
+          </Link>
+          <span className="text-sm text-muted-foreground hidden sm:inline">Verificación de identidad</span>
+        </div>
+        {/* Hilo conductor del onboarding, visible también en login y registro (L-019) */}
+        <OnboardingThread current="verify" className="w-full sm:w-64" />
       </header>
 
       <div className="flex-1 flex items-center justify-center px-4 py-12">
@@ -233,13 +250,29 @@ export default function VerificationPage() {
                 </div>
 
                 <div className="flex flex-col gap-4">
-                  {/* Instrucciones */}
-                  <div className="flex items-start gap-3 rounded-xl bg-primary/5 border border-primary/15 p-3">
-                    <Shield className="size-4 text-primary mt-0.5 shrink-0" />
+                  {/* Por qué pedimos el DNI, antes de la zona de carga (L-015):
+                      el mayor punto de abandono es entregar un documento
+                      sensible sin saber para qué se usa. */}
+                  <div className="rounded-xl bg-primary/5 border border-primary/15 p-3">
+                    <p className="text-xs font-semibold text-foreground mb-1">
+                      ¿Por qué necesitamos tu documento?
+                    </p>
                     <p className="text-xs text-foreground/75 leading-relaxed">
-                      Tus documentos viajan y se guardan cifrados, y solo el área de verificación puede abrirlos. Cada acceso queda registrado.
+                      Verificamos tu identidad antes de habilitar tu cuenta para invertir. Tu
+                      documento se usa únicamente como parte del proceso de validación, viaja y
+                      se guarda cifrado, y solo el área de verificación puede abrirlo. Cada
+                      acceso queda registrado.{" "}
+                      <Link href="/seguridad" className="font-medium underline">
+                        Cómo protegemos tus datos
+                      </Link>
                     </p>
                   </div>
+
+                  {fileError && (
+                    <div className="rounded-xl bg-destructive/10 border border-destructive/20 p-3">
+                      <p className="text-xs text-destructive">{fileError}</p>
+                    </div>
+                  )}
 
                   {/* Upload areas */}
                   {(["front", "back"] as const).map((side) => {
@@ -351,45 +384,63 @@ export default function VerificationPage() {
                   </h2>
                   <p className="text-sm text-muted-foreground mt-2 max-w-sm leading-relaxed">
                     Tu información está siendo revisada por nuestro equipo. Recibirás una confirmación
-                    en tu correo en las próximas <strong className="text-foreground">2–4 horas</strong>.
+                    en tu correo en <strong className="text-foreground">hasta 24 horas hábiles</strong>.
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2 max-w-sm leading-relaxed">
+                    Si necesitamos información adicional, te avisaremos por correo y podrás
+                    actualizarla desde tu cuenta.
                   </p>
                 </div>
 
-                {/* Status timeline */}
-                <div className="w-full flex flex-col gap-3">
-                  {[
-                    { label: "Información personal recibida", done: true },
-                    { label: "Documentos cargados", done: true },
-                    { label: "Revisión en proceso", done: false, active: true },
-                    { label: "Cuenta activada", done: false },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-center gap-3">
-                      <div
-                        className={`size-5 rounded-full flex items-center justify-center shrink-0 ${
-                          item.done
-                            ? "bg-primary"
-                            : item.active
-                            ? "bg-warning"
-                            : "bg-border"
-                        }`}
-                      >
-                        {item.done ? (
-                          <CheckCircle2 className="size-3 text-primary-foreground" />
-                        ) : item.active ? (
-                          <div className="size-2 rounded-full bg-card animate-pulse" />
-                        ) : (
-                          <div className="size-2 rounded-full bg-card/60" />
-                        )}
+                {/* Sub-estado de la etapa 3 del stepper superior, no un segundo
+                    stepper (L-010): tratamiento visual subordinado. */}
+                <div className="w-full">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-3 text-left">
+                    Estado detallado
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    {[
+                      { label: "Información personal recibida", done: true },
+                      { label: "Documentos cargados", done: true },
+                      { label: "Revisión en proceso", done: false, active: true },
+                      { label: "Cuenta activada", done: false },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center gap-3">
+                        <div
+                          className={`size-5 rounded-full flex items-center justify-center shrink-0 ${
+                            item.done
+                              ? "bg-primary"
+                              : item.active
+                              ? "bg-warning"
+                              : "bg-border"
+                          }`}
+                        >
+                          {item.done ? (
+                            <CheckCircle2 className="size-3 text-primary-foreground" />
+                          ) : item.active ? (
+                            <div className="size-2 rounded-full bg-card animate-pulse" />
+                          ) : (
+                            <div className="size-2 rounded-full bg-card/60" />
+                          )}
+                        </div>
+                        <span
+                          className={`text-sm ${
+                            item.done || item.active ? "text-foreground font-medium" : "text-muted-foreground"
+                          }`}
+                        >
+                          {item.label}
+                        </span>
                       </div>
-                      <span
-                        className={`text-sm ${
-                          item.done || item.active ? "text-foreground font-medium" : "text-muted-foreground"
-                        }`}
-                      >
-                        {item.label}
-                      </span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                </div>
+
+                {/* Cuenta pendiente ≠ cuenta habilitada (L-029, L-031) */}
+                <div className="w-full rounded-xl bg-warning/10 border border-warning/20 p-3 text-left">
+                  <p className="text-xs text-warning leading-relaxed">
+                    Tu cuenta sigue en revisión. Puedes explorar propiedades mientras tanto; las
+                    operaciones de inversión se habilitan cuando aprobemos tu verificación.
+                  </p>
                 </div>
 
                 <Button
@@ -409,6 +460,26 @@ export default function VerificationPage() {
                     </span>
                   )}
                 </Button>
+
+                {/* Ayuda contextual (L-001, L-024) */}
+                <div className="flex items-center justify-center gap-4 text-xs">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      window.open("mailto:soporte@rematto.pe?subject=Problema%20con%20mi%20verificación", "_blank")
+                    }
+                    className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <HelpCircle className="size-3.5" />
+                    ¿Problemas con tu verificación?
+                  </button>
+                  <Link
+                    href="/preguntas-frecuentes"
+                    className="text-muted-foreground hover:text-foreground transition-colors underline"
+                  >
+                    Ver preguntas frecuentes
+                  </Link>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

@@ -1,5 +1,6 @@
 import type { PropertyCurrency } from "@/lib/currency";
 import type { UserTier } from "@/lib/admin/types";
+import type { JudicialRecord, VerificationReport, RoiBasis } from "@/lib/dashboard/types";
 
 export type PremiumPropertyStatus =
   | "available"
@@ -30,6 +31,11 @@ export interface PremiumProperty {
   caughtAt?: string;
   notifyPremiumUsers: boolean;
   createdAt: string;
+  judicial: JudicialRecord;
+  verification: VerificationReport;
+  roiBasis: RoiBasis;
+  /** Criterios reales que justifican la clasificación Premium (P-019). */
+  premiumCriteria: string[];
 }
 
 export interface PremiumInvestment {

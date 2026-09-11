@@ -80,8 +80,8 @@ const MOCK_PROPERTIES = [
 ];
 
 const MOCK_USERS: Pick<AdminUser, "id" | "name" | "email">[] = [
-  { id: "standard-demo", name: "Carlos Mendoza", email: "standard@remata.com" },
-  { id: "premium-demo", name: "Valentina Ríos", email: "premium@remata.com" },
+  { id: "standard-demo", name: "Carlos Mendoza", email: "standard@rematto.com" },
+  { id: "premium-demo", name: "Valentina Ríos", email: "premium@rematto.com" },
   { id: "user-ext-001", name: "Ana Lucía Torres", email: "ana.torres@outlook.com" },
   { id: "user-ext-002", name: "Roberto Sánchez Vega", email: "rsanchez@empresa.pe" },
   { id: "user-ext-003", name: "Patricia Huamán Quispe", email: "phuaman@yahoo.com" },
@@ -183,6 +183,7 @@ export function CreateRetornoDialog({
     setSubmitting(true);
     await new Promise((r) => setTimeout(r, 600));
 
+    const parsedAmount = parseFloat(amount);
     addRetorno({
       type: type!,
       propertyId: selectedProperty!.id,
@@ -190,7 +191,11 @@ export function CreateRetornoDialog({
       userId: selectedUser!.id,
       userName: selectedUser!.name,
       userEmail: selectedUser!.email,
-      amount: parseFloat(amount),
+      amount: parsedAmount,
+      // "Ganancia" es la única categoría que suma al indicador de retornos
+      // generados; capital devuelto y reembolsos quedan en principalAmount (WP-4.1).
+      principalAmount: type === "roi_return" ? 0 : parsedAmount,
+      gainAmount: type === "roi_return" ? parsedAmount : 0,
       currency: (selectedProperty!.currency as "PEN" | "USD") ?? "PEN",
       paymentMethod: paymentMethod!,
       ...(paymentMethod === "card"

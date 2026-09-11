@@ -14,23 +14,18 @@ import {
   PREMIUM_NOTIFICATIONS,
   type AppNotification,
 } from "@/lib/dashboard/notifications";
+import { readStoredUser } from "@/contexts/user-context";
+
 function getInitialNotifications(): AppNotification[] {
   if (typeof window === "undefined") return INITIAL_NOTIFICATIONS;
-  try {
-    const stored = localStorage.getItem("remata-demo-user-v1");
-    if (stored) {
-      const user = JSON.parse(stored) as { tier?: string };
-      if (user.tier === "premium") {
-        return [...PREMIUM_NOTIFICATIONS, ...INITIAL_NOTIFICATIONS];
-      }
-    }
-  } catch {
-    /* ignore */
+  const user = readStoredUser();
+  if (user?.tier === "premium") {
+    return [...PREMIUM_NOTIFICATIONS, ...INITIAL_NOTIFICATIONS];
   }
   return INITIAL_NOTIFICATIONS;
 }
 
-const STORAGE_KEY = "remata-notifications-v1";
+const STORAGE_KEY = "rematto-notifications-v1";
 
 interface NotificationsContextValue {
   notifications: AppNotification[];
@@ -38,6 +33,7 @@ interface NotificationsContextValue {
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   toggleRead: (id: string) => void;
+  addNotification: (input: Omit<AppNotification, "id" | "timestamp" | "timeAgo" | "read">) => void;
 }
 
 const NotificationsContext = createContext<NotificationsContextValue | null>(
@@ -97,6 +93,20 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const addNotification = useCallback(
+    (input: Omit<AppNotification, "id" | "timestamp" | "timeAgo" | "read">) => {
+      const notification: AppNotification = {
+        ...input,
+        id: `n-${Date.now()}`,
+        timestamp: Date.now(),
+        timeAgo: "ahora",
+        read: false,
+      };
+      setNotifications((prev) => [notification, ...prev]);
+    },
+    []
+  );
+
   const value = useMemo(
     () => ({
       notifications,
@@ -104,8 +114,9 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       markAsRead,
       markAllAsRead,
       toggleRead,
+      addNotification,
     }),
-    [notifications, unreadCount, markAsRead, markAllAsRead, toggleRead]
+    [notifications, unreadCount, markAsRead, markAllAsRead, toggleRead, addNotification]
   );
 
   return (

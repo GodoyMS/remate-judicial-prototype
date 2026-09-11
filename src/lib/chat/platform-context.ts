@@ -62,7 +62,7 @@ export const platformContext = {
       "Plataforma fintech peruana de inversión fraccionada en remates judiciales inmobiliarios.",
   },
 
-  whatIsRemata: {
+  whatIsRematto: {
     summary:
       "Rematto es una plataforma digital que permite a personas naturales invertir en participaciones de inmuebles adjudicados o en proceso de remate judicial en Perú, sin necesidad de comprar una propiedad completa.",
     businessModel:
@@ -236,7 +236,7 @@ export function buildPlatformContextPrompt(): string {
     .join("\n");
 
   return `
-# REMATA — Base de conocimiento oficial
+# REMATTO — Base de conocimiento oficial
 
 ## Identidad
 - Marca: ${ctx.brand.name} (${ctx.brand.legalName})
@@ -245,12 +245,12 @@ export function buildPlatformContextPrompt(): string {
 - Eslogan: "${ctx.brand.tagline}"
 
 ## ¿Qué es Rematto?
-${ctx.whatIsRemata.summary}
+${ctx.whatIsRematto.summary}
 
-Modelo de negocio: ${ctx.whatIsRemata.businessModel}
+Modelo de negocio: ${ctx.whatIsRematto.businessModel}
 
 Diferenciadores:
-${ctx.whatIsRemata.differentiators.map((d) => `- ${d}`).join("\n")}
+${ctx.whatIsRematto.differentiators.map((d) => `- ${d}`).join("\n")}
 
 ## Legitimidad y regulación
 ${ctx.legitimacyAndRegulation.isLegit}

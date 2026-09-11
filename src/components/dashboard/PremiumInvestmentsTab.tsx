@@ -25,6 +25,7 @@ import {
 import { formatCurrency, formatDate } from "@/lib/dashboard/mock-data";
 import type { PremiumInvestment } from "@/lib/premium/types";
 import { cn } from "@/lib/utils";
+import { formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
 
 const statusConfig = {
   active: { label: "Activa", className: "bg-success/10 text-success border-success/20" },
@@ -51,8 +52,11 @@ export function PremiumInvestmentsTab() {
     [investments]
   );
 
-  const totalInvested = enriched.reduce((sum, i) => sum + i.amount, 0);
-  const totalReturn = enriched.reduce((sum, i) => sum + i.estimatedReturn, 0);
+  // Nunca sumar PEN y USD en un mismo total (WP-4.2): cada moneda se agrega por separado.
+  const totalInvestedLabel = formatMixedCurrencyTotals(sumByCurrency(enriched));
+  const totalReturnLabel = formatMixedCurrencyTotals(
+    sumByCurrency(enriched.map((i) => ({ amount: i.estimatedReturn, currency: i.currency })))
+  );
 
   if (!isPremium) {
     return (
@@ -102,14 +106,14 @@ export function PremiumInvestmentsTab() {
           },
           {
             label: "Capital Premium",
-            value: formatCurrency(totalInvested, enriched[0]?.currency ?? "PEN"),
+            value: totalInvestedLabel,
             sub: "inversión exclusiva",
             icon: Sparkles,
             accent: "text-premium bg-premium/10",
           },
           {
             label: "Retorno estimado",
-            value: formatCurrency(totalReturn, enriched[0]?.currency ?? "PEN"),
+            value: totalReturnLabel,
             sub: "ROI premium",
             icon: TrendingUp,
             accent: "text-success bg-success/10",

@@ -28,7 +28,7 @@ import {
   getModuleFromPath,
 } from "@/lib/admin/rbac/permissions";
 
-const SESSION_KEY = "remata-admin-session-v1";
+const SESSION_KEY = "rematto-admin-session-v1";
 
 interface AdminSessionData {
   accountId: string;

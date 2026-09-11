@@ -16,7 +16,9 @@ import {
   Info,
   Landmark,
   Smartphone,
+  Bell,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,22 +43,36 @@ import {
   type YapeFormData,
 } from "@/components/dashboard/invest/YapePaymentForm";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
-import { dashboardProperties, formatCurrency } from "@/lib/dashboard/mock-data";
+import { dashboardProperties, formatCurrency, confirmInvestment } from "@/lib/dashboard/mock-data";
 import { getCurrencyLabel, getCurrencySymbol, type PropertyCurrency } from "@/lib/currency";
+import { useNotifications } from "@/contexts/notifications-context";
 
 const STEPS = ["Propiedad", "Monto", "Pago", "Confirmación"];
 
-const properties = dashboardProperties.map((p) => ({
-  id: p.id,
-  name: p.name,
-  address: p.address,
-  price: formatCurrency(p.price, p.currency),
-  roi: `${p.roi}%`,
-  minInv: p.minInvestment,
-  deadline: p.deadline,
-  img: p.img,
-  currency: p.currency,
-}));
+// Solo propiedades habilitadas para inversión: Activo y con cupo disponible
+// (WP-5.1, cierra E-039). Calculado en cada render (no en el módulo) para
+// reflejar de inmediato el raisedAmount que actualiza confirmInvestment
+// (WP-5.2): una oportunidad que se cierra deja de listarse sin recargar.
+function getInvestableProperties() {
+  return dashboardProperties
+    .filter((p) => p.status === "Activo" && p.raisedAmount < p.totalInvestment)
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      address: p.address,
+      price: formatCurrency(p.price, p.currency),
+      roi: `${p.roi}%`,
+      minInv: p.minInvestment,
+      maxInv: p.totalInvestment - p.raisedAmount,
+      deadline: p.deadline,
+      img: p.img,
+      currency: p.currency,
+    }));
+}
+
+function getUpcomingProperties() {
+  return dashboardProperties.filter((p) => p.status === "Próximo");
+}
 
 const paymentMethods = [
   { id: "card", label: "Tarjeta débito / crédito", icon: CreditCard, hint: "Visa, Mastercard, Amex" },
@@ -75,6 +91,9 @@ export default function InvestPage() {
 
 function InvestPageContent() {
   const searchParams = useSearchParams();
+  const { addNotification } = useNotifications();
+  const [properties, setProperties] = useState(getInvestableProperties);
+  const [upcomingProperties] = useState(getUpcomingProperties);
   const [step, setStep] = useState(0);
   const [selectedProperty, setSelectedProperty] = useState<number | null>(null);
   const [amount, setAmount] = useState("");
@@ -113,7 +132,7 @@ function InvestPageContent() {
         setSelectedProperty(id);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, properties]);
 
   const property = properties.find((p) => p.id === selectedProperty);
   const propertyCurrency: PropertyCurrency = property?.currency ?? "PEN";
@@ -123,14 +142,15 @@ function InvestPageContent() {
   );
 
   const quickAmounts = property
-    ? propertyCurrency === "USD"
-      ? [property.minInv, 100, 500, 1000].filter(
-          (v, i, arr) => arr.indexOf(v) === i
-        )
-      : [property.minInv, 1000, 5000, 10000].filter(
-          (v, i, arr) => arr.indexOf(v) === i
-        )
+    ? (propertyCurrency === "USD"
+        ? [property.minInv, 100, 500, 1000]
+        : [property.minInv, 1000, 5000, 10000]
+      )
+        .filter((v, i, arr) => arr.indexOf(v) === i)
+        .filter((v) => v <= property.maxInv)
     : [];
+
+  const amountExceedsAvailable = !!property && !!amount && parseFloat(amount) > property.maxInv;
 
   const estimatedReturn = property && amount
     ? (parseFloat(amount) * parseFloat(property.roi) / 100).toFixed(2)
@@ -172,8 +192,26 @@ function InvestPageContent() {
   };
 
   const handleConfirm = () => {
+    if (!property) return;
     setConfirming(true);
     setTimeout(() => {
+      // Una sola transacción (WP-5.2, cierra E-042): registra la inversión,
+      // actualiza el progreso de la propiedad y dispara la notificación.
+      // "Mis inversiones" y "Total invertido" derivan de la misma fuente
+      // (userInvestments), así que quedan consistentes de inmediato.
+      confirmInvestment({
+        propertyId: property.id,
+        amount: parseFloat(amount),
+        paymentMethod: paymentMethods.find((m) => m.id === paymentMethod)?.label ?? "",
+      });
+      addNotification({
+        category: "investment",
+        title: `Inversión confirmada en ${property.name}`,
+        description: `Tu aporte de ${formatCurrency(parseFloat(amount), propertyCurrency)} fue registrado y está en seguimiento.`,
+        href: "/dashboard/my-investments",
+        highlight: formatCurrency(parseFloat(amount), propertyCurrency),
+      });
+      setProperties(getInvestableProperties());
       setConfirming(false);
       setConfirmed(true);
     }, 2000);
@@ -301,6 +339,9 @@ function InvestPageContent() {
                       </div>
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <CurrencyBadge currency={p.currency} />
+                        <span className="inline-flex items-center rounded-full bg-success/10 text-success text-[10px] font-semibold px-2 py-0.5">
+                          Disponible
+                        </span>
                         <span className="text-xs font-medium text-foreground">{p.price}</span>
                         <span className="text-xs font-bold text-success">{p.roi} ROI</span>
                         <span className="text-xs text-muted-foreground">{p.deadline}</span>
@@ -317,8 +358,53 @@ function InvestPageContent() {
                     </div>
                   </button>
                 ))}
+                {properties.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-6">
+                    No hay propiedades disponibles para invertir en este momento.
+                  </p>
+                )}
               </div>
             </div>
+
+            {upcomingProperties.length > 0 && (
+              <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
+                <h3 className="text-sm font-semibold text-foreground mb-3">Próximamente</h3>
+                <div className="flex flex-col gap-3">
+                  {upcomingProperties.map((p) => (
+                    <div
+                      key={p.id}
+                      className="flex items-center gap-4 rounded-xl border border-dashed border-border/60 p-4"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={p.img} alt={p.name} className="size-14 rounded-xl object-cover shrink-0 grayscale-[40%]" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground">{p.name}</p>
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          <span className="inline-flex items-center rounded-full bg-muted text-muted-foreground text-[10px] font-semibold px-2 py-0.5">
+                            Próximo
+                          </span>
+                          <span className="text-xs text-muted-foreground">Aún no disponible para inversión</span>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-xl shrink-0"
+                        onClick={() =>
+                          toast.success("Te avisaremos cuando abra", {
+                            description: p.name,
+                          })
+                        }
+                      >
+                        <Bell className="size-3.5 mr-1" />
+                        Avísame
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <Button
               onClick={() => setStep(1)}
               disabled={!selectedProperty}
@@ -367,12 +453,19 @@ function InvestPageContent() {
                     onChange={(e) => setAmount(e.target.value)}
                     className="h-12 pl-10 rounded-xl border-border/80 bg-muted/30 text-lg font-semibold text-foreground"
                     min={property.minInv}
+                    max={property.maxInv}
                   />
                 </div>
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Info className="size-3" />
-                  Inversión mínima: {formatCurrency(property.minInv, propertyCurrency)}
+                  Inversión mínima: {formatCurrency(property.minInv, propertyCurrency)} · Disponible para financiar: {formatCurrency(property.maxInv, propertyCurrency)}
                 </p>
+                {amountExceedsAvailable && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <Info className="size-3" />
+                    Supera el monto disponible para esta oportunidad ({formatCurrency(property.maxInv, propertyCurrency)}).
+                  </p>
+                )}
               </div>
 
               {/* Quick amounts */}
@@ -416,7 +509,7 @@ function InvestPageContent() {
               </Button>
               <Button
                 onClick={() => setStep(2)}
-                disabled={!amount || parseFloat(amount) < property.minInv}
+                disabled={!amount || parseFloat(amount) < property.minInv || amountExceedsAvailable}
                 className="flex-1 h-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold group disabled:opacity-50"
               >
                 Continuar

@@ -39,5 +39,26 @@ export function adminPropertyToPremiumProperty(
     caughtAt: override?.caughtAt ?? property.caughtAt,
     notifyPremiumUsers: property.notifyPremiumUsers ?? false,
     createdAt: property.createdAt,
+    // Las propiedades creadas desde el panel admin todavía no capturan estos
+    // campos en su formulario; se refleja como pendiente en vez de inventar
+    // un expediente o supuestos que no existen ("No inventes datos").
+    judicial: {
+      expediente: "Pendiente de registro",
+      juzgado: "Pendiente de registro",
+      etapa: "Pendiente de registro",
+      lastReviewedAt: property.createdAt,
+    },
+    verification: {
+      verifiedAt: property.createdAt,
+      scope: [],
+      documents: [],
+    },
+    roiBasis: {
+      assumptions: [],
+      costs: [],
+      grossRoi: property.premiumRoi ?? property.roi,
+      netRoi: property.premiumRoi ?? property.roi,
+    },
+    premiumCriteria: [],
   };
 }

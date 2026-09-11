@@ -14,10 +14,11 @@ import {
   ArrowRight,
   Shield,
   Percent,
-  Wallet,
   Calendar,
   User,
+  Phone,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +31,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
+import { OpportunityEvidence, RoiBreakdown } from "@/components/dashboard/OpportunityEvidence";
 import { PremiumCountdown } from "@/components/dashboard/PremiumCountdown";
 import { PremiumExclusiveBadge, PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
@@ -155,6 +157,28 @@ export default function PremiumPropertyDetailPage({
             </CardContent>
           </Card>
 
+          {isPremium && property.premiumCriteria.length > 0 && (
+            <Card className="rounded-2xl border-border/60">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">¿Por qué esta oportunidad es Premium?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-1.5">
+                  {property.premiumCriteria.map((c) => (
+                    <li key={c} className="flex items-start gap-2 text-sm text-foreground">
+                      <CheckCircle2 className="size-3.5 text-premium shrink-0 mt-0.5" />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+
+          {isPremium && (
+            <OpportunityEvidence judicial={property.judicial} verification={property.verification} />
+          )}
+
           {caughtByMe && isPremium && (
             <Card className="rounded-2xl border-premium/20 bg-gradient-to-br from-premium/10 to-card">
               <CardHeader className="pb-3">
@@ -198,7 +222,7 @@ export default function PremiumPropertyDetailPage({
                   <div>
                     <p className="text-sm font-semibold text-foreground">Propiedad ya capturada</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      <strong>{property.caughtByUserName}</strong> invirtió el 100% el{" "}
+                      Otro inversionista Premium financió el 100% el{" "}
                       {new Date(property.caughtAt!).toLocaleDateString("es-PE")}.
                       Esta oportunidad ya no está disponible.
                     </p>
@@ -222,38 +246,28 @@ export default function PremiumPropertyDetailPage({
                 ? "bg-gradient-to-br from-premium to-premium/80 text-premium-foreground"
                 : "bg-muted/30"
             )}>
-              {isAvailable && isPremium ? (
-                <>
-                  <p className="text-xs font-medium text-premium-foreground/80 mb-1">ROI Premium exclusivo</p>
-                  <p className="text-4xl font-bold">{property.premiumRoi}%</p>
-                  <p className="text-xs text-premium-foreground/70 mt-1">
-                    +{roiDiff}% vs mercado estándar ({property.standardRoi}%)
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-xs text-muted-foreground mb-1">ROI Premium</p>
-                  <p className="text-3xl font-bold text-foreground">{property.premiumRoi}%</p>
-                </>
-              )}
+              {/* Jerarquía financiera (P-006): capital requerido manda sobre ROI y ganancia */}
+              <p className={cn("text-xs font-medium mb-1", isAvailable && isPremium ? "text-premium-foreground/80" : "text-muted-foreground")}>
+                Capital requerido
+              </p>
+              <p className="text-3xl font-bold">{formatCurrency(property.totalValue, property.currency)}</p>
+              <p className={cn("text-xs mt-1", isAvailable && isPremium ? "text-premium-foreground/70" : "text-muted-foreground")}>
+                Financiado por un solo inversionista (100%)
+              </p>
             </div>
             <CardContent className="p-4 space-y-4">
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1.5">
-                    <Wallet className="size-3.5" />
-                    Valor total
-                  </span>
-                  <span className="font-semibold">
-                    {formatCurrency(property.totalValue, property.currency)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
                     <Percent className="size-3.5" />
-                    Inversión requerida
+                    Retorno estimado base
                   </span>
-                  <span className="font-semibold text-premium">100%</span>
+                  <span className="font-semibold text-premium">
+                    {property.premiumRoi}%
+                    <span className="text-[10px] text-muted-foreground font-normal ml-1">
+                      (+{roiDiff}% vs. estándar)
+                    </span>
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1.5">
@@ -264,9 +278,30 @@ export default function PremiumPropertyDetailPage({
                     {formatCurrency(estimatedReturn, property.currency)}
                   </span>
                 </div>
+                <RoiBreakdown
+                  roiBasis={property.roiBasis}
+                  currency={property.currency}
+                  label="Ver escenarios y cálculo"
+                />
               </div>
 
               <Separator />
+
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-1.5">
+                <p className="text-xs font-semibold text-foreground">Antes de invertir</p>
+                <ul className="space-y-1 text-xs text-muted-foreground">
+                  <li>· Retorno estimado, no garantizado</li>
+                  <li>· Plazo estimado sujeto al proceso judicial</li>
+                  <li>· Posibilidad de recuperación inferior a la prevista</li>
+                  <li>· Liquidez no inmediata; capital comprometido al 100%</li>
+                </ul>
+                <Link
+                  href="/politica-de-riesgos"
+                  className="inline-block text-xs font-medium text-primary hover:underline pt-1"
+                >
+                  Ver riesgos completos
+                </Link>
+              </div>
 
               {isAvailable && isPremium && (
                 <PremiumCountdown deadline={property.premiumDeadline} />
@@ -329,10 +364,25 @@ export default function PremiumPropertyDetailPage({
               <div className="flex items-start gap-2 rounded-xl bg-muted/50 p-3">
                 <Shield className="size-4 text-muted-foreground shrink-0 mt-0.5" />
                 <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  Inversión exclusiva: un solo inversor Premium captura el 100%.
-                  Si la ventana expira sin inversión, la propiedad pasa al mercado estándar.
+                  La oportunidad dispone inicialmente de una ventana de inversión individual.
+                  Finalizado ese periodo, puede habilitarse para participación colectiva.
                 </p>
               </div>
+
+              {isPremium && (
+                <Button
+                  variant="outline"
+                  className="w-full h-10 rounded-xl text-sm"
+                  onClick={() =>
+                    toast.message("Asesor Premium", {
+                      description: "Escríbenos a premium@rematto.pe o llama al (01) 700-3200 — un asesor te responderá en menos de 2 horas hábiles.",
+                    })
+                  }
+                >
+                  <Phone className="size-3.5 mr-1.5" />
+                  Hablar con un asesor Premium
+                </Button>
+              )}
             </CardContent>
           </Card>
 

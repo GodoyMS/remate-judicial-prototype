@@ -2,31 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Building2,
-  TrendingUp,
-  Settings,
-  LogOut,
-  ChevronRight,
-  History,
-  Crown,
-  ArrowDownToLine,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/brand/Logo";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { useCurrentUser } from "@/contexts/user-context";
+import {
+  DASHBOARD_NAV_ITEMS,
+  NAV_GROUP_LABELS,
+  isNavItemActive,
+  type DashboardNavGroup,
+} from "@/lib/dashboard/nav-config";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/properties", label: "Propiedades", icon: Building2 },
-  { href: "/dashboard/premium-properties", label: "Premium", icon: Crown, premiumHighlight: true },
-  { href: "/dashboard/my-investments", label: "Mis inversiones", icon: History },
-  { href: "/dashboard/retornos", label: "Retornos", icon: ArrowDownToLine },
-  { href: "/dashboard/invest", label: "Invertir", icon: TrendingUp },
-  { href: "/dashboard/account", label: "Mi cuenta", icon: Settings },
-];
+const GROUP_ORDER: DashboardNavGroup[] = ["principal", "cuenta", "premium"];
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -39,35 +27,47 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 flex flex-col gap-1 px-3 py-4">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/40 px-3 mb-2">
-          Menú principal
-        </p>
-        {navItems.map((item) => {
-          const active = item.exact
-            ? pathname === item.href
-            : pathname.startsWith(item.href);
-
+        {GROUP_ORDER.map((group) => {
+          const items = DASHBOARD_NAV_ITEMS.filter((item) => item.group === group);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group",
-                active
-                  ? item.premiumHighlight && isPremium
-                    ? "bg-gradient-to-r from-premium to-premium/80 text-premium-foreground"
-                    : "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent",
-                item.premiumHighlight && !active && !isPremium && "opacity-80"
-              )}
-            >
-              <item.icon className="size-4 shrink-0" />
-              <span className="flex-1">{item.label}</span>
-              {item.premiumHighlight && isPremium && !active && (
-                <span className="size-1.5 rounded-full bg-premium animate-pulse" />
-              )}
-              {active && <ChevronRight className="size-3.5 opacity-60" />}
-            </Link>
+            <div key={group} className={group !== "principal" ? "mt-4" : undefined}>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/40 px-3 mb-2">
+                {NAV_GROUP_LABELS[group]}
+              </p>
+              {items.map((item) => {
+                const active = isNavItemActive(pathname, item);
+                const isPremiumItem = group === "premium";
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group",
+                      active
+                        ? isPremiumItem
+                          ? "bg-premium/15 text-premium"
+                          : "bg-sidebar-primary/12 text-sidebar-primary"
+                        : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                    )}
+                  >
+                    {active && (
+                      <span
+                        className={cn(
+                          "absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full",
+                          isPremiumItem ? "bg-premium" : "bg-sidebar-primary"
+                        )}
+                      />
+                    )}
+                    <item.icon className="size-4 shrink-0" />
+                    <span className="flex-1">{item.label}</span>
+                    {isPremiumItem && isPremium && !active && (
+                      <span className="size-1.5 rounded-full bg-premium animate-pulse" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
           );
         })}
       </nav>
@@ -83,7 +83,7 @@ export function Sidebar() {
               {isPremium && <PremiumBadge size="sm" className="scale-90 origin-left" />}
             </div>
             <p className="text-[10px] text-sidebar-foreground/50 truncate">
-              {isPremium ? "Plan Premium ✓" : "Plan Estándar"}
+              {isPremium ? "Acceso Premium" : "Cuenta Estándar"}
             </p>
           </div>
         </div>

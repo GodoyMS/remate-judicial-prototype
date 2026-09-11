@@ -1,6 +1,6 @@
-export const BRAND_COLOR_STORAGE_KEY = "remata-brand-color";
-export const THEME_MODE_STORAGE_KEY = "remata-theme-mode";
-export const LOGO_SCALE_STORAGE_KEY = "remata-logo-scale";
+export const BRAND_COLOR_STORAGE_KEY = "rematto-brand-color";
+export const THEME_MODE_STORAGE_KEY = "rematto-theme-mode";
+export const LOGO_SCALE_STORAGE_KEY = "rematto-logo-scale";
 
 /** Multiplier applied to every logo's contextual size (1 = as designed) */
 export const DEFAULT_LOGO_SCALE = 1;

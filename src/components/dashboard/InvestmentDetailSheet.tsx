@@ -10,6 +10,7 @@ import {
   Shield,
   Hash,
   Clock,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,8 @@ import {
 import type { UserInvestment } from "@/lib/dashboard/types";
 import type { DashboardProperty } from "@/lib/dashboard/types";
 import { formatCurrency, formatDate } from "@/lib/dashboard/mock-data";
+import { describeOutcome, getOutcomeReturnAmount } from "@/lib/dashboard/outcome";
+import { PROCESS_STAGE_LABELS } from "@/lib/dashboard/types";
 
 interface InvestmentDetailSheetProps {
   investment: UserInvestment | null;
@@ -49,6 +52,14 @@ export function InvestmentDetailSheet({
   if (!investment || !property) return null;
 
   const status = statusLabels[investment.status];
+  const outcomeReturn = getOutcomeReturnAmount(investment.outcome, investment.amount);
+  const { label: outcomeLabel, tone: outcomeTone } = describeOutcome(investment.outcome);
+  const outcomeToneClass =
+    outcomeTone === "success"
+      ? "text-success"
+      : outcomeTone === "destructive"
+        ? "text-destructive"
+        : "text-muted-foreground";
 
   const handleDownloadCertificate = () => {
     const html = `<!DOCTYPE html>
@@ -83,8 +94,8 @@ export function InvestmentDetailSheet({
   </div>
   <div class="grid">
     <div><div class="label">Monto invertido</div><div class="value">${formatCurrency(investment.amount, investment.currency)}</div></div>
-    <div><div class="label">ROI estimado</div><div class="value">+${investment.roi}%</div></div>
-    <div><div class="label">Retorno estimado</div><div class="value">${formatCurrency(investment.estimatedReturn, investment.currency)}</div></div>
+    <div><div class="label">Resultado</div><div class="value">${outcomeLabel}</div></div>
+    <div><div class="label">Monto asociado al resultado</div><div class="value">${formatCurrency(outcomeReturn, investment.currency)}</div></div>
     <div><div class="label">Fecha de pago</div><div class="value">${formatDate(investment.datePaid)}</div></div>
     <div><div class="label">Fecha estimada de retorno</div><div class="value">${formatDate(investment.expectedRoiDate)}</div></div>
     <div><div class="label">Método de pago</div><div class="value">${investment.paymentMethod}</div></div>
@@ -133,24 +144,49 @@ export function InvestmentDetailSheet({
             <div className="min-w-0">
               <p className="text-sm font-semibold truncate">{property.name}</p>
               <p className="text-xs text-muted-foreground truncate">{property.address}</p>
-              <p className="text-xs text-success font-bold mt-1">+{investment.roi}% ROI</p>
+              <p className={`text-xs font-bold mt-1 ${outcomeToneClass}`}>{outcomeLabel}</p>
             </div>
           </div>
 
           <div className="rounded-2xl bg-muted/30 border border-border/60 p-4 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Monto invertido</p>
             <p className="text-3xl font-bold text-foreground mt-1">{formatCurrency(investment.amount, investment.currency)}</p>
-            <p className="text-sm text-success font-semibold mt-1">
-              Retorno est. {formatCurrency(investment.estimatedReturn, investment.currency)}
-            </p>
+            <p className={`text-sm font-semibold mt-1 ${outcomeToneClass}`}>{outcomeLabel}</p>
+          </div>
+
+          {/* Estimado vs. resultado actual (WP-4.3, cierra E-034/E-038): el
+              escenario adverso tiene la misma representación que el favorable. */}
+          <div className="rounded-xl border border-border/60 p-3 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Estimado inicial</p>
+              <p className="text-sm font-semibold tabular-nums">
+                {investment.outcome.kind === "revised" ? `${investment.outcome.previousRoi}%` : `${investment.roi}%`}
+              </p>
+            </div>
+            <ArrowRight className="size-3.5 text-muted-foreground shrink-0" />
+            <div className="text-right">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Resultado actual</p>
+              <p className={`text-sm font-semibold tabular-nums ${outcomeToneClass}`}>{outcomeLabel}</p>
+            </div>
           </div>
 
           <div className="space-y-3">
             <DetailRow icon={Hash} label="ID de certificado" value={investment.certificateId} />
             <DetailRow icon={Calendar} label="Fecha de pago" value={formatDate(investment.datePaid)} />
-            <DetailRow icon={TrendingUp} label="ROI de la propiedad" value={`+${investment.roi}% anual`} />
-            <DetailRow icon={Clock} label="Retorno estimado" value={formatDate(investment.expectedRoiDate)} />
-            {investment.status === "active" && (
+            <DetailRow icon={TrendingUp} label="Etapa del proceso" value={PROCESS_STAGE_LABELS[investment.stage]} />
+            <DetailRow
+              icon={Clock}
+              label={investment.outcome.kind === "extended" ? "Fecha estimada original" : "Fecha estimada de retorno"}
+              value={formatDate(investment.expectedRoiDate)}
+            />
+            {investment.outcome.kind === "extended" && (
+              <DetailRow
+                icon={Clock}
+                label="Nueva fecha estimada"
+                value={formatDate(investment.outcome.newExpectedAt)}
+              />
+            )}
+            {investment.status === "active" && investment.daysUntilRoi > 0 && (
               <DetailRow
                 icon={Clock}
                 label="Tiempo restante"

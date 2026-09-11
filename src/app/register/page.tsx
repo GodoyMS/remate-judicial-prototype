@@ -8,13 +8,36 @@ import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DEMO_USERS } from "@/lib/premium/mock-data";
+import { isValidEmail, INVALID_EMAIL_MESSAGE } from "@/lib/auth/validation";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (emailError) setEmailError(null);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isValidEmail(email)) {
+      setEmailError(INVALID_EMAIL_MESSAGE);
+      return;
+    }
+    // Correo ya existe (L-030): en este demo, las cuentas demo están "ya
+    // registradas". Un backend real consultaría la base de usuarios.
+    if (email.toLowerCase().trim() in DEMO_USERS) {
+      setEmailError(
+        "Ya existe una cuenta con este correo. Inicia sesión o recupera tu contraseña."
+      );
+      return;
+    }
+
     setLoading(true);
     setTimeout(() => {
       window.location.href = "/verification";
@@ -22,7 +45,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthSplitLayout>
+    <AuthSplitLayout variant="register">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -37,10 +60,11 @@ export default function RegisterPage() {
             Volver al inicio
           </Link>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Crea tu cuenta
+            Crea tu cuenta para comenzar tu proceso de registro
           </h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            Es gratis y no te obliga a invertir.
+            Es gratis y no te obliga a invertir. Después verificaremos tus datos
+            antes de habilitar inversiones.
           </p>
         </div>
 
@@ -62,6 +86,10 @@ export default function RegisterPage() {
             </li>
           ))}
         </ol>
+        <p className="mb-6 text-xs text-muted-foreground -mt-3">
+          Una vez validada tu cuenta podrás acceder a las funciones habilitadas
+          para inversionistas.
+        </p>
 
         <Button
           variant="outline"
@@ -120,9 +148,24 @@ export default function RegisterPage() {
               id="email"
               type="email"
               placeholder="nombre@correo.com"
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
               className="h-11 rounded-xl border-border/80 bg-muted/30 text-sm"
+              aria-invalid={!!emailError}
               required
             />
+            {emailError && (
+              <p className="text-xs text-destructive">
+                {emailError}{" "}
+                {emailError.startsWith("Ya existe") && (
+                  <>
+                    <Link href="/login" className="underline font-medium">Inicia sesión</Link>
+                    {" o "}
+                    <Link href="/forgot-password" className="underline font-medium">recupera tu contraseña</Link>
+                  </>
+                )}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">

@@ -59,6 +59,7 @@ import {
   savePendingPremiumInvestment,
   getPendingInvestmentsForProperty,
 } from "@/lib/app-store";
+import { methodCoversAmount, getPaymentMethodLimit } from "@/lib/invest/payment-limits";
 
 const STEPS = ["Propiedad", "Revisión", "Pago", "Confirmación"];
 
@@ -132,8 +133,15 @@ function PremiumInvestContent() {
   const estimatedReturn = property ? (amount * property.premiumRoi) / 100 : 0;
   const commission = amount * 0.005;
 
+  // Para operaciones de alto valor, solo se ofrecen los canales que
+  // realmente pueden procesar el monto completo (WP-6.4, cierra
+  // P-024/P-026/P-028): tarjeta y Yape están acotados por el
+  // procesador/emisor y no son razonables como checkout ecommerce para
+  // cientos de miles de soles o dólares.
   const availablePaymentMethods = paymentMethods.filter(
-    (m) => propertyCurrency === "PEN" || m.id !== "yape"
+    (m) =>
+      (propertyCurrency === "PEN" || m.id !== "yape") &&
+      methodCoversAmount(m.id as "card" | "transfer" | "deposit" | "yape", propertyCurrency, amount)
   );
 
   const paymentForms = { card: cardForm, transfer: transferForm, deposit: depositForm, yape: yapeForm };
@@ -216,7 +224,7 @@ function PremiumInvestContent() {
           </Link>
         </Button>
         <p className="text-xs text-muted-foreground mt-4">
-          Demo: inicia sesión con premium@remata.com
+          Demo: inicia sesión con premium@rematto.com
         </p>
       </div>
     );
@@ -318,12 +326,12 @@ function PremiumInvestContent() {
           <div>
             <PremiumBadge size="md" className="mb-3" />
             <h2 className="text-2xl font-bold text-foreground tracking-tight">
-              ¡Propiedad capturada!
+              Fondos recibidos — reserva confirmada
             </h2>
             <p className="text-muted-foreground mt-2 max-w-md leading-relaxed">
-              Has invertido el <strong className="text-foreground">100%</strong> en{" "}
-              <strong className="text-foreground">{property.name}</strong>.
-              Eres el único inversor de esta propiedad premium.
+              Recibimos tu aporte del <strong className="text-foreground">100%</strong> para{" "}
+              <strong className="text-foreground">{property.name}</strong>. Eres el único
+              inversor mientras avanza la formalización.
             </p>
           </div>
           <div className="w-full rounded-2xl bg-card border border-premium/15 p-5 flex flex-col gap-3 text-left">
@@ -353,6 +361,19 @@ function PremiumInvestContent() {
               <span className="text-muted-foreground">Certificado</span>
               <span className="font-mono text-xs">PREM-2026-NEW</span>
             </div>
+            <div className="flex justify-between text-sm pt-2 border-t border-border/60">
+              <span className="text-muted-foreground">Estado</span>
+              <span className="text-premium font-medium">Formalización en proceso</span>
+            </div>
+          </div>
+          {/* Hitos reales (P-025): "pago confirmado" no equivale a "propiedad adquirida" */}
+          <div className="w-full rounded-xl bg-muted/50 p-4 text-left text-xs text-muted-foreground">
+            <p className="font-semibold text-foreground mb-1">¿Qué sigue?</p>
+            <ul className="space-y-1">
+              <li>• Fondos recibidos y verificados</li>
+              <li>• Documentación y formalización en proceso</li>
+              <li>• Te notificaremos en cada hito hasta la operación formalizada</li>
+            </ul>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 w-full">
             <Button
@@ -515,11 +536,42 @@ function PremiumInvestContent() {
 
               <PremiumCountdown deadline={property.premiumDeadline} />
 
+              {/* Métodos y límites, visibles antes del último paso (P-028) */}
+              <div className="mt-4 rounded-xl border border-border/60 p-4">
+                <p className="text-xs font-semibold text-foreground mb-2">Métodos disponibles para esta oportunidad</p>
+                <div className="space-y-1.5">
+                  {paymentMethods
+                    .filter((m) => propertyCurrency === "PEN" || m.id !== "yape")
+                    .map((m) => {
+                      const covers = methodCoversAmount(m.id as "card" | "transfer" | "deposit" | "yape", propertyCurrency, amount);
+                      const limit = getPaymentMethodLimit(m.id as "card" | "transfer" | "deposit" | "yape");
+                      return (
+                        <div key={m.id} className="flex items-start gap-2 text-xs">
+                          <span className={covers ? "text-success mt-0.5" : "text-muted-foreground mt-0.5"}>
+                            {covers ? "✓" : "✕"}
+                          </span>
+                          <div>
+                            <span className={covers ? "font-medium text-foreground" : "text-muted-foreground"}>
+                              {m.label}
+                            </span>
+                            {!covers && limit && (
+                              <span className="text-muted-foreground"> — {limit.note}</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  El capital total debe recibirse en una única operación.
+                </p>
+              </div>
+
               <div className="flex items-start gap-2 mt-4 rounded-xl bg-muted/50 p-3">
                 <Shield className="size-4 text-muted-foreground shrink-0 mt-0.5" />
                 <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  Al confirmar, capturas esta propiedad como único inversor Premium.
-                  Otros usuarios Premium no podrán invertir una vez completado el pago.
+                  Al confirmar, reservas esta propiedad como único inversor Premium mientras
+                  se procesa tu pago. Otros usuarios Premium no podrán invertir mientras tanto.
                 </p>
               </div>
             </div>

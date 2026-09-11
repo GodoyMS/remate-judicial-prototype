@@ -85,13 +85,9 @@ export function PremiumPropertyCard({
             )}
             {isConverted && (
               <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-info text-info-foreground">
-                Ahora estándar
+                Pasó a inversión colectiva
               </span>
             )}
-          </div>
-
-          <div className="absolute top-3 right-3">
-            <CurrencyBadge currency={property.currency} />
           </div>
 
           {!isPremium && (
@@ -117,25 +113,29 @@ export function PremiumPropertyCard({
       </Link>
 
       <div className="px-4 pb-4 flex flex-col gap-3">
-        <div className="grid grid-cols-3 divide-x divide-border/60 rounded-xl border border-border/60 overflow-hidden text-center">
-          <div className="py-2 px-1">
-            <p className="text-[9px] text-muted-foreground">Valor total</p>
-            <p className="text-[10px] font-semibold text-foreground mt-0.5">
-              {formatCurrency(property.totalValue, property.currency)}
-            </p>
+        {/* Jerarquía financiera (P-006): capital requerido manda, luego retorno, luego ganancia */}
+        <div className="rounded-xl border border-border/60 overflow-hidden">
+          <div className="px-3 py-2 flex items-center justify-between gap-2 bg-muted/30">
+            <span className="text-[9px] text-muted-foreground uppercase tracking-wide">Capital requerido</span>
+            <CurrencyBadge currency={property.currency} />
           </div>
-          <div className="py-2 px-1 bg-premium/10">
-            <p className="text-[9px] text-premium">ROI Premium</p>
-            <p className="text-[10px] font-bold text-premium mt-0.5 flex items-center justify-center gap-0.5">
-              <TrendingUp className="size-2.5" />
-              {property.premiumRoi}%
-            </p>
-          </div>
-          <div className="py-2 px-1">
-            <p className="text-[9px] text-muted-foreground">Ganancia est.</p>
-            <p className="text-[10px] font-bold text-success mt-0.5">
-              {formatCurrency(estimatedReturn, property.currency)}
-            </p>
+          <p className="px-3 pt-1.5 pb-2 text-base font-bold text-foreground tabular-nums">
+            {formatCurrency(property.totalValue, property.currency)}
+          </p>
+          <div className="grid grid-cols-2 divide-x divide-border/60 border-t border-border/60 text-center">
+            <div className="py-2 px-1">
+              <p className="text-[9px] text-muted-foreground">Retorno estimado</p>
+              <p className="text-[10px] font-bold text-premium mt-0.5 flex items-center justify-center gap-0.5">
+                <TrendingUp className="size-2.5" />
+                {property.premiumRoi}%
+              </p>
+            </div>
+            <div className="py-2 px-1">
+              <p className="text-[9px] text-muted-foreground">Ganancia estimada</p>
+              <p className="text-[10px] font-bold text-success mt-0.5">
+                {formatCurrency(estimatedReturn, property.currency)}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -145,7 +145,13 @@ export function PremiumPropertyCard({
 
         {caughtByOther && (
           <p className="text-xs text-muted-foreground text-center py-1">
-            Capturada por <span className="font-medium text-foreground">{property.caughtByUserName}</span>
+            Ya no está disponible para captura
+          </p>
+        )}
+
+        {isConverted && (
+          <p className="text-xs text-muted-foreground text-center py-1">
+            Ventana Premium finalizada · Ahora disponible en Estándar
           </p>
         )}
 

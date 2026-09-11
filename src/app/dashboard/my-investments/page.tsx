@@ -52,6 +52,7 @@ import {
   formatCurrency,
   formatDate,
 } from "@/lib/dashboard/mock-data";
+import { describeOutcome, getOutcomeReturnAmount } from "@/lib/dashboard/outcome";
 import { formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
 import type { UserInvestment, InvestmentStatus } from "@/lib/dashboard/types";
 import { usePagination } from "@/hooks/use-pagination";
@@ -199,7 +200,7 @@ function MyInvestmentsContent() {
     const investedByCurrency = sumByCurrency(enriched);
     const returnsByCurrency = sumByCurrency(
       enriched.map((i) => ({
-        amount: i.estimatedReturn,
+        amount: getOutcomeReturnAmount(i.outcome, i.amount),
         currency: i.currency,
       }))
     );
@@ -320,10 +321,11 @@ function MyInvestmentsContent() {
           >
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wide truncate">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
                   {s.label}
                 </p>
-                <p className="text-lg font-bold text-foreground mt-0.5 truncate">
+                {/* El dinero nunca se trunca (E-049): prioridad de ancho al valor. */}
+                <p className="text-base sm:text-lg font-bold text-foreground mt-0.5 break-words tabular-nums">
                   {s.value}
                 </p>
                 <p className="text-[10px] text-muted-foreground">{s.sub}</p>
@@ -441,8 +443,93 @@ function MyInvestmentsContent() {
           </div>
         </div>
 
+        {/* Bajo lg, tarjetas en vez de tabla (E-050): la fecha no compite por
+            ancho con el nombre del activo, y no hace falta desplazar
+            horizontalmente para leer una fila. */}
+        <div className="flex flex-col gap-3 p-3 lg:hidden">
+          {paginatedItems.map((inv) => {
+            const cfg = statusConfig[inv.status];
+            const { label: outcomeLabel, tone } = describeOutcome(inv.outcome);
+            return (
+              <div
+                key={inv.id}
+                className={cn(
+                  "rounded-xl border-l-[3px] border border-border/60 bg-card py-3 px-3.5",
+                  cfg.rowBorder,
+                  inv.status === "cancelled" && "opacity-75"
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{inv.property.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {inv.property.district} · {formatDate(inv.datePaid)}
+                    </p>
+                  </div>
+                  <span
+                    className={cn(
+                      "shrink-0 inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-semibold",
+                      cfg.badge
+                    )}
+                  >
+                    {cfg.label}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-border/50">
+                  <div>
+                    <p className="text-[10px] text-muted-foreground">Monto</p>
+                    <p className="text-sm font-bold tabular-nums">{formatCurrency(inv.amount, inv.currency)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-muted-foreground">Retorno est.</p>
+                    <p
+                      className={cn(
+                        "text-sm font-bold tabular-nums",
+                        tone === "success" && "text-success",
+                        tone === "destructive" && "text-destructive",
+                        tone === "muted" && "text-muted-foreground"
+                      )}
+                    >
+                      {inv.status === "cancelled"
+                        ? "—"
+                        : formatCurrency(getOutcomeReturnAmount(inv.outcome, inv.amount), inv.currency)}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1.5">{outcomeLabel}</p>
+
+                <div className="flex items-center justify-end gap-2 mt-2">
+                  <Button asChild variant="outline" size="sm" className="h-8 rounded-lg text-xs">
+                    <Link href={`/dashboard/properties/${inv.propertyId}`}>
+                      <Eye className="size-3.5 mr-1" />
+                      Propiedad
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 rounded-lg text-xs"
+                    onClick={() => openInvestment(inv)}
+                  >
+                    <FileText className="size-3.5 mr-1" />
+                    Detalle
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+          {filtered.length === 0 && (
+            <div className="py-12 text-center">
+              <X className="size-8 text-muted-foreground/30 mx-auto mb-2" />
+              <p className="text-sm font-medium text-foreground">Sin transacciones</p>
+              <p className="text-xs text-muted-foreground mt-1">Ajusta los filtros o limpia la búsqueda</p>
+            </div>
+          )}
+        </div>
+
         {/* Full-width records table */}
-        <div className="overflow-x-auto">
+        <div className="hidden lg:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/60">
@@ -519,22 +606,36 @@ function MyInvestmentsContent() {
                       </span>
                     </TableCell>
                     <TableCell className="py-3 whitespace-nowrap">
-                      <span className="text-sm font-bold text-success tabular-nums">
-                        +{inv.roi}%
-                      </span>
+                      {(() => {
+                        const { label, tone } = describeOutcome(inv.outcome);
+                        return (
+                          <span
+                            className={cn(
+                              "text-xs font-bold tabular-nums",
+                              tone === "success" && "text-success",
+                              tone === "destructive" && "text-destructive",
+                              tone === "muted" && "text-muted-foreground"
+                            )}
+                          >
+                            {label}
+                          </span>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="py-3 whitespace-nowrap">
-                      <p className="text-sm font-semibold text-success tabular-nums">
+                      <p className="text-sm font-semibold text-foreground tabular-nums">
                         {inv.status === "cancelled"
                           ? "—"
-                          : formatCurrency(inv.estimatedReturn, inv.currency)}
+                          : formatCurrency(getOutcomeReturnAmount(inv.outcome, inv.amount), inv.currency)}
                       </p>
                       {inv.status !== "cancelled" && inv.status !== "completed" && (
                         <p className="text-[10px] text-muted-foreground flex items-center gap-0.5 mt-0.5">
                           <Clock className="size-2.5" />
-                          {inv.daysUntilRoi > 0
-                            ? `${inv.daysUntilRoi} días`
-                            : "Próximo"}
+                          {inv.outcome.kind === "extended"
+                            ? "Plazo extendido"
+                            : inv.daysUntilRoi > 0
+                              ? `${inv.daysUntilRoi} días`
+                              : "Próximo"}
                         </p>
                       )}
                     </TableCell>

@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Crown, Filter, Sparkles } from "lucide-react";
 import { PremiumPropertyCard } from "@/components/dashboard/PremiumPropertyCard";
 import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { useCurrentUser } from "@/contexts/user-context";
-import { getAllPremiumProperties, premiumProperties } from "@/lib/premium/mock-data";
+import { getAllPremiumProperties, premiumProperties, isCaughtByOther } from "@/lib/premium/mock-data";
 import type { PremiumProperty } from "@/lib/premium/types";
 import { cn } from "@/lib/utils";
 
@@ -15,30 +16,57 @@ const filters = [
   { id: "all", label: "Todas" },
   { id: "available", label: "Disponibles" },
   { id: "caught", label: "Capturadas" },
-  { id: "converted", label: "Convertidas" },
+  { id: "converted", label: "Pasaron a inversión colectiva" },
 ] as const;
 
+type FilterId = (typeof filters)[number]["id"];
+
 export default function PremiumPropertiesPage() {
+  return (
+    <Suspense>
+      <PremiumPropertiesContent />
+    </Suspense>
+  );
+}
+
+function PremiumPropertiesContent() {
   const { user, isPremium } = useCurrentUser();
-  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const searchParams = useSearchParams();
+  const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [properties, setProperties] = useState<PremiumProperty[]>(premiumProperties);
 
   useEffect(() => {
     setProperties(getAllPremiumProperties());
   }, []);
 
+  // "Ver oportunidades" desde el dashboard abre directo el filtro Disponibles (P-002).
+  useEffect(() => {
+    const requested = searchParams.get("filter");
+    if (requested && filters.some((f) => f.id === requested)) {
+      setActiveFilter(requested as FilterId);
+    }
+  }, [searchParams]);
+
+  // Las propiedades capturadas por otros usuarios se retiran de la vista de
+  // terceros (P-013/P-022): ya no se pueden capturar y exponen actividad
+  // financiera ajena de alto valor sin ningún propósito para quien mira.
+  const visibleToUser = useMemo(
+    () => properties.filter((p) => !isCaughtByOther(p, user.id)),
+    [properties, user.id]
+  );
+
   const filtered = useMemo(() => {
-    if (activeFilter === "all") return properties;
+    if (activeFilter === "all") return visibleToUser;
     if (activeFilter === "available") {
-      return properties.filter((p) => p.status === "available");
+      return visibleToUser.filter((p) => p.status === "available");
     }
     if (activeFilter === "caught") {
-      return properties.filter((p) => p.status === "caught");
+      return visibleToUser.filter((p) => p.status === "caught");
     }
-    return properties.filter(
+    return visibleToUser.filter(
       (p) => p.status === "converted" || p.status === "expired"
     );
-  }, [activeFilter, properties]);
+  }, [activeFilter, visibleToUser]);
 
   const availableCount = properties.filter((p) => p.status === "available").length;
 
@@ -89,8 +117,9 @@ export default function PremiumPropertiesPage() {
               Hola {user.name.split(" ")[0]}, tienes acceso anticipado
             </p>
             <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-              Captura propiedades invirtiendo el 100% antes de que expire la ventana premium.
-              Si nadie invierte, la propiedad se abre al mercado estándar con ROI reducido.
+              Financia individualmente el 100% del capital requerido antes de que expire la
+              ventana Premium. Si nadie invierte en ese periodo, la oportunidad puede
+              habilitarse para participación colectiva.
             </p>
           </div>
         </div>

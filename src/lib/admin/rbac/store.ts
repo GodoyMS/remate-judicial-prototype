@@ -4,8 +4,8 @@ import {
 } from "./constants";
 import type { AdminAccount, AdminRole } from "./types";
 
-const ROLES_KEY = "remata-admin-roles-v1";
-const ACCOUNTS_KEY = "remata-admin-accounts-v1";
+const ROLES_KEY = "rematto-admin-roles-v1";
+const ACCOUNTS_KEY = "rematto-admin-accounts-v1";
 
 const SYSTEM_ROLES: AdminRole[] = [
   {
@@ -76,7 +76,7 @@ const DEFAULT_ACCOUNTS: AdminAccount[] = [
   {
     id: "acc-superadmin",
     name: "Super Admin",
-    email: "superadmin@remata.com",
+    email: "superadmin@rematto.com",
     password: "superadmin1234",
     roleId: "role-super-admin",
     isSuperAdmin: true,
@@ -88,7 +88,7 @@ const DEFAULT_ACCOUNTS: AdminAccount[] = [
   {
     id: "acc-admin",
     name: "Admin Operaciones",
-    email: "admin@remata.com",
+    email: "admin@rematto.com",
     password: "admin1234",
     roleId: "role-admin",
     isSuperAdmin: false,
@@ -100,7 +100,7 @@ const DEFAULT_ACCOUNTS: AdminAccount[] = [
   {
     id: "acc-analyst",
     name: "Ana Lista",
-    email: "analysist@remata.com",
+    email: "analysist@rematto.com",
     password: "analyst1234",
     roleId: "role-analyst",
     isSuperAdmin: false,

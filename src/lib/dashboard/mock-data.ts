@@ -1,4 +1,39 @@
-import type { DashboardProperty, UserInvestment } from "./types";
+import type {
+  DashboardProperty,
+  UserInvestment,
+  ProcessStage,
+  ProcessMilestone,
+} from "./types";
+import { PROCESS_STAGE_ORDER } from "./types";
+
+function addDays(date: string, days: number): string {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Genera el timeline hasta la etapa actual; el resto queda como "esperado". */
+function buildTimeline(
+  currentStage: ProcessStage,
+  startDate: string,
+  extendedFinal?: boolean
+): ProcessMilestone[] {
+  const idx = PROCESS_STAGE_ORDER.indexOf(currentStage);
+  return PROCESS_STAGE_ORDER.map((stage, i) => {
+    if (i < idx) {
+      return { stage, reachedAt: addDays(startDate, i * 45), expectedAt: null };
+    }
+    if (i === idx) {
+      return {
+        stage,
+        reachedAt: addDays(startDate, i * 45),
+        expectedAt: null,
+        note: extendedFinal ? "Plazo extendido respecto a la estimación inicial." : undefined,
+      };
+    }
+    return { stage, reachedAt: null, expectedAt: addDays(startDate, i * 45) };
+  });
+}
 
 export const dashboardProperties: DashboardProperty[] = [
   {
@@ -24,7 +59,7 @@ export const dashboardProperties: DashboardProperty[] = [
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=800&fit=crop",
     ],
-    badge: "🔥 Alta demanda",
+    badge: "23 inversionistas · 70% financiado",
     badgeStyle: "bg-warning/10 text-warning",
     investors: 23,
     raisedAmount: 198500,
@@ -37,6 +72,39 @@ export const dashboardProperties: DashboardProperty[] = [
       { id: "l4", obfuscatedName: "L*** F.", amount: 1000, timeAgo: "hace 22 min" },
       { id: "l5", obfuscatedName: "D*** R.", amount: 7500, timeAgo: "hace 35 min" },
     ],
+    judicial: {
+      expediente: "01847-2025-0-1801-JR-CI-07",
+      juzgado: "7° Juzgado Civil de Lima",
+      etapa: "Subasta convocada",
+      lastReviewedAt: "2026-06-01",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-06-01",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Resolución de convocatoria a remate", url: "#" },
+        { label: "Informe de tasación", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "S/ 320,000" },
+        { label: "Precio de salida en remate", value: "S/ 285,000" },
+        { label: "Plazo estimado de liquidación", value: "12 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 8550 },
+        { label: "Gastos notariales y registrales", amount: 4200 },
+      ],
+      grossRoi: 22,
+      netRoi: 19,
+    },
   },
   {
     id: 2,
@@ -60,7 +128,7 @@ export const dashboardProperties: DashboardProperty[] = [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop",
     ],
-    badge: "⚖️ Proceso expedito",
+    badge: "Etapa: formalización",
     badgeStyle: "bg-info/10 text-info",
     investors: 14,
     raisedAmount: 312000,
@@ -70,6 +138,38 @@ export const dashboardProperties: DashboardProperty[] = [
       { id: "l6", obfuscatedName: "M*** V.", amount: 15000, timeAgo: "hace 5 min" },
       { id: "l7", obfuscatedName: "R*** S.", amount: 3000, timeAgo: "hace 18 min" },
     ],
+    judicial: {
+      expediente: "02391-2024-0-1801-JR-CI-12",
+      juzgado: "12° Juzgado Civil de Lima",
+      etapa: "Actos notariales y registrales",
+      lastReviewedAt: "2026-05-28",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-05-28",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Acta de adjudicación", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "S/ 560,000" },
+        { label: "Precio de adjudicación", value: "S/ 520,000" },
+        { label: "Plazo estimado de liquidación", value: "14 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 15600 },
+        { label: "Gastos notariales y registrales", amount: 7800 },
+      ],
+      grossRoi: 18,
+      netRoi: 15,
+    },
   },
   {
     id: 3,
@@ -92,7 +192,7 @@ export const dashboardProperties: DashboardProperty[] = [
       "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop",
     ],
-    badge: "⭐ Exclusivo",
+    badge: "18 inversionistas · 67% financiado",
     badgeStyle: "bg-premium/10 text-premium",
     investors: 18,
     raisedAmount: 187600,
@@ -101,6 +201,38 @@ export const dashboardProperties: DashboardProperty[] = [
     liveInvestments: [
       { id: "l8", obfuscatedName: "J*** P.", amount: 2000, timeAgo: "hace 1 h" },
     ],
+    judicial: {
+      expediente: "00512-2025-0-1801-JR-CI-03",
+      juzgado: "3° Juzgado Civil de Lima",
+      etapa: "Subasta convocada",
+      lastReviewedAt: "2026-06-02",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-06-02",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Resolución de convocatoria a remate", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "S/ 315,000" },
+        { label: "Precio de salida en remate", value: "S/ 280,000" },
+        { label: "Plazo estimado de liquidación", value: "12 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 8400 },
+        { label: "Gastos notariales y registrales", amount: 4100 },
+      ],
+      grossRoi: 22,
+      netRoi: 19,
+    },
   },
   {
     id: 4,
@@ -123,7 +255,7 @@ export const dashboardProperties: DashboardProperty[] = [
       "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&h=800&fit=crop",
     ],
-    badge: "🏢 Comercial",
+    badge: "Comercial",
     badgeStyle: "bg-muted text-muted-foreground",
     investors: 19,
     raisedAmount: 171000,
@@ -133,6 +265,38 @@ export const dashboardProperties: DashboardProperty[] = [
       { id: "l9", obfuscatedName: "D*** R.", amount: 3000, timeAgo: "hace 12 min" },
       { id: "l10", obfuscatedName: "P*** G.", amount: 1500, timeAgo: "hace 45 min" },
     ],
+    judicial: {
+      expediente: "01120-2024-0-1801-JR-CI-09",
+      juzgado: "9° Juzgado Civil de Lima",
+      etapa: "En comercialización",
+      lastReviewedAt: "2026-05-20",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-05-20",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Acta de adjudicación", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "US$ 205,000" },
+        { label: "Precio de adjudicación", value: "US$ 190,000" },
+        { label: "Plazo estimado de liquidación", value: "16 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 5700 },
+        { label: "Gastos notariales y registrales", amount: 2800 },
+      ],
+      grossRoi: 18,
+      netRoi: 15,
+    },
   },
   {
     id: 5,
@@ -155,13 +319,45 @@ export const dashboardProperties: DashboardProperty[] = [
       "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&h=800&fit=crop",
       "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&h=800&fit=crop",
     ],
-    badge: "⚡ Cierra pronto",
+    badge: "Cierra en 5 días",
     badgeStyle: "bg-warning/10 text-warning",
     investors: 31,
     raisedAmount: 165000,
     totalInvestment: 165000,
     currency: "PEN",
     liveInvestments: [],
+    judicial: {
+      expediente: "00298-2025-0-1801-JR-CI-05",
+      juzgado: "5° Juzgado Civil de Lima",
+      etapa: "Subasta convocada",
+      lastReviewedAt: "2026-06-03",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-06-03",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Resolución de convocatoria a remate", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "S/ 188,000" },
+        { label: "Precio de salida en remate", value: "S/ 165,000" },
+        { label: "Plazo estimado de liquidación", value: "10 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 4950 },
+        { label: "Gastos notariales y registrales", amount: 2400 },
+      ],
+      grossRoi: 24,
+      netRoi: 20,
+    },
   },
   {
     id: 6,
@@ -183,7 +379,7 @@ export const dashboardProperties: DashboardProperty[] = [
     images: [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&h=800&fit=crop",
     ],
-    badge: "🌿 Residencial",
+    badge: "Próximo",
     badgeStyle: "bg-success/10 text-success",
     investors: 6,
     raisedAmount: 45000,
@@ -192,6 +388,35 @@ export const dashboardProperties: DashboardProperty[] = [
     liveInvestments: [
       { id: "l11", obfuscatedName: "S*** L.", amount: 1000, timeAgo: "hace 3 h" },
     ],
+    judicial: {
+      expediente: "01765-2025-0-1801-JR-CI-14",
+      juzgado: "14° Juzgado Civil de Lima",
+      etapa: "Pendiente de convocatoria",
+      lastReviewedAt: "2026-05-30",
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: "2026-05-30",
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+      ],
+      documents: [{ label: "Partida registral (SUNARP)", url: "#" }],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "S/ 445,000" },
+        { label: "Precio de salida estimado", value: "S/ 410,000" },
+        { label: "Plazo estimado de liquidación", value: "14 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto", amount: 12300 },
+        { label: "Gastos notariales y registrales", amount: 6100 },
+      ],
+      grossRoi: 19,
+      netRoi: 16,
+    },
   },
 ];
 
@@ -208,7 +433,9 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: 323,
     status: "active",
     paymentMethod: "Tarjeta débito / crédito",
-    estimatedReturn: 770,
+    outcome: { kind: "estimated", roi: 22 },
+    stage: "subasta",
+    timeline: buildTimeline("subasta", "2026-04-10"),
   },
   {
     id: "inv-002",
@@ -222,7 +449,9 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: 304,
     status: "active",
     paymentMethod: "Transferencia bancaria",
-    estimatedReturn: 900,
+    outcome: { kind: "revised", roi: 16, previousRoi: 18, revisedAt: "2026-05-15" },
+    stage: "formalizacion",
+    timeline: buildTimeline("formalizacion", "2026-03-22"),
   },
   {
     id: "inv-003",
@@ -236,7 +465,9 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: 85,
     status: "active",
     paymentMethod: "Tarjeta débito / crédito",
-    estimatedReturn: 600,
+    outcome: { kind: "estimated", roi: 24 },
+    stage: "adjudicacion",
+    timeline: buildTimeline("adjudicacion", "2026-02-15"),
   },
   {
     id: "inv-004",
@@ -248,23 +479,27 @@ export const userInvestments: UserInvestment[] = [
     datePaid: "2025-11-05",
     expectedRoiDate: "2026-05-05",
     daysUntilRoi: -17,
-    status: "completed",
+    status: "active",
     paymentMethod: "Transferencia bancaria",
-    estimatedReturn: 270,
+    outcome: { kind: "extended", newExpectedAt: "2026-09-05" },
+    stage: "venta",
+    timeline: buildTimeline("venta", "2025-11-05", true),
   },
   {
     id: "inv-005",
     certificateId: "REM-2026-002301",
     propertyId: 3,
     amount: 2000,
-    currency: "USD",
-    roi: 20,
+    currency: "PEN",
+    roi: 22,
     datePaid: "2026-05-18",
     expectedRoiDate: "2027-05-18",
     daysUntilRoi: 361,
     status: "pending",
     paymentMethod: "Transferencia bancaria",
-    estimatedReturn: 400,
+    outcome: { kind: "estimated", roi: 22 },
+    stage: "subasta",
+    timeline: buildTimeline("subasta", "2026-05-18"),
   },
   {
     id: "inv-006",
@@ -278,7 +513,9 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: -63,
     status: "completed",
     paymentMethod: "Tarjeta débito / crédito",
-    estimatedReturn: 220,
+    outcome: { kind: "settled", roi: -3 },
+    stage: "liquidacion",
+    timeline: buildTimeline("liquidacion", "2025-09-20"),
   },
   {
     id: "inv-007",
@@ -292,7 +529,9 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: 345,
     status: "active",
     paymentMethod: "Yape / Plin",
-    estimatedReturn: 756,
+    outcome: { kind: "estimated", roi: 18 },
+    stage: "subasta",
+    timeline: buildTimeline("subasta", "2026-05-02"),
   },
   {
     id: "inv-008",
@@ -306,7 +545,9 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: -97,
     status: "completed",
     paymentMethod: "Yape / Plin",
-    estimatedReturn: 144,
+    outcome: { kind: "capital_returned" },
+    stage: "liquidacion",
+    timeline: buildTimeline("liquidacion", "2025-08-14"),
   },
   {
     id: "inv-009",
@@ -320,21 +561,25 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: 186,
     status: "pending",
     paymentMethod: "Transferencia bancaria",
-    estimatedReturn: 360,
+    outcome: { kind: "estimated", roi: 24 },
+    stage: "subasta",
+    timeline: buildTimeline("subasta", "2026-05-25"),
   },
   {
     id: "inv-010",
     certificateId: "REM-2025-006891",
     propertyId: 3,
     amount: 3000,
-    currency: "USD",
+    currency: "PEN",
     roi: 20,
     datePaid: "2025-07-03",
     expectedRoiDate: "2026-01-03",
     daysUntilRoi: -139,
     status: "completed",
     paymentMethod: "Transferencia bancaria",
-    estimatedReturn: 600,
+    outcome: { kind: "settled", roi: 20 },
+    stage: "liquidacion",
+    timeline: buildTimeline("liquidacion", "2025-07-03"),
   },
   {
     id: "inv-011",
@@ -348,7 +593,9 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: 251,
     status: "cancelled",
     paymentMethod: "Tarjeta débito / crédito",
-    estimatedReturn: 0,
+    outcome: { kind: "capital_returned" },
+    stage: "subasta",
+    timeline: buildTimeline("subasta", "2026-01-28"),
   },
   {
     id: "inv-012",
@@ -362,7 +609,9 @@ export const userInvestments: UserInvestment[] = [
     daysUntilRoi: 371,
     status: "active",
     paymentMethod: "Transferencia bancaria",
-    estimatedReturn: 1080,
+    outcome: { kind: "estimated", roi: 18 },
+    stage: "subasta",
+    timeline: buildTimeline("subasta", "2026-05-28"),
   },
 ];
 
@@ -374,6 +623,73 @@ export function getInvestmentById(id: string): UserInvestment | undefined {
   return userInvestments.find((i) => i.id === id);
 }
 
+export interface ActiveInvestmentView extends UserInvestment {
+  property: DashboardProperty;
+}
+
+/**
+ * Une cada inversión con su propiedad. Es la única fuente de verdad para el
+ * dashboard, `my-investments` y el detalle de inversión (WP-0.1): los tres
+ * consumen exactamente este selector, así que el nombre, ROI, estado y
+ * moneda de un activo no pueden divergir entre pantallas.
+ */
+export function getActiveInvestmentsForUser(): ActiveInvestmentView[] {
+  return userInvestments
+    .map((inv) => {
+      const property = getPropertyById(inv.propertyId);
+      return property ? { ...inv, property } : null;
+    })
+    .filter((v): v is ActiveInvestmentView => v !== null);
+}
+
+export interface ConfirmInvestmentInput {
+  propertyId: number;
+  amount: number;
+  paymentMethod: string;
+}
+
+/**
+ * Registra una inversión confirmada en una sola operación (WP-5.2, cierra
+ * E-042): actualiza `userInvestments` (de donde salen "Mis inversiones" y
+ * "Total invertido") y el progreso de la propiedad (`raisedAmount`,
+ * `investors`), para que ambos módulos queden consistentes de inmediato.
+ * Notificaciones y actividad reciente se disparan aparte, desde el llamador,
+ * porque viven en un contexto de React (ver `useNotifications`).
+ */
+export function confirmInvestment(input: ConfirmInvestmentInput): UserInvestment {
+  const property = getPropertyById(input.propertyId);
+  if (!property) {
+    throw new Error(`Propiedad ${input.propertyId} no encontrada`);
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const investment: UserInvestment = {
+    id: `inv-${Date.now()}`,
+    certificateId: `REM-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`,
+    propertyId: input.propertyId,
+    amount: input.amount,
+    currency: property.currency,
+    roi: property.roi,
+    datePaid: today,
+    expectedRoiDate: addDays(today, 365),
+    daysUntilRoi: 365,
+    status: "active",
+    paymentMethod: input.paymentMethod,
+    outcome: { kind: "estimated", roi: property.roi },
+    stage: "subasta",
+    timeline: buildTimeline("subasta", today),
+  };
+
+  userInvestments.unshift(investment);
+  property.raisedAmount = Math.min(property.raisedAmount + input.amount, property.totalInvestment);
+  property.investors += 1;
+  if (property.raisedAmount >= property.totalInvestment) {
+    property.status = "Cerrado";
+  }
+
+  return investment;
+}
+
 export { formatCurrency } from "@/lib/currency";
 
 export function formatDate(date: string): string {
@@ -381,5 +697,15 @@ export function formatDate(date: string): string {
     day: "numeric",
     month: "short",
     year: "numeric",
+  }).format(new Date(date));
+}
+
+export function formatDateTime(date: string): string {
+  return new Intl.DateTimeFormat("es-PE", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(new Date(date));
 }

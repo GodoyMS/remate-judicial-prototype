@@ -59,7 +59,7 @@ export function AdminTopbar() {
                   <Shield className="size-4 text-sidebar-primary-foreground" />
                 </div>
                 <span className="text-base font-bold tracking-tight text-sidebar-foreground">
-                  remata admin
+                  rematto admin
                 </span>
               </div>
               <button

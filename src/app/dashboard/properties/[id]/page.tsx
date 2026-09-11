@@ -30,6 +30,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { PropertyGalleryFullscreen } from "@/components/dashboard/PropertyGalleryFullscreen";
+import { OpportunityEvidence, RoiBreakdown } from "@/components/dashboard/OpportunityEvidence";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
 import { getPropertyById, formatCurrency } from "@/lib/dashboard/mock-data";
 
@@ -79,6 +80,7 @@ export default function PropertyDetailPage({
 
   const progress = Math.round((raisedAmount / property.totalInvestment) * 100);
   const remaining = property.totalInvestment - raisedAmount;
+  const isInvestable = property.status === "Activo" && remaining > 0;
 
   const openGallery = (index: number) => {
     setGalleryIndex(index);
@@ -219,6 +221,8 @@ export default function PropertyDetailPage({
               </AnimatePresence>
             </CardContent>
           </Card>
+
+          <OpportunityEvidence judicial={property.judicial} verification={property.verification} />
         </div>
 
         <div className="space-y-6">
@@ -236,6 +240,7 @@ export default function PropertyDetailPage({
                 </div>
                 <span className="text-xl font-bold text-success">+{property.roi}%</span>
               </div>
+              <RoiBreakdown roiBasis={property.roiBasis} currency={property.currency} />
 
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -266,12 +271,35 @@ export default function PropertyDetailPage({
                 ))}
               </div>
 
-              <Button asChild size="lg" className="w-full h-12 rounded-xl font-semibold text-base">
-                <Link href={`/dashboard/invest?property=${property.id}`}>
-                  Invertir ahora
-                  <ArrowRight className="size-5 ml-1" />
+              {/* "Antes de invertir" (WP-3.2, cierra E-035): mismo peso visual que los beneficios. */}
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-1.5">
+                <p className="text-xs font-semibold text-foreground">Antes de invertir</p>
+                <ul className="space-y-1 text-xs text-muted-foreground">
+                  <li>· Retorno estimado, no garantizado</li>
+                  <li>· Plazo estimado sujeto al proceso judicial</li>
+                  <li>· Posibilidad de recuperación inferior a la prevista</li>
+                  <li>· Liquidez no inmediata</li>
+                </ul>
+                <Link
+                  href="/politica-de-riesgos"
+                  className="inline-block text-xs font-medium text-primary hover:underline pt-1"
+                >
+                  Ver riesgos completos
                 </Link>
-              </Button>
+              </div>
+
+              {isInvestable ? (
+                <Button asChild size="lg" className="w-full h-12 rounded-xl font-semibold text-base">
+                  <Link href={`/dashboard/invest?property=${property.id}`}>
+                    Invertir ahora
+                    <ArrowRight className="size-5 ml-1" />
+                  </Link>
+                </Button>
+              ) : (
+                <Button size="lg" disabled className="w-full h-12 rounded-xl font-semibold text-base">
+                  {property.status === "Próximo" ? "Aún no disponible" : "Financiado por completo"}
+                </Button>
+              )}
 
               <p className="text-[10px] text-muted-foreground text-center">
                 Inversión mínima {formatCurrency(property.minInvestment, property.currency)} · Proceso 100% digital
