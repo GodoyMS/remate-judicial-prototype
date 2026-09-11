@@ -14,7 +14,6 @@ import {
   ArrowRight,
   Shield,
   Percent,
-  Wallet,
   Calendar,
   User,
 } from "lucide-react";
@@ -222,38 +221,28 @@ export default function PremiumPropertyDetailPage({
                 ? "bg-gradient-to-br from-premium to-premium/80 text-premium-foreground"
                 : "bg-muted/30"
             )}>
-              {isAvailable && isPremium ? (
-                <>
-                  <p className="text-xs font-medium text-premium-foreground/80 mb-1">ROI Premium exclusivo</p>
-                  <p className="text-4xl font-bold">{property.premiumRoi}%</p>
-                  <p className="text-xs text-premium-foreground/70 mt-1">
-                    +{roiDiff}% vs mercado estándar ({property.standardRoi}%)
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-xs text-muted-foreground mb-1">ROI Premium</p>
-                  <p className="text-3xl font-bold text-foreground">{property.premiumRoi}%</p>
-                </>
-              )}
+              {/* Jerarquía financiera (P-006): capital requerido manda sobre ROI y ganancia */}
+              <p className={cn("text-xs font-medium mb-1", isAvailable && isPremium ? "text-premium-foreground/80" : "text-muted-foreground")}>
+                Capital requerido
+              </p>
+              <p className="text-3xl font-bold">{formatCurrency(property.totalValue, property.currency)}</p>
+              <p className={cn("text-xs mt-1", isAvailable && isPremium ? "text-premium-foreground/70" : "text-muted-foreground")}>
+                Financiado por un solo inversionista (100%)
+              </p>
             </div>
             <CardContent className="p-4 space-y-4">
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1.5">
-                    <Wallet className="size-3.5" />
-                    Valor total
-                  </span>
-                  <span className="font-semibold">
-                    {formatCurrency(property.totalValue, property.currency)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
                     <Percent className="size-3.5" />
-                    Inversión requerida
+                    Retorno estimado
                   </span>
-                  <span className="font-semibold text-premium">100%</span>
+                  <span className="font-semibold text-premium">
+                    {property.premiumRoi}%
+                    <span className="text-[10px] text-muted-foreground font-normal ml-1">
+                      (+{roiDiff}% vs. estándar)
+                    </span>
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1.5">

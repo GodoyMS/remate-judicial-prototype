@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useNotifications } from "@/contexts/notifications-context";
+import { useCurrentUser } from "@/contexts/user-context";
+import { formatCurrency } from "@/lib/dashboard/mock-data";
 import { cn } from "@/lib/utils";
 
 const MENU_ITEMS = [
@@ -65,6 +67,7 @@ const MENU_ITEMS = [
 export function UserMenu() {
   const router = useRouter();
   const { unreadCount } = useNotifications();
+  const { user, isPremium, logout } = useCurrentUser();
 
   const handleHelp = () => {
     toast.message("Centro de ayuda", {
@@ -74,11 +77,14 @@ export function UserMenu() {
   };
 
   const handleLogout = () => {
+    logout();
     toast.success("Sesión cerrada", {
-      description: "Hasta pronto, Ana Sofía. Te esperamos de vuelta.",
+      description: `Hasta pronto, ${user.name.split(" ")[0]}. Te esperamos de vuelta.`,
     });
     router.push("/login");
   };
+
+  const investmentsDescription = `${formatCurrency(user.totalInvested, "PEN")} invertidos`;
 
   return (
     <DropdownMenu>
@@ -88,7 +94,7 @@ export function UserMenu() {
           className="relative size-8 rounded-full bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground cursor-pointer hover:opacity-90 transition-all ring-2 ring-transparent hover:ring-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           aria-label="Menú de usuario"
         >
-          AS
+          {user.initials}
           <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-success border-2 border-background" />
         </button>
       </DropdownMenuTrigger>
@@ -101,48 +107,51 @@ export function UserMenu() {
         <div className="bg-gradient-to-br from-primary/8 via-background to-muted/40 px-4 py-4 border-b border-border/50">
           <div className="flex items-center gap-3">
             <div className="size-11 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground shrink-0 shadow-md">
-              AS
+              {user.initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">
-                Ana Sofía Torres
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-semibold text-foreground truncate">
+                  {user.name}
+                </p>
+                {isPremium && (
+                  <Badge className="h-4 px-1.5 text-[9px] font-semibold bg-premium/15 text-premium border-premium/20">
+                    Premium
+                  </Badge>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground truncate">
-                ana.torres@mail.com
+                {user.email}
               </p>
-              <Badge
-                variant="outline"
-                className="mt-1.5 h-5 text-[10px] font-medium border-success/20 bg-success/10 text-success"
-              >
-                <ShieldCheck className="size-2.5 mr-1" />
-                Identidad verificada
-              </Badge>
+              {user.verified ? (
+                <Badge
+                  variant="outline"
+                  className="mt-1.5 h-5 text-[10px] font-medium border-success/20 bg-success/10 text-success"
+                >
+                  <ShieldCheck className="size-2.5 mr-1" />
+                  Identidad verificada
+                </Badge>
+              ) : (
+                <Badge
+                  variant="outline"
+                  className="mt-1.5 h-5 text-[10px] font-medium border-warning/20 bg-warning/10 text-warning"
+                >
+                  Verificación en proceso
+                </Badge>
+              )}
             </div>
           </div>
 
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <div className="rounded-xl bg-background/80 border border-border/60 px-3 py-2">
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Wallet className="size-3" />
-                <span className="text-[10px] font-medium uppercase tracking-wide">
-                  Invertido
-                </span>
-              </div>
-              <p className="text-sm font-bold text-foreground mt-0.5">
-                S/ 12,500
-              </p>
+          <div className="mt-3 rounded-xl bg-background/80 border border-border/60 px-3 py-2">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Wallet className="size-3" />
+              <span className="text-[10px] font-medium uppercase tracking-wide">
+                Total invertido
+              </span>
             </div>
-            <div className="rounded-xl bg-background/80 border border-border/60 px-3 py-2">
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <TrendingUp className="size-3" />
-                <span className="text-[10px] font-medium uppercase tracking-wide">
-                  Retorno
-                </span>
-              </div>
-              <p className="text-sm font-bold text-success mt-0.5">
-                +22.7%
-              </p>
-            </div>
+            <p className="text-sm font-bold text-foreground mt-0.5">
+              {formatCurrency(user.totalInvested, "PEN")}
+            </p>
           </div>
         </div>
 
@@ -161,7 +170,7 @@ export function UserMenu() {
                     {item.label}
                   </p>
                   <p className="text-[11px] text-muted-foreground truncate">
-                    {item.description}
+                    {item.href === "/dashboard/my-investments" ? investmentsDescription : item.description}
                   </p>
                 </div>
                 {"showBadge" in item && item.showBadge && unreadCount > 0 ? (
