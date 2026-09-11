@@ -14,23 +14,18 @@ import {
   PREMIUM_NOTIFICATIONS,
   type AppNotification,
 } from "@/lib/dashboard/notifications";
+import { readStoredUser } from "@/contexts/user-context";
+
 function getInitialNotifications(): AppNotification[] {
   if (typeof window === "undefined") return INITIAL_NOTIFICATIONS;
-  try {
-    const stored = localStorage.getItem("remata-demo-user-v1");
-    if (stored) {
-      const user = JSON.parse(stored) as { tier?: string };
-      if (user.tier === "premium") {
-        return [...PREMIUM_NOTIFICATIONS, ...INITIAL_NOTIFICATIONS];
-      }
-    }
-  } catch {
-    /* ignore */
+  const user = readStoredUser();
+  if (user?.tier === "premium") {
+    return [...PREMIUM_NOTIFICATIONS, ...INITIAL_NOTIFICATIONS];
   }
   return INITIAL_NOTIFICATIONS;
 }
 
-const STORAGE_KEY = "remata-notifications-v1";
+const STORAGE_KEY = "rematto-notifications-v1";
 
 interface NotificationsContextValue {
   notifications: AppNotification[];

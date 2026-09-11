@@ -2,79 +2,47 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Crown, Sparkles, ArrowRight, Lock } from "lucide-react";
+import { Crown, ArrowRight, Zap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+/**
+ * Compacta a una fila (E-015, E-022): título, una frase y máximo 2
+ * beneficios. Los cuatro argumentos completos viven en `/premium`.
+ */
 export function PremiumUpgradeBanner() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative overflow-hidden rounded-2xl border border-sidebar-border bg-sidebar p-6 md:p-8"
+      className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-premium/25 bg-premium/5 px-5 py-4"
     >
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-premium/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-
-      <div className="relative flex flex-col md:flex-row md:items-center gap-6">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="size-10 rounded-xl bg-premium/20 flex items-center justify-center">
-              <Crown className="size-5 text-premium" />
-            </div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-premium/80">
-              Inversiones Premium
-            </span>
-          </div>
-          {/* Second review, finding 29: Premium is an access tier, not a
-              yield tier. Advertising "hasta 52%" promised a return nobody can
-              commit to and contradicted the 22% published on the landing. */}
-          <h3 className="text-xl md:text-2xl font-bold text-sidebar-foreground tracking-tight mb-2">
-            Toma la operación completa, antes que el mercado estándar
-          </h3>
-          <p className="text-sm text-sidebar-foreground/70 max-w-xl leading-relaxed">
-            Como cuenta Premium accedes a oportunidades durante una ventana de
-            exclusividad, antes de que se abran al capital colectivo, y puedes
-            tomar el 100% del capital requerido. Si nadie la toma en esa
-            ventana, la operación pasa al mercado estándar.
-          </p>
-          <ul className="flex flex-wrap gap-3 mt-4">
-            {[
-              "Acceso anticipado exclusivo",
-              "Inversión 100% — un solo inversionista",
-              "Asesor asignado durante la operación",
-              "Notificaciones en tiempo real",
-            ].map((item) => (
-              <li
-                key={item}
-                className="flex items-center gap-1.5 text-xs text-sidebar-foreground/80 bg-sidebar-foreground/10 px-2.5 py-1 rounded-full"
-              >
-                <Sparkles className="size-3 text-premium" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="flex flex-col gap-3 shrink-0">
-          <div className="rounded-xl bg-sidebar-foreground/10 backdrop-blur-sm border border-sidebar-foreground/20 p-4 text-center">
-            <Lock className="size-6 text-premium mx-auto mb-2" />
-            <p className="text-xs text-sidebar-foreground/70 mb-1">Tu plan actual</p>
-            <p className="text-sm font-bold text-sidebar-foreground">Estándar</p>
-          </div>
-          <Button
-            asChild
-            className="h-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
-          >
-            <Link href="/dashboard/account?section=premium">
-              Actualizar a Premium
-              <ArrowRight className="size-4 ml-1" />
-            </Link>
-          </Button>
-          <p className="text-[10px] text-sidebar-foreground/50 text-center">
-            Demo: inicia con premium@remata.com
-          </p>
+      <div className="size-10 rounded-xl bg-premium/15 flex items-center justify-center shrink-0">
+        <Crown className="size-5 text-premium" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-foreground">Acceso Premium</p>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Financia el 100% de una oportunidad durante su ventana de exclusividad.
+        </p>
+        <div className="flex flex-wrap gap-3 mt-1.5">
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Zap className="size-3 text-premium" /> Acceso anticipado
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Sparkles className="size-3 text-premium" /> Oportunidades exclusivas
+          </span>
         </div>
       </div>
+      <Button
+        asChild
+        variant="outline"
+        className="rounded-xl border-premium/40 text-premium hover:bg-premium/10 shrink-0 w-full sm:w-auto"
+      >
+        <Link href="/premium">
+          Ver beneficios
+          <ArrowRight className="size-4 ml-1" />
+        </Link>
+      </Button>
     </motion.div>
   );
 }

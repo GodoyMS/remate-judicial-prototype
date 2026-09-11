@@ -80,8 +80,8 @@ const MOCK_PROPERTIES = [
 ];
 
 const MOCK_USERS: Pick<AdminUser, "id" | "name" | "email">[] = [
-  { id: "standard-demo", name: "Carlos Mendoza", email: "standard@remata.com" },
-  { id: "premium-demo", name: "Valentina Ríos", email: "premium@remata.com" },
+  { id: "standard-demo", name: "Carlos Mendoza", email: "standard@rematto.com" },
+  { id: "premium-demo", name: "Valentina Ríos", email: "premium@rematto.com" },
   { id: "user-ext-001", name: "Ana Lucía Torres", email: "ana.torres@outlook.com" },
   { id: "user-ext-002", name: "Roberto Sánchez Vega", email: "rsanchez@empresa.pe" },
   { id: "user-ext-003", name: "Patricia Huamán Quispe", email: "phuaman@yahoo.com" },

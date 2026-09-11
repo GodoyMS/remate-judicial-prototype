@@ -12,14 +12,14 @@ import { DEMO_USERS } from "@/lib/premium/mock-data";
 
 const DEMO_ACCOUNTS = [
   {
-    email: "premium@remata.com",
+    email: "premium@rematto.com",
     label: "Usuario Premium",
     description: "Acceso a inversiones exclusivas al 100%",
     icon: Crown,
     accent: "from-premium to-premium/80 text-premium-foreground",
   },
   {
-    email: "standard@remata.com",
+    email: "standard@rematto.com",
     label: "Usuario Estándar",
     description: "Acceso al mercado regular de propiedades",
     icon: User,
@@ -42,11 +42,11 @@ export default function LoginPage() {
 
     try {
       if (user) {
-        localStorage.setItem("remata-demo-user-v1", JSON.stringify(user));
+        localStorage.setItem("rematto-demo-user-v1", JSON.stringify(user));
       } else {
         localStorage.setItem(
-          "remata-demo-user-v1",
-          JSON.stringify(DEMO_USERS["standard@remata.com"])
+          "rematto-demo-user-v1",
+          JSON.stringify(DEMO_USERS["standard@rematto.com"])
         );
       }
     } catch {
@@ -65,7 +65,7 @@ export default function LoginPage() {
 
     const user = DEMO_USERS[demoEmail as keyof typeof DEMO_USERS];
     try {
-      localStorage.setItem("remata-demo-user-v1", JSON.stringify(user));
+      localStorage.setItem("rematto-demo-user-v1", JSON.stringify(user));
     } catch {
       /* ignore */
     }
@@ -143,7 +143,7 @@ export default function LoginPage() {
             <Input
               id="email"
               type="email"
-              placeholder="premium@remata.com"
+              placeholder="premium@rematto.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-11 rounded-xl border-border/80 bg-muted/30 text-sm"

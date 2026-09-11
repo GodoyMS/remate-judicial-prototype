@@ -17,7 +17,28 @@ import {
   type PremiumUpgradeRequest,
 } from "@/lib/app-store";
 
-const STORAGE_KEY = "remata-demo-user-v1";
+const STORAGE_KEY = "rematto-demo-user-v1";
+const LEGACY_STORAGE_KEY = "remata-demo-user-v1";
+
+/**
+ * Reads the persisted demo user, migrating the pre-rebrand storage key once
+ * so a session created before the "Rematto" rename doesn't get logged out.
+ */
+export function readStoredUser(): DashboardUser | null {
+  try {
+    const current = localStorage.getItem(STORAGE_KEY);
+    if (current) return JSON.parse(current) as DashboardUser;
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy) {
+      localStorage.setItem(STORAGE_KEY, legacy);
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+      return JSON.parse(legacy) as DashboardUser;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
 
 interface UserContextValue {
   user: DashboardUser;
@@ -33,8 +54,8 @@ const UserContext = createContext<UserContextValue | null>(null);
 
 function resolveUser(email: string): DashboardUser {
   const normalized = email.toLowerCase().trim();
-  if (normalized === "premium@remata.com") return DEMO_USERS["premium@remata.com"];
-  if (normalized === "standard@remata.com") return DEMO_USERS["standard@remata.com"];
+  if (normalized === "premium@rematto.com") return DEMO_USERS["premium@rematto.com"];
+  if (normalized === "standard@rematto.com") return DEMO_USERS["standard@rematto.com"];
   return DEFAULT_USER;
 }
 
@@ -44,18 +65,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [upgradeRequest, setUpgradeRequest] = useState<PremiumUpgradeRequest | undefined>(undefined);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as DashboardUser;
-        // Apply any tier override set by admin approval
-        const tierOverride = getTierOverrideForUser(parsed.id);
-        const effectiveUser = tierOverride ? { ...parsed, tier: tierOverride } : parsed;
-        setUser(effectiveUser);
-        setUpgradeRequest(getUpgradeRequestForUser(effectiveUser.id));
-      }
-    } catch {
-      /* ignore */
+    const parsed = readStoredUser();
+    if (parsed) {
+      // Apply any tier override set by admin approval
+      const tierOverride = getTierOverrideForUser(parsed.id);
+      const effectiveUser = tierOverride ? { ...parsed, tier: tierOverride } : parsed;
+      setUser(effectiveUser);
+      setUpgradeRequest(getUpgradeRequestForUser(effectiveUser.id));
     }
     setHydrated(true);
   }, []);

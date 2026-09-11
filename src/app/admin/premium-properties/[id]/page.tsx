@@ -406,7 +406,7 @@ export default function AdminPremiumPropertyDetailPage({
                   <Mail className="size-3.5" />
                   <span className="truncate">
                     {baseProperty.caughtByUserId === "premium-demo"
-                      ? "premium@remata.com"
+                      ? "premium@rematto.com"
                       : "inversor@mail.com"}
                   </span>
                 </div>

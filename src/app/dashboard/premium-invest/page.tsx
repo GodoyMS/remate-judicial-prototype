@@ -216,7 +216,7 @@ function PremiumInvestContent() {
           </Link>
         </Button>
         <p className="text-xs text-muted-foreground mt-4">
-          Demo: inicia sesión con premium@remata.com
+          Demo: inicia sesión con premium@rematto.com
         </p>
       </div>
     );

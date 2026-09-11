@@ -36,8 +36,8 @@ function isLikelyOffTopic(message: string): boolean {
   const normalized = message.toLowerCase().trim();
   if (normalized.length < 3) return true;
 
-  const remataKeywords = [
-    "remata",
+  const remattoKeywords = [
+    "rematto",
     "invers",
     "remate",
     "subasta",
@@ -77,7 +77,7 @@ function isLikelyOffTopic(message: string): boolean {
     "tarifa",
   ];
 
-  if (remataKeywords.some((kw) => normalized.includes(kw))) return false;
+  if (remattoKeywords.some((kw) => normalized.includes(kw))) return false;
   if (OFF_TOPIC_KEYWORDS.some((kw) => normalized.includes(kw))) return true;
 
   return false;

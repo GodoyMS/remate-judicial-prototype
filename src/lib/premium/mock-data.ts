@@ -22,20 +22,20 @@ const PREMIUM_USER_ID = "premium-demo";
 const OTHER_PREMIUM_USER_ID = "u2";
 
 export const DEMO_USERS: Record<string, DashboardUser> = {
-  "premium@remata.com": {
+  "premium@rematto.com": {
     id: PREMIUM_USER_ID,
     name: "Valentina Ríos",
-    email: "premium@remata.com",
+    email: "premium@rematto.com",
     tier: "premium",
     initials: "VR",
     verified: true,
     totalInvested: 1240000,
     premiumInvestments: 2,
   },
-  "standard@remata.com": {
+  "standard@rematto.com": {
     id: "standard-demo",
     name: "Carlos Mendoza",
-    email: "standard@remata.com",
+    email: "standard@rematto.com",
     tier: "standard",
     initials: "CM",
     verified: true,
@@ -44,7 +44,7 @@ export const DEMO_USERS: Record<string, DashboardUser> = {
   },
 };
 
-export const DEFAULT_USER = DEMO_USERS["standard@remata.com"];
+export const DEFAULT_USER = DEMO_USERS["standard@rematto.com"];
 
 export const premiumProperties: PremiumProperty[] = [
   {

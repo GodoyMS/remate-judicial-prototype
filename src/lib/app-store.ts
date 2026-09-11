@@ -54,11 +54,11 @@ export interface PremiumPropertyOverride {
 
 // ─── Storage Keys ─────────────────────────────────────────────────────────────
 
-const UPGRADE_REQUESTS_KEY = "remata-upgrade-requests-v1";
-const PENDING_INVESTMENTS_KEY = "remata-pending-premium-investments-v1";
-const PROPERTY_OVERRIDES_KEY = "remata-premium-property-overrides-v1";
-const TIER_OVERRIDES_KEY = "remata-tier-overrides-v1";
-const CREATED_PREMIUM_PROPERTIES_KEY = "remata-created-premium-properties-v1";
+const UPGRADE_REQUESTS_KEY = "rematto-upgrade-requests-v1";
+const PENDING_INVESTMENTS_KEY = "rematto-pending-premium-investments-v1";
+const PROPERTY_OVERRIDES_KEY = "rematto-premium-property-overrides-v1";
+const TIER_OVERRIDES_KEY = "rematto-tier-overrides-v1";
+const CREATED_PREMIUM_PROPERTIES_KEY = "rematto-created-premium-properties-v1";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -83,7 +83,7 @@ function writeJson<T>(key: string, value: T): void {
 
 // ─── Upgrade Requests ─────────────────────────────────────────────────────────
 
-const UPGRADE_REQUESTS_SEED_KEY = "remata-upgrade-requests-seeded-v1";
+const UPGRADE_REQUESTS_SEED_KEY = "rematto-upgrade-requests-seeded-v1";
 
 function ensureUpgradeRequestsSeeded(): void {
   if (typeof window === "undefined") return;

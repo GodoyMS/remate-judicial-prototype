@@ -319,6 +319,41 @@ html {
     @apply text-xs leading-relaxed;
   }
 
+  /* ───────────────────────────────────────────────────────────────────
+     Dashboard typographic scale (WP-0.3 / E-019)
+
+     The dashboard had no fixed type roles, so cards drifted in size and
+     weight relative to each other. These six roles are the only sizes the
+     authenticated product (dashboard, properties, premium, account) should
+     use. Rule: one dominant figure per card — any secondary figure drops
+     to `.dash-caption` inside a pill, and every financial number carries
+     `tabular-nums`.
+       .dash-display  — dominant figure on a card (e.g. "S/ 12,500")
+       .dash-title    — page H1
+       .dash-heading  — section title
+       .dash-body     — running text
+       .dash-caption  — label, metadata, variation
+       .dash-overline — uppercase eyebrow label
+     ─────────────────────────────────────────────────────────────────── */
+  .dash-display {
+    @apply text-[2rem] leading-none font-bold tabular-nums;
+  }
+  .dash-title {
+    @apply text-2xl leading-tight font-bold tracking-tight;
+  }
+  .dash-heading {
+    @apply text-base leading-snug font-semibold;
+  }
+  .dash-body {
+    @apply text-sm leading-relaxed font-normal;
+  }
+  .dash-caption {
+    @apply text-xs leading-snug font-medium;
+  }
+  .dash-overline {
+    @apply text-[10px] font-semibold uppercase tracking-widest;
+  }
+
   /* Safe area for floating controls (audit RM-010) — reserves the bottom
      strip occupied by the chat launcher and the appearance FAB so page
      content and CTAs never end up underneath them. */

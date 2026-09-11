@@ -24,7 +24,7 @@ const infoCards = [
     icon: Phone,
     title: "Otros canales",
     /**
-     * Finding 40 — this card published "(01) 700-REMATA", a number that
+     * Finding 40 — this card published "(01) 700-REMATTO", a number that
      * appears nowhere else and does not match the one in Contacto and the
      * footer. Escalating a complaint through a channel that does not exist is
      * the worst place to lose someone, so both values now come from the

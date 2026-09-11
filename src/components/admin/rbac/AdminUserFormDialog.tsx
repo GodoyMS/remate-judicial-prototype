@@ -122,7 +122,7 @@ export function AdminUserFormDialog({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@remata.com"
+              placeholder="admin@rematto.com"
               className="rounded-xl"
               disabled={!!account}
             />

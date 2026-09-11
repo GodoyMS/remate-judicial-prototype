@@ -52,6 +52,7 @@ import {
   formatCurrency,
   formatDate,
 } from "@/lib/dashboard/mock-data";
+import { describeOutcome, getOutcomeReturnAmount } from "@/lib/dashboard/outcome";
 import { formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
 import type { UserInvestment, InvestmentStatus } from "@/lib/dashboard/types";
 import { usePagination } from "@/hooks/use-pagination";
@@ -199,7 +200,7 @@ function MyInvestmentsContent() {
     const investedByCurrency = sumByCurrency(enriched);
     const returnsByCurrency = sumByCurrency(
       enriched.map((i) => ({
-        amount: i.estimatedReturn,
+        amount: getOutcomeReturnAmount(i.outcome, i.amount),
         currency: i.currency,
       }))
     );
@@ -519,15 +520,27 @@ function MyInvestmentsContent() {
                       </span>
                     </TableCell>
                     <TableCell className="py-3 whitespace-nowrap">
-                      <span className="text-sm font-bold text-success tabular-nums">
-                        +{inv.roi}%
-                      </span>
+                      {(() => {
+                        const { label, tone } = describeOutcome(inv.outcome);
+                        return (
+                          <span
+                            className={cn(
+                              "text-xs font-bold tabular-nums",
+                              tone === "success" && "text-success",
+                              tone === "destructive" && "text-destructive",
+                              tone === "muted" && "text-muted-foreground"
+                            )}
+                          >
+                            {label}
+                          </span>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="py-3 whitespace-nowrap">
-                      <p className="text-sm font-semibold text-success tabular-nums">
+                      <p className="text-sm font-semibold text-foreground tabular-nums">
                         {inv.status === "cancelled"
                           ? "—"
-                          : formatCurrency(inv.estimatedReturn, inv.currency)}
+                          : formatCurrency(getOutcomeReturnAmount(inv.outcome, inv.amount), inv.currency)}
                       </p>
                       {inv.status !== "cancelled" && inv.status !== "completed" && (
                         <p className="text-[10px] text-muted-foreground flex items-center gap-0.5 mt-0.5">

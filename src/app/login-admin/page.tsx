@@ -14,21 +14,21 @@ import { useAdminAuth } from "@/contexts/admin-auth-context";
 
 const DEMO_ACCOUNTS = [
   {
-    email: "superadmin@remata.com",
+    email: "superadmin@rematto.com",
     password: "superadmin1234",
     label: "Super Admin",
     description: "Acceso total sin restricciones",
     color: "border-sidebar-primary/40 bg-sidebar-primary/10 text-sidebar-primary",
   },
   {
-    email: "admin@remata.com",
+    email: "admin@rematto.com",
     password: "admin1234",
     label: "Administrador",
     description: "Acceso completo a módulos operativos",
     color: "border-info/40 bg-info/10 text-info",
   },
   {
-    email: "analysist@remata.com",
+    email: "analysist@rematto.com",
     password: "analyst1234",
     label: "Analista",
     description: "Solo lectura en módulos asignados",
@@ -123,7 +123,7 @@ export default function LoginAdminPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@remata.com"
+                placeholder="admin@rematto.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11 rounded-xl border-sidebar-border bg-sidebar/50 text-sidebar-foreground placeholder:text-sidebar-foreground/40 focus-visible:ring-sidebar-primary/30"

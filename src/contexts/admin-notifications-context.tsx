@@ -14,7 +14,7 @@ import {
   type AdminNotification,
 } from "@/lib/admin/notifications";
 
-const STORAGE_KEY = "remata-admin-notifications-v1";
+const STORAGE_KEY = "rematto-admin-notifications-v1";
 
 interface AdminNotificationsContextValue {
   notifications: AdminNotification[];

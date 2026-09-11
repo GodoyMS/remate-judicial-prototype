@@ -1,4 +1,4 @@
-const SESSION_KEY = "remata-chat-session-id";
+const SESSION_KEY = "rematto-chat-session-id";
 
 export function getOrCreateChatSessionId(): string {
   if (typeof window === "undefined") return `sess-${Date.now()}`;
