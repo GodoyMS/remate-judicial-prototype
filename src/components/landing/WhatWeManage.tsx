@@ -57,7 +57,7 @@ export function WhatWeManage() {
             Qué gestiona <span className="text-primary">{BRAND_NAME}</span> por
             ti
           </h2>
-          <p className="mt-4 type-lead text-pretty text-[oklch(from_var(--brand)_0.78_calc(c*0.04)_h)] dark:text-[oklch(from_var(--brand)_0.8_calc(c*0.05)_h)]">
+          <p className="mt-4 type-lead text-pretty dark-band-body">
             Ganar la subasta es el punto medio, no el final. Estas son las
             cuatro etapas que el equipo lleva por cuenta de la operación.
           </p>
@@ -88,7 +88,7 @@ export function WhatWeManage() {
             <h3 className="type-h3 text-balance text-inherit">
               Tú sigues cada etapa desde tu cuenta
             </h3>
-            <p className="mt-3 type-body text-pretty text-[oklch(from_var(--brand)_0.78_calc(c*0.04)_h)] dark:text-[oklch(from_var(--brand)_0.8_calc(c*0.05)_h)]">
+            <p className="mt-3 type-body text-pretty dark-band-body">
               Estado de cada operación, documentos que respaldan tu
               participación, hitos del proceso judicial y el resultado cuando se
               liquida. Todas tus participaciones en un solo portafolio.
@@ -113,7 +113,7 @@ export function WhatWeManage() {
                 decoding="async"
               />
             </div>
-            <figcaption className="type-caption mt-3 text-[oklch(from_var(--brand)_0.68_calc(c*0.03)_h)] dark:text-[oklch(from_var(--brand)_0.7_calc(c*0.04)_h)]">
+            <figcaption className="type-caption mt-3 dark-band-caption">
               Panel del inversionista. Los datos mostrados corresponden a una
               cuenta de demostración.
             </figcaption>

@@ -66,7 +66,7 @@ export function WhyInvest() {
             Cuatro razones para invertir con{" "}
             <span className="text-primary">{BRAND_NAME}</span>
           </h2>
-          <p className="mt-4 type-lead text-pretty text-[oklch(from_var(--brand)_0.78_calc(c*0.04)_h)] dark:text-[oklch(from_var(--brand)_0.8_calc(c*0.05)_h)]">
+          <p className="mt-4 type-lead text-pretty dark-band-body">
             Lo que obtienes gracias a la plataforma, y dónde puedes comprobarlo.
           </p>
         </motion.div>
@@ -82,7 +82,7 @@ export function WhyInvest() {
                 duration: 0.45,
                 delay: reduceMotion ? 0 : i * 0.07,
               }}
-              className="overflow-hidden rounded-3xl border border-white/12 bg-white/5"
+              className="overflow-hidden rounded-3xl border border-white/12 bg-white/5 transition-all duration-300 hover:border-white/20 hover:bg-white/8"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -105,7 +105,7 @@ export function WhyInvest() {
                 <h3 className="type-h3 text-balance text-inherit">
                   {pillar.title}
                 </h3>
-                <p className="type-body mt-2 text-pretty text-[oklch(from_var(--brand)_0.78_calc(c*0.04)_h)] dark:text-[oklch(from_var(--brand)_0.8_calc(c*0.05)_h)]">
+                <p className="type-body mt-2 text-pretty dark-band-body">
                   {pillar.desc}
                 </p>
               </div>
