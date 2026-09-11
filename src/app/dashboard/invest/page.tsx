@@ -43,29 +43,36 @@ import {
   type YapeFormData,
 } from "@/components/dashboard/invest/YapePaymentForm";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
-import { dashboardProperties, formatCurrency } from "@/lib/dashboard/mock-data";
+import { dashboardProperties, formatCurrency, confirmInvestment } from "@/lib/dashboard/mock-data";
 import { getCurrencyLabel, getCurrencySymbol, type PropertyCurrency } from "@/lib/currency";
+import { useNotifications } from "@/contexts/notifications-context";
 
 const STEPS = ["Propiedad", "Monto", "Pago", "Confirmación"];
 
 // Solo propiedades habilitadas para inversión: Activo y con cupo disponible
-// (WP-5.1, cierra E-039). "Próximo" se muestra aparte, sin ruta de pago.
-const properties = dashboardProperties
-  .filter((p) => p.status === "Activo" && p.raisedAmount < p.totalInvestment)
-  .map((p) => ({
-    id: p.id,
-    name: p.name,
-    address: p.address,
-    price: formatCurrency(p.price, p.currency),
-    roi: `${p.roi}%`,
-    minInv: p.minInvestment,
-    maxInv: p.totalInvestment - p.raisedAmount,
-    deadline: p.deadline,
-    img: p.img,
-    currency: p.currency,
-  }));
+// (WP-5.1, cierra E-039). Calculado en cada render (no en el módulo) para
+// reflejar de inmediato el raisedAmount que actualiza confirmInvestment
+// (WP-5.2): una oportunidad que se cierra deja de listarse sin recargar.
+function getInvestableProperties() {
+  return dashboardProperties
+    .filter((p) => p.status === "Activo" && p.raisedAmount < p.totalInvestment)
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      address: p.address,
+      price: formatCurrency(p.price, p.currency),
+      roi: `${p.roi}%`,
+      minInv: p.minInvestment,
+      maxInv: p.totalInvestment - p.raisedAmount,
+      deadline: p.deadline,
+      img: p.img,
+      currency: p.currency,
+    }));
+}
 
-const upcomingProperties = dashboardProperties.filter((p) => p.status === "Próximo");
+function getUpcomingProperties() {
+  return dashboardProperties.filter((p) => p.status === "Próximo");
+}
 
 const paymentMethods = [
   { id: "card", label: "Tarjeta débito / crédito", icon: CreditCard, hint: "Visa, Mastercard, Amex" },
@@ -84,6 +91,9 @@ export default function InvestPage() {
 
 function InvestPageContent() {
   const searchParams = useSearchParams();
+  const { addNotification } = useNotifications();
+  const [properties, setProperties] = useState(getInvestableProperties);
+  const [upcomingProperties] = useState(getUpcomingProperties);
   const [step, setStep] = useState(0);
   const [selectedProperty, setSelectedProperty] = useState<number | null>(null);
   const [amount, setAmount] = useState("");
@@ -122,7 +132,7 @@ function InvestPageContent() {
         setSelectedProperty(id);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, properties]);
 
   const property = properties.find((p) => p.id === selectedProperty);
   const propertyCurrency: PropertyCurrency = property?.currency ?? "PEN";
@@ -182,8 +192,26 @@ function InvestPageContent() {
   };
 
   const handleConfirm = () => {
+    if (!property) return;
     setConfirming(true);
     setTimeout(() => {
+      // Una sola transacción (WP-5.2, cierra E-042): registra la inversión,
+      // actualiza el progreso de la propiedad y dispara la notificación.
+      // "Mis inversiones" y "Total invertido" derivan de la misma fuente
+      // (userInvestments), así que quedan consistentes de inmediato.
+      confirmInvestment({
+        propertyId: property.id,
+        amount: parseFloat(amount),
+        paymentMethod: paymentMethods.find((m) => m.id === paymentMethod)?.label ?? "",
+      });
+      addNotification({
+        category: "investment",
+        title: `Inversión confirmada en ${property.name}`,
+        description: `Tu aporte de ${formatCurrency(parseFloat(amount), propertyCurrency)} fue registrado y está en seguimiento.`,
+        href: "/dashboard/my-investments",
+        highlight: formatCurrency(parseFloat(amount), propertyCurrency),
+      });
+      setProperties(getInvestableProperties());
       setConfirming(false);
       setConfirmed(true);
     }, 2000);

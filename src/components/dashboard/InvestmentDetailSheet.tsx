@@ -10,6 +10,7 @@ import {
   Shield,
   Hash,
   Clock,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -153,11 +154,38 @@ export function InvestmentDetailSheet({
             <p className={`text-sm font-semibold mt-1 ${outcomeToneClass}`}>{outcomeLabel}</p>
           </div>
 
+          {/* Estimado vs. resultado actual (WP-4.3, cierra E-034/E-038): el
+              escenario adverso tiene la misma representación que el favorable. */}
+          <div className="rounded-xl border border-border/60 p-3 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Estimado inicial</p>
+              <p className="text-sm font-semibold tabular-nums">
+                {investment.outcome.kind === "revised" ? `${investment.outcome.previousRoi}%` : `${investment.roi}%`}
+              </p>
+            </div>
+            <ArrowRight className="size-3.5 text-muted-foreground shrink-0" />
+            <div className="text-right">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Resultado actual</p>
+              <p className={`text-sm font-semibold tabular-nums ${outcomeToneClass}`}>{outcomeLabel}</p>
+            </div>
+          </div>
+
           <div className="space-y-3">
             <DetailRow icon={Hash} label="ID de certificado" value={investment.certificateId} />
             <DetailRow icon={Calendar} label="Fecha de pago" value={formatDate(investment.datePaid)} />
             <DetailRow icon={TrendingUp} label="Etapa del proceso" value={PROCESS_STAGE_LABELS[investment.stage]} />
-            <DetailRow icon={Clock} label="Fecha estimada de retorno" value={formatDate(investment.expectedRoiDate)} />
+            <DetailRow
+              icon={Clock}
+              label={investment.outcome.kind === "extended" ? "Fecha estimada original" : "Fecha estimada de retorno"}
+              value={formatDate(investment.expectedRoiDate)}
+            />
+            {investment.outcome.kind === "extended" && (
+              <DetailRow
+                icon={Clock}
+                label="Nueva fecha estimada"
+                value={formatDate(investment.outcome.newExpectedAt)}
+              />
+            )}
             {investment.status === "active" && investment.daysUntilRoi > 0 && (
               <DetailRow
                 icon={Clock}

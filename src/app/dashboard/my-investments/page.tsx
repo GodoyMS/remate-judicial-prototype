@@ -545,9 +545,11 @@ function MyInvestmentsContent() {
                       {inv.status !== "cancelled" && inv.status !== "completed" && (
                         <p className="text-[10px] text-muted-foreground flex items-center gap-0.5 mt-0.5">
                           <Clock className="size-2.5" />
-                          {inv.daysUntilRoi > 0
-                            ? `${inv.daysUntilRoi} días`
-                            : "Próximo"}
+                          {inv.outcome.kind === "extended"
+                            ? "Plazo extendido"
+                            : inv.daysUntilRoi > 0
+                              ? `${inv.daysUntilRoi} días`
+                              : "Próximo"}
                         </p>
                       )}
                     </TableCell>

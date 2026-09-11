@@ -642,6 +642,54 @@ export function getActiveInvestmentsForUser(): ActiveInvestmentView[] {
     .filter((v): v is ActiveInvestmentView => v !== null);
 }
 
+export interface ConfirmInvestmentInput {
+  propertyId: number;
+  amount: number;
+  paymentMethod: string;
+}
+
+/**
+ * Registra una inversión confirmada en una sola operación (WP-5.2, cierra
+ * E-042): actualiza `userInvestments` (de donde salen "Mis inversiones" y
+ * "Total invertido") y el progreso de la propiedad (`raisedAmount`,
+ * `investors`), para que ambos módulos queden consistentes de inmediato.
+ * Notificaciones y actividad reciente se disparan aparte, desde el llamador,
+ * porque viven en un contexto de React (ver `useNotifications`).
+ */
+export function confirmInvestment(input: ConfirmInvestmentInput): UserInvestment {
+  const property = getPropertyById(input.propertyId);
+  if (!property) {
+    throw new Error(`Propiedad ${input.propertyId} no encontrada`);
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const investment: UserInvestment = {
+    id: `inv-${Date.now()}`,
+    certificateId: `REM-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`,
+    propertyId: input.propertyId,
+    amount: input.amount,
+    currency: property.currency,
+    roi: property.roi,
+    datePaid: today,
+    expectedRoiDate: addDays(today, 365),
+    daysUntilRoi: 365,
+    status: "active",
+    paymentMethod: input.paymentMethod,
+    outcome: { kind: "estimated", roi: property.roi },
+    stage: "subasta",
+    timeline: buildTimeline("subasta", today),
+  };
+
+  userInvestments.unshift(investment);
+  property.raisedAmount = Math.min(property.raisedAmount + input.amount, property.totalInvestment);
+  property.investors += 1;
+  if (property.raisedAmount >= property.totalInvestment) {
+    property.status = "Cerrado";
+  }
+
+  return investment;
+}
+
 export { formatCurrency } from "@/lib/currency";
 
 export function formatDate(date: string): string {

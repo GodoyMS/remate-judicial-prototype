@@ -25,11 +25,13 @@ export function InvestmentCard({ investment, onViewDetail }: InvestmentCardProps
   const returnAmount = getOutcomeReturnAmount(investment.outcome, investment.amount);
 
   const deadlineText =
-    investment.stage === "subasta" && investment.daysUntilRoi > 0
-      ? `Cierra en ${investment.daysUntilRoi} días`
-      : investment.daysUntilRoi < 0
-        ? `En revisión desde hace ${Math.abs(investment.daysUntilRoi)} días`
-        : `Etapa: ${PROCESS_STAGE_LABELS[investment.stage]}`;
+    investment.outcome.kind === "extended"
+      ? "Plazo extendido"
+      : investment.stage === "subasta" && investment.daysUntilRoi > 0
+        ? `Cierra en ${investment.daysUntilRoi} días`
+        : investment.daysUntilRoi < 0
+          ? `En revisión desde hace ${Math.abs(investment.daysUntilRoi)} días`
+          : `Etapa: ${PROCESS_STAGE_LABELS[investment.stage]}`;
 
   return (
     <button

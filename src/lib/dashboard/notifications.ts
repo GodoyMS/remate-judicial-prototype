@@ -178,6 +178,87 @@ export const INITIAL_NOTIFICATIONS: AppNotification[] = [
     read: true,
     href: "/dashboard/account?section=notifications",
   },
+  // Cobertura de eventos (WP-5.3, cierra E-044): antes casi todas las
+  // notificaciones eran de oportunidad y ganancia. Estas cubren el resto
+  // del ciclo de vida de una inversión, incluyendo escenarios adversos.
+  {
+    id: "n11",
+    category: "alert",
+    title: "Estimación de ROI actualizada — Casa en La Molina",
+    description:
+      "El retorno estimado pasó de 18% a 16% tras una revisión del expediente. Consulta el detalle en tu inversión.",
+    timeAgo: "hace 6 días",
+    timestamp: now - 6 * day,
+    read: true,
+    href: "/dashboard/my-investments",
+    highlight: "18% → 16%",
+  },
+  {
+    id: "n12",
+    category: "alert",
+    title: "Plazo extendido — Oficina en San Borja",
+    description:
+      "El proceso judicial demoró más de lo previsto. La nueva fecha estimada de retorno es en 4 meses.",
+    timeAgo: "hace 1 semana",
+    timestamp: now - 7 * day - 2 * hour,
+    read: true,
+    href: "/dashboard/my-investments",
+  },
+  {
+    id: "n13",
+    category: "auction",
+    title: "Subasta suspendida — Local Comercial Barranco",
+    description:
+      "El juzgado suspendió temporalmente la subasta por un incidente procesal. Te avisaremos cuando se reprograme.",
+    timeAgo: "hace 9 días",
+    timestamp: now - 9 * day,
+    read: true,
+    href: "/dashboard/properties",
+  },
+  {
+    id: "n14",
+    category: "payment",
+    title: "Devolución de capital procesada",
+    description:
+      "Se acreditó la devolución de capital de tu inversión en Departamento en Barranco. Revisa el detalle en Retornos.",
+    timeAgo: "hace 10 días",
+    timestamp: now - 10 * day,
+    read: true,
+    href: "/dashboard/retornos",
+  },
+  {
+    id: "n15",
+    category: "legal",
+    title: "Documento requerido para tu verificación",
+    description:
+      "Necesitamos una copia adicional de tu DNI por el reverso. Súbela desde Mi cuenta para no interrumpir tus inversiones.",
+    timeAgo: "hace 11 días",
+    timestamp: now - 11 * day,
+    read: true,
+    href: "/dashboard/account?section=security",
+  },
+  {
+    id: "n16",
+    category: "legal",
+    title: "Cambio de estado legal — Departamento en San Isidro",
+    description:
+      "El expediente pasó de \"Subasta convocada\" a \"Adjudicación, pendiente de formalizar\".",
+    timeAgo: "hace 12 días",
+    timestamp: now - 12 * day,
+    read: true,
+    href: "/dashboard/properties/1",
+  },
+  {
+    id: "n17",
+    category: "payment",
+    title: "Reembolso procesado",
+    description:
+      "Tu reembolso por un error de pago fue acreditado a tu método de origen. Revisa el detalle en Retornos.",
+    timeAgo: "hace 13 días",
+    timestamp: now - 13 * day,
+    read: true,
+    href: "/dashboard/retornos",
+  },
 ];
 
 export const CATEGORY_META: Record<
