@@ -31,7 +31,7 @@ import Link from "next/link";
 
 const sections = [
   { id: "profile", label: "Perfil personal", icon: User },
-  { id: "premium", label: "Plan Premium", icon: Crown },
+  { id: "premium", label: "Acceso Premium", icon: Crown },
   { id: "security", label: "Seguridad", icon: Lock },
   { id: "notifications", label: "Notificaciones", icon: Bell },
 ];
@@ -240,12 +240,12 @@ function AccountPageContent() {
             {activeSection === "premium" && (
               <div className="rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-base font-semibold text-foreground">Plan Premium</h3>
+                  <h3 className="text-base font-semibold text-foreground">Acceso Premium</h3>
                   {isPremium ? (
                     <PremiumBadge size="md" />
                   ) : (
                     <span className="text-xs font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
-                      Plan Estándar
+                      Cuenta Estándar
                     </span>
                   )}
                 </div>
@@ -258,13 +258,13 @@ function AccountPageContent() {
                           <Crown className="size-6 text-premium-foreground" />
                         </div>
                         <div>
-                          <p className="text-lg font-bold text-foreground">Plan Premium activo</p>
+                          <p className="text-lg font-bold text-foreground">Acceso Premium activo</p>
                           <p className="text-sm text-muted-foreground">Acceso completo a inversiones exclusivas</p>
                         </div>
                       </div>
                       <ul className="grid sm:grid-cols-2 gap-3">
                         {[
-                          "Captura propiedades al 100%",
+                          "Financia individualmente el 100% del capital requerido",
                           "Ventana de exclusividad antes de la apertura",
                           "Acceso anticipado exclusivo",
                           "Comisión reducida 0.5%",
@@ -361,7 +361,7 @@ function AccountPageContent() {
 
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="rounded-xl border p-4">
-                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-3">Plan Estándar</p>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-3">Cuenta Estándar</p>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                           <li>• Acceso a subastas publicadas</li>
                           <li>• Dashboard de inversiones</li>
@@ -369,9 +369,9 @@ function AccountPageContent() {
                         </ul>
                       </div>
                       <div className="rounded-xl border border-premium/20 bg-premium/5 p-4">
-                        <p className="text-xs font-semibold text-premium uppercase mb-3">Plan Premium</p>
+                        <p className="text-xs font-semibold text-premium uppercase mb-3">Acceso Premium</p>
                         <ul className="space-y-2 text-sm text-foreground">
-                          <li>• Captura al 100% exclusiva</li>
+                          <li>• Financia el 100% de forma individual</li>
                           <li>• Ventana de exclusividad</li>
                           <li>• Comisión 0.5%</li>
                         </ul>

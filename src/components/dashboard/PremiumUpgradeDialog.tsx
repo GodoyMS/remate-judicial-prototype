@@ -21,8 +21,8 @@ interface PremiumUpgradeDialogProps {
 const PREMIUM_BENEFITS = [
   {
     icon: Crown,
-    title: "Captura al 100%",
-    description: "Sé el único inversionista de una operación Premium",
+    title: "Financia el 100% de una operación",
+    description: "Eres el único inversionista de esa operación en particular",
   },
   {
     icon: TrendingUp,
@@ -41,8 +41,8 @@ const PREMIUM_BENEFITS = [
   },
   {
     icon: Sparkles,
-    title: "Soporte prioritario 24/7",
-    description: "Atención dedicada para inversores premium",
+    title: "Asesor asignado",
+    description: "Acompañamiento dedicado durante todo el ciclo de la operación",
   },
 ];
 
@@ -100,7 +100,7 @@ export function PremiumUpgradeDialog({
                   <Crown className="size-5 text-premium-foreground" />
                 </div>
                 <DialogTitle className="text-lg font-bold text-premium-foreground">
-                  Plan Premium
+                  Acceso Premium
                 </DialogTitle>
               </div>
               <button
@@ -111,12 +111,25 @@ export function PremiumUpgradeDialog({
               </button>
             </div>
             <p className="text-sm text-premium-foreground/80 mt-2 text-left">
-              Accede a las inversiones más exclusivas con retornos excepcionales
+              Premium cambia cómo participas, no cuánto ganas: accedes individualmente
+              a operaciones antes de que se abran al capital colectivo.
             </p>
           </DialogHeader>
         </div>
 
         <div className="p-6 space-y-4">
+          {/* Capacidad financiera, desde el inicio (P-012): Premium no es un
+              plan con más beneficios, cambia radicalmente el ticket. */}
+          {!showSuccess && (
+            <div className="rounded-xl bg-muted/50 border border-border/60 p-3">
+              <p className="text-xs text-foreground leading-relaxed">
+                Premium está diseñado para inversionistas que pueden financiar
+                individualmente el capital total requerido de una oportunidad —desde
+                decenas de miles hasta más de un millón de soles o dólares, según la
+                operación.
+              </p>
+            </div>
+          )}
           {showSuccess ? (
             <div className="flex flex-col items-center text-center py-4 gap-4">
               <div className="size-16 rounded-full bg-success/10 flex items-center justify-center">
@@ -168,16 +181,17 @@ export function PremiumUpgradeDialog({
                 ))}
               </div>
 
-              {/* Comparison */}
+              {/* Comparison — nunca por ROI: mismo riesgo judicial, distinta
+                  forma de participar (ver /premium). */}
               <div className="grid grid-cols-2 gap-3 mt-2">
                 <div className="rounded-xl border p-3">
                   <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-2">
                     Estándar
                   </p>
                   <ul className="space-y-1 text-xs text-muted-foreground">
-                    <li>ROI hasta 24%</li>
+                    <li>Participación colectiva</li>
                     <li>Comisión 1.5%</li>
-                    <li>Acceso normal</li>
+                    <li>Acceso cuando abre al público</li>
                   </ul>
                 </div>
                 <div className="rounded-xl border border-premium/20 bg-premium/10 p-3">
@@ -185,9 +199,9 @@ export function PremiumUpgradeDialog({
                     Premium ✦
                   </p>
                   <ul className="space-y-1 text-xs text-foreground font-medium">
-                    <li>Ventana de exclusividad</li>
+                    <li>100% individual</li>
                     <li>Comisión 0.5%</li>
-                    <li>Acceso anticipado</li>
+                    <li>Ventana de exclusividad</li>
                   </ul>
                 </div>
               </div>
