@@ -34,12 +34,13 @@ function TeamMemberCard({
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4, delay: reduceMotion ? 0 : index * 0.07 }}
       className={cn(
-        "group grid overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm",
-        "sm:min-h-[240px] sm:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,1fr)]",
+        "group grid h-full overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm",
+        "grid-cols-[9rem_minmax(0,1fr)] min-h-56",
+        "lg:grid-cols-[8.5rem_minmax(0,1fr)] lg:min-h-[15.5rem]",
         "transition-all duration-300 hover:border-primary/25 hover:shadow-md"
       )}
     >
-      <div className="relative min-h-64 overflow-hidden bg-muted sm:min-h-full">
+      <div className="relative min-h-56 overflow-hidden bg-muted lg:min-h-full">
         {member.photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -59,7 +60,7 @@ function TeamMemberCard({
         )}
       </div>
 
-      <div className="flex flex-col justify-center p-5 sm:p-6">
+      <div className="flex flex-col justify-center p-4 sm:p-5">
         <p className="text-lg font-bold tracking-tight text-foreground">
           {member.name}
         </p>
@@ -71,7 +72,7 @@ function TeamMemberCard({
           href={member.linkedin}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary hover:underline"
+          className="mt-3 inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary hover:underline"
           aria-label={`${member.profileLabel ?? "Ver perfil profesional"} de ${member.name}`}
         >
           {member.profileLabel ?? "LinkedIn"}
@@ -92,7 +93,7 @@ export function TeamSection({ members }: { members: TeamMember[] }) {
       data-nav-tone="light"
       className="relative overflow-hidden bg-background py-16 sm:py-20 lg:py-24 scroll-mt-24"
     >
-      <div className="relative mx-auto max-w-6xl section-padding">
+      <div className="relative mx-auto max-w-[1400px] section-padding">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -113,7 +114,7 @@ export function TeamSection({ members }: { members: TeamMember[] }) {
           </p>
         </motion.div>
 
-        <ul className="mt-12 grid gap-4 sm:mt-14">
+        <ul className="mt-12 grid grid-cols-1 gap-5 sm:mt-14 lg:grid-cols-3">
           {visibleMembers.map((member, index) => (
             <TeamMemberCard
               key={member.name}
