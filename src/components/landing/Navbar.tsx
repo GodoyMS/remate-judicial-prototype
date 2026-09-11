@@ -30,19 +30,28 @@ const links = [
 function getToneUnderNav(): "dark" | "light" {
   const probeY = 32; // mid navbar
   const sections = document.querySelectorAll<HTMLElement>("[data-nav-tone]");
+  let tone: "dark" | "light" = "light";
   for (const el of sections) {
     const rect = el.getBoundingClientRect();
     if (rect.top <= probeY && rect.bottom > probeY) {
-      return el.dataset.navTone === "dark" ? "dark" : "light";
+      // Last match wins when sections overlap during scroll.
+      tone = el.dataset.navTone === "dark" ? "dark" : "light";
     }
   }
-  return "light";
+  return tone;
+}
+
+function initialNavTone(pathname: string): "dark" | "light" {
+  // Nosotros opens on a dark full-bleed hero; landing opens on a light hero.
+  return pathname === "/nosotros" ? "dark" : "light";
 }
 
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [overDark, setOverDark] = useState(false);
+  const [overDark, setOverDark] = useState(
+    () => initialNavTone(pathname) === "dark",
+  );
   const [scrolled, setScrolled] = useState(false);
 
   const isOverlayPage = pathname === "/" || pathname === "/nosotros";
@@ -55,10 +64,7 @@ export function Navbar() {
    * which keeps the glass look while giving the labels a ground to sit on.
    */
   const scrim = !solid && scrolled;
-  // Overlay pages open on a dark hero. Until the probe runs (and while
-  // still at the top), keep light labels so the bar stays readable.
-  const lightText =
-    !solid && (isOverlayPage && !scrolled ? true : overDark);
+  const lightText = !solid && overDark;
 
   useEffect(() => {
     if (!isOverlayPage) return;
@@ -74,7 +80,7 @@ export function Navbar() {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [isOverlayPage]);
+  }, [isOverlayPage, pathname]);
 
   return (
     <header
