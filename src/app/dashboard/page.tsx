@@ -25,6 +25,8 @@ import {
   getActiveInvestmentsForUser,
   getPropertyById,
   formatDateTime,
+  formatCurrency,
+  dashboardProperties,
 } from "@/lib/dashboard/mock-data";
 import { getOutcomeReturnAmount } from "@/lib/dashboard/outcome";
 import { PROCESS_STAGE_LABELS } from "@/lib/dashboard/types";
@@ -42,6 +44,23 @@ export default function DashboardPage() {
 
   const investments = useMemo(() => getActiveInvestmentsForUser(), []);
   const inProgress = investments.filter((i) => i.status === "active" || i.status === "pending");
+
+  // Con el motivo explícito (E-030): en soles, desde el mínimo más bajo,
+  // en distritos donde el usuario ya invirtió, excluyendo lo que ya tiene.
+  const recommended = useMemo(() => {
+    const ownDistricts = new Set(investments.map((i) => i.property.district));
+    const ownPropertyIds = new Set(investments.map((i) => i.propertyId));
+    return dashboardProperties
+      .filter(
+        (p) =>
+          p.status === "Activo" &&
+          p.currency === "PEN" &&
+          p.minInvestment <= 500 &&
+          ownDistricts.has(p.district) &&
+          !ownPropertyIds.has(p.id)
+      )
+      .slice(0, 2);
+  }, [investments]);
 
   const stageBreakdown = useMemo(() => {
     const counts = new Map<string, number>();
@@ -265,6 +284,52 @@ export default function DashboardPage() {
           })}
         </div>
       </div>
+
+      {/* Oportunidades que podrían interesarte, con el motivo explícito (E-030) */}
+      {recommended.length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-base font-semibold text-foreground">Oportunidades que podrían interesarte</h3>
+          <p className="text-xs text-muted-foreground mt-0.5 mb-4">
+            En soles · Desde {formatCurrency(500, "PEN")} · Distritos que ya has consultado
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {recommended.map((p) => (
+              <Link
+                key={p.id}
+                href={`/dashboard/properties/${p.id}`}
+                className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 hover:border-primary/40 hover:bg-secondary/8 transition-colors"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={p.img} alt="" className="size-11 rounded-lg object-cover shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{p.name}</p>
+                  <p className="text-xs text-muted-foreground">{p.district} · ROI {p.roi}%</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tu cuenta Estándar, con beneficios propios (E-026, E-027):
+          Premium se presenta después como modalidad adicional. */}
+      {!isPremium && (
+        <div className="mb-8 rounded-2xl border border-border/60 bg-secondary/5 p-5">
+          <h3 className="text-base font-semibold text-foreground">Tu cuenta Estándar</h3>
+          <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+            <li>· Accede a oportunidades verificadas, con expediente y evidencia</li>
+            <li>· Sigue tus inversiones y retornos desde tu cuenta</li>
+            <li>· Participa en conjunto con otros inversionistas desde {formatCurrency(500, "PEN")}</li>
+          </ul>
+          <Link
+            href="/premium"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline mt-3"
+          >
+            Comparar Estándar vs. Premium
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* 6. Premium — compacto (E-008, E-015, E-022) */}
       {!isPremium ? (
