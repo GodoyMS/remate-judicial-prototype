@@ -3,21 +3,18 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  TrendingUp,
-  Building2,
-  Wallet,
-  ArrowRight,
-  ArrowUpRight,
-  CheckCircle2,
-  Crown,
-  FileText,
-} from "lucide-react";
+import { ArrowRight, Crown, FileText, Gavel, PenLine, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
 import { InvestmentCard } from "@/components/dashboard/InvestmentCard";
 import { InvestmentDetailSheet } from "@/components/dashboard/InvestmentDetailSheet";
+import { PortfolioOverview } from "@/components/dashboard/home/PortfolioOverview";
+import { KpiCards } from "@/components/dashboard/home/KpiCards";
+import { PriorityActions, type PriorityAction } from "@/components/dashboard/home/PriorityActions";
+import { SectionBar } from "@/components/dashboard/home/SectionBar";
+import { RecentActivity } from "@/components/dashboard/home/RecentActivity";
+import { FeaturedOpportunity } from "@/components/dashboard/home/FeaturedOpportunity";
+import { AccountTiers } from "@/components/dashboard/home/AccountTiers";
 import { useCurrentUser } from "@/contexts/user-context";
 import { useNotifications } from "@/contexts/notifications-context";
 import { premiumProperties } from "@/lib/premium/mock-data";
@@ -25,18 +22,23 @@ import {
   getActiveInvestmentsForUser,
   getPropertyById,
   formatDateTime,
-  formatCurrency,
   dashboardProperties,
 } from "@/lib/dashboard/mock-data";
 import { getOutcomeReturnAmount } from "@/lib/dashboard/outcome";
 import { PROCESS_STAGE_LABELS } from "@/lib/dashboard/types";
 import { formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
-import { CATEGORY_META } from "@/lib/dashboard/notifications";
 import type { ActiveInvestmentView } from "@/lib/dashboard/mock-data";
+
+/** Entrada suave y escalonada, común a todas las secciones de Inicio. */
+const reveal = (delay: number) => ({
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { delay, duration: 0.35, ease: "easeOut" as const },
+});
 
 export default function DashboardPage() {
   const { user, isPremium } = useCurrentUser();
-  const { notifications, unreadCount } = useNotifications();
+  const { notifications } = useNotifications();
   const availablePremium = premiumProperties.filter((p) => p.status === "available");
 
   const [selectedInvestment, setSelectedInvestment] = useState<ActiveInvestmentView | null>(null);
@@ -52,23 +54,6 @@ export default function DashboardPage() {
 
   const investments = useMemo(() => getActiveInvestmentsForUser(), []);
   const inProgress = investments.filter((i) => i.status === "active" || i.status === "pending");
-
-  // Con el motivo explícito (E-030): en soles, desde el mínimo más bajo,
-  // en distritos donde el usuario ya invirtió, excluyendo lo que ya tiene.
-  const recommended = useMemo(() => {
-    const ownDistricts = new Set(investments.map((i) => i.property.district));
-    const ownPropertyIds = new Set(investments.map((i) => i.propertyId));
-    return dashboardProperties
-      .filter(
-        (p) =>
-          p.status === "Activo" &&
-          p.currency === "PEN" &&
-          p.minInvestment <= 500 &&
-          ownDistricts.has(p.district) &&
-          !ownPropertyIds.has(p.id)
-      )
-      .slice(0, 2);
-  }, [investments]);
 
   const stageBreakdown = useMemo(() => {
     const counts = new Map<string, number>();
@@ -92,151 +77,97 @@ export default function DashboardPage() {
       {} as Partial<Record<"PEN" | "USD", number>>
     );
 
-  const summaryCards = [
-    {
-      label: "Total invertido",
-      value: formatMixedCurrencyTotals(investedByCurrency),
-      change: null,
-      icon: Wallet,
-      color: "bg-info/10 text-info",
-    },
-    {
-      label: "Inversiones en curso",
-      value: String(inProgress.length),
-      change: stageBreakdown.join(" · ") || "Sin inversiones en curso",
-      icon: Building2,
-      color: "bg-warning/10 text-warning",
-    },
-    {
-      label: "Retornos generados",
-      value: formatMixedCurrencyTotals(realizedGains),
-      change: "Solo ganancias realizadas, sin capital devuelto",
-      icon: TrendingUp,
-      color: "bg-success/10 text-success",
-    },
-  ];
+  // Acciones prioritarias (E-004): verificación pendiente + hitos del proceso
+  // que piden algo al usuario. Máximo tres, en orden de urgencia.
+  const priorityActions = useMemo<PriorityAction[]>(() => {
+    const actions: PriorityAction[] = [];
+    if (!user.verified) {
+      actions.push({
+        id: "kyc",
+        title: "Verificación de identidad en proceso",
+        description: "Completa tu verificación para invertir sin límites.",
+        cta: "Ver estado",
+        href: "/dashboard/account",
+        icon: ShieldCheck,
+      });
+    }
+    const inFormalization = inProgress.find((i) => i.stage === "formalizacion");
+    if (inFormalization) {
+      actions.push({
+        id: `doc-${inFormalization.id}`,
+        title: "Documento pendiente de revisión",
+        description: `Ya está disponible el informe legal de ${inFormalization.property.name}.`,
+        cta: "Revisar",
+        href: "/dashboard/my-investments",
+        icon: FileText,
+      });
+    }
+    const nextAuction = inProgress
+      .filter((i) => i.stage === "subasta" && i.property.deadlineDays > 0)
+      .sort((a, b) => a.property.deadlineDays - b.property.deadlineDays)[0];
+    if (nextAuction) {
+      actions.push({
+        id: `auction-${nextAuction.id}`,
+        title: "Subasta próxima",
+        description: `${nextAuction.property.name} se subasta en ${nextAuction.property.deadlineDays} días.`,
+        cta: "Ver detalles",
+        href: `/dashboard/properties/${nextAuction.propertyId}`,
+        icon: Gavel,
+      });
+    }
+    const pendingSignature = investments.find((i) => i.status === "pending");
+    if (pendingSignature) {
+      actions.push({
+        id: `sign-${pendingSignature.id}`,
+        title: "Firma pendiente",
+        description: `Revisa y firma el documento de participación de ${pendingSignature.property.name}.`,
+        cta: "Ver detalle",
+        href: "/dashboard/my-investments",
+        icon: PenLine,
+      });
+    }
+    return actions.slice(0, 3);
+  }, [user.verified, inProgress, investments]);
+
+  // Oportunidad destacada: la de mayor retorno estimado que aún no tiene.
+  const featured = useMemo(() => {
+    const ownPropertyIds = new Set(investments.map((i) => i.propertyId));
+    const active = dashboardProperties.filter((p) => p.status === "Activo");
+    const pool = active.filter((p) => !ownPropertyIds.has(p.id));
+    return [...(pool.length > 0 ? pool : active)].sort((a, b) => b.roi - a.roi)[0];
+  }, [investments]);
 
   const recentUpdates = notifications.slice(0, 5);
 
-  // "Requiere tu atención" (E-004): estado de verificación + notificaciones sin leer.
-  const attentionItem = !user.verified
-    ? { text: "Tu verificación de identidad está en proceso.", href: "/dashboard/account" }
-    : unreadCount > 0
-      ? {
-          text: `${unreadCount} notificación${unreadCount > 1 ? "es" : ""} nueva${unreadCount > 1 ? "s" : ""} por revisar.`,
-          href: "/dashboard/notifications",
-        }
-      : null;
-
-  // CTA contextual (E-013)
-  const closingSoon = inProgress
-    .filter((i) => i.stage === "subasta" && i.daysUntilRoi > 0)
-    .sort((a, b) => a.daysUntilRoi - b.daysUntilRoi)[0];
-  const contextualCta = attentionItem
-    ? { label: "Revisar pendiente", href: attentionItem.href }
-    : closingSoon
-      ? { label: `Ver inversión que cierra en ${closingSoon.daysUntilRoi} días`, href: "/dashboard/my-investments" }
-      : { label: "Explorar oportunidades", href: "/dashboard/properties" };
-
   return (
-    <div className="w-full">
-      {/* 1. Saludo + dato contextual + un solo CTA sólido (E-014) */}
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
-      >
-        <div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="dash-title text-foreground whitespace-nowrap">
-              Buenos días, {user.name.split(" ")[0]} 👋
-            </h2>
-            {isPremium && <PremiumBadge size="md" />}
-          </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Sigue cada etapa de tus inversiones desde un solo lugar.
-          </p>
-        </div>
-        <Button
-          asChild
-          className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold w-full sm:w-auto"
-        >
-          <Link href={contextualCta.href}>
-            {contextualCta.label}
-            <ArrowRight className="size-4 ml-1" />
-          </Link>
-        </Button>
+    <div className="w-full flex flex-col gap-8 pb-4">
+      {/* 1. Encabezado y resumen */}
+      <motion.div {...reveal(0)}>
+        <PortfolioOverview firstName={user.name.split(" ")[0]} isPremium={isPremium} />
       </motion.div>
 
-      {/* 2. Requiere tu atención (E-004) */}
-      <div className="mb-6 rounded-2xl border border-border/60 bg-secondary/5 p-4 flex items-center gap-3">
-        <div
-          className={`size-9 rounded-xl flex items-center justify-center shrink-0 ${
-            attentionItem ? "bg-warning/10 text-warning" : "bg-success/10 text-success"
-          }`}
-        >
-          <CheckCircle2 className="size-4" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Requiere tu atención
-          </p>
-          {attentionItem ? (
-            <Link href={attentionItem.href} className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-              {attentionItem.text}
-            </Link>
-          ) : (
-            <p className="text-sm font-medium text-foreground">No tienes acciones pendientes.</p>
-          )}
-        </div>
-      </div>
+      {/* 2. KPIs principales (E-009) */}
+      <motion.div {...reveal(0.06)}>
+        <KpiCards
+          totalInvested={formatMixedCurrencyTotals(investedByCurrency)}
+          inProgress={{ count: inProgress.length, breakdown: stageBreakdown.join(" · ") }}
+          realizedGains={formatMixedCurrencyTotals(realizedGains)}
+          lastUpdated={lastUpdated ? formatDateTime(lastUpdated) : null}
+        />
+      </motion.div>
 
-      {/* 3. Métricas del portafolio (E-009) */}
-      <div className="grid sm:grid-cols-3 gap-4 mb-2">
-        {summaryCards.map((c, i) => (
-          <motion.div
-            key={c.label}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08, duration: 0.4 }}
-            className="rounded-2xl border border-border/60 bg-secondary/5 p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">{c.label}</span>
-              <div className={`size-9 rounded-xl flex items-center justify-center ${c.color.split(" ")[0]}`}>
-                <c.icon className={`size-4 ${c.color.split(" ")[1]}`} />
-              </div>
-            </div>
-            <div>
-              <p className="dash-display text-foreground">{c.value}</p>
-              {c.change && (
-                <p className="text-xs mt-1 flex items-center gap-1 text-muted-foreground">
-                  {c.label === "Total invertido" && <ArrowUpRight className="size-3" />}
-                  {c.change}
-                </p>
-              )}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      <p className="text-[11px] text-muted-foreground mb-8">
-        {lastUpdated ? `Información actualizada: ${formatDateTime(lastUpdated)}` : " "}
-      </p>
+      {/* 3. Acciones prioritarias (E-004) */}
+      <motion.div {...reveal(0.12)}>
+        <PriorityActions actions={priorityActions} viewAllHref="/dashboard/notifications" />
+      </motion.div>
 
-      {/* 4. Tus inversiones (WP-2.3) */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-semibold text-foreground">Tus inversiones</h3>
-          <Link
-            href="/dashboard/my-investments"
-            className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1 min-h-11 px-2 -mr-2"
-          >
-            Ver todas
-            <ArrowRight className="size-3.5" />
-          </Link>
-        </div>
-
+      {/* 4. Inversiones activas (WP-2.3) */}
+      <section aria-labelledby="home-investments" className="flex flex-col gap-3">
+        <SectionBar
+          id="home-investments"
+          title="Inversiones activas"
+          action={{ label: "Ver todas", href: "/dashboard/my-investments" }}
+        />
         {investments.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground">
             Aún no tienes inversiones. Explora oportunidades para empezar.
@@ -244,12 +175,7 @@ export default function DashboardPage() {
         ) : (
           <div className="grid sm:grid-cols-2 gap-3">
             {investments.slice(0, 4).map((inv, i) => (
-              <motion.div
-                key={inv.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.06 + 0.15 }}
-              >
+              <motion.div key={inv.id} {...reveal(0.15 + i * 0.05)}>
                 <InvestmentCard
                   investment={inv}
                   onViewDetail={(investment) => {
@@ -261,85 +187,18 @@ export default function DashboardPage() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* 5. Actividad reciente + oportunidad destacada (E-029, E-030) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-3">
+        <RecentActivity items={recentUpdates} />
+        {featured && <FeaturedOpportunity property={featured} />}
       </div>
 
-      {/* 5. Últimas actualizaciones de tu cuenta (E-029) */}
-      <div className="mb-8">
-        <h3 className="text-base font-semibold text-foreground">Últimas actualizaciones de tu cuenta</h3>
-        <p className="text-xs text-muted-foreground mt-0.5 mb-4">
-          Cambios, documentos y movimientos relacionados con tus inversiones.
-        </p>
-        <div className="rounded-2xl border border-border/60 bg-secondary/5 p-4 flex flex-col">
-          {recentUpdates.map((n, i) => {
-            const meta = CATEGORY_META[n.category];
-            return (
-              <Link
-                key={n.id}
-                href={n.href ?? "/dashboard/notifications"}
-                className={`flex items-start gap-3 py-3 hover:bg-secondary/10 -mx-2 px-2 rounded-lg transition-colors ${
-                  i < recentUpdates.length - 1 ? "border-b border-border/50" : ""
-                }`}
-              >
-                <div className={`size-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${meta.bg}`}>
-                  <FileText className={`size-3.5 ${meta.color}`} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-foreground leading-relaxed">{n.title}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{n.timeAgo}</p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+      {/* Tu cuenta Estándar vs. Premium (E-026, E-027) */}
+      {!isPremium && <AccountTiers />}
 
-      {/* Oportunidades que podrían interesarte, con el motivo explícito (E-030) */}
-      {recommended.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-base font-semibold text-foreground">Oportunidades que podrían interesarte</h3>
-          <p className="text-xs text-muted-foreground mt-0.5 mb-4">
-            En soles · Desde {formatCurrency(500, "PEN")} · Distritos que ya has consultado
-          </p>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {recommended.map((p) => (
-              <Link
-                key={p.id}
-                href={`/dashboard/properties/${p.id}`}
-                className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 hover:border-primary/40 hover:bg-secondary/8 transition-colors"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.img} alt="" className="size-11 rounded-lg object-cover shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">{p.name}</p>
-                  <p className="text-xs text-muted-foreground">{p.district} · ROI {p.roi}%</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Tu cuenta Estándar, con beneficios propios (E-026, E-027):
-          Premium se presenta después como modalidad adicional. */}
-      {!isPremium && (
-        <div className="mb-8 rounded-2xl border border-border/60 bg-secondary/5 p-5">
-          <h3 className="text-base font-semibold text-foreground">Tu cuenta Estándar</h3>
-          <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-            <li>· Accede a oportunidades verificadas, con expediente y evidencia</li>
-            <li>· Sigue tus inversiones y retornos desde tu cuenta</li>
-            <li>· Participa en conjunto con otros inversionistas desde {formatCurrency(500, "PEN")}</li>
-          </ul>
-          <Link
-            href="/premium"
-            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline mt-3"
-          >
-            Comparar Estándar vs. Premium
-            <ArrowRight className="size-3.5" />
-          </Link>
-        </div>
-      )}
-
-      {/* 6. Premium — compacto (E-008, E-015, E-022) */}
+      {/* 6. Oportunidades Premium (E-008, E-015, E-022) */}
       {!isPremium ? (
         <PremiumUpgradeBanner />
       ) : (
