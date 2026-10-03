@@ -123,20 +123,26 @@ export default function DashboardRetornosPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="w-full">
+      {/* Hero inverso a sangre: continúa la banda del Topbar (ver HERO_ROUTES)
+          anulando el padding de <main>. Oscuro en claro, claro en oscuro. */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
+        className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 rounded-b-3xl bg-foreground text-background px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10"
       >
-        <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-          Mi cuenta
-        </p>
-        <h2 className="text-2xl font-bold tracking-tight">Retornos</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Revisa todos tus retornos, reembolsos y devoluciones
-        </p>
+        <div className="mx-auto max-w-3xl">
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-background/60">
+            Mi cuenta
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Retornos</h2>
+          <p className="mt-1 text-sm text-background/75">
+            Revisa todos tus retornos, reembolsos y devoluciones
+          </p>
+        </div>
       </motion.div>
+
+      <div className="mx-auto max-w-3xl">
 
       {/* Summary */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -151,7 +157,7 @@ export default function DashboardRetornosPage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
-            className="rounded-xl border border-border/60 bg-background px-4 py-3"
+            className="rounded-2xl border border-border/60 bg-card px-4 py-4 shadow-sm"
           >
             <div className="flex items-center justify-between gap-2">
               <div>
@@ -167,14 +173,14 @@ export default function DashboardRetornosPage() {
         ))}
       </div>
 
-      <div className="mb-6 rounded-xl border border-success/20 bg-success/5 px-4 py-3 flex items-center justify-between gap-3">
+      <div className="mb-6 rounded-2xl bg-primary text-primary-foreground px-5 py-4 shadow-sm shadow-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
         <div>
-          <p className="text-xs font-medium text-success">Ganancias generadas</p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-sm font-semibold">Ganancias generadas</p>
+          <p className="text-[11px] text-primary-foreground/75 mt-0.5">
             Solo ganancia real. No incluye capital devuelto ni reembolsos.
           </p>
         </div>
-        <p className="text-lg font-bold text-success tabular-nums shrink-0">{stats.gainLabel}</p>
+        <p className="text-xl sm:text-2xl font-bold tabular-nums shrink-0">{stats.gainLabel}</p>
       </div>
 
       {/* Filters */}
@@ -185,11 +191,11 @@ export default function DashboardRetornosPage() {
             placeholder="Buscar por propiedad o ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="rounded-xl pl-9"
+            className="h-10 rounded-xl pl-9 bg-card"
           />
         </div>
         <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as RetornoType | "all")}>
-          <SelectTrigger className="w-full rounded-xl sm:w-44">
+          <SelectTrigger className={cn("h-10 w-full rounded-xl sm:w-44 bg-card", typeFilter !== "all" && "bg-primary text-primary-foreground border-primary [&_svg]:text-primary-foreground")}>
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>
@@ -225,7 +231,7 @@ export default function DashboardRetornosPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="rounded-xl border border-border/60 bg-background p-4 transition-all hover:border-foreground/20 hover:shadow-sm"
+                className="rounded-2xl border border-border/60 bg-card p-4 transition-all hover:border-primary/30 hover:shadow-md"
               >
                 {/* Top row: icon + info + amount */}
                 <div className="flex items-start justify-between gap-4">
@@ -304,6 +310,7 @@ export default function DashboardRetornosPage() {
         onOpenChange={setTicketOpen}
         userName={user.name}
       />
+      </div>
     </div>
   );
 }

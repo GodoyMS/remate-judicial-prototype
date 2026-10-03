@@ -234,24 +234,29 @@ function MyInvestmentsContent() {
 
   return (
     <div className="w-full -mx-0">
+      {/* Hero primario a sangre: continúa la banda del Topbar (ver
+          HERO_ROUTES) anulando el padding de <main>. */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
+        className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 bg-primary text-primary-foreground rounded-b-3xl px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10"
       >
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/70 mb-1">
               Registro de transacciones
             </p>
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
               Mis inversiones
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-primary-foreground/80 mt-1">
               Historial de aportes, certificados y estados de cada participación
             </p>
           </div>
-          <Button variant="outline" size="sm" className="rounded-xl w-fit shrink-0">
+          <Button
+            size="sm"
+            className="rounded-xl w-fit shrink-0 bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-sm"
+          >
             <Download className="size-4 mr-2" />
             Exportar CSV
           </Button>
@@ -288,7 +293,7 @@ function MyInvestmentsContent() {
             value: String(stats.transactions),
             sub: "registros totales",
             icon: Receipt,
-            accent: "text-muted-foreground bg-muted",
+            accent: "text-primary bg-primary/10",
           },
           {
             label: "Capital invertido",
@@ -317,26 +322,50 @@ function MyInvestmentsContent() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
-            className="rounded-xl border border-border/60 bg-card bg-background px-4 py-3"
+            className={cn(
+              "rounded-2xl px-4 py-4 shadow-sm",
+              i === 0
+                ? "bg-primary text-primary-foreground shadow-primary/20"
+                : "border border-border/60 bg-card"
+            )}
           >
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
+                <p
+                  className={cn(
+                    "text-[10px] uppercase tracking-wide font-semibold",
+                    i === 0 ? "text-primary-foreground/75" : "text-muted-foreground"
+                  )}
+                >
                   {s.label}
                 </p>
                 {/* El dinero nunca se trunca (E-049): prioridad de ancho al valor. */}
-                <p className="text-base sm:text-lg font-bold text-foreground mt-0.5 break-words tabular-nums">
+                <p
+                  className={cn(
+                    "font-bold mt-1 break-words tabular-nums",
+                    i === 0 ? "text-3xl sm:text-4xl leading-none" : "text-base sm:text-lg text-foreground"
+                  )}
+                >
                   {s.value}
                 </p>
-                <p className="text-[10px] text-muted-foreground">{s.sub}</p>
+                <p
+                  className={cn(
+                    "text-[10px] mt-1",
+                    i === 0 ? "text-primary-foreground/75" : "text-muted-foreground"
+                  )}
+                >
+                  {s.sub}
+                </p>
               </div>
               <div
                 className={cn(
-                  "size-9 rounded-lg flex items-center justify-center shrink-0",
-                  s.accent.split(" ")[1]
+                  "size-9 rounded-xl flex items-center justify-center shrink-0",
+                  i === 0 ? "bg-primary-foreground/15" : s.accent.split(" ")[1]
                 )}
               >
-                <s.icon className={cn("size-4", s.accent.split(" ")[0])} />
+                <s.icon
+                  className={cn("size-4", i === 0 ? "text-primary-foreground" : s.accent.split(" ")[0])}
+                />
               </div>
             </div>
           </motion.div>
@@ -344,10 +373,10 @@ function MyInvestmentsContent() {
       </div>
 
       {/* Filters toolbar */}
-      <div className="rounded-xl border border-border/60 b bg-card mb-4 overflow-hidden">
-        <div className="flex flex-col gap-3 p-4 border-b border-border/40 bg-muted/15">
+      <div className="rounded-2xl border border-border/60 bg-card mb-4 overflow-hidden shadow-sm">
+        <div className="flex flex-col gap-3 p-4 border-b border-border/40">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-            <div className="relative flex-1 min-w-0 max-w-xs">
+            <div className="relative flex-1 min-w-0 lg:max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por certificado, ID o propiedad..."
@@ -359,7 +388,12 @@ function MyInvestmentsContent() {
             <div className="flex flex-wrap items-center gap-2">
  
               <Select value={districtFilter} onValueChange={setDistrictFilter}>
-                <SelectTrigger className="h-10 w-full sm:w-[150px] rounded-xl">
+                <SelectTrigger
+                  className={cn(
+                    "h-10 w-full sm:w-[170px] rounded-xl",
+                    districtFilter !== "all" && "bg-primary text-primary-foreground border-primary [&_svg]:text-primary-foreground"
+                  )}
+                >
                   <SelectValue placeholder="Distrito" />
                 </SelectTrigger>
                 <SelectContent>
@@ -372,7 +406,12 @@ function MyInvestmentsContent() {
                 </SelectContent>
               </Select>
               <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-                <SelectTrigger className="h-10 w-full sm:w-[160px] rounded-xl">
+                <SelectTrigger
+                  className={cn(
+                    "h-10 w-full sm:w-[170px] rounded-xl",
+                    paymentFilter !== "all" && "bg-primary text-primary-foreground border-primary [&_svg]:text-primary-foreground"
+                  )}
+                >
                   <SelectValue placeholder="Método de pago" />
                 </SelectTrigger>
                 <SelectContent>
@@ -383,7 +422,7 @@ function MyInvestmentsContent() {
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="h-10 w-full sm:w-[160px] rounded-xl">
+                <SelectTrigger className="h-10 w-full sm:w-[170px] rounded-xl">
                   <ArrowUpDown className="size-3.5 mr-1 text-muted-foreground shrink-0" />
                   <SelectValue />
                 </SelectTrigger>
@@ -532,8 +571,8 @@ function MyInvestmentsContent() {
         <div className="hidden lg:block overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border/60">
-                <TableHead className="pl-4 min-w-[200px] text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <TableRow className="bg-primary/5 hover:bg-primary/5 border-b border-border/60">
+                <TableHead className="pl-4 min-w-[200px] text-xs font-semibold uppercase tracking-wide text-primary">
                   Propiedad / Activo
                 </TableHead>
                 <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

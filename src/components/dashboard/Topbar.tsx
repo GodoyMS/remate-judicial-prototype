@@ -10,6 +10,24 @@ import { UserMenu } from "@/components/dashboard/UserMenu";
 import { SidebarNav } from "@/components/dashboard/Sidebar";
 import { useCurrentUser } from "@/contexts/user-context";
 import { getPageTitle } from "@/lib/dashboard/nav-config";
+import { cn } from "@/lib/utils";
+
+// Rutas con hero a sangre: el topbar se funde con la banda de color de la
+// página. "inverse" = oscuro en modo claro / claro en modo oscuro.
+const HERO_ROUTES: Record<string, "primary" | "inverse"> = {
+  "/dashboard/my-investments": "primary",
+  "/dashboard/retornos": "inverse",
+  "/dashboard/account": "primary",
+  "/dashboard/properties": "primary",
+  "/dashboard/notifications": "inverse",
+};
+
+const HERO_CLASSES = {
+  primary:
+    "bg-primary text-primary-foreground [&_h1]:text-primary-foreground [&_header_button]:text-primary-foreground [&_header_button:hover]:bg-primary-foreground/10 [&_header_svg]:text-primary-foreground",
+  inverse:
+    "bg-foreground text-background [&_h1]:text-background [&_header_button]:text-background [&_header_button:hover]:bg-background/10 [&_header_svg]:text-background",
+};
 
 export function Topbar() {
   const pathname = usePathname();
@@ -17,10 +35,18 @@ export function Topbar() {
   const { logout } = useCurrentUser();
 
   const title = getPageTitle(pathname);
+  // Coincidencia exacta: las subrutas (p. ej. /dashboard/properties/[id]) no
+  // tienen hero y deben conservar el topbar normal.
+  const hero = HERO_ROUTES[pathname.replace(/\/$/, "")];
 
   return (
     <>
-      <div className="w-full">
+      <div
+        className={cn(
+          "w-full",
+          hero && HERO_CLASSES[hero]
+        )}
+      >
         <header className="h-16 flex items-center justify-between px-4 sm:px-6 shrink-0 gap-3 min-w-0">
           <div className="flex items-center gap-3 min-w-0">
             <div className="lg:hidden flex items-center gap-2 shrink-0">

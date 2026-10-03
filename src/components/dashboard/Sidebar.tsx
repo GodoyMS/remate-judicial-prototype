@@ -20,7 +20,7 @@ export function Sidebar() {
   const { user, isPremium, logout } = useCurrentUser();
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 bg-sidebar border-r border-sidebar-border min-h-screen shrink-0">
+    <aside className="hidden lg:flex flex-col w-64 bg-sidebar border-r border-sidebar-border h-screen sticky top-0 shrink-0">
       <div className="flex items-center px-6 h-16 border-b border-sidebar-border shrink-0">
         <Logo className="text-xl text-sidebar-primary" />
       </div>

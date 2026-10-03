@@ -68,20 +68,21 @@ function AccountPageContent() {
 
   return (
     <div className="w-full">
-      {/* Header */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-foreground tracking-tight">Mi cuenta</h2>
-        <p className="text-sm text-muted-foreground mt-1">
+      {/* Hero primario a sangre: continúa la banda del Topbar (ver HERO_ROUTES)
+          anulando el padding de <main>. Las tarjetas van debajo, sin solaparse. */}
+      <div className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 rounded-b-3xl bg-primary text-primary-foreground px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Mi cuenta</h2>
+        <p className="text-sm text-primary-foreground/80 mt-1">
           Gestiona tu perfil, seguridad y preferencias.
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-6">
+      <div className="grid lg:grid-cols-[17rem_minmax(0,1fr)] gap-6 relative">
         {/* Left: nav */}
         <div className="flex flex-col gap-2">
           {/* Profile summary */}
-          <div className="rounded-2xl  bg-secondary/5 p-4 flex flex-col items-center gap-3 mb-2">
-            <div className="size-16 rounded-full bg-primary flex items-center justify-center text-xl font-bold text-primary-foreground">
+          <div className="rounded-2xl border border-border/60 bg-card shadow-sm p-5 flex flex-col items-center gap-3 mb-2">
+            <div className="size-16 rounded-full bg-primary ring-4 ring-card shadow-md flex items-center justify-center text-xl font-bold text-primary-foreground">
               {user.initials}
             </div>
             <div className="text-center">
@@ -101,9 +102,9 @@ function AccountPageContent() {
             <button
               key={s.id}
               onClick={() => setActiveSection(s.id)}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                 activeSection === s.id
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
@@ -123,7 +124,7 @@ function AccountPageContent() {
         </div>
 
         {/* Right: content */}
-        <div className="lg:col-span-3">
+        <div className="min-w-0">
           <motion.div
             key={activeSection}
             initial={{ opacity: 0, y: 12 }}
@@ -131,7 +132,7 @@ function AccountPageContent() {
             transition={{ duration: 0.3 }}
           >
             {activeSection === "profile" && (
-              <div className="rounded-2xl  p-6 ">
+              <div className="rounded-2xl border border-border/60 bg-card shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-base font-semibold text-foreground">Datos personales</h3>
                   <div className="flex items-center gap-1.5 rounded-full bg-success/10 border border-success/20 px-3 py-1">
@@ -238,7 +239,7 @@ function AccountPageContent() {
             )}
 
             {activeSection === "premium" && (
-              <div className="rounded-2xl p-6">
+              <div className="rounded-2xl border border-border/60 bg-card shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-base font-semibold text-foreground">Acceso Premium</h3>
                   {isPremium ? (
@@ -389,7 +390,7 @@ function AccountPageContent() {
             )}
 
             {activeSection === "security" && (
-              <div className="p-6 ">
+              <div className="rounded-2xl border border-border/60 bg-card shadow-sm p-6">
                 <h3 className="text-base font-semibold text-foreground mb-6">Seguridad de cuenta</h3>
 
                 <div className="flex flex-col gap-5">
@@ -445,7 +446,7 @@ function AccountPageContent() {
             )}
 
             {activeSection === "notifications" && (
-              <div className="p-6 ">
+              <div className="rounded-2xl border border-border/60 bg-card shadow-sm p-6">
                 <h3 className="text-base font-semibold text-foreground mb-6">Preferencias de notificación</h3>
 
                 <div className="flex flex-col gap-3">

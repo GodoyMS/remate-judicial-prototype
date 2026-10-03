@@ -22,7 +22,7 @@ export function AdminSidebar() {
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 bg-sidebar border-r border-sidebar-border min-h-screen shrink-0">
+    <aside className="hidden lg:flex flex-col w-64 bg-sidebar border-r border-sidebar-border h-screen sticky top-0 shrink-0">
       <div className="flex items-center gap-2.5 px-6 h-16 border-b border-sidebar-border shrink-0">
         <div className="size-8 rounded-lg bg-sidebar-primary flex items-center justify-center">
           <Shield className="size-4 text-sidebar-primary-foreground" />

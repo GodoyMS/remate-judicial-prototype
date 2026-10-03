@@ -8,12 +8,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <NotificationsProvider>
       <SessionGuard />
-      <div className="flex h-screen overflow-hidden bg-muted/20">
+      <div className="flex min-h-screen items-start bg-muted/20">
         <Sidebar />
         <div className="max-w-6xl mx-auto flex-1 w-full min-w-0">
-          <div className="flex flex-col w-full h-full min-w-0 overflow-hidden">
+          <div className="flex flex-col w-full min-h-screen min-w-0">
             <Topbar />
-            <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden min-w-0">
+            <main className="flex-1 p-4 sm:p-6 lg:p-8 min-w-0">
               {children}
             </main>
           </div>

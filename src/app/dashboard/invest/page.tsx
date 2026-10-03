@@ -219,7 +219,7 @@ function InvestPageContent() {
 
   if (confirmed) {
     return (
-      <div className=" max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
+      <div className=" max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[calc(100vh-12rem)]">
         <motion.div
           initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

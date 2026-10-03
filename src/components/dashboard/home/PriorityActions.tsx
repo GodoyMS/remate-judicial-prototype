@@ -57,7 +57,7 @@ export function PriorityActions({ actions, viewAllHref }: PriorityActionsProps) 
               className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl bg-card p-3 sm:pr-4"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <span className="size-10 rounded-xl bg-foreground text-background flex items-center justify-center shrink-0">
+                <span className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <action.icon className="size-[18px]" strokeWidth={1.75} />
                 </span>
                 <div className="min-w-0">

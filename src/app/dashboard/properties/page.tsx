@@ -64,10 +64,15 @@ export default function PropertiesPage() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      {/* Hero primario a sangre: continúa la banda del Topbar (ver
+          HERO_ROUTES) anulando el padding de <main>. */}
+      <div className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 rounded-b-3xl bg-primary text-primary-foreground px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-foreground tracking-tight">Propiedades en remate</h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/70 mb-1">
+            Catálogo de remates
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Propiedades en remate</h2>
+          <p className="text-sm text-primary-foreground/80 mt-1">
             {filtered.length} propiedades verificadas disponibles en soles y dólares
           </p>
         </div>
