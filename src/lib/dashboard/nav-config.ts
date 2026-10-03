@@ -6,6 +6,7 @@ import {
   Crown,
   ArrowDownToLine,
   Bell,
+  FolderOpen,
   type LucideIcon,
 } from "lucide-react";
 
@@ -39,6 +40,7 @@ export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
   { href: "/dashboard/my-investments", label: "Mis inversiones", icon: History, group: "principal" },
   { href: "/dashboard/retornos", label: "Retornos", icon: ArrowDownToLine, group: "principal" },
   { href: "/dashboard/notifications", label: "Notificaciones", icon: Bell, group: "cuenta" },
+  { href: "/dashboard/documents", label: "Mis documentos", icon: FolderOpen, group: "cuenta" },
   { href: "/dashboard/account", label: "Mi cuenta", icon: Settings, group: "cuenta" },
   { href: "/dashboard/premium-properties", label: "Premium", icon: Crown, group: "premium" },
 ];
@@ -59,5 +61,6 @@ export function getPageTitle(pathname: string): string {
   if (pathname === "/dashboard/premium-invest") return "Invertir Premium";
   if (pathname === "/dashboard/account") return "Mi cuenta";
   if (pathname === "/dashboard/notifications") return "Notificaciones";
+  if (pathname === "/dashboard/documents") return "Mis documentos";
   return "Inicio";
 }
