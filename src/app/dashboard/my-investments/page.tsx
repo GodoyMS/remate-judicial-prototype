@@ -1,10 +1,11 @@
 "use client";
 
+import { PageHero } from "@/components/dashboard/PageHero";
 import { useMemo, useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Crown } from "lucide-react";
+import { Briefcase, Crown } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PremiumInvestmentsTab } from "@/components/dashboard/PremiumInvestmentsTab";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
@@ -234,34 +235,18 @@ function MyInvestmentsContent() {
 
   return (
     <div className="w-full -mx-0">
-      {/* Hero primario a sangre: continúa la banda del Topbar (ver
-          HERO_ROUTES) anulando el padding de <main>. */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 bg-primary text-primary-foreground rounded-b-3xl px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10"
-      >
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/70 mb-1">
-              Registro de transacciones
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Mis inversiones
-            </h2>
-            <p className="text-sm text-primary-foreground/80 mt-1">
-              Historial de aportes, certificados y estados de cada participación
-            </p>
-          </div>
-          <Button
-            size="sm"
-            className="rounded-xl w-fit shrink-0 bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-sm"
-          >
+      <PageHero
+        icon={Briefcase}
+        eyebrow="Registro de transacciones"
+        title="Mis inversiones"
+        description="Historial de aportes, certificados y estados de cada participación."
+        actions={
+          <Button className="rounded-xl bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-sm">
             <Download className="size-4 mr-2" />
             Exportar CSV
           </Button>
-        </div>
-      </motion.div>
+        }
+      />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="rounded-xl h-10 p-1 bg-muted/50">
@@ -322,49 +307,35 @@ function MyInvestmentsContent() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
-            className={cn(
-              "rounded-2xl px-4 py-4 shadow-sm",
-              i === 0
-                ? "bg-primary text-primary-foreground shadow-primary/20"
-                : "border border-border/60 bg-card"
-            )}
+            className="rounded-2xl px-4 py-4 shadow-sm bg-primary text-primary-foreground shadow-primary/20"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <p
-                  className={cn(
-                    "text-[10px] uppercase tracking-wide font-semibold",
-                    i === 0 ? "text-primary-foreground/75" : "text-muted-foreground"
-                  )}
+                  className="text-[10px] uppercase tracking-wide font-semibold text-primary-foreground/75"
                 >
                   {s.label}
                 </p>
                 {/* El dinero nunca se trunca (E-049): prioridad de ancho al valor. */}
                 <p
                   className={cn(
-                    "font-bold mt-1 break-words tabular-nums",
-                    i === 0 ? "text-3xl sm:text-4xl leading-none" : "text-base sm:text-lg text-foreground"
+                    "font-bold mt-1 break-words tabular-nums leading-tight",
+                    s.value.length > 8 ? "text-xl sm:text-2xl" : "text-3xl sm:text-4xl leading-none"
                   )}
                 >
                   {s.value}
                 </p>
                 <p
-                  className={cn(
-                    "text-[10px] mt-1",
-                    i === 0 ? "text-primary-foreground/75" : "text-muted-foreground"
-                  )}
+                  className="text-[10px] mt-1 text-primary-foreground/75"
                 >
                   {s.sub}
                 </p>
               </div>
               <div
-                className={cn(
-                  "size-9 rounded-xl flex items-center justify-center shrink-0",
-                  i === 0 ? "bg-primary-foreground/15" : s.accent.split(" ")[1]
-                )}
+                className="size-9 rounded-xl flex items-center justify-center shrink-0 bg-primary-foreground/15"
               >
                 <s.icon
-                  className={cn("size-4", i === 0 ? "text-primary-foreground" : s.accent.split(" ")[0])}
+                  className="size-4 text-primary-foreground"
                 />
               </div>
             </div>

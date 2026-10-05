@@ -6,6 +6,7 @@ import { Bell, CheckCheck, Inbox, MailOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NotificationItem } from "@/components/dashboard/NotificationItem";
+import { PageHero } from "@/components/dashboard/PageHero";
 import { useNotifications } from "@/contexts/notifications-context";
 import {
   formatNotificationDate,
@@ -52,45 +53,32 @@ export default function NotificationsPage() {
 
   return (
     <div className="w-full">
-      {/* Hero inverso a sangre: continúa la banda del Topbar (ver HERO_ROUTES)
-          anulando el padding de <main>. Oscuro en claro, claro en oscuro. */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 rounded-b-3xl bg-foreground text-background px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10"
-      >
-        <div className="mx-auto max-w-3xl flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-background/60">
-                Centro de alertas
-              </p>
-              {unreadCount > 0 && (
-                <span className="rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-semibold">
-                  {unreadCount} sin leer
-                </span>
-              )}
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Notificaciones
-            </h2>
-            <p className="text-sm text-background/75 mt-1">
-              Subastas, pagos, actualizaciones legales y alertas de tu portafolio.
-            </p>
-          </div>
+      <PageHero
+        tone="inverse"
+        icon={Bell}
+        eyebrow="Centro de alertas"
+        badge={
+          unreadCount > 0 ? (
+            <span className="rounded-full bg-primary text-primary-foreground px-2.5 py-0.5 text-[11px] font-semibold">
+              {unreadCount} sin leer
+            </span>
+          ) : null
+        }
+        title="Notificaciones"
+        description="Subastas, pagos, actualizaciones legales y alertas de tu portafolio."
+        actions={
           <Button
-            size="sm"
-            className="rounded-xl shrink-0 w-fit bg-background text-foreground hover:bg-background/90 shadow-sm disabled:opacity-60"
+            className="rounded-xl bg-background text-foreground hover:bg-background/90 shadow-sm disabled:opacity-60"
             onClick={handleMarkAll}
             disabled={unreadCount === 0}
           >
             <CheckCheck className="size-4 mr-2" />
             Marcar todo como leído
           </Button>
-        </div>
-      </motion.div>
+        }
+      />
 
-      <div className="w-full max-w-3xl mx-auto">
+      <div className="w-full">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

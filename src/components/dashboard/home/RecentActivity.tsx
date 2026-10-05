@@ -26,20 +26,23 @@ interface RecentActivityProps {
   items: AppNotification[];
 }
 
-/** 5. Actividad reciente: línea de tiempo compacta de lo último que pasó. */
+/**
+ * 5. Actividad reciente: línea de tiempo vertical sobre un panel tipo
+ * overlay oscuro translúcido (no negro puro), legible en ambos temas.
+ */
 export function RecentActivity({ items }: RecentActivityProps) {
   return (
     <section
       aria-labelledby="home-activity"
-      className="rounded-3xl border border-border/60 bg-card p-5 shadow-sm flex flex-col"
+      className="rounded-3xl bg-neutral-950/80 text-white ring-1 ring-white/10 backdrop-blur-sm p-5 sm:p-6 shadow-lg flex flex-col"
     >
-      <div className="flex items-center justify-between gap-3 mb-4">
-        <h3 id="home-activity" className="dash-heading text-foreground">
+      <div className="flex items-center justify-between gap-3 mb-5">
+        <h3 id="home-activity" className="text-lg font-semibold tracking-tight">
           Actividad reciente
         </h3>
         <Link
           href="/dashboard/notifications"
-          className="inline-flex items-center gap-1 rounded-lg px-2 py-1 -mr-2 text-sm font-medium text-primary dark:text-accent-foreground hover:bg-primary/5 transition-colors"
+          className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/20 transition-colors"
         >
           Ver todas
           <ArrowRight className="size-3.5" />
@@ -47,37 +50,34 @@ export function RecentActivity({ items }: RecentActivityProps) {
       </div>
 
       {items.length === 0 ? (
-        <p className="dash-body text-muted-foreground py-6 text-center">Aún no hay actividad.</p>
+        <p className="text-sm text-white/60 py-6 text-center">Aún no hay actividad.</p>
       ) : (
-        <ol className="relative flex flex-col">
-          {items.map((n, i) => {
+        <ol className="relative">
+          {/* Riel continuo de la línea de tiempo */}
+          <span aria-hidden className="absolute left-[15px] top-4 bottom-4 w-px bg-white/15" />
+          {items.map((n) => {
             const Icon = CATEGORY_ICONS[n.category];
-            const isLast = i === items.length - 1;
             return (
-              <li key={n.id} className="relative flex gap-3">
-                {/* Riel de la línea de tiempo */}
-                <div className="relative flex flex-col items-center shrink-0">
-                  <span className="relative z-10 size-8 rounded-full bg-primary/8 text-primary dark:bg-accent dark:text-accent-foreground ring-4 ring-card flex items-center justify-center">
-                    <Icon className="size-3.5" />
-                  </span>
-                  {!isLast && <span aria-hidden className="w-px flex-1 bg-border" />}
-                </div>
+              <li key={n.id} className="relative">
                 <Link
                   href={n.href ?? "/dashboard/notifications"}
-                  className="group flex-1 min-w-0 flex items-start justify-between gap-3 rounded-xl -mt-1 mb-2 px-2 py-1.5 hover:bg-muted/60 transition-colors"
+                  className="group flex items-start gap-4 rounded-2xl py-3 pr-2 -mr-2 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:bg-white/10"
                 >
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-primary dark:text-accent-foreground">
+                  <span className="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 ring-1 ring-white/20 text-white/80 group-hover:text-white group-hover:ring-white/40 transition-colors">
+                    <Icon className="size-3.5" />
+                  </span>
+                  <div className="min-w-0 flex-1 pt-0.5">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <p className="text-sm font-semibold text-white truncate">{n.title}</p>
+                      <time className="text-[11px] text-white/50 whitespace-nowrap shrink-0 tabular-nums">
+                        {n.timeAgo}
+                      </time>
+                    </div>
+                    <p className="text-[13px] text-white/65 line-clamp-1 mt-0.5">{n.description}</p>
+                    <p className="text-[10px] font-medium uppercase tracking-wider text-white/40 mt-1">
                       {CATEGORY_META[n.category].label}
                     </p>
-                    <p className="text-sm font-medium text-foreground mt-0.5 truncate">{n.title}</p>
-                    <p className="dash-caption font-normal text-muted-foreground line-clamp-1 mt-0.5">
-                      {n.description}
-                    </p>
                   </div>
-                  <span className="text-[11px] text-muted-foreground whitespace-nowrap shrink-0 mt-0.5">
-                    {n.timeAgo}
-                  </span>
                 </Link>
               </li>
             );

@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Crown, FileText, Gavel, PenLine, ShieldCheck } from "lucide-react";
+import { Accordion as AccordionPrimitive } from "radix-ui";
+import { ArrowRight, ChevronDown, Crown, FileText, Gavel, PenLine, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
 import { InvestmentCard } from "@/components/dashboard/InvestmentCard";
@@ -11,7 +12,6 @@ import { InvestmentDetailSheet } from "@/components/dashboard/InvestmentDetailSh
 import { PortfolioOverview } from "@/components/dashboard/home/PortfolioOverview";
 import { KpiCards } from "@/components/dashboard/home/KpiCards";
 import { PriorityActions, type PriorityAction } from "@/components/dashboard/home/PriorityActions";
-import { SectionBar } from "@/components/dashboard/home/SectionBar";
 import { RecentActivity } from "@/components/dashboard/home/RecentActivity";
 import { FeaturedOpportunity } from "@/components/dashboard/home/FeaturedOpportunity";
 import { AccountTiers } from "@/components/dashboard/home/AccountTiers";
@@ -162,32 +162,56 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* 4. Inversiones activas (WP-2.3) */}
-      <section aria-labelledby="home-investments" className="flex flex-col gap-3">
-        <SectionBar
-          id="home-investments"
-          title="Inversiones activas"
-          action={{ label: "Ver todas", href: "/dashboard/my-investments" }}
-        />
-        {investments.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground">
-            Aún no tienes inversiones. Explora oportunidades para empezar.
-          </div>
-        ) : (
-          <div className="grid sm:grid-cols-2 gap-3">
-            {investments.slice(0, 4).map((inv, i) => (
-              <motion.div key={inv.id} {...reveal(0.15 + i * 0.05)}>
-                <InvestmentCard
-                  investment={inv}
-                  onViewDetail={(investment) => {
-                    setSelectedInvestment(investment);
-                    setSheetOpen(true);
-                  }}
-                />
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </section>
+      <AccordionPrimitive.Root type="single" collapsible aria-label="Inversiones activas">
+        <AccordionPrimitive.Item
+          value="investments"
+          className="group/inv rounded-2xl bg-primary text-primary-foreground shadow-sm shadow-primary/20 overflow-hidden"
+        >
+          <AccordionPrimitive.Header className="flex items-center gap-2 pr-3">
+            <AccordionPrimitive.Trigger className="flex flex-1 items-center gap-3 min-h-14 px-5 py-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/60 focus-visible:ring-inset rounded-2xl">
+              <span id="home-investments" className="text-base font-semibold">
+                Inversiones activas
+              </span>
+              <span className="rounded-full bg-primary-foreground/15 px-2 py-0.5 text-xs font-semibold tabular-nums">
+                {investments.length}
+              </span>
+              <ChevronDown
+                aria-hidden
+                className="ml-auto size-4 text-primary-foreground/80 transition-transform duration-200 group-data-[state=open]/inv:rotate-180"
+              />
+            </AccordionPrimitive.Trigger>
+            <Link
+              href="/dashboard/my-investments"
+              className="hidden sm:inline-flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-primary-foreground/85 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
+            >
+              Ver todas
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </AccordionPrimitive.Header>
+          <AccordionPrimitive.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+            <div className="px-3 pb-3 text-foreground">
+              {investments.length === 0 ? (
+                <div className="rounded-xl bg-card p-8 text-center text-sm text-muted-foreground">
+                  Aún no tienes inversiones. Explora oportunidades para empezar.
+                </div>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {investments.map((inv) => (
+                    <InvestmentCard
+                      key={inv.id}
+                      investment={inv}
+                      onViewDetail={(investment) => {
+                        setSelectedInvestment(investment);
+                        setSheetOpen(true);
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </AccordionPrimitive.Content>
+        </AccordionPrimitive.Item>
+      </AccordionPrimitive.Root>
 
       {/* 5. Actividad reciente + oportunidad destacada (E-029, E-030) */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-3">
