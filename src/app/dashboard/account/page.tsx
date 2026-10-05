@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHero } from "@/components/dashboard/PageHero";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -20,6 +21,7 @@ import {
   Clock,
   XCircle,
   RefreshCw,
+  UserCog,
 } from "lucide-react";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
 import { PremiumUpgradeDialog } from "@/components/dashboard/PremiumUpgradeDialog";
@@ -68,14 +70,12 @@ function AccountPageContent() {
 
   return (
     <div className="w-full">
-      {/* Hero primario a sangre: continúa la banda del Topbar (ver HERO_ROUTES)
-          anulando el padding de <main>. Las tarjetas van debajo, sin solaparse. */}
-      <div className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 rounded-b-3xl bg-primary text-primary-foreground px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Mi cuenta</h2>
-        <p className="text-sm text-primary-foreground/80 mt-1">
-          Gestiona tu perfil, seguridad y preferencias.
-        </p>
-      </div>
+      <PageHero
+        icon={UserCog}
+        eyebrow="Configuración"
+        title="Mi cuenta"
+        description="Gestiona tu perfil, seguridad y preferencias."
+      />
 
       <div className="grid lg:grid-cols-[17rem_minmax(0,1fr)] gap-6 relative">
         {/* Left: nav */}

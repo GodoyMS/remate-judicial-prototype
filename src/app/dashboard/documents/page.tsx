@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHero } from "@/components/dashboard/PageHero";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -94,28 +95,25 @@ export default function DocumentsPage() {
 
   return (
     <div className="w-full">
-      {/* Hero primario a sangre: continúa la banda del Topbar (ver
-          HERO_ROUTES) anulando el padding de <main>. */}
-      <div className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 rounded-b-3xl bg-primary text-primary-foreground px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-primary-foreground/70 mb-1">
-            Cuenta
-          </p>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Mis documentos</h2>
-          <p className="text-sm text-primary-foreground/80 mt-1">
-            {state === "ready"
-              ? `${docs.length} documento${docs.length !== 1 ? "s" : ""} · ${formatFileSize(totalSize)} en total`
-              : "Sube y gestiona tus documentos de identidad, bancarios y de respaldo"}
-          </p>
-        </div>
-        <Button
-          onClick={() => setUploadOpen(true)}
-          className="w-fit shrink-0 rounded-xl bg-primary-foreground text-primary shadow-sm hover:bg-primary-foreground/90"
-        >
-          <CloudUpload className="mr-2 size-4" />
-          Subir documento
-        </Button>
-      </div>
+      <PageHero
+        icon={FolderOpen}
+        eyebrow="Cuenta"
+        title="Mis documentos"
+        description={
+          state === "ready"
+            ? `${docs.length} documento${docs.length !== 1 ? "s" : ""} · ${formatFileSize(totalSize)} en total`
+            : "Sube y gestiona tus documentos de identidad, bancarios y de respaldo"
+        }
+        actions={
+          <Button
+            onClick={() => setUploadOpen(true)}
+            className="rounded-xl bg-primary-foreground text-primary shadow-sm hover:bg-primary-foreground/90"
+          >
+            <CloudUpload className="mr-2 size-4" />
+            Subir documento
+          </Button>
+        }
+      />
 
       {/* Toolbar */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">

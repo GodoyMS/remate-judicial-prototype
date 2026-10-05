@@ -31,33 +31,34 @@ import { formatDateTime } from "@/lib/admin/formatters";
 import { formatCurrency, formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
 import { useCurrentUser } from "@/contexts/user-context";
 import { RetornoDetailSheet } from "@/components/dashboard/retornos/RetornoDetailSheet";
+import { PageHero } from "@/components/dashboard/PageHero";
 import { CreateTicketDialog } from "@/components/dashboard/retornos/CreateTicketDialog";
 
-const typeConfig: Record<RetornoType, { label: string; icon: typeof TrendingUp; color: string; bg: string }> = {
+const typeConfig: Record<RetornoType, { label: string; icon: typeof TrendingUp; solid: string; chip: string }> = {
   roi_return: {
     label: RETORNO_CATEGORY_LABELS.roi_return,
     icon: TrendingUp,
-    color: "text-success",
-    bg: "bg-success/10 border-success/20",
+    solid: "bg-success text-success-foreground",
+    chip: "bg-success/15 text-foreground",
   },
   refund: {
     label: RETORNO_CATEGORY_LABELS.refund,
     icon: RotateCcw,
-    color: "text-info",
-    bg: "bg-info/10 border-info/20",
+    solid: "bg-info text-info-foreground",
+    chip: "bg-info/15 text-foreground",
   },
   goal_not_reached: {
     label: RETORNO_CATEGORY_LABELS.goal_not_reached,
     icon: Target,
-    color: "text-warning",
-    bg: "bg-warning/10 border-warning/20",
+    solid: "bg-warning text-warning-foreground",
+    chip: "bg-warning/15 text-foreground",
   },
 };
 
 const ticketStatusConfig: Record<TicketStatus, { label: string; color: string }> = {
-  flagged: { label: "En observación", color: "border-warning/20 bg-warning/10 text-warning" },
-  in_review: { label: "En revisión", color: "border-info/20 bg-info/10 text-info" },
-  resolved: { label: "Resuelto", color: "border-success/20 bg-success/10 text-success" },
+  flagged: { label: "En observación", color: "bg-warning text-warning-foreground" },
+  in_review: { label: "En revisión", color: "bg-info text-info-foreground" },
+  resolved: { label: "Resuelto", color: "bg-success text-success-foreground" },
 };
 
 export default function DashboardRetornosPage() {
@@ -124,25 +125,15 @@ export default function DashboardRetornosPage() {
 
   return (
     <div className="w-full">
-      {/* Hero inverso a sangre: continúa la banda del Topbar (ver HERO_ROUTES)
-          anulando el padding de <main>. Oscuro en claro, claro en oscuro. */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="-mx-4 sm:-mx-6 lg:-mx-8 -mt-4 sm:-mt-6 lg:-mt-8 mb-6 rounded-b-3xl bg-foreground text-background px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pb-10"
-      >
-        <div className="mx-auto max-w-3xl">
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-background/60">
-            Mi cuenta
-          </p>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Retornos</h2>
-          <p className="mt-1 text-sm text-background/75">
-            Revisa todos tus retornos, reembolsos y devoluciones
-          </p>
-        </div>
-      </motion.div>
+      <PageHero
+        tone="inverse"
+        icon={ArrowDownToLine}
+        eyebrow="Mi cuenta"
+        title="Retornos"
+        description="Revisa todos tus retornos, reembolsos y devoluciones."
+      />
 
-      <div className="mx-auto max-w-3xl">
+      <div className="w-full">
 
       {/* Summary */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -219,7 +210,7 @@ export default function DashboardRetornosPage() {
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid gap-3 lg:grid-cols-2">
           {filtered.map((r, i) => {
             const cfg = typeConfig[r.type];
             const ticket = r.ticket;
@@ -231,25 +222,29 @@ export default function DashboardRetornosPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="rounded-2xl border border-border/60 bg-card p-4 transition-all hover:border-primary/30 hover:shadow-md"
+                className="rounded-2xl border border-border/60 bg-card p-4 sm:p-5 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
               >
                 {/* Top row: icon + info + amount */}
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl border", cfg.bg)}>
-                      <cfg.icon className={cn("size-5", cfg.color)} />
+                    <div className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl", cfg.solid)}>
+                      <cfg.icon className="size-5" />
                     </div>
                     <div className="min-w-0">
-                      <p className="line-clamp-1 font-semibold text-sm">{r.propertyTitle}</p>
-                      <p className="text-xs text-muted-foreground">{cfg.label}</p>
-                      <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">{r.id}</p>
+                      <p className="line-clamp-1 font-semibold text-[15px] text-foreground">{r.propertyTitle}</p>
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                        <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold", cfg.chip)}>
+                          {cfg.label}
+                        </span>
+                        <span className="font-mono text-[11px] text-foreground/60">{r.id}</span>
+                      </div>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-lg font-bold text-foreground">
+                    <p className="text-lg sm:text-xl font-bold tabular-nums text-foreground">
                       {formatCurrency(r.amount, r.currency)}
                     </p>
-                    <div className="mt-1 flex items-center justify-end gap-1.5 text-xs text-success">
+                    <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-semibold text-success">
                       <CheckCircle2 className="size-3" />
                       Confirmado
                     </div>
@@ -257,36 +252,35 @@ export default function DashboardRetornosPage() {
                 </div>
 
                 {/* Bottom row: date + ticket badge + action buttons */}
-                <div className="mt-3 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Clock className="size-3" />
+                <div className="mt-4 pt-3 border-t border-border/60 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-foreground/70">
+                    <Clock className="size-3.5" />
                     {formatDateTime(r.createdAt)}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     {ticket && ticketCfg && (
-                      <span className={cn("rounded-md border px-1.5 py-0.5 text-[10px] font-semibold", ticketCfg.color)}>
-                        <Flag className="mr-1 inline size-2.5" />
+                      <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold", ticketCfg.color)}>
+                        <Flag className="mr-1 size-3" />
                         {ticketCfg.label}
                       </span>
                     )}
                     {!ticket && (
                       <Button
                         size="sm"
-                        variant="outline"
-                        className="h-7 rounded-lg gap-1 px-2.5 text-xs border-warning/20 text-warning hover:bg-warning/10"
+                        variant="ghost"
+                        className="h-8 rounded-lg gap-1.5 px-3 text-xs font-medium text-foreground/75 hover:text-foreground hover:bg-muted"
                         onClick={() => openTicket(r)}
                       >
-                        <Flag className="size-3" />
+                        <Flag className="size-3.5" />
                         Observar
                       </Button>
                     )}
                     <Button
                       size="sm"
-                      variant="outline"
-                      className="h-7 rounded-lg gap-1 px-2.5 text-xs"
+                      className="h-8 rounded-lg gap-1.5 px-3 text-xs font-semibold"
                       onClick={() => openDetail(r)}
                     >
-                      <Eye className="size-3" />
+                      <Eye className="size-3.5" />
                       Ver detalles
                     </Button>
                   </div>
