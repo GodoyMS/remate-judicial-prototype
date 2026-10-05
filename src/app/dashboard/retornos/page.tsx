@@ -210,7 +210,7 @@ export default function DashboardRetornosPage() {
           </p>
         </div>
       ) : (
-        <div className="grid gap-3 lg:grid-cols-2">
+        <div className="flex flex-col gap-3">
           {filtered.map((r, i) => {
             const cfg = typeConfig[r.type];
             const ticket = r.ticket;
