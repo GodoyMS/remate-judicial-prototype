@@ -33,12 +33,14 @@ export function KpiCards({ totalInvested, inProgress, realizedGains, lastUpdated
       value: String(inProgress.count),
       caption: inProgress.breakdown || "Sin inversiones en curso",
       icon: Building2,
+      featured:true
     },
     {
       label: "Retornos generados",
       value: realizedGains,
       caption: "Solo ganancias realizadas, sin capital devuelto",
       icon: TrendingUp,
+      featured:true
     },
   ];
 
