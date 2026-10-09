@@ -147,6 +147,7 @@ export function Hero() {
                   <span className="type-label absolute left-4 top-4 rounded-full bg-card/95 px-3 py-1.5 uppercase tracking-wide text-foreground backdrop-blur-sm">
                     {FEATURED.statusLabel}
                   </span>
+                  
 
                   <div className="absolute inset-x-0 bottom-0 p-4">
                     <p className="type-h3 text-white drop-shadow">
