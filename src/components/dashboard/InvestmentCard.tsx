@@ -37,7 +37,7 @@ export function InvestmentCard({ investment, onViewDetail }: InvestmentCardProps
     <button
       type="button"
       onClick={() => onViewDetail(investment)}
-      className="w-full text-left flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4 hover:border-primary/40 hover:bg-secondary/8 transition-colors group"
+      className="w-full text-left flex flex-col gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group"
     >
       <div className="flex items-start gap-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
