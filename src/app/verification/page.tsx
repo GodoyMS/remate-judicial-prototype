@@ -85,7 +85,7 @@ export default function VerificationPage() {
       <header className="bg-card border-b border-border/60 px-4 sm:px-6 py-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="flex items-center justify-between sm:justify-start gap-4">
           <Link href="/" className="flex items-center">
-            <Logo className="text-xl text-primary" />
+            <Logo className="text-xl text-logo" />
           </Link>
           <span className="text-sm text-muted-foreground hidden sm:inline">Verificación de identidad</span>
         </div>

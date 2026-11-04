@@ -9,7 +9,7 @@ export function OriginHero() {
 
   return (
     <section
-      data-nav-tone="dark"
+      data-nav-tone="inverted"
       className="relative isolate min-h-[100dvh] overflow-hidden bg-foreground text-background"
     >
       <div className="absolute inset-0" aria-hidden>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Fredoka } from "next/font/google";
+import { Geist } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ThemeSwitcherFab } from "@/components/theme/ThemeSwitcherFab";
 import { UserProvider } from "@/contexts/user-context";
@@ -16,12 +16,6 @@ const geist = Geist({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-const fredoka = Fredoka({
-  variable: "--font-logo",
-  subsets: ["latin"],
-  weight: ["500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -84,7 +78,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`${geist.variable} ${fredoka.variable} h-full antialiased`}
+      className={`${geist.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

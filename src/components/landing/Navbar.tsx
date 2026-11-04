@@ -27,15 +27,24 @@ const links = [
 ];
 
 /** Which page surface sits under the fixed navbar band. */
-function getToneUnderNav(): "dark" | "light" {
+function getToneUnderNav(): "dark" | "light" | "bright" {
   const probeY = 32; // mid navbar
   const sections = document.querySelectorAll<HTMLElement>("[data-nav-tone]");
-  let tone: "dark" | "light" = "light";
+  let tone: "dark" | "light" | "bright" = "light";
   for (const el of sections) {
     const rect = el.getBoundingClientRect();
     if (rect.top <= probeY && rect.bottom > probeY) {
       // Last match wins when sections overlap during scroll.
-      tone = el.dataset.navTone === "dark" ? "dark" : "light";
+      const declared = el.dataset.navTone;
+      // "inverted" surfaces (bg-foreground) flip with the theme: dark in the
+      // light theme, bright in the dark theme.
+      if (declared === "inverted") {
+        tone = document.documentElement.classList.contains("dark")
+          ? "bright"
+          : "dark";
+      } else {
+        tone = declared === "dark" ? "dark" : "light";
+      }
     }
   }
   return tone;
@@ -70,8 +79,11 @@ export function Navbar() {
     if (!isOverlayPage) return;
 
     const update = () => {
-      setOverDark(getToneUnderNav() === "dark");
-      setScrolled(window.scrollY > 24);
+      const tone = getToneUnderNav();
+      setOverDark(tone === "dark");
+      // The dark theme's light text needs the scrim over bright surfaces, even
+      // at the top of the page.
+      setScrolled(window.scrollY > 24 || tone === "bright");
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -97,9 +109,14 @@ export function Navbar() {
     >
       <div className="mx-auto max-w-[1400px] section-padding">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo — always brand primary */}
+          {/* Logo — white over dark sections, otherwise the logo token */}
           <Link href="/" className="flex items-center group">
-            <Logo className="text-2xl text-primary" />
+            <Logo
+              className={cn(
+                "text-2xl transition-colors",
+                lightText ? "text-white" : "text-logo",
+              )}
+            />
           </Link>
 
           {/* Desktop nav */}

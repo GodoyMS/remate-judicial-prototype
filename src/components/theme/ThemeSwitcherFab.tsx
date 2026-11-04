@@ -246,7 +246,7 @@ export function ThemeSwitcherFab() {
               </div>
             </div>
             <div className="mb-2.5 flex h-14 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-card">
-              <Logo className="text-2xl text-primary" />
+              <Logo className="text-2xl text-logo" />
             </div>
             <input
               type="range"

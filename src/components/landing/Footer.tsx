@@ -136,7 +136,7 @@ function FooterColumn({
 
 export function Footer() {
   return (
-    <footer data-nav-tone="dark" className="bg-foreground text-background">
+    <footer data-nav-tone="inverted" className="bg-foreground text-background">
       <div className="mx-auto max-w-[1400px] section-padding py-14 sm:py-16">
         {/* Contact first — it is the thing a hesitant reader scrolls down for
             (RM-025, RM-031), so it does not hide behind an accordion. */}
