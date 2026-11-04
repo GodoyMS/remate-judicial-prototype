@@ -143,7 +143,7 @@ export function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <div className="flex flex-col gap-5">
             <Link href="/" className="flex w-fit items-center">
-              <Logo className="text-2xl text-background" />
+              <Logo className="text-2xl" tone="inverted" />
             </Link>
             <p className="max-w-sm text-sm leading-relaxed text-background/60">
               Inversión colectiva en inmuebles adjudicados en remates

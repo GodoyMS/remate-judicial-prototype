@@ -28,7 +28,7 @@ export function AdminSidebar() {
           <Shield className="size-4 text-sidebar-primary-foreground" />
         </div>
         <div className="flex flex-col">
-          <Logo className="text-lg text-sidebar-foreground" />
+          <Logo className="text-lg" />
           <span className="text-[10px] text-sidebar-foreground/50 mt-0.5">Admin Panel</span>
         </div>
       </div>

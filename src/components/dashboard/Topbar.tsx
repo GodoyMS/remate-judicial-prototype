@@ -59,7 +59,7 @@ export function Topbar() {
                 <Menu className="size-5 text-muted-foreground" />
               </button>
               <span
-                className="inline-flex text-logo"
+                className="inline-flex"
                 style={{ fontSize: "calc(1.75rem * var(--logo-scale, 1))" }}
               >
                 <LogoMark className="size-[1em]" />
@@ -86,7 +86,7 @@ export function Topbar() {
           <aside className="relative w-[min(18rem,85vw)] bg-sidebar flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-5 h-16 border-b border-sidebar-border">
               <div className="flex items-center min-w-0">
-                <Logo className="text-xl text-logo" />
+                <Logo className="text-xl" />
               </div>
               <button
                 onClick={() => setMobileOpen(false)}
