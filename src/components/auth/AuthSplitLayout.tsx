@@ -16,7 +16,7 @@ export function AuthSplitLayout({ children, variant }: AuthSplitLayoutProps) {
         <div className="w-full max-w-md">
           <div className="lg:hidden flex justify-center mb-8">
             <Link href="/" className="flex items-center">
-              <Logo className="text-2xl text-primary" />
+              <Logo className="text-2xl text-logo" />
             </Link>
           </div>
 

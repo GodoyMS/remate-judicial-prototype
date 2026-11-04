@@ -173,7 +173,7 @@ export function FinalCTA() {
 
   return (
     <section
-      data-nav-tone="dark"
+      data-nav-tone="inverted"
       className="relative isolate min-h-[88vh] overflow-hidden bg-foreground py-28 text-background sm:min-h-[92vh] sm:py-32"
     >
       <div className="pointer-events-none absolute -top-32 left-1/2 size-[600px] -translate-x-1/2 rounded-full bg-primary/25 blur-3xl" aria-hidden />

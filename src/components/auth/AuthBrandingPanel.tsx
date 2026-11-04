@@ -48,7 +48,7 @@ export function AuthBrandingPanel({ variant = "register" }: AuthBrandingPanelPro
 
       <div className="relative flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center">
-          <Logo className="text-2xl text-primary" />
+          <Logo className="text-2xl text-logo" />
         </Link>
         <Link
           href="/"
