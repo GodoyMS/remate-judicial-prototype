@@ -92,7 +92,7 @@ export default function LoginAdminPage() {
               <Shield className="size-5 text-sidebar-primary-foreground" />
             </div>
             <div className="flex flex-col">
-              <Logo className="text-xl text-sidebar-foreground" />
+              <Logo className="text-xl" />
               <span className="text-[10px] text-sidebar-foreground/50 mt-0.5">Panel de administración</span>
             </div>
           </Link>

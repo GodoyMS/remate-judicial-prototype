@@ -109,14 +109,9 @@ export function Navbar() {
     >
       <div className="mx-auto max-w-[1400px] section-padding">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo — white over dark sections, otherwise the logo token */}
+          {/* Logo — white over dark sections, otherwise the brand tone */}
           <Link href="/" className="flex items-center group">
-            <Logo
-              className={cn(
-                "text-2xl transition-colors",
-                lightText ? "text-white" : "text-logo",
-              )}
-            />
+            <Logo className="text-2xl" tone={lightText ? "white" : "brand"} />
           </Link>
 
           {/* Desktop nav */}
