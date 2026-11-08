@@ -1,85 +1,30 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { use } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  Crown,
-  MapPin,
-  TrendingUp,
-  User,
-  Calendar,
-  Bell,
-  CheckCircle2,
-  Percent,
-  Wallet,
-  Mail,
-  Phone,
-  Shield,
-  Clock,
-  ArrowRightLeft,
-  Banknote,
-  Landmark,
-  XCircle,
-  AlertCircle,
-} from "lucide-react";
+import { ArrowLeft, Crown, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
 import { AdminPropertyGallery } from "@/components/admin/AdminPropertyGallery";
-import { getAdminPremiumPropertyById } from "@/lib/admin/premium-mock-data";
+import { PremiumReservationsPanel } from "@/components/admin/PremiumReservationsPanel";
+import { StatusPill } from "@/components/premium/StatusPill";
+import { availabilityPill } from "@/components/premium/reservation-ui";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
-import { formatCurrency, formatDate } from "@/lib/admin/formatters";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
-import {
-  getPendingInvestmentsForProperty,
-  getPremiumPropertyOverride,
-  updatePendingPremiumInvestment,
-  setPremiumPropertyOverride,
-  type PendingPremiumInvestment,
-} from "@/lib/app-store";
-import type { AdminProperty } from "@/lib/admin/types";
+import { getAdminPremiumPropertyById } from "@/lib/admin/premium-mock-data";
+import { getPremiumPropertyById } from "@/lib/premium/mock-data";
+import { getAvailability } from "@/lib/premium/availability";
+import { useReservations } from "@/lib/premium/reservations";
+import { formatLimaDateTime } from "@/lib/premium/dates";
+import { formatCurrency } from "@/lib/admin/formatters";
 
-export default function AdminPremiumPropertyDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function AdminPremiumPropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const baseProperty = getAdminPremiumPropertyById(id);
-
-  const [pendingInvestments, setPendingInvestments] = useState<PendingPremiumInvestment[]>([]);
-  const [propertyOverride, setPropertyOverrideState] = useState<{
-    premiumStatus: AdminProperty["premiumStatus"];
-    caughtByUserName?: string;
-  } | null>(null);
-  const [rejectTarget, setRejectTarget] = useState<PendingPremiumInvestment | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
-
-  useEffect(() => {
-    const investments = getPendingInvestmentsForProperty(id).filter(
-      (i) => i.status === "pending_verification"
-    );
-    setPendingInvestments(investments);
-    // Check for approved investment override
-    const override = getPremiumPropertyOverride(id);
-    if (override) setPropertyOverrideState(override);
-  }, [id]);
+  const premium = getPremiumPropertyById(id);
+  const reservations = useReservations();
 
   if (!baseProperty) {
     return (
@@ -92,524 +37,97 @@ export default function AdminPremiumPropertyDetailPage({
     );
   }
 
-  const effectivePremiumStatus =
-    (propertyOverride?.premiumStatus ?? baseProperty.premiumStatus) as AdminProperty["premiumStatus"];
-  const effectiveCaughtByUserName =
-    propertyOverride?.caughtByUserName ?? baseProperty.caughtByUserName;
-
-  const isCaught = effectivePremiumStatus === "caught";
-  const isAvailable = effectivePremiumStatus === "available";
-  const isConverted = effectivePremiumStatus === "converted";
-  const estimatedReturn = baseProperty.totalInvestment * (baseProperty.premiumRoi ?? 0) / 100;
-
-  const handleApproveInvestment = (inv: PendingPremiumInvestment) => {
-    updatePendingPremiumInvestment(inv.id, {
-      status: "approved",
-      resolvedAt: new Date().toISOString(),
-    });
-    setPremiumPropertyOverride({
-      propertyId: id,
-      premiumStatus: "caught",
-      caughtByUserId: inv.userId,
-      caughtByUserName: inv.userName,
-      caughtAt: new Date().toISOString(),
-    });
-    setPendingInvestments([]);
-    setPropertyOverrideState({ premiumStatus: "caught", caughtByUserName: inv.userName });
-    toast.success(`Inversión de ${inv.userName} aprobada`, {
-      description: `Propiedad marcada como Capturada. Inversión: Activa.`,
-    });
-  };
-
-  const handleRejectInvestment = () => {
-    if (!rejectTarget || !rejectReason.trim()) return;
-    updatePendingPremiumInvestment(rejectTarget.id, {
-      status: "rejected",
-      rejectionReason: rejectReason.trim(),
-      resolvedAt: new Date().toISOString(),
-    });
-    setPendingInvestments((prev) => prev.filter((i) => i.id !== rejectTarget.id));
-    toast.success(`Inversión rechazada`, {
-      description: `La propiedad vuelve a estar disponible para otros inversores Premium.`,
-    });
-    setRejectTarget(null);
-    setRejectReason("");
-  };
+  // Vista de admin: la disponibilidad se mira "desde fuera" (sin usuario).
+  const availability = premium ? getAvailability(premium, reservations, "__admin__") : null;
+  const pill = availability
+    ? availability.kind === "held" || availability.kind === "taken"
+      ? { label: availability.kind === "held" ? "Con solicitud o reserva" : "Financiada", tone: "primary" as const }
+      : availabilityPill(availability)
+    : null;
+  const deadline = premium?.premiumDeadline ?? baseProperty.premiumDeadline;
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto space-y-6 pb-10">
+    <div className="mx-auto w-full max-w-[1400px] space-y-6 pb-10">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex items-start gap-3 min-w-0">
-          <Button asChild variant="ghost" size="icon-sm" className="rounded-xl shrink-0 mt-0.5">
-            <Link href="/admin/premium-properties">
+        <div className="flex min-w-0 items-start gap-3">
+          <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0 rounded-xl">
+            <Link href="/admin/premium-properties" aria-label="Volver">
               <ArrowLeft className="size-4" />
             </Link>
           </Button>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl font-bold truncate">{baseProperty.title}</h1>
-              <Badge className="bg-gradient-to-r from-premium to-premium/80 text-premium-foreground border-0">
-                <Crown className="size-3 mr-1" />
+              <h1 className="truncate text-xl font-bold">{baseProperty.title}</h1>
+              <Badge className="border-0 bg-premium/15 text-premium">
+                <Crown className="mr-1 size-3" />
                 Premium
               </Badge>
-              {isCaught && (
-                <Badge className="bg-success text-success-foreground border-0">
-                  <CheckCircle2 className="size-3 mr-1" />
-                  Capturada
-                </Badge>
-              )}
-              {isAvailable && pendingInvestments.length > 0 && (
-                <Badge variant="outline" className="bg-info/10 text-info border-info/20">
-                  <Clock className="size-3 mr-1" />
-                  En verificación
-                </Badge>
-              )}
-              {isAvailable && pendingInvestments.length === 0 && (
-                <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
-                  <Clock className="size-3 mr-1" />
-                  Disponible
-                </Badge>
-              )}
-              {isConverted && (
-                <Badge variant="outline" className="bg-info/10 text-info">
-                  <ArrowRightLeft className="size-3 mr-1" />
-                  Convertida a estándar
-                </Badge>
-              )}
+              {pill && <StatusPill tone={pill.tone} size="xs">{pill.label}</StatusPill>}
               <CurrencyBadge currency={baseProperty.currency} />
             </div>
-            <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+            <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin className="size-3.5 shrink-0" />
               {baseProperty.address}
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="rounded-xl">
-            Editar
-          </Button>
-          {isAvailable && pendingInvestments.length === 0 && (
-            <Button className="rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground">
-              <Bell className="size-4 mr-2" />
-              Notificar Premium
-            </Button>
-          )}
-        </div>
+        <Button variant="outline" className="rounded-xl">
+          Editar
+        </Button>
       </header>
 
-      {/* ─── Pending investment verification banner ─── */}
-      {pendingInvestments.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border-2 border-info/20 bg-gradient-to-br from-info/10 to-card p-6"
-        >
-          <div className="flex items-center gap-2 mb-5">
-            <div className="size-10 rounded-xl bg-info flex items-center justify-center">
-              <AlertCircle className="size-5 text-info-foreground" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-info">
-                Inversión pendiente de verificación
-              </p>
-              <p className="text-xs text-info">
-                Revisa el comprobante y aprueba o rechaza la inversión
-              </p>
-            </div>
-          </div>
-
-          {pendingInvestments.map((inv) => (
-            <div
-              key={inv.id}
-              className="rounded-xl bg-card border border-info/15 p-5 space-y-4"
-            >
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Investor info */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-semibold flex items-center gap-2">
-                    <User className="size-4 text-info" />
-                    Datos del inversor
-                  </h3>
-                  <div className="flex items-center gap-4">
-                    <div className="size-12 rounded-full bg-info/15 flex items-center justify-center text-base font-bold text-info">
-                      {inv.userName.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                    </div>
-                    <div>
-                      <p className="text-base font-bold">{inv.userName}</p>
-                      <p className="text-xs text-muted-foreground">Usuario Premium</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2 text-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Mail className="size-3.5" />
-                      <span className="truncate">{inv.userEmail}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Calendar className="size-3.5" />
-                      <span>
-                        Enviado:{" "}
-                        {new Intl.DateTimeFormat("es-PE", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }).format(new Date(inv.submittedAt))}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Investment & payment details */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-semibold flex items-center gap-2">
-                    <Wallet className="size-4 text-info" />
-                    Detalle del pago
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Monto</span>
-                      <span className="font-bold">
-                        {formatCurrency(inv.amount, inv.currency)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground flex items-center gap-1">
-                        <Percent className="size-3.5" />
-                        Participación
-                      </span>
-                      <span className="font-bold text-premium">100%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground flex items-center gap-1">
-                        <TrendingUp className="size-3.5" />
-                        Retorno estimado
-                      </span>
-                      <span className="font-bold text-success">
-                        {formatCurrency(inv.estimatedReturn, inv.currency)}
-                      </span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Método</span>
-                      <span className="flex items-center gap-1 font-medium">
-                        {inv.paymentMethod === "transfer" ? (
-                          <><Banknote className="size-3.5" /> Transferencia bancaria</>
-                        ) : (
-                          <><Landmark className="size-3.5" /> Depósito en cuenta</>
-                        )}
-                      </span>
-                    </div>
-                    {inv.paymentMethod === "transfer" && (
-                      <>
-                        {inv.transferNumber && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">N° transferencia</span>
-                            <span className="font-mono text-xs">{inv.transferNumber}</span>
-                          </div>
-                        )}
-                        {inv.originAccountNumber && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Cuenta origen</span>
-                            <span className="font-mono text-xs">{inv.originAccountNumber}</span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {inv.paymentMethod === "deposit" && (
-                      <>
-                        {inv.voucherNumber && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">N° voucher</span>
-                            <span className="font-mono text-xs">{inv.voucherNumber}</span>
-                          </div>
-                        )}
-                        {inv.operationNumber && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">N° operación</span>
-                            <span className="font-mono text-xs">{inv.operationNumber}</span>
-                          </div>
-                        )}
-                        {inv.voucherDate && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Fecha voucher</span>
-                            <span>{inv.voucherDate}</span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-info/15">
-                <Button
-                  className="flex-1 rounded-xl bg-success hover:bg-success/90 text-success-foreground"
-                  onClick={() => handleApproveInvestment(inv)}
-                >
-                  <CheckCircle2 className="size-4 mr-2" />
-                  Aprobar inversión — marcar como Capturada
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1 rounded-xl text-destructive border-destructive/20 hover:bg-destructive/10"
-                  onClick={() => { setRejectTarget(inv); setRejectReason(""); }}
-                >
-                  <XCircle className="size-4 mr-2" />
-                  Rechazar
-                </Button>
-              </div>
-            </div>
-          ))}
-        </motion.div>
-      )}
-
-      {/* ─── Caught investor banner (after approval or static data) ─── */}
-      {isCaught && pendingInvestments.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border-2 border-success/20 bg-gradient-to-br from-success/10 to-card p-6"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <div className="size-10 rounded-xl bg-success flex items-center justify-center">
-              <User className="size-5 text-success-foreground" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-success">Inversor único — Captura al 100%</p>
-              <p className="text-xs text-success">Esta propiedad tiene un solo inversor Premium</p>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="rounded-xl bg-card border border-success/15 p-5 space-y-4">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <User className="size-4 text-success" />
-                Datos del inversor
-              </h3>
-              <div className="flex items-center gap-4">
-                <div className="size-14 rounded-full bg-success/15 flex items-center justify-center text-lg font-bold text-success">
-                  {(effectiveCaughtByUserName ?? "")
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </div>
-                <div>
-                  <p className="text-base font-bold">{effectiveCaughtByUserName}</p>
-                  <p className="text-xs text-muted-foreground">Usuario Premium verificado</p>
-                </div>
-              </div>
-              <Separator />
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Mail className="size-3.5" />
-                  <span className="truncate">
-                    {baseProperty.caughtByUserId === "premium-demo"
-                      ? "premium@rematto.com"
-                      : "inversor@mail.com"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Phone className="size-3.5" />
-                  <span>+51 999 *** ***</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Shield className="size-3.5" />
-                  <span>KYC verificado</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="size-3.5" />
-                  <span>
-                    {baseProperty.caughtAt
-                      ? formatDate(baseProperty.caughtAt.split("T")[0])
-                      : "—"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-xl bg-card border border-success/15 p-5 space-y-4">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <Wallet className="size-4 text-success" />
-                Detalle de inversión
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Monto invertido</span>
-                  <span className="font-bold">
-                    {formatCurrency(baseProperty.totalInvestment, baseProperty.currency)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Percent className="size-3.5" />
-                    Participación
-                  </span>
-                  <span className="font-bold text-success">100%</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <TrendingUp className="size-3.5" />
-                    ROI Premium
-                  </span>
-                  <span className="font-bold text-premium">{baseProperty.premiumRoi}%</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Retorno estimado</span>
-                  <span className="font-bold text-success">
-                    {formatCurrency(estimatedReturn, baseProperty.currency)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Estado del pago</span>
-                  <Badge className="bg-success/10 text-success border-success/20" variant="outline">
-                    Confirmado
-                  </Badge>
-                </div>
-              </div>
-              <Button className="w-full rounded-xl" variant="outline">
-                Ver comprobante de pago
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
+          <PremiumReservationsPanel propertyId={id} />
           <AdminPropertyGallery images={baseProperty.images} title={baseProperty.title} />
-
           <Card className="rounded-2xl">
             <CardHeader>
               <CardTitle className="text-base">Descripción</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {baseProperty.description}
-              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">{premium?.description ?? baseProperty.description}</p>
             </CardContent>
           </Card>
         </div>
 
         <div className="space-y-4">
-          <Card className={cn(
-            "rounded-2xl overflow-hidden",
-            isAvailable && "border-premium/20"
-          )}>
-            <div className={cn(
-              "p-4",
-              isAvailable
-                ? "bg-gradient-to-br from-premium to-premium/80 text-premium-foreground"
-                : "bg-muted/30"
-            )}>
-              <p className={cn("text-xs mb-1", isAvailable ? "text-premium-foreground/80" : "text-muted-foreground")}>
-                ROI Premium
-              </p>
-              <p className="text-3xl font-bold">{baseProperty.premiumRoi}%</p>
-              <p className={cn("text-xs mt-1", isAvailable ? "text-premium-foreground/70" : "text-muted-foreground")}>
-                Estándar: {baseProperty.roi}%
-              </p>
-            </div>
-            <CardContent className="p-4 space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Valor total</span>
-                <span className="font-semibold">
-                  {formatCurrency(baseProperty.totalInvestment, baseProperty.currency)}
-                </span>
+          <Card className="rounded-2xl">
+            <CardContent className="space-y-3 p-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Capital requerido (100%)</p>
+                <p className="text-2xl font-bold tabular-nums">{formatCurrency(baseProperty.totalInvestment, baseProperty.currency)}</p>
               </div>
+              <Separator />
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Inversores</span>
-                <span className="font-semibold">
-                  {isCaught ? "1 (100%)" : "0"}
-                </span>
+                <span className="text-muted-foreground">Retorno neto estimado</span>
+                <span className="font-semibold">{premium?.roiBasis.netRoi ?? baseProperty.premiumRoi}%</span>
               </div>
-              {baseProperty.premiumDeadline && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Vence premium</span>
-                  <span>{formatDate(baseProperty.premiumDeadline.split("T")[0])}</span>
+              {deadline && (
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-muted-foreground">Cierre de ventana</span>
+                  <span className="text-right">{formatLimaDateTime(deadline)}</span>
                 </div>
               )}
               <Separator />
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Notificar Premium</span>
-                <Switch checked={baseProperty.notifyPremiumUsers} />
+                <span className="text-sm text-muted-foreground">Notificar a usuarios Premium</span>
+                <Switch defaultChecked={baseProperty.notifyPremiumUsers} aria-label="Notificar a usuarios Premium" />
               </div>
             </CardContent>
           </Card>
-
-          {isAvailable && pendingInvestments.length === 0 && (
-            <Card className="rounded-2xl border-premium/20 bg-premium/10">
-              <CardContent className="p-4">
-                <p className="text-sm font-semibold text-premium mb-2">Acciones disponibles</p>
-                <div className="flex flex-col gap-2">
-                  <Button className="rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground w-full">
-                    <Bell className="size-4 mr-2" />
-                    Enviar notificación Premium
-                  </Button>
-                  <Button variant="outline" className="rounded-xl w-full">
-                    Extender ventana premium
-                  </Button>
-                  <Button variant="outline" className="rounded-xl w-full text-destructive hover:text-destructive/90">
-                    Convertir a estándar ahora
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {isConverted && (
-            <Card className="rounded-2xl border-info/20 bg-info/10">
-              <CardContent className="p-4">
-                <p className="text-sm font-semibold text-info mb-1">Convertida a estándar</p>
-                <p className="text-xs text-info leading-relaxed">
-                  La ventana premium expiró sin inversor. La propiedad ahora está
-                  disponible en el mercado estándar con ROI del {baseProperty.roi}%.
-                </p>
-                <Button asChild variant="outline" className="rounded-xl w-full mt-3">
-                  <Link href={`/admin/properties/${baseProperty.id}`}>
-                    Ver en propiedades estándar
-                  </Link>
+          {availability?.kind === "available" && (
+            <Card className="rounded-2xl">
+              <CardContent className="space-y-2 p-4">
+                <p className="text-sm font-semibold">Ventana abierta</p>
+                <Button variant="outline" className="w-full rounded-xl">Extender ventana</Button>
+                <Button variant="outline" className="w-full rounded-xl text-destructive hover:text-destructive">
+                  Pasar a inversión colectiva
                 </Button>
               </CardContent>
             </Card>
           )}
         </div>
       </div>
-
-      {/* Reject investment dialog */}
-      <AlertDialog
-        open={!!rejectTarget}
-        onOpenChange={(open) => { if (!open) { setRejectTarget(null); setRejectReason(""); } }}
-      >
-        <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Rechazar inversión Premium</AlertDialogTitle>
-            <AlertDialogDescription>
-              La inversión de <strong>{rejectTarget?.userName}</strong> será rechazada y la
-              propiedad volverá a estar disponible para inversores Premium.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="pb-0">
-            <Input
-              placeholder="Motivo del rechazo..."
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              className="rounded-xl"
-            />
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              className="rounded-xl bg-destructive hover:bg-destructive/90"
-              disabled={!rejectReason.trim()}
-              onClick={handleRejectInvestment}
-            >
-              Rechazar inversión
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

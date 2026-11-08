@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHero } from "@/components/dashboard/PageHero";
+import { OperationDocuments } from "@/components/premium/OperationDocuments";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -39,7 +40,7 @@ const KIND_FILTERS: { value: DocumentKind | "all"; label: string }[] = [
 ];
 
 export default function DocumentsPage() {
-  const { user } = useCurrentUser();
+  const { user, isPremium } = useCurrentUser();
   const [docs, setDocs] = useState<UserDocument[]>([]);
   const [state, setState] = useState<LoadState>("loading");
   const [search, setSearch] = useState("");
@@ -147,6 +148,11 @@ export default function DocumentsPage() {
         </div>
       </div>
 
+      {isPremium && <OperationDocuments userId={user.id} query={search} />}
+
+      {isPremium && (
+        <h2 className="mb-3 px-1 text-sm font-semibold text-foreground">Subidos por ti</h2>
+      )}
       <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
         {state === "loading" ? (
           <LoadingRows />

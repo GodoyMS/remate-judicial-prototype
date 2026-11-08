@@ -1,25 +1,11 @@
-import type { PremiumProperty, PremiumInvestment, DashboardUser } from "./types";
-import {
-  getCreatedPremiumProperties,
-  getPremiumPropertyOverride,
-  getPendingInvestmentsForProperty,
-} from "@/lib/app-store";
+import type { PremiumProperty, DashboardUser } from "./types";
+import { getCreatedPremiumProperties } from "@/lib/app-store";
 import { adminPropertyToPremiumProperty } from "./convert";
+import { limaDateFromToday } from "./dates";
 
 export { getPremiumPropertyOverride } from "@/lib/app-store";
 
-export function isPropertyEffectivelyAvailable(propertyId: string): boolean {
-  // Check if overridden (admin set status)
-  const override = getPremiumPropertyOverride(propertyId);
-  if (override && override.premiumStatus !== "available") return false;
-  // Check if a pending investment exists (locked while under review)
-  const pending = getPendingInvestmentsForProperty(propertyId);
-  if (pending.some((i) => i.status === "pending_verification")) return false;
-  return true;
-}
-
 const PREMIUM_USER_ID = "premium-demo";
-const OTHER_PREMIUM_USER_ID = "u2";
 
 export const DEMO_USERS: Record<string, DashboardUser> = {
   "premium@rematto.com": {
@@ -55,8 +41,7 @@ export const premiumProperties: PremiumProperty[] = [
     area: "240 m²",
     district: "Chorrillos",
     region: "Lima",
-    description:
-      "Exclusivo penthouse con terraza de 80 m² y vista panorámica al Pacífico. Oportunidad premium: invierte el 100% y obtén retornos excepcionales antes de que pase al mercado estándar.",
+    description: "Penthouse de 240 m² con terraza de 80 m² y vista al Pacífico, en remate judicial con fecha confirmada. Durante la ventana Premium, un solo inversionista puede solicitar reservar el 100% del capital requerido.",
     img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&h=800&fit=crop",
@@ -67,20 +52,20 @@ export const premiumProperties: PremiumProperty[] = [
     totalValue: 890000,
     premiumRoi: 48,
     standardRoi: 22,
-    premiumDeadline: "2026-06-11T23:59:59",
-    premiumDeadlineDays: 3,
+    premiumDeadline: limaDateFromToday(2, 18),
+    premiumDeadlineDays: 0,
     status: "available",
     notifyPremiumUsers: true,
-    createdAt: "2026-06-05",
+    createdAt: limaDateFromToday(-5, 9),
     judicial: {
       expediente: "00721-2025-0-1801-JR-CI-04",
       juzgado: "4° Juzgado Civil de Lima",
       etapa: "Subasta convocada",
-      lastReviewedAt: "2026-06-04",
+      lastReviewedAt: limaDateFromToday(-4, 9),
       sourceUrl: "https://cej.pj.gob.pe/",
     },
     verification: {
-      verifiedAt: "2026-06-04",
+      verifiedAt: limaDateFromToday(-4, 9),
       scope: [
         "Partida registral y titularidad libre de cargas adicionales",
         "Estado del expediente en el Poder Judicial",
@@ -100,7 +85,7 @@ export const premiumProperties: PremiumProperty[] = [
         { label: "Plazo estimado de liquidación", value: "10 meses" },
       ],
       costs: [
-        { label: "Comisión Rematto", amount: 4450 },
+        { label: "Comisión Rematto (referencial)", amount: 4450 },
         { label: "Gastos notariales y registrales", amount: 8900 },
         { label: "Impuestos de transferencia", amount: 17800 },
       ],
@@ -121,8 +106,7 @@ export const premiumProperties: PremiumProperty[] = [
     area: "420 m²",
     district: "Asia",
     region: "Lima",
-    description:
-      "Villa frente al mar con piscina infinita y 5 suites. Esta propiedad premium fue capturada por un inversor exclusivo con inversión del 100%.",
+    description: "Villa frente al mar con piscina y 5 suites, adjudicada y en etapa de formalización. Requiere un único inversionista para el 100% del capital.",
     img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&h=800&fit=crop",
@@ -132,23 +116,20 @@ export const premiumProperties: PremiumProperty[] = [
     totalValue: 1450000,
     premiumRoi: 52,
     standardRoi: 24,
-    premiumDeadline: "2026-06-01T23:59:59",
+    premiumDeadline: limaDateFromToday(4, 18),
     premiumDeadlineDays: 0,
-    status: "caught",
-    caughtByUserId: OTHER_PREMIUM_USER_ID,
-    caughtByUserName: "María Vargas",
-    caughtAt: "2026-06-02T14:32:00",
+    status: "available",
     notifyPremiumUsers: true,
-    createdAt: "2026-05-28",
+    createdAt: limaDateFromToday(-3, 9),
     judicial: {
       expediente: "01893-2025-0-1801-JR-CI-06",
       juzgado: "6° Juzgado Civil de Lima",
       etapa: "Adjudicada, en formalización",
-      lastReviewedAt: "2026-06-02",
+      lastReviewedAt: limaDateFromToday(-4, 9),
       sourceUrl: "https://cej.pj.gob.pe/",
     },
     verification: {
-      verifiedAt: "2026-06-02",
+      verifiedAt: limaDateFromToday(-4, 9),
       scope: [
         "Partida registral y titularidad libre de cargas adicionales",
         "Estado del expediente en el Poder Judicial",
@@ -166,7 +147,7 @@ export const premiumProperties: PremiumProperty[] = [
         { label: "Plazo estimado de liquidación", value: "11 meses" },
       ],
       costs: [
-        { label: "Comisión Rematto", amount: 7250 },
+        { label: "Comisión Rematto (referencial)", amount: 7250 },
         { label: "Gastos notariales y registrales", amount: 14500 },
         { label: "Impuestos de transferencia", amount: 29000 },
       ],
@@ -187,8 +168,7 @@ export const premiumProperties: PremiumProperty[] = [
     area: "165 m²",
     district: "Barranco",
     region: "Lima",
-    description:
-      "Loft de diseño en zona bohemia con doble altura y acabados de autor. Capturado por ti con inversión exclusiva del 100%.",
+    description: "Loft de doble altura en zona bohemia, con expediente adjudicado y en formalización.",
     img: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&h=800&fit=crop",
@@ -198,23 +178,20 @@ export const premiumProperties: PremiumProperty[] = [
     totalValue: 520000,
     premiumRoi: 45,
     standardRoi: 20,
-    premiumDeadline: "2026-06-04T23:59:59",
+    premiumDeadline: limaDateFromToday(-49, 18),
     premiumDeadlineDays: 0,
-    status: "caught",
-    caughtByUserId: PREMIUM_USER_ID,
-    caughtByUserName: "Valentina Ríos",
-    caughtAt: "2026-06-03T09:15:00",
+    status: "available",
     notifyPremiumUsers: true,
-    createdAt: "2026-05-25",
+    createdAt: limaDateFromToday(-55, 9),
     judicial: {
       expediente: "00347-2025-0-1801-JR-CI-08",
       juzgado: "8° Juzgado Civil de Lima",
       etapa: "Adjudicada, en formalización",
-      lastReviewedAt: "2026-06-03",
+      lastReviewedAt: limaDateFromToday(-4, 9),
       sourceUrl: "https://cej.pj.gob.pe/",
     },
     verification: {
-      verifiedAt: "2026-06-03",
+      verifiedAt: limaDateFromToday(-4, 9),
       scope: [
         "Partida registral y titularidad libre de cargas adicionales",
         "Estado del expediente en el Poder Judicial",
@@ -232,7 +209,7 @@ export const premiumProperties: PremiumProperty[] = [
         { label: "Plazo estimado de liquidación", value: "9 meses" },
       ],
       costs: [
-        { label: "Comisión Rematto", amount: 2600 },
+        { label: "Comisión Rematto (referencial)", amount: 2600 },
         { label: "Gastos notariales y registrales", amount: 5200 },
         { label: "Impuestos de transferencia", amount: 10400 },
       ],
@@ -253,8 +230,7 @@ export const premiumProperties: PremiumProperty[] = [
     area: "128 m²",
     district: "San Borja",
     region: "Lima",
-    description:
-      "Departamento en piso alto con vista a la ciudad. Ventana premium abierta: sé el único inversor con retorno del 42% antes de apertura estándar.",
+    description: "Departamento en piso alto con vista a la ciudad, en remate judicial con fecha confirmada. Ventana Premium abierta para financiamiento individual del 100%.",
     img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=800&fit=crop",
@@ -264,20 +240,20 @@ export const premiumProperties: PremiumProperty[] = [
     totalValue: 380000,
     premiumRoi: 42,
     standardRoi: 19,
-    premiumDeadline: "2026-06-15T23:59:59",
-    premiumDeadlineDays: 7,
+    premiumDeadline: limaDateFromToday(6, 18),
+    premiumDeadlineDays: 0,
     status: "available",
     notifyPremiumUsers: true,
-    createdAt: "2026-06-01",
+    createdAt: limaDateFromToday(-1, 9),
     judicial: {
       expediente: "01204-2025-0-1801-JR-CI-11",
       juzgado: "11° Juzgado Civil de Lima",
       etapa: "Subasta convocada",
-      lastReviewedAt: "2026-06-01",
+      lastReviewedAt: limaDateFromToday(-4, 9),
       sourceUrl: "https://cej.pj.gob.pe/",
     },
     verification: {
-      verifiedAt: "2026-06-01",
+      verifiedAt: limaDateFromToday(-4, 9),
       scope: [
         "Partida registral y titularidad libre de cargas adicionales",
         "Estado del expediente en el Poder Judicial",
@@ -295,7 +271,7 @@ export const premiumProperties: PremiumProperty[] = [
         { label: "Plazo estimado de liquidación", value: "9 meses" },
       ],
       costs: [
-        { label: "Comisión Rematto", amount: 1900 },
+        { label: "Comisión Rematto (referencial)", amount: 1900 },
         { label: "Gastos notariales y registrales", amount: 3800 },
       ],
       grossRoi: 42,
@@ -315,8 +291,7 @@ export const premiumProperties: PremiumProperty[] = [
     area: "310 m²",
     district: "Punta Hermosa",
     region: "Lima",
-    description:
-      "Casa de playa con acceso directo al mar. El periodo premium expiró sin inversor — ahora disponible como propiedad estándar con ROI del 21%.",
+    description: "Casa de playa con acceso directo al mar. La ventana Premium finalizó y la oportunidad pasó a participación colectiva desde S/ 500.",
     img: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&h=400&fit=crop",
     images: [
       "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&h=800&fit=crop",
@@ -325,20 +300,20 @@ export const premiumProperties: PremiumProperty[] = [
     totalValue: 720000,
     premiumRoi: 46,
     standardRoi: 21,
-    premiumDeadline: "2026-05-30T23:59:59",
+    premiumDeadline: limaDateFromToday(-9, 18),
     premiumDeadlineDays: 0,
     status: "converted",
     notifyPremiumUsers: false,
-    createdAt: "2026-05-10",
+    createdAt: limaDateFromToday(-20, 9),
     judicial: {
       expediente: "00889-2024-0-1801-JR-CI-02",
       juzgado: "2° Juzgado Civil de Lima",
       etapa: "En comercialización",
-      lastReviewedAt: "2026-05-29",
+      lastReviewedAt: limaDateFromToday(-4, 9),
       sourceUrl: "https://cej.pj.gob.pe/",
     },
     verification: {
-      verifiedAt: "2026-05-29",
+      verifiedAt: limaDateFromToday(-4, 9),
       scope: [
         "Partida registral y titularidad libre de cargas adicionales",
         "Estado del expediente en el Poder Judicial",
@@ -353,7 +328,7 @@ export const premiumProperties: PremiumProperty[] = [
         { label: "Plazo estimado de liquidación", value: "12 meses" },
       ],
       costs: [
-        { label: "Comisión Rematto", amount: 3600 },
+        { label: "Comisión Rematto (referencial)", amount: 3600 },
         { label: "Gastos notariales y registrales", amount: 7200 },
       ],
       grossRoi: 21,
@@ -363,42 +338,107 @@ export const premiumProperties: PremiumProperty[] = [
       "Ventana Premium ya finalizada — ahora en participación colectiva",
     ],
   },
+  {
+    id: "pp-106",
+    name: "Oficina Corporativa — San Isidro",
+    address: "Av. Rivera Navarrete 765, piso 12, San Isidro",
+    type: "Oficina",
+    area: "310 m²",
+    district: "San Isidro",
+    region: "Lima",
+    description:
+      "Planta de oficinas de 310 m² con 6 estacionamientos en el centro financiero, en remate judicial con fecha confirmada.",
+    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&h=800&fit=crop",
+    ],
+    currency: "USD",
+    totalValue: 640000,
+    premiumRoi: 38,
+    standardRoi: 18,
+    premiumDeadline: limaDateFromToday(-3, 18),
+    premiumDeadlineDays: 0,
+    status: "available",
+    notifyPremiumUsers: true,
+    createdAt: limaDateFromToday(-8, 9),
+    judicial: {
+      expediente: "01188-2025-0-1801-JR-CI-09",
+      juzgado: "9° Juzgado Civil de Lima",
+      etapa: "Subasta convocada",
+      lastReviewedAt: limaDateFromToday(-4, 9),
+      sourceUrl: "https://cej.pj.gob.pe/",
+    },
+    verification: {
+      verifiedAt: limaDateFromToday(-4, 9),
+      scope: [
+        "Partida registral y titularidad libre de cargas adicionales",
+        "Estado del expediente en el Poder Judicial",
+        "Tasación pericial vigente",
+        "Deudas de mantenimiento y arbitrios",
+      ],
+      documents: [
+        { label: "Partida registral (SUNARP)", url: "#" },
+        { label: "Informe de tasación", url: "#" },
+      ],
+    },
+    roiBasis: {
+      assumptions: [
+        { label: "Tasación pericial", value: "US$ 720,000" },
+        { label: "Precio de salida en remate", value: "US$ 640,000" },
+        { label: "Plazo estimado de liquidación", value: "11 meses" },
+      ],
+      costs: [
+        { label: "Comisión Rematto (referencial)", amount: 3200 },
+        { label: "Gastos notariales y registrales", amount: 6400 },
+        { label: "Impuestos de transferencia", amount: 12800 },
+      ],
+      grossRoi: 38,
+      netRoi: 33,
+    },
+    premiumCriteria: [
+      "Capital requerido superior a US$ 500,000",
+      "Activo corporativo con demanda de alquiler comprobada en la zona",
+      "Expediente en etapa de subasta con fecha de remate confirmada",
+    ],
+  },
 ];
 
-export const premiumInvestments: PremiumInvestment[] = [
+
+/**
+ * Oportunidades Premium ya cerradas. No aparecen en el listado, pero el
+ * seguimiento de una operación liquidada necesita resolver su ficha.
+ */
+export const archivedPremiumProperties: PremiumProperty[] = [
   {
-    id: "pinv-001",
-    certificateId: "PREM-2026-000412",
-    propertyId: "pp-103",
-    userId: PREMIUM_USER_ID,
-    amount: 520000,
+    id: "pp-107",
+    name: "Casa de Campo — Cieneguilla",
+    address: "Av. Nueva Toledo 1240, Cieneguilla",
+    type: "Casa",
+    area: "1,200 m²",
+    district: "Cieneguilla",
+    region: "Lima",
+    description: "Casa de campo con terreno de 1,200 m². Operación Premium liquidada.",
+    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&h=400&fit=crop",
+    images: ["https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&h=800&fit=crop"],
     currency: "PEN",
-    premiumRoi: 45,
-    ownershipPercent: 100,
-    datePaid: "2026-06-03",
-    expectedRoiDate: "2027-06-03",
-    daysUntilRoi: 360,
-    status: "active",
-    paymentMethod: "Transferencia bancaria",
-    estimatedReturn: 234000,
-    isPremiumExclusive: true,
-  },
-  {
-    id: "pinv-002",
-    certificateId: "PREM-2026-000389",
-    propertyId: "pp-101",
-    userId: PREMIUM_USER_ID,
-    amount: 890000,
-    currency: "USD",
-    premiumRoi: 48,
-    ownershipPercent: 100,
-    datePaid: "2026-06-06",
-    expectedRoiDate: "2027-06-06",
-    daysUntilRoi: 363,
-    status: "pending",
-    paymentMethod: "Tarjeta débito / crédito",
-    estimatedReturn: 427200,
-    isPremiumExclusive: true,
+    totalValue: 410000,
+    premiumRoi: 18,
+    standardRoi: 12,
+    premiumDeadline: limaDateFromToday(-421, 18),
+    premiumDeadlineDays: 0,
+    status: "converted",
+    notifyPremiumUsers: false,
+    createdAt: limaDateFromToday(-430, 9),
+    judicial: {
+      expediente: "00412-2024-0-1801-JR-CI-03",
+      juzgado: "3° Juzgado Civil de Lima",
+      etapa: "Concluido",
+      lastReviewedAt: limaDateFromToday(-28, 9),
+    },
+    verification: { verifiedAt: limaDateFromToday(-425, 9), scope: [], documents: [] },
+    roiBasis: { assumptions: [], costs: [], grossRoi: 18, netRoi: 15 },
+    premiumCriteria: [],
   },
 ];
 
@@ -413,33 +453,8 @@ export function getAllPremiumProperties(): PremiumProperty[] {
 }
 
 export function getPremiumPropertyById(id: string): PremiumProperty | undefined {
-  return getAllPremiumProperties().find((p) => p.id === id);
-}
-
-export function getPremiumInvestmentsForUser(userId: string): PremiumInvestment[] {
-  return premiumInvestments.filter((i) => i.userId === userId);
-}
-
-export function isCaughtByUser(property: PremiumProperty, userId: string): boolean {
-  return property.status === "caught" && property.caughtByUserId === userId;
-}
-
-export function isCaughtByOther(property: PremiumProperty, userId: string): boolean {
-  return property.status === "caught" && property.caughtByUserId !== userId;
-}
-
-export function getPremiumCountdown(deadline: string): {
-  days: number;
-  hours: number;
-  minutes: number;
-  expired: boolean;
-} {
-  const diff = new Date(deadline).getTime() - Date.now();
-  if (diff <= 0) {
-    return { days: 0, hours: 0, minutes: 0, expired: true };
-  }
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  return { days, hours, minutes, expired: false };
+  return (
+    getAllPremiumProperties().find((p) => p.id === id) ??
+    archivedPremiumProperties.find((p) => p.id === id)
+  );
 }

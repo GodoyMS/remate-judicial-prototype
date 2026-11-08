@@ -1,4 +1,3 @@
-import type { PropertyCurrency } from "@/lib/currency";
 import type { AdminProperty, PremiumPropertyAdminStatus, UserTier } from "@/lib/admin/types";
 import { seedPremiumUpgradeRequests } from "@/lib/admin/premium-upgrade-mock-data";
 
@@ -18,32 +17,6 @@ export interface PremiumUpgradeRequest {
   resolvedAt?: string;
 }
 
-export interface PendingPremiumInvestment {
-  id: string;
-  certificateId: string;
-  propertyId: string;
-  propertyName: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  amount: number;
-  currency: PropertyCurrency;
-  premiumRoi: number;
-  estimatedReturn: number;
-  paymentMethod: "transfer" | "deposit";
-  submittedAt: string;
-  status: "pending_verification" | "approved" | "rejected";
-  // Transfer fields
-  transferNumber?: string;
-  originAccountNumber?: string;
-  // Deposit fields
-  voucherNumber?: string;
-  voucherDate?: string;
-  operationNumber?: string;
-  rejectionReason?: string;
-  resolvedAt?: string;
-}
-
 export interface PremiumPropertyOverride {
   propertyId: string;
   premiumStatus: PremiumPropertyAdminStatus;
@@ -55,7 +28,6 @@ export interface PremiumPropertyOverride {
 // ─── Storage Keys ─────────────────────────────────────────────────────────────
 
 const UPGRADE_REQUESTS_KEY = "rematto-upgrade-requests-v1";
-const PENDING_INVESTMENTS_KEY = "rematto-pending-premium-investments-v1";
 const PROPERTY_OVERRIDES_KEY = "rematto-premium-property-overrides-v1";
 const TIER_OVERRIDES_KEY = "rematto-tier-overrides-v1";
 const CREATED_PREMIUM_PROPERTIES_KEY = "rematto-created-premium-properties-v1";
@@ -149,50 +121,6 @@ export function getUpgradeRequestForUser(
     if (priorityDiff !== 0) return priorityDiff;
     return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
   })[0];
-}
-
-// ─── Pending Premium Investments ──────────────────────────────────────────────
-
-export function getPendingPremiumInvestments(): PendingPremiumInvestment[] {
-  return readJson<PendingPremiumInvestment[]>(PENDING_INVESTMENTS_KEY, []);
-}
-
-export function savePendingPremiumInvestment(
-  inv: PendingPremiumInvestment
-): void {
-  const all = getPendingPremiumInvestments();
-  const idx = all.findIndex((i) => i.id === inv.id);
-  if (idx >= 0) {
-    all[idx] = inv;
-  } else {
-    all.unshift(inv);
-  }
-  writeJson(PENDING_INVESTMENTS_KEY, all);
-}
-
-export function updatePendingPremiumInvestment(
-  id: string,
-  updates: Partial<PendingPremiumInvestment>
-): void {
-  const all = getPendingPremiumInvestments();
-  writeJson(
-    PENDING_INVESTMENTS_KEY,
-    all.map((i) => (i.id === id ? { ...i, ...updates } : i))
-  );
-}
-
-export function getPendingInvestmentsForProperty(
-  propertyId: string
-): PendingPremiumInvestment[] {
-  return getPendingPremiumInvestments().filter(
-    (i) => i.propertyId === propertyId
-  );
-}
-
-export function getPendingInvestmentsForUser(
-  userId: string
-): PendingPremiumInvestment[] {
-  return getPendingPremiumInvestments().filter((i) => i.userId === userId);
 }
 
 // ─── Premium Property Overrides ───────────────────────────────────────────────

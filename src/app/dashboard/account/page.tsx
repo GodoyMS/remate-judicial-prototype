@@ -1,8 +1,8 @@
 "use client";
 
 import { PageHero } from "@/components/dashboard/PageHero";
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   User,
@@ -17,14 +17,10 @@ import {
   EyeOff,
   LogOut,
   Crown,
-  Sparkles,
-  Clock,
-  XCircle,
-  RefreshCw,
   UserCog,
 } from "lucide-react";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
-import { PremiumUpgradeDialog } from "@/components/dashboard/PremiumUpgradeDialog";
+import { PremiumAccessSection } from "@/components/premium/PremiumAccessSection";
 import { useCurrentUser } from "@/contexts/user-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,18 +46,19 @@ export default function AccountPage() {
 
 function AccountPageContent() {
   const searchParams = useSearchParams();
-  const { user, isPremium, upgradeRequest, refreshUpgradeRequest } = useCurrentUser();
-  const [activeSection, setActiveSection] = useState("profile");
+  const router = useRouter();
+  const { user, isPremium } = useCurrentUser();
+  // La sección vive en la URL: los enlaces "Completar verificación" y
+  // "Conocer Premium" abren directamente la sección correcta.
+  const requestedSection = searchParams.get("section");
+  const activeSection =
+    requestedSection && VALID_SECTIONS.includes(requestedSection as (typeof VALID_SECTIONS)[number])
+      ? requestedSection
+      : "profile";
+  const setActiveSection = (section: string) =>
+    router.replace(section === "profile" ? "/dashboard/account" : `/dashboard/account?section=${section}`, { scroll: false });
   const [showPassword, setShowPassword] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
-
-  useEffect(() => {
-    const section = searchParams.get("section");
-    if (section && VALID_SECTIONS.includes(section as (typeof VALID_SECTIONS)[number])) {
-      setActiveSection(section);
-    }
-  }, [searchParams]);
 
   const handleSave = () => {
     setSaved(true);
@@ -238,156 +235,7 @@ function AccountPageContent() {
               </div>
             )}
 
-            {activeSection === "premium" && (
-              <div className="rounded-2xl border border-border/60 bg-card shadow-sm p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-base font-semibold text-foreground">Acceso Premium</h3>
-                  {isPremium ? (
-                    <PremiumBadge size="md" />
-                  ) : (
-                    <span className="text-xs font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
-                      Cuenta Estándar
-                    </span>
-                  )}
-                </div>
-
-                {isPremium ? (
-                  <div className="space-y-6">
-                    <div className="rounded-2xl border border-premium/20 bg-gradient-to-br from-premium/10 to-white p-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="size-12 rounded-xl bg-gradient-to-br from-premium to-premium/80 flex items-center justify-center">
-                          <Crown className="size-6 text-premium-foreground" />
-                        </div>
-                        <div>
-                          <p className="text-lg font-bold text-foreground">Acceso Premium activo</p>
-                          <p className="text-sm text-muted-foreground">Acceso completo a inversiones exclusivas</p>
-                        </div>
-                      </div>
-                      <ul className="grid sm:grid-cols-2 gap-3">
-                        {[
-                          "Financia individualmente el 100% del capital requerido",
-                          "Ventana de exclusividad antes de la apertura",
-                          "Acceso anticipado exclusivo",
-                          "Comisión reducida 0.5%",
-                          "Soporte prioritario 24/7",
-                          "Notificaciones en tiempo real",
-                        ].map((benefit) => (
-                          <li key={benefit} className="flex items-center gap-2 text-sm text-foreground">
-                            <Sparkles className="size-3.5 text-premium shrink-0" />
-                            {benefit}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="grid sm:grid-cols-3 gap-3">
-                      <div className="rounded-xl border p-4 text-center">
-                        <p className="text-2xl font-bold text-foreground">{user.premiumInvestments}</p>
-                        <p className="text-xs text-muted-foreground mt-1">Inversiones Premium</p>
-                      </div>
-                      <div className="rounded-xl border p-4 text-center">
-                        <p className="text-2xl font-bold text-foreground">0.5%</p>
-                        <p className="text-xs text-muted-foreground mt-1">Comisión</p>
-                      </div>
-                      <div className="rounded-xl border p-4 text-center">
-                        <p className="text-2xl font-bold text-foreground">48%</p>
-                        <p className="text-xs text-muted-foreground mt-1">ROI máximo</p>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {/* Pending request state */}
-                    {upgradeRequest?.status === "pending" && (
-                      <div className="rounded-2xl border border-warning/20 bg-warning/10 p-5">
-                        <div className="flex items-start gap-3">
-                          <div className="size-9 rounded-lg bg-warning/15 flex items-center justify-center shrink-0 mt-0.5">
-                            <Clock className="size-4 text-warning" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-warning">Solicitud enviada — en revisión</p>
-                            <p className="text-xs text-warning mt-1">
-                              Tu solicitud de upgrade a Premium está siendo revisada. Tiempo estimado: 1-2 días hábiles.
-                            </p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            className="text-warning hover:text-warning hover:bg-warning/15 rounded-lg shrink-0"
-                            onClick={refreshUpgradeRequest}
-                          >
-                            <RefreshCw className="size-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Rejected state */}
-                    {upgradeRequest?.status === "rejected" && (
-                      <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-5">
-                        <div className="flex items-start gap-3">
-                          <div className="size-9 rounded-lg bg-destructive/15 flex items-center justify-center shrink-0 mt-0.5">
-                            <XCircle className="size-4 text-destructive" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-destructive">Solicitud rechazada</p>
-                            {upgradeRequest.rejectionReason && (
-                              <p className="text-xs text-destructive mt-1">{upgradeRequest.rejectionReason}</p>
-                            )}
-                            <p className="text-xs text-destructive mt-2">
-                              Puedes volver a enviar una solicitud o contactar a soporte.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* CTA when no pending/rejected request */}
-                    {(!upgradeRequest || upgradeRequest.status === "rejected") && (
-                      <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-                        <Crown className="size-12 mx-auto mb-4 text-premium" />
-                        <h4 className="text-lg font-bold mb-2">Actualiza a Premium</h4>
-                        <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
-                          Accede a propiedades exclusivas, captura inversiones al 100%
-                          y obtén retornos excepcionales antes del mercado estándar.
-                        </p>
-                        <Button
-                          onClick={() => setUpgradeDialogOpen(true)}
-                          className="rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold"
-                        >
-                          <Crown className="size-4 mr-2" />
-                          {upgradeRequest?.status === "rejected" ? "Volver a solicitar upgrade" : "Solicitar upgrade Premium"}
-                        </Button>
-                      </div>
-                    )}
-
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="rounded-xl border p-4">
-                        <p className="text-xs font-semibold text-muted-foreground uppercase mb-3">Cuenta Estándar</p>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                          <li>• Acceso a subastas publicadas</li>
-                          <li>• Dashboard de inversiones</li>
-                          <li>• Comisión 1.5%</li>
-                        </ul>
-                      </div>
-                      <div className="rounded-xl border border-premium/20 bg-premium/5 p-4">
-                        <p className="text-xs font-semibold text-premium uppercase mb-3">Acceso Premium</p>
-                        <ul className="space-y-2 text-sm text-foreground">
-                          <li>• Financia el 100% de forma individual</li>
-                          <li>• Ventana de exclusividad</li>
-                          <li>• Comisión 0.5%</li>
-                        </ul>
-                      </div>
-                    </div>
-
-                    <PremiumUpgradeDialog
-                      open={upgradeDialogOpen}
-                      onOpenChange={setUpgradeDialogOpen}
-                      onRequested={refreshUpgradeRequest}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
+            {activeSection === "premium" && <PremiumAccessSection />}
 
             {activeSection === "security" && (
               <div className="rounded-2xl border border-border/60 bg-card shadow-sm p-6">

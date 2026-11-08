@@ -25,7 +25,8 @@ function getInitialNotifications(): AppNotification[] {
   return INITIAL_NOTIFICATIONS;
 }
 
-const STORAGE_KEY = "rematto-notifications-v1";
+// v2: notificaciones Premium con vocabulario de reserva, grupo y CTA.
+const STORAGE_KEY = "rematto-notifications-v2";
 
 interface NotificationsContextValue {
   notifications: AppNotification[];

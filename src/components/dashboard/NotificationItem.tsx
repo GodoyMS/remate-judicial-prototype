@@ -90,7 +90,7 @@ export function NotificationItem({
               {notification.title}
             </p>
             {isUnread && (
-              <span className="size-2 rounded-full bg-primary shrink-0 animate-pulse" />
+              <span className="size-2 rounded-full bg-primary shrink-0" aria-label="Sin leer" />
             )}
           </div>
           {notification.highlight && (
@@ -126,14 +126,22 @@ export function NotificationItem({
               {meta.label}
             </span>
             <span className="text-[10px] text-muted-foreground/60">·</span>
-            <span className="text-[10px] text-muted-foreground">
+            <span className="whitespace-nowrap text-[10px] text-muted-foreground">
               {notification.timeAgo}
             </span>
           </div>
 
+          <div className="flex items-center gap-1">
+          {notification.cta && notification.href && !compact && (
+            <span className="inline-flex items-center rounded-lg bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground">
+              {notification.cta}
+            </span>
+          )}
+
           {showMarkAction && onMarkRead && (
             <button
               type="button"
+              aria-label={isUnread ? "Marcar como leída" : "Marcar como no leída"}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -149,16 +157,17 @@ export function NotificationItem({
               {isUnread ? (
                 <>
                   <Check className="size-3" />
-                  Marcar leída
+                  <span className="hidden sm:inline">Marcar leída</span>
                 </>
               ) : (
                 <>
                   <Circle className="size-3" />
-                  No leída
+                  <span className="hidden sm:inline">No leída</span>
                 </>
               )}
             </button>
           )}
+          </div>
         </div>
       </div>
     </div>

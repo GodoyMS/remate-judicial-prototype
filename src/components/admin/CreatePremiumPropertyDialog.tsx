@@ -201,7 +201,7 @@ export function CreatePremiumPropertyDialog({
             Nueva propiedad Premium
           </DialogTitle>
           <DialogDescription>
-            Crea una ventana exclusiva para inversores Premium con captura al 100%.
+            Crea una ventana exclusiva para inversores Premium para financiamiento individual del 100%.
           </DialogDescription>
         </DialogHeader>
 

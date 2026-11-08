@@ -1,28 +1,21 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
+  AlertTriangle,
   ArrowLeft,
-  MapPin,
-  TrendingUp,
-  Crown,
-  CheckCircle2,
-  XCircle,
-  Lock,
   ArrowRight,
-  Shield,
-  Percent,
-  Calendar,
-  User,
-  Phone,
+  BadgeCheck,
+  ExternalLink,
+  FileText,
+  Footprints,
+  LineChart,
+  MapPin,
+  ScrollText,
+  ShieldCheck,
 } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   Carousel,
   CarouselContent,
@@ -31,375 +24,384 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
-import { OpportunityEvidence, RoiBreakdown } from "@/components/dashboard/OpportunityEvidence";
-import { PremiumCountdown } from "@/components/dashboard/PremiumCountdown";
-import { PremiumExclusiveBadge, PremiumBadge } from "@/components/dashboard/PremiumBadge";
-import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
+import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
+import { DetailSection } from "@/components/premium/DetailSection";
+import { ReservationPanel, primaryAction } from "@/components/premium/ReservationPanel";
+import { AdvisorDialog } from "@/components/premium/AdvisorDialog";
 import { useCurrentUser } from "@/contexts/user-context";
-import {
-  getPremiumPropertyById,
-  isCaughtByUser,
-  isCaughtByOther,
-} from "@/lib/premium/mock-data";
-import { formatCurrency } from "@/lib/dashboard/mock-data";
+import { getPremiumPropertyById } from "@/lib/premium/mock-data";
+import { getAvailability } from "@/lib/premium/availability";
+import { OPERATION_STAGES, useReservations } from "@/lib/premium/reservations";
+import { getEstimatedTerm, getPremiumScenarios } from "@/lib/premium/scenarios";
+import { formatLimaDate } from "@/lib/premium/dates";
+import { formatCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
-export default function PremiumPropertyDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+const RISKS = [
+  "El retorno es una estimación y no está garantizado.",
+  "El plazo depende del proceso judicial y puede extenderse.",
+  "La venta puede cerrar por debajo de lo estimado (escenario adverso).",
+  "La liquidez no es inmediata: el capital queda comprometido hasta la liquidación.",
+  "Invertir el 100% no equivale a adquirir la propiedad registral de forma automática.",
+];
+
+export default function PremiumPropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const property = getPremiumPropertyById(id);
   const { user, isPremium } = useCurrentUser();
+  const reservations = useReservations();
+  const [advisorOpen, setAdvisorOpen] = useState(false);
+  const [scenariosOpen, setScenariosOpen] = useState<boolean | undefined>(undefined);
+  const [ctaVisible, setCtaVisible] = useState(true);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  // Barra fija en móvil: solo cuando el CTA del panel sale de la vista.
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setCtaVisible(e.isIntersecting), { threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [property?.id]);
 
   if (!property) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <p className="text-lg font-semibold">Propiedad no encontrada</p>
-        <Button asChild variant="link" className="mt-2">
-          <Link href="/dashboard/premium-properties">Volver</Link>
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <p className="text-lg font-semibold">Oportunidad no encontrada</p>
+        <p className="mt-1 text-sm text-muted-foreground">Puede que la ventana haya cerrado o que el enlace sea incorrecto.</p>
+        <Button asChild variant="outline" className="mt-5 rounded-xl">
+          <Link href="/dashboard/premium-properties">Ver oportunidades Premium</Link>
         </Button>
       </div>
     );
   }
 
-  const caughtByMe = isCaughtByUser(property, user.id);
-  const caughtByOther = isCaughtByOther(property, user.id);
-  const isAvailable = property.status === "available";
-  const isConverted = property.status === "converted" || property.status === "expired";
-  const estimatedReturn = (property.totalValue * property.premiumRoi) / 100;
-  const roiDiff = property.premiumRoi - property.standardRoi;
+  const availability = getAvailability(property, reservations, user.id);
+  const scenarios = getPremiumScenarios(property);
+  const term = getEstimatedTerm(property);
+  const totalCosts = property.roiBasis.costs.reduce((s, c) => s + c.amount, 0);
+  const action = primaryAction(property, availability, isPremium);
+  const hidden = availability.kind === "taken";
+
+  const showScenarios = () => {
+    setScenariosOpen(true);
+    requestAnimationFrame(() =>
+      document.getElementById("escenarios")?.scrollIntoView({ behavior: "smooth", block: "start" })
+    );
+  };
+
+  if (hidden) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <p className="text-lg font-semibold">Esta oportunidad ya no está disponible</p>
+        <p className="mt-1 max-w-sm text-sm text-muted-foreground">Otro inversionista completó su aporte. Te avisaremos cuando se abra una nueva ventana.</p>
+        <Button asChild variant="outline" className="mt-5 rounded-xl">
+          <Link href="/dashboard/premium-properties?filter=available">Ver oportunidades disponibles</Link>
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full">
-      <div className="flex items-center gap-3 mb-6">
-        <Button asChild variant="ghost" size="icon-sm" className="rounded-xl shrink-0">
-          <Link href="/dashboard/premium-properties">
-            <ArrowLeft className="size-4" />
-          </Link>
-        </Button>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="text-xl font-bold truncate">{property.name}</h2>
-            <PremiumExclusiveBadge />
-            {caughtByMe && (
-              <Badge className="bg-success text-success-foreground text-[10px]">
-                <CheckCircle2 className="size-3 mr-1" />
-                Capturada por ti
-              </Badge>
-            )}
-            {caughtByOther && (
-              <Badge variant="secondary" className="text-[10px]">
-                <XCircle className="size-3 mr-1" />
-                Ya capturada
-              </Badge>
-            )}
-            <CurrencyBadge currency={property.currency} />
+    <div className={cn("w-full", action && "pb-24 lg:pb-0")}>
+      <Link
+        href="/dashboard/premium-properties"
+        className="mb-4 inline-flex items-center gap-1.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" />
+        Oportunidades Premium
+      </Link>
+
+      <header className="mb-6">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <PremiumBadge size="md" />
+          <CurrencyBadge currency={property.currency} />
+        </div>
+        <h1 className="text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl text-balance">
+          {property.name}
+        </h1>
+        <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+          <MapPin className="size-3.5 shrink-0" />
+          <span className="truncate">{property.address}</span>
+        </p>
+      </header>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="flex min-w-0 flex-col gap-4">
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-sm">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {property.images.map((img, i) => (
+                  <CarouselItem key={img}>
+                    <div className="relative aspect-[16/10]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img} alt={`${property.name}, foto ${i + 1}`} className="size-full object-cover" />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {property.images.length > 1 && (
+                <>
+                  <CarouselPrevious className="left-3 border-0 bg-card/90 shadow-md hover:bg-card" />
+                  <CarouselNext className="right-3 border-0 bg-card/90 shadow-md hover:bg-card" />
+                </>
+              )}
+            </Carousel>
           </div>
-          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
-            <MapPin className="size-3 shrink-0" />
-            <span className="truncate">{property.address}</span>
-          </p>
-        </div>
-      </div>
 
-      {!isPremium && (
-        <div className="mb-6">
-          <PremiumUpgradeBanner />
-        </div>
-      )}
+          {/* En móvil el panel de decisión va justo después de la foto */}
+          <div className="lg:hidden">
+            <ReservationPanel
+              property={property}
+              availability={availability}
+              isPremium={isPremium}
+              onOpenAdvisor={() => setAdvisorOpen(true)}
+              onShowScenarios={showScenarios}
+              ctaRef={ctaRef}
+            />
+          </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-card shadow-sm">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {property.images.map((img, i) => (
-                    <CarouselItem key={i}>
-                      <div className="relative aspect-[16/10]">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={img}
-                          alt={`${property.name} ${i + 1}`}
-                          className={cn(
-                            "w-full h-full object-cover",
-                            !isPremium && "blur-sm"
-                          )}
-                        />
-                        {!isPremium && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                            <div className="text-center text-white">
-                              <Lock className="size-10 mx-auto mb-2" />
-                              <p className="text-sm font-semibold">Contenido Premium</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-3 bg-card/90 hover:bg-card border-0 shadow-md" />
-                <CarouselNext className="right-3 bg-card/90 hover:bg-card border-0 shadow-md" />
-              </Carousel>
-            </div>
-          </motion.div>
+          <DetailSection
+            title="Resumen de la oportunidad"
+            icon={ScrollText}
+            summary={`${property.type} · ${property.area} · ${property.judicial.etapa}`}
+            defaultOpenMobile
+          >
+            <p className="text-sm leading-relaxed text-muted-foreground">{property.description}</p>
+            <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm sm:grid-cols-3">
+              <Fact label="Tipo" value={property.type} />
+              <Fact label="Área" value={property.area} />
+              <Fact label="Distrito" value={property.district} />
+              <Fact label="Etapa judicial" value={property.judicial.etapa} />
+              {term && isPremium && <Fact label="Plazo estimado" value={term} />}
+              <Fact label="Publicada" value={formatLimaDate(property.createdAt)} />
+            </dl>
+          </DetailSection>
 
-          <Card className="rounded-2xl border-border/60">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Descripción</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {isPremium ? property.description : "Actualiza a Premium para ver el análisis completo de esta propiedad exclusiva."}
-              </p>
-            </CardContent>
-          </Card>
+          <DetailSection
+            title="¿Por qué es Premium?"
+            icon={BadgeCheck}
+            summary={`${property.premiumCriteria.length} criterios verificables`}
+            locked={!isPremium}
+          >
+            <ul className="space-y-2">
+              {property.premiumCriteria.map((c) => (
+                <li key={c} className="flex items-start gap-2.5 text-sm text-foreground">
+                  <BadgeCheck className="mt-0.5 size-4 shrink-0 text-primary dark:text-accent-foreground" />
+                  {c}
+                </li>
+              ))}
+            </ul>
+          </DetailSection>
 
-          {isPremium && property.premiumCriteria.length > 0 && (
-            <Card className="rounded-2xl border-border/60">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">¿Por qué esta oportunidad es Premium?</CardTitle>
-              </CardHeader>
-              <CardContent>
+          <DetailSection
+            title="Expediente y documentos"
+            icon={ShieldCheck}
+            summary={`Exp. ${property.judicial.expediente} · ${property.verification.documents.length} documentos`}
+            locked={!isPremium}
+          >
+            <dl className="grid gap-x-4 gap-y-3 text-sm sm:grid-cols-2">
+              <Fact label="N.º de expediente" value={property.judicial.expediente} mono />
+              <Fact label="Juzgado" value={property.judicial.juzgado} />
+              <Fact label="Etapa actual" value={property.judicial.etapa} />
+              <Fact label="Revisado por Rematto" value={formatLimaDate(property.verification.verifiedAt)} />
+            </dl>
+            {property.verification.scope.length > 0 && (
+              <>
+                <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Qué se revisó</p>
                 <ul className="space-y-1.5">
-                  {property.premiumCriteria.map((c) => (
-                    <li key={c} className="flex items-start gap-2 text-sm text-foreground">
-                      <CheckCircle2 className="size-3.5 text-premium shrink-0 mt-0.5" />
-                      {c}
+                  {property.verification.scope.map((s) => (
+                    <li key={s} className="flex items-start gap-2 text-sm text-foreground">
+                      <ShieldCheck className="mt-0.5 size-4 shrink-0 text-success" />
+                      {s}
                     </li>
                   ))}
                 </ul>
-              </CardContent>
-            </Card>
-          )}
+              </>
+            )}
+            {property.verification.documents.length > 0 && (
+              <>
+                <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Documentos</p>
+                <ul className="divide-y divide-border/60 rounded-xl border border-border/60">
+                  {property.verification.documents.map((d) => (
+                    <li key={d.label}>
+                      <a href={d.url} className="flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-muted/50">
+                        <FileText className="size-4 shrink-0 text-muted-foreground" />
+                        <span className="flex-1">{d.label}</span>
+                        <span className="text-xs font-medium text-primary">Ver</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {property.judicial.sourceUrl && (
+              <a
+                href={property.judicial.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+              >
+                Consultar el expediente en el Poder Judicial
+                <ExternalLink className="size-3.5" />
+              </a>
+            )}
+          </DetailSection>
 
-          {isPremium && (
-            <OpportunityEvidence judicial={property.judicial} verification={property.verification} />
-          )}
+          <DetailSection
+            id="escenarios"
+            title="Escenarios y costos"
+            icon={LineChart}
+            summary={`Esperado ${property.roiBasis.netRoi}% neto · adverso ${scenarios[0].netRoi}%`}
+            locked={!isPremium}
+            open={scenariosOpen}
+            onOpenChange={setScenariosOpen}
+          >
+            <div className="grid gap-2 sm:grid-cols-3">
+              {scenarios.map((s) => (
+                <div
+                  key={s.id}
+                  className={cn(
+                    "rounded-xl border p-3",
+                    s.tone === "base" ? "border-primary/30 bg-primary/5" : "border-border/60 bg-muted/40"
+                  )}
+                >
+                  <p className="text-xs font-semibold text-foreground">{s.label}</p>
+                  <p
+                    className={cn(
+                      "mt-1 text-xl font-bold tabular-nums",
+                      s.netRoi < 0 ? "text-destructive" : "text-foreground"
+                    )}
+                  >
+                    {s.netRoi > 0 ? "+" : ""}
+                    {s.netRoi}%
+                  </p>
+                  <p className="text-xs tabular-nums text-muted-foreground">
+                    {s.netGain >= 0 ? "Ganancia" : "Pérdida"} neta: {formatCurrency(Math.abs(s.netGain), property.currency)}
+                  </p>
+                  <p className="mt-2 text-xs leading-snug text-muted-foreground">{s.caption}</p>
+                </div>
+              ))}
+            </div>
 
-          {caughtByMe && isPremium && (
-            <Card className="rounded-2xl border-premium/20 bg-gradient-to-br from-premium/10 to-card">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Crown className="size-4 text-premium" />
-                  Tu inversión exclusiva
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="rounded-xl bg-card border border-premium/15 p-4">
-                    <p className="text-xs text-muted-foreground">Inversión total</p>
-                    <p className="text-xl font-bold text-foreground mt-1">
-                      {formatCurrency(property.totalValue, property.currency)}
-                    </p>
-                    <p className="text-[10px] text-premium mt-1">100% de la propiedad</p>
+            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Supuestos</p>
+                <dl className="space-y-1.5 text-sm">
+                  {property.roiBasis.assumptions.map((a) => (
+                    <div key={a.label} className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">{a.label}</dt>
+                      <dd className="text-right font-medium tabular-nums">{a.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Costos estimados</p>
+                <dl className="space-y-1.5 text-sm">
+                  {property.roiBasis.costs.map((c) => (
+                    <div key={c.label} className="flex justify-between gap-3">
+                      <dt className="text-muted-foreground">{c.label}</dt>
+                      <dd className="text-right font-medium tabular-nums">{formatCurrency(c.amount, property.currency)}</dd>
+                    </div>
+                  ))}
+                  <div className="flex justify-between gap-3 border-t border-border/60 pt-1.5">
+                    <dt className="font-medium text-foreground">Total</dt>
+                    <dd className="text-right font-semibold tabular-nums">{formatCurrency(totalCosts, property.currency)}</dd>
                   </div>
-                  <div className="rounded-xl bg-success/10 border border-success/20 p-4">
-                    <p className="text-xs text-success">Retorno estimado</p>
-                    <p className="text-xl font-bold text-success mt-1">
-                      {formatCurrency(estimatedReturn, property.currency)}
-                    </p>
-                    <p className="text-[10px] text-success mt-1">ROI {property.premiumRoi}%</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Calendar className="size-3.5" />
-                  Capturada el {new Date(property.caughtAt!).toLocaleDateString("es-PE", { day: "numeric", month: "long", year: "numeric" })}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                </dl>
+              </div>
+            </div>
+            <p className="mt-4 text-xs text-muted-foreground">
+              Retorno bruto {property.roiBasis.grossRoi}% · neto {property.roiBasis.netRoi}% en el escenario esperado, sobre la operación completa. Estimaciones de referencia, no promesas.
+            </p>
+          </DetailSection>
 
-          {caughtByOther && isPremium && (
-            <Card className="rounded-2xl border-border/60 bg-muted/30">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                    <User className="size-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">Propiedad ya capturada</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Otro inversionista Premium financió el 100% el{" "}
-                      {new Date(property.caughtAt!).toLocaleDateString("es-PE")}.
-                      Esta oportunidad ya no está disponible.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <DetailSection
+            title="Qué hace Rematto después de tu aporte"
+            icon={Footprints}
+            summary="Subasta, adjudicación, formalización y salida"
+            locked={!isPremium}
+          >
+            <ol className="relative space-y-4 border-l border-border pl-5">
+              {OPERATION_STAGES.map((s, i) => (
+                <li key={s.id} className="relative">
+                  <span className="absolute -left-[29px] flex size-5 items-center justify-center rounded-full bg-card text-[11px] font-bold text-foreground ring-1 ring-border">
+                    {i + 1}
+                  </span>
+                  <p className="text-sm font-semibold text-foreground">{s.label}</p>
+                  <p className="text-sm text-muted-foreground">{s.description}</p>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-4 rounded-xl bg-muted/50 p-3 text-sm text-muted-foreground">
+              Te notificamos cada hito, publicamos cada documento en tu seguimiento y tienes una asesora asignada durante toda la operación.
+            </p>
+          </DetailSection>
+
+          <DetailSection title="Riesgos" icon={AlertTriangle} summary="Lee esto antes de solicitar la reserva" locked={!isPremium}>
+            <ul className="space-y-2">
+              {RISKS.map((r) => (
+                <li key={r} className="flex items-start gap-2.5 text-sm text-foreground">
+                  <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-muted-foreground/60" />
+                  {r}
+                </li>
+              ))}
+            </ul>
+            <Link href="/politica-de-riesgos" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+              Ver política de riesgos completa
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </DetailSection>
         </div>
 
-        <div className="space-y-4">
-          <Card className={cn(
-            "rounded-2xl overflow-hidden",
-            isAvailable && isPremium
-              ? "border-premium/20 ring-1 ring-premium/15"
-              : "border-border/60"
-          )}>
-            <div className={cn(
-              "p-4",
-              isAvailable && isPremium
-                ? "bg-gradient-to-br from-premium to-premium/80 text-premium-foreground"
-                : "bg-muted/30"
-            )}>
-              {/* Jerarquía financiera (P-006): capital requerido manda sobre ROI y ganancia */}
-              <p className={cn("text-xs font-medium mb-1", isAvailable && isPremium ? "text-premium-foreground/80" : "text-muted-foreground")}>
-                Capital requerido
-              </p>
-              <p className="text-3xl font-bold">{formatCurrency(property.totalValue, property.currency)}</p>
-              <p className={cn("text-xs mt-1", isAvailable && isPremium ? "text-premium-foreground/70" : "text-muted-foreground")}>
-                Financiado por un solo inversionista (100%)
+        <aside className="hidden lg:block">
+          <div className="sticky top-24">
+            <ReservationPanel
+              property={property}
+              availability={availability}
+              isPremium={isPremium}
+              onOpenAdvisor={() => setAdvisorOpen(true)}
+              onShowScenarios={showScenarios}
+            />
+          </div>
+        </aside>
+      </div>
+
+      {/* Barra de acción fija en móvil (aparece cuando el CTA del panel sale de vista) */}
+      {action && (
+        <div
+          className={cn(
+            "fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-card/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.18)] backdrop-blur-md transition-transform duration-300 lg:hidden",
+            ctaVisible ? "translate-y-full" : "translate-y-0"
+          )}
+          aria-hidden={ctaVisible}
+          inert={ctaVisible ? true : undefined}
+        >
+          <div className="mx-auto flex max-w-xl items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] text-muted-foreground">Capital requerido</p>
+              <p className="truncate text-base font-bold tabular-nums text-foreground">
+                {formatCurrency(property.totalValue, property.currency)}
               </p>
             </div>
-            <CardContent className="p-4 space-y-4">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <Percent className="size-3.5" />
-                    Retorno estimado base
-                  </span>
-                  <span className="font-semibold text-premium">
-                    {property.premiumRoi}%
-                    <span className="text-[10px] text-muted-foreground font-normal ml-1">
-                      (+{roiDiff}% vs. estándar)
-                    </span>
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <TrendingUp className="size-3.5" />
-                    Ganancia estimada
-                  </span>
-                  <span className="font-bold text-success">
-                    {formatCurrency(estimatedReturn, property.currency)}
-                  </span>
-                </div>
-                <RoiBreakdown
-                  roiBasis={property.roiBasis}
-                  currency={property.currency}
-                  label="Ver escenarios y cálculo"
-                />
-              </div>
-
-              <Separator />
-
-              <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-1.5">
-                <p className="text-xs font-semibold text-foreground">Antes de invertir</p>
-                <ul className="space-y-1 text-xs text-muted-foreground">
-                  <li>· Retorno estimado, no garantizado</li>
-                  <li>· Plazo estimado sujeto al proceso judicial</li>
-                  <li>· Posibilidad de recuperación inferior a la prevista</li>
-                  <li>· Liquidez no inmediata; capital comprometido al 100%</li>
-                </ul>
-                <Link
-                  href="/politica-de-riesgos"
-                  className="inline-block text-xs font-medium text-primary hover:underline pt-1"
-                >
-                  Ver riesgos completos
-                </Link>
-              </div>
-
-              {isAvailable && isPremium && (
-                <PremiumCountdown deadline={property.premiumDeadline} />
-              )}
-
-              {isPremium ? (
-                <>
-                  {isAvailable && (
-                    <Button
-                      asChild
-                      className="w-full min-h-11 h-auto py-2.5 rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold whitespace-normal text-center"
-                    >
-                      <Link href={`/dashboard/premium-invest?property=${property.id}`} className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
-                        <span className="inline-flex items-center gap-2">
-                          <Crown className="size-4 shrink-0" />
-                          Capturar al 100%
-                        </span>
-                        <span className="text-sm sm:text-base font-bold">
-                          {formatCurrency(property.totalValue, property.currency)}
-                        </span>
-                      </Link>
-                    </Button>
-                  )}
-                  {caughtByMe && (
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full h-11 rounded-xl border-premium/40"
-                    >
-                      <Link href="/dashboard/my-investments?tab=premium">
-                        Ver en mis inversiones
-                        <ArrowRight className="size-4 ml-2" />
-                      </Link>
-                    </Button>
-                  )}
-                  {caughtByOther && (
-                    <Button disabled className="w-full h-11 rounded-xl">
-                      <XCircle className="size-4 mr-2" />
-                      Propiedad capturada
-                    </Button>
-                  )}
-                  {isConverted && (
-                    <Button asChild variant="outline" className="w-full h-11 rounded-xl">
-                      <Link href="/dashboard/properties">Ver como propiedad estándar</Link>
-                    </Button>
-                  )}
-                </>
-              ) : (
-                <Button
-                  asChild
-                  className="w-full h-11 rounded-xl bg-premium text-premium-foreground hover:bg-premium/90 font-semibold"
-                >
-                  <Link href="/dashboard/account?section=premium">
-                    <Crown className="size-4 mr-2" />
-                    Actualizar a Premium
-                  </Link>
-                </Button>
-              )}
-
-              <div className="flex items-start gap-2 rounded-xl bg-muted/50 p-3">
-                <Shield className="size-4 text-muted-foreground shrink-0 mt-0.5" />
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  La oportunidad dispone inicialmente de una ventana de inversión individual.
-                  Finalizado ese periodo, puede habilitarse para participación colectiva.
-                </p>
-              </div>
-
-              {isPremium && (
-                <Button
-                  variant="outline"
-                  className="w-full h-10 rounded-xl text-sm"
-                  onClick={() =>
-                    toast.message("Asesor Premium", {
-                      description: "Escríbenos a premium@rematto.pe o llama al (01) 700-3200 — un asesor te responderá en menos de 2 horas hábiles.",
-                    })
-                  }
-                >
-                  <Phone className="size-3.5 mr-1.5" />
-                  Hablar con un asesor Premium
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-
-          {isPremium && (
-            <Card className="rounded-2xl border-border/60">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <PremiumBadge variant="subtle" />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Comisión reducida del 0.5% aplicada a inversiones Premium.
-                </p>
-              </CardContent>
-            </Card>
-          )}
+            <Button asChild className="h-11 shrink-0 rounded-xl px-5 font-semibold">
+              <Link href={action.href}>{action.label}</Link>
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
+
+      <AdvisorDialog open={advisorOpen} onOpenChange={setAdvisorOpen} context={property.name} />
+    </div>
+  );
+}
+
+function Fact({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs text-muted-foreground">{label}</dt>
+      <dd className={cn("mt-0.5 font-medium text-foreground", mono && "font-mono text-[13px] break-all")}>{value}</dd>
     </div>
   );
 }

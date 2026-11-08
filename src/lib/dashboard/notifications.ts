@@ -1,3 +1,5 @@
+import { formatLimaShort, limaDateFromToday } from "@/lib/premium/dates";
+
 export type NotificationCategory =
   | "investment"
   | "auction"
@@ -7,9 +9,22 @@ export type NotificationCategory =
   | "alert"
   | "premium";
 
+/** Para qué sirve la notificación (filtros de la bandeja). */
+export type NotificationGroup = "actions" | "operations" | "documents";
+
+export const NOTIFICATION_GROUP_LABELS: Record<NotificationGroup, string> = {
+  actions: "Acciones",
+  operations: "Operaciones",
+  documents: "Documentos",
+};
+
 export interface AppNotification {
   id: string;
   category: NotificationCategory;
+  /** Si falta se deriva de la categoría (ver `notificationGroup`). */
+  group?: NotificationGroup;
+  /** Verbo del botón: cada notificación abre la página exacta donde se resuelve. */
+  cta?: string;
   title: string;
   description: string;
   timeAgo: string;
@@ -26,39 +41,74 @@ const day = 24 * hour;
 export const PREMIUM_NOTIFICATIONS: AppNotification[] = [
   {
     id: "pn1",
-    category: "premium",
-    title: "Nueva oportunidad Premium — Penthouse Chorrillos",
-    description:
-      "Invierte el 100% y obtén un ROI del 48% antes de que pase al mercado estándar. Solo quedan 3 días para capturar esta propiedad.",
-    timeAgo: "hace 5 min",
-    timestamp: now - 5 * 60 * 1000,
+    category: "alert",
+    group: "actions",
+    title: "Verificación reforzada pendiente",
+    description: "Actualiza tu declaración de origen de fondos para enviar nuevas solicitudes de reserva.",
+    timeAgo: "hace 20 min",
+    timestamp: now - 20 * 60 * 1000,
     read: false,
-    href: "/dashboard/premium-properties/pp-101",
-    highlight: "ROI 48%",
+    href: "/dashboard/account?section=premium",
+    cta: "Completar",
   },
   {
     id: "pn2",
     category: "premium",
-    title: "Ventana Premium abierta — San Borja",
-    description:
-      "Departamento Skyline disponible exclusivamente para usuarios Premium. Captura el 100% con retorno del 42%.",
-    timeAgo: "hace 1 h",
-    timestamp: now - hour,
+    group: "actions",
+    title: "Anexo listo para firmar — Oficina Corporativa San Isidro",
+    description: "Firma el cronograma de aportes desde el seguimiento de tu reserva.",
+    timeAgo: "hace 2 h",
+    timestamp: now - 2 * hour,
     read: false,
-    href: "/dashboard/premium-properties/pp-104",
-    highlight: "7 días restantes",
+    href: "/dashboard/my-investments/premium/res-0436?tab=documentos",
+    cta: "Revisar",
   },
   {
     id: "pn3",
     category: "premium",
-    title: "Propiedad capturada — Villa Asia",
-    description:
-      "La Villa de Lujo en Asia fue capturada por otro inversor Premium. Explora otras oportunidades disponibles.",
-    timeAgo: "hace 2 días",
-    timestamp: now - 2 * day,
+    group: "operations",
+    title: "Nueva ventana Premium — Penthouse Chorrillos",
+    description: `Ventana exclusiva abierta hasta el ${formatLimaShort(limaDateFromToday(2, 18))}. Revisa el expediente antes del cierre.`,
+    timeAgo: "hace 5 h",
+    timestamp: now - 5 * hour,
+    read: false,
+    href: "/dashboard/premium-properties/pp-101",
+    cta: "Ver expediente",
+  },
+  {
+    id: "pn4",
+    category: "payment",
+    group: "operations",
+    title: "Aporte confirmado — USD 250,000",
+    description: "Conciliamos tu transferencia para Oficina Corporativa San Isidro. Quedan USD 390,000 por confirmar.",
+    timeAgo: "ayer",
+    timestamp: now - 1 * day,
+    read: false,
+    href: "/dashboard/my-investments/premium/res-0436?tab=aportes",
+    cta: "Ver aportes",
+  },
+  {
+    id: "pn5",
+    category: "legal",
+    group: "documents",
+    title: "Informe legal actualizado — Loft Industrial Barranco",
+    description: "Se agregó la versión 2 del informe de adjudicación a tu operación.",
+    timeAgo: "ayer",
+    timestamp: now - 1 * day - 3 * hour,
     read: true,
-    href: "/dashboard/premium-properties/pp-102",
-    highlight: "Capturada",
+    href: "/dashboard/my-investments/premium/res-0412?tab=documentos",
+    cta: "Abrir",
+  },
+  {
+    id: "pn6",
+    category: "premium",
+    group: "operations",
+    title: "Inmueble adjudicado — Loft Industrial Barranco",
+    description: "El 4° Juzgado Civil de Lima adjudicó el inmueble. Siguiente hito: formalización.",
+    timeAgo: "hace 12 días",
+    timestamp: now - 12 * day,
+    read: true,
+    href: "/dashboard/my-investments/premium/res-0412",
   },
 ];
 
@@ -308,6 +358,13 @@ export const CATEGORY_META: Record<
     bg: "bg-premium/10 border-premium/20",
   },
 };
+
+export function notificationGroup(n: AppNotification): NotificationGroup {
+  if (n.group) return n.group;
+  if (n.category === "alert") return "actions";
+  if (n.category === "legal") return "documents";
+  return "operations";
+}
 
 export function formatNotificationDate(timestamp: number): string {
   const diff = now - timestamp;

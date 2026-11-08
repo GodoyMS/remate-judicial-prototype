@@ -30,11 +30,20 @@ const SEED: Omit<UserDocument, "userId">[] = [
   },
 ];
 
-let documents: UserDocument[] | null = null;
+let documents: UserDocument[] = [];
+const seededUsers = new Set<string>();
 const listeners = new Set<() => void>();
 
+/**
+ * Semilla por usuario. Antes se sembraba una sola vez con el primer userId
+ * consultado: durante la hidratación ese es el usuario por defecto, así que
+ * la cuenta real (p. ej. Premium) veía "0 documentos".
+ */
 function ensure(userId: string): UserDocument[] {
-  if (!documents) documents = SEED.map((d) => ({ ...d, userId }));
+  if (!seededUsers.has(userId)) {
+    seededUsers.add(userId);
+    documents = [...documents, ...SEED.map((d) => ({ ...d, id: `${d.id}-${userId}`, userId }))];
+  }
   return documents;
 }
 

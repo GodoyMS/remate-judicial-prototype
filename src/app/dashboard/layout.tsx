@@ -3,8 +3,13 @@ import { Topbar } from "@/components/dashboard/Topbar";
 import { SessionGuard } from "@/components/dashboard/SessionGuard";
 import { NotificationsProvider } from "@/contexts/notifications-context";
 import { Toaster } from "sonner";
+import { connection } from "next/server";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  // El dashboard es privado y depende de la fecha (ventanas Premium, plazos de
+  // aporte, "hace X días"): se renderiza por solicitud, nunca en el build.
+  // Prerenderizarlo congelaría esas fechas y romperían la hidratación.
+  await connection();
   return (
     <NotificationsProvider>
       <SessionGuard />

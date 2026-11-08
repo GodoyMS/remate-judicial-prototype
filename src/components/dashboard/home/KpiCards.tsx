@@ -1,52 +1,68 @@
+import type { ReactNode } from "react";
 import { Building2, TrendingUp, Wallet, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface KpiItem {
   label: string;
-  value: string;
+  value: ReactNode;
   caption: string;
   icon: LucideIcon;
 }
 
 interface KpiCardsProps {
-  totalInvested: string;
+  totalInvested: ReactNode;
   inProgress: { count: number; breakdown: string };
-  realizedGains: string;
+  realizedGains: ReactNode;
   lastUpdated: string | null;
+  /** Premium: mismas tarjetas, etiquetas de la operación individual. */
+  premium?: boolean;
 }
 
 /**
  * 2. KPIs principales. "Total invertido" es el dato ancla y va sobre
  * primary; los demás quedan en superficie neutra para no competir con él.
  */
-export function KpiCards({ totalInvested, inProgress, realizedGains, lastUpdated }: KpiCardsProps) {
+export function KpiCards({ totalInvested, inProgress, realizedGains, lastUpdated, premium }: KpiCardsProps) {
   const items: (KpiItem & { featured?: boolean })[] = [
     {
-      label: "Total invertido",
+      label: premium ? "Capital comprometido" : "Total invertido",
       value: totalInvested,
-      caption: "Capital aportado en todas tus inversiones",
+      caption: premium ? "Estándar + Premium · separado por moneda" : "Capital aportado en todas tus inversiones",
       icon: Wallet,
       featured: true,
     },
     {
-      label: "Inversiones en curso",
+      label: premium ? "Operaciones activas" : "Inversiones en curso",
       value: String(inProgress.count),
       caption: inProgress.breakdown || "Sin inversiones en curso",
       icon: Building2,
-      featured:true
+      featured: true,
     },
     {
-      label: "Retornos generados",
+      label: premium ? "Retornos realizados" : "Retornos generados",
       value: realizedGains,
-      caption: "Solo ganancias realizadas, sin capital devuelto",
+      caption: premium ? "Ganancias ya acreditadas, sin capital devuelto" : "Solo ganancias realizadas, sin capital devuelto",
       icon: TrendingUp,
-      featured:true
+      featured: true,
     },
   ];
 
   return (
     <section aria-label="Indicadores principales" className="flex flex-col gap-2">
-      <div className="grid sm:grid-cols-3 gap-3">
+      {/* Móvil: una sola tarjeta con tres filas. Tres tarjetas a ancho
+          completo empujaban las acciones fuera de la primera pantalla. */}
+      <dl className="divide-y divide-primary-foreground/15 rounded-2xl bg-primary px-4 text-primary-foreground shadow-md shadow-primary/20 sm:hidden">
+        {items.map((item) => (
+          <div key={item.label} className="flex items-start justify-between gap-4 py-3.5">
+            <div className="min-w-0">
+              <dt className="text-xs font-semibold text-primary-foreground/80">{item.label}</dt>
+              <p className="mt-0.5 text-[11px] leading-snug text-primary-foreground/65">{item.caption}</p>
+            </div>
+            <dd className="shrink-0 text-right text-lg font-bold leading-tight tabular-nums">{item.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <div className="hidden sm:grid sm:grid-cols-3 gap-3">
         {items.map((item) => (
           <div
             key={item.label}
@@ -78,7 +94,7 @@ export function KpiCards({ totalInvested, inProgress, realizedGains, lastUpdated
               </span>
             </div>
             <div>
-              <p className="dash-display break-words">{item.value}</p>
+              <div className="dash-display break-words">{item.value}</div>
               <p
                 className={cn(
                   "dash-caption mt-2",

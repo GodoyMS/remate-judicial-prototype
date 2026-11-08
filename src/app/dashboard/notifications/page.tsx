@@ -1,20 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Bell, CheckCheck, Inbox, MailOpen } from "lucide-react";
+import { Bell, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 import { NotificationItem } from "@/components/dashboard/NotificationItem";
 import { PageHero } from "@/components/dashboard/PageHero";
 import { useNotifications } from "@/contexts/notifications-context";
 import {
+  NOTIFICATION_GROUP_LABELS,
   formatNotificationDate,
+  notificationGroup,
   type AppNotification,
+  type NotificationGroup,
 } from "@/lib/dashboard/notifications";
 import { toast } from "sonner";
 
-type FilterTab = "all" | "unread" | "read";
+type TypeFilter = "all" | NotificationGroup;
+const TYPE_FILTERS: TypeFilter[] = ["all", "actions", "operations", "documents"];
 
 function groupByDate(items: AppNotification[]) {
   const groups: Record<string, AppNotification[]> = {};
@@ -30,17 +36,47 @@ function groupByDate(items: AppNotification[]) {
 }
 
 export default function NotificationsPage() {
-  const [tab, setTab] = useState<FilterTab>("all");
+  return (
+    <Suspense>
+      <NotificationsContent />
+    </Suspense>
+  );
+}
+
+function NotificationsContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const typeParam = searchParams.get("type") as TypeFilter | null;
+  const type: TypeFilter = typeParam && TYPE_FILTERS.includes(typeParam) ? typeParam : "all";
+  const unreadOnly = searchParams.get("unread") === "1";
   const { notifications, unreadCount, markAllAsRead, toggleRead } =
     useNotifications();
 
-  const filtered = useMemo(() => {
-    if (tab === "unread") return notifications.filter((n) => !n.read);
-    if (tab === "read") return notifications.filter((n) => n.read);
-    return notifications;
-  }, [notifications, tab]);
+  const setFilters = (next: { type?: TypeFilter; unread?: boolean }) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const t = next.type ?? type;
+    const u = next.unread ?? unreadOnly;
+    if (t === "all") params.delete("type");
+    else params.set("type", t);
+    if (u) params.set("unread", "1");
+    else params.delete("unread");
+    router.replace(`/dashboard/notifications${params.size ? `?${params}` : ""}`, { scroll: false });
+  };
 
-  const grouped = useMemo(() => groupByDate(filtered), [filtered]);
+  const counts = useMemo(() => {
+    const c: Record<TypeFilter, number> = { all: 0, actions: 0, operations: 0, documents: 0 };
+    notifications.forEach((n) => {
+      if (unreadOnly && n.read) return;
+      c.all++;
+      c[notificationGroup(n)]++;
+    });
+    return c;
+  }, [notifications, unreadOnly]);
+
+  const filtered = notifications.filter(
+    (n) => (type === "all" || notificationGroup(n) === type) && (!unreadOnly || !n.read)
+  );
+  const grouped = groupByDate(filtered);
 
   const handleMarkAll = () => {
     if (unreadCount === 0) {
@@ -65,7 +101,7 @@ export default function NotificationsPage() {
           ) : null
         }
         title="Notificaciones"
-        description="Subastas, pagos, actualizaciones legales y alertas de tu portafolio."
+        description="Acciones pendientes, avances de tus operaciones y documentos nuevos."
         actions={
           <Button
             className="rounded-xl bg-background text-foreground hover:bg-background/90 shadow-sm disabled:opacity-60"
@@ -84,90 +120,78 @@ export default function NotificationsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
       >
-        <Tabs
-          value={tab}
-          onValueChange={(v) => setTab(v as FilterTab)}
-          className="gap-6"
-        >
-          <TabsList className="w-full sm:w-auto h-10 rounded-xl bg-muted/50 p-1">
-            <TabsTrigger value="all" className="rounded-lg gap-1.5 px-4">
-              <Inbox className="size-3.5" />
-              Todos
-              <span className="text-muted-foreground text-xs">
-                ({notifications.length})
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="unread" className="rounded-lg gap-1.5 px-4">
-              No leídos
-              {unreadCount > 0 && (
-                <span className="size-4 inline-flex items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
-                  {unreadCount}
-                </span>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="read" className="rounded-lg gap-1.5 px-4">
-              <MailOpen className="size-3.5" />
-              Leídos
-              <span className="text-muted-foreground text-xs">
-                ({notifications.filter((n) => n.read).length})
-              </span>
-            </TabsTrigger>
-          </TabsList>
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div
+            role="tablist"
+            aria-label="Tipo de notificación"
+            className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 [scrollbar-width:none]"
+          >
+            {TYPE_FILTERS.map((t) => {
+              const active = type === t;
+              return (
+                <button
+                  key={t}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setFilters({ type: t })}
+                  className={cn(
+                    "inline-flex h-9 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors",
+                    active
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                  )}
+                >
+                  {t === "all" ? "Todas" : NOTIFICATION_GROUP_LABELS[t]}
+                  <span className={cn("rounded-full px-1.5 text-xs tabular-nums", active ? "bg-primary-foreground/20" : "bg-muted text-foreground/70")}>
+                    {counts[t]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <label className="inline-flex shrink-0 cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+            <Switch checked={unreadOnly} onCheckedChange={(v) => setFilters({ unread: v })} />
+            Solo no leídas
+          </label>
+        </div>
 
-          {(["all", "unread", "read"] as const).map((value) => (
-            <TabsContent key={value} value={value} className="mt-0">
-              {filtered.length === 0 ? (
-                <EmptyState tab={value} />
-              ) : (
-                <div className="flex flex-col gap-8">
-                  {grouped.map((group) => (
-                    <section key={group.label}>
-                      <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 px-1">
-                        {group.label}
-                      </h3>
-                      <div className="flex flex-col gap-3">
-                        {group.items.map((n, i) => (
-                          <motion.div
-                            key={n.id}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.04 }}
-                          >
-                            <NotificationItem
-                              notification={n}
-                              onMarkRead={toggleRead}
-                            />
-                          </motion.div>
-                        ))}
-                      </div>
-                    </section>
+        {filtered.length === 0 ? (
+          <EmptyState unreadOnly={unreadOnly} type={type} />
+        ) : (
+          <div className="flex flex-col gap-8">
+            {grouped.map((group) => (
+              <section key={group.label}>
+                <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 px-1">
+                  {group.label}
+                </h3>
+                <div className="flex flex-col gap-3">
+                  {group.items.map((n, i) => (
+                    <motion.div
+                      key={n.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: Math.min(i, 6) * 0.04 }}
+                    >
+                      <NotificationItem notification={n} onMarkRead={toggleRead} />
+                    </motion.div>
                   ))}
                 </div>
-              )}
-            </TabsContent>
-          ))}
-        </Tabs>
+              </section>
+            ))}
+          </div>
+        )}
       </motion.div>
       </div>
     </div>
   );
 }
 
-function EmptyState({ tab }: { tab: FilterTab }) {
-  const copy = {
-    all: {
-      title: "Sin notificaciones",
-      sub: "Cuando haya actividad en tu cuenta, aparecerá aquí.",
-    },
-    unread: {
-      title: "¡Estás al día!",
-      sub: "No tienes notificaciones sin leer. Buen trabajo.",
-    },
-    read: {
-      title: "Sin historial leído",
-      sub: "Las notificaciones que marques como leídas aparecerán aquí.",
-    },
-  }[tab];
+function EmptyState({ unreadOnly, type }: { unreadOnly: boolean; type: TypeFilter }) {
+  const copy = unreadOnly
+    ? { title: "¡Estás al día!", sub: "No tienes notificaciones sin leer en esta categoría." }
+    : type === "actions"
+      ? { title: "Nada pendiente", sub: "Cuando algo requiera tu acción, aparecerá aquí." }
+      : { title: "Sin notificaciones", sub: "Cuando haya actividad en tu cuenta, aparecerá aquí." };
 
   return (
     <div className="rounded-2xl border border-dashed border-border/80 bg-muted/20 flex flex-col items-center justify-center py-16 px-6 text-center">
