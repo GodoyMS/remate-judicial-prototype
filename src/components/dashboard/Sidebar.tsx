@@ -91,10 +91,10 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                   className={cn(
                     "relative flex items-center gap-3 h-11 px-3 rounded-xl text-[15px] font-medium transition-colors duration-150",
                     "outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring/40",
+                    // Mismo estado activo para todos los ítems: el dorado queda solo
+                    // en el ícono, como marca, no como estado (P-007).
                     active
-                      ? isPremiumItem
-                        ? "bg-premium/15 text-premium"
-                        : "bg-sidebar-primary/12 text-sidebar-primary dark:bg-sidebar-accent dark:text-sidebar-accent-foreground"
+                      ? "bg-sidebar-primary/12 text-sidebar-primary dark:bg-sidebar-accent dark:text-sidebar-accent-foreground"
                       : "text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-foreground/5"
                   )}
                 >
@@ -103,14 +103,14 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                       aria-hidden
                       className={cn(
                         "absolute -left-3 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full",
-                        isPremiumItem ? "bg-premium" : "bg-sidebar-primary"
+                        "bg-sidebar-primary"
                       )}
                     />
                   )}
-                  <item.icon className="size-[18px] shrink-0" strokeWidth={1.75} />
+                  <item.icon className={cn("size-[18px] shrink-0", isPremiumItem && "text-premium")} strokeWidth={1.75} />
                   <span className="flex-1">{item.label}</span>
                   {isPremiumItem && isPremium && !active && (
-                    <span className="size-1.5 rounded-full bg-premium animate-pulse" />
+                    <span aria-label="Ventanas abiertas" className="size-1.5 rounded-full bg-premium" />
                   )}
                 </Link>
               );

@@ -23,8 +23,14 @@ export interface PremiumProperty {
   totalValue: number;
   premiumRoi: number;
   standardRoi: number;
+  /** Cierre de la ventana Premium (ISO con offset de Lima). */
   premiumDeadline: string;
+  /** Obsoleto: se deriva de `premiumDeadline`. Se conserva por compatibilidad con admin. */
   premiumDeadlineDays: number;
+  /**
+   * Estado editorial que fija admin. La disponibilidad real para un usuario
+   * se deriva de la ventana y de las reservas (ver `availability.ts`).
+   */
   status: PremiumPropertyStatus;
   caughtByUserId?: string;
   caughtByUserName?: string;
@@ -38,24 +44,6 @@ export interface PremiumProperty {
   premiumCriteria: string[];
 }
 
-export interface PremiumInvestment {
-  id: string;
-  certificateId: string;
-  propertyId: string;
-  userId: string;
-  amount: number;
-  currency: PropertyCurrency;
-  premiumRoi: number;
-  ownershipPercent: number;
-  datePaid: string;
-  expectedRoiDate: string;
-  daysUntilRoi: number;
-  status: "active" | "pending" | "completed";
-  paymentMethod: string;
-  estimatedReturn: number;
-  isPremiumExclusive: true;
-}
-
 export interface DashboardUser {
   id: string;
   name: string;
@@ -66,10 +54,3 @@ export interface DashboardUser {
   totalInvested: number;
   premiumInvestments: number;
 }
-
-export type PremiumCountdown = {
-  days: number;
-  hours: number;
-  minutes: number;
-  expired: boolean;
-};

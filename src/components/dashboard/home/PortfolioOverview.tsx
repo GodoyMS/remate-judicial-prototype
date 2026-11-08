@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, TrendingUp } from "lucide-react";
+import { ArrowRight, Gauge, MessageCircle } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,21 +28,23 @@ import {
 } from "@/lib/dashboard/portfolio-performance";
 
 const chartConfig = {
-  value: { label: "Rendimiento", color: "var(--primary)" },
+  value: { label: "Retorno estimado", color: "var(--primary)" },
 } satisfies ChartConfig;
 
 interface PortfolioOverviewProps {
   firstName: string;
   isPremium: boolean;
+  /** Avance promedio (0–100) de las operaciones en curso. `null` si no hay. */
+  progress: number | null;
+  operations: number;
+  /** Premium: abre el contacto con su asesora en vez de WhatsApp genérico. */
+  onContactAdvisor?: () => void;
 }
 
 /** 1. Encabezado y resumen: saludo, rendimiento del portafolio y CTAs. */
-export function PortfolioOverview({ firstName, isPremium }: PortfolioOverviewProps) {
+export function PortfolioOverview({ firstName, isPremium, progress, operations, onContactAdvisor }: PortfolioOverviewProps) {
   const [range, setRange] = useState<PerformanceRange>("6");
   const series = getPerformanceSeries(range);
-  const current = series[series.length - 1].value;
-  const periodDelta = current - series[0].value;
-  const rangeLabel = PERFORMANCE_RANGES.find((r) => r.value === range)?.label.toLowerCase();
 
   return (
     <section aria-labelledby="home-greeting" className="flex flex-col gap-5">
@@ -55,16 +57,29 @@ export function PortfolioOverview({ firstName, isPremium }: PortfolioOverviewPro
             {isPremium && <PremiumBadge size="md" />}
           </div>
           <p className="dash-body text-muted-foreground mt-1">
-            Aquí tienes un resumen de tu portafolio y las novedades más importantes.
+            {isPremium
+              ? "Aquí tienes un resumen de tus operaciones Estándar y Premium."
+              : "Aquí tienes un resumen de tu portafolio y las novedades más importantes."}
           </p>
         </div>
         <div className="flex flex-col-reverse sm:flex-row gap-2 shrink-0">
-          <Button asChild variant="outline" className="h-10 rounded-xl px-4 border-primary/30 text-primary hover:bg-primary/5 hover:text-primary dark:text-accent-foreground dark:hover:text-accent-foreground">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+          {onContactAdvisor ? (
+            <Button
+              variant="outline"
+              onClick={onContactAdvisor}
+              className="h-10 rounded-xl px-4 border-primary/30 text-primary hover:bg-primary/5 hover:text-primary dark:text-accent-foreground dark:hover:text-accent-foreground"
+            >
               <MessageCircle />
-              Hablar con el equipo
-            </a>
-          </Button>
+              Hablar con tu asesora
+            </Button>
+          ) : (
+            <Button asChild variant="outline" className="h-10 rounded-xl px-4 border-primary/30 text-primary hover:bg-primary/5 hover:text-primary dark:text-accent-foreground dark:hover:text-accent-foreground">
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                <MessageCircle />
+                Hablar con el equipo
+              </a>
+            </Button>
+          )}
           <Button asChild className="h-10 rounded-xl px-4 shadow-sm shadow-primary/20">
             <Link href="/dashboard/properties">
               Ver oportunidades
@@ -83,16 +98,20 @@ export function PortfolioOverview({ firstName, isPremium }: PortfolioOverviewPro
           />
           <div className="relative flex items-center gap-2">
             <span className="size-8 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
-              <TrendingUp className="size-4" />
+              <Gauge className="size-4" />
             </span>
-            <p className="text-sm font-medium text-primary-foreground/85">Rendimiento de tu portafolio</p>
+            <p className="text-sm font-medium text-primary-foreground/85">Avance del portafolio</p>
           </div>
+          {/* No es un retorno: es cuánto han avanzado tus procesos (auditoría
+              Premium, slide 4 — nada de ROI global en la cifra protagonista). */}
           <div className="relative">
             <p className="text-5xl leading-none font-bold tracking-tight tabular-nums">
-              {formatSignedPercent(current)}
+              {progress === null ? "—" : `${progress}%`}
             </p>
             <p className="dash-caption text-primary-foreground/75 mt-2">
-              {formatSignedPercent(periodDelta).replace("%", " pts")} en los {rangeLabel}
+              {progress === null
+                ? "Sin operaciones en curso"
+                : `Etapa promedio de tus ${operations} operaciones en curso`}
             </p>
           </div>
         </div>
@@ -102,7 +121,7 @@ export function PortfolioOverview({ firstName, isPremium }: PortfolioOverviewPro
             <div className="min-w-0">
               <p className="dash-heading text-foreground">Evolución mensual</p>
               <p className="dash-caption text-muted-foreground">
-                Rendimiento acumulado estimado según el avance de tus procesos
+                Retorno estimado acumulado · proyección de referencia, no garantizada
               </p>
             </div>
             <Select value={range} onValueChange={(v) => setRange(v as PerformanceRange)}>

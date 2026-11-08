@@ -12,7 +12,7 @@ const STANDARD_BENEFITS = [
 const PREMIUM_BENEFITS = [
   "Financia el 100% de una oportunidad durante su ventana de exclusividad",
   "Oportunidades exclusivas antes que el mercado estándar",
-  "Comisión reducida del 0.5%",
+  "Asesora asignada durante toda la operación",
 ];
 
 /**

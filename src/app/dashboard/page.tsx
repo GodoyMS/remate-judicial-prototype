@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useHydrated } from "@/hooks/use-hydrated";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Accordion as AccordionPrimitive } from "radix-ui";
-import { ArrowRight, ChevronDown, Crown, FileText, Gavel, PenLine, ShieldCheck } from "lucide-react";
+import { ArrowRight, ChevronDown, Crown, FileText, Gavel, Landmark, PenLine, ShieldCheck, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PremiumUpgradeBanner } from "@/components/dashboard/PremiumUpgradeBanner";
 import { InvestmentCard } from "@/components/dashboard/InvestmentCard";
@@ -15,9 +16,24 @@ import { PriorityActions, type PriorityAction } from "@/components/dashboard/hom
 import { RecentActivity } from "@/components/dashboard/home/RecentActivity";
 import { FeaturedOpportunity } from "@/components/dashboard/home/FeaturedOpportunity";
 import { AccountTiers } from "@/components/dashboard/home/AccountTiers";
+import { PremiumOperations } from "@/components/dashboard/home/PremiumOperations";
+import { AdvisorDialog } from "@/components/premium/AdvisorDialog";
+import { trackingHref } from "@/components/premium/reservation-ui";
+import { MoneyLines } from "@/components/shared/MoneyLines";
+import { useCompliance } from "@/lib/premium/compliance";
+import { getAvailability } from "@/lib/premium/availability";
+import {
+  getFunds,
+  getOperationProgress,
+  isActive,
+  needsSignature,
+  useReservations,
+} from "@/lib/premium/reservations";
+import { formatLimaShort, hoursUntil } from "@/lib/premium/dates";
+import { formatCurrency } from "@/lib/currency";
 import { useCurrentUser } from "@/contexts/user-context";
 import { useNotifications } from "@/contexts/notifications-context";
-import { premiumProperties } from "@/lib/premium/mock-data";
+import { premiumProperties, getPremiumPropertyById } from "@/lib/premium/mock-data";
 import {
   getActiveInvestmentsForUser,
   getPropertyById,
@@ -26,7 +42,7 @@ import {
 } from "@/lib/dashboard/mock-data";
 import { getOutcomeReturnAmount } from "@/lib/dashboard/outcome";
 import { PROCESS_STAGE_LABELS } from "@/lib/dashboard/types";
-import { formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
+import { sumByCurrency } from "@/lib/currency";
 import type { ActiveInvestmentView } from "@/lib/dashboard/mock-data";
 
 /** Entrada suave y escalonada, común a todas las secciones de Inicio. */
@@ -39,7 +55,21 @@ const reveal = (delay: number) => ({
 export default function DashboardPage() {
   const { user, isPremium } = useCurrentUser();
   const { notifications } = useNotifications();
-  const availablePremium = premiumProperties.filter((p) => p.status === "available");
+  const reservations = useReservations();
+  const compliance = useCompliance(user.id);
+  const [advisorOpen, setAdvisorOpen] = useState(false);
+  const myPremium = useMemo(
+    () => (isPremium ? reservations.filter((r) => r.userId === user.id) : []),
+    [reservations, user.id, isPremium]
+  );
+  const activePremium = useMemo(() => myPremium.filter(isActive), [myPremium]);
+  const openWindows = useMemo(
+    () =>
+      premiumProperties
+        .filter((p) => getAvailability(p, reservations, user.id).kind === "available")
+        .sort((a, b) => a.premiumDeadline.localeCompare(b.premiumDeadline)),
+    [reservations, user.id]
+  );
 
   const [selectedInvestment, setSelectedInvestment] = useState<ActiveInvestmentView | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -47,10 +77,8 @@ export default function DashboardPage() {
   // "Información actualizada" solo se conoce al montar en el cliente: fijarla
   // durante el render de servidor produciría un mismatch de hidratación,
   // porque SSR y cliente evalúan Date.now() en instantes distintos.
-  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-  useEffect(() => {
-    setLastUpdated(new Date().toISOString());
-  }, []);
+  const hydrated = useHydrated();
+  const lastUpdated = useMemo(() => (hydrated ? new Date().toISOString() : null), [hydrated]);
 
   const investments = useMemo(() => getActiveInvestmentsForUser(), []);
   const inProgress = investments.filter((i) => i.status === "active" || i.status === "pending");
@@ -67,6 +95,23 @@ export default function DashboardPage() {
   const investedByCurrency = sumByCurrency(
     investments.filter((i) => i.status !== "cancelled")
   );
+  // Premium: solo cuenta el capital ya conciliado en custodia.
+  activePremium.forEach((r) => {
+    const confirmed = getFunds(r).confirmed;
+    if (confirmed > 0) investedByCurrency[r.currency] = (investedByCurrency[r.currency] ?? 0) + confirmed;
+  });
+
+  // Avance del portafolio: etapa promedio de las operaciones en curso.
+  // Es una medida de proceso, no de rentabilidad.
+  const STAGE_PROGRESS: Record<string, number> = { subasta: 0.2, adjudicacion: 0.4, formalizacion: 0.6, venta: 0.8, liquidacion: 0.95 };
+  const progressValues = [
+    ...inProgress.map((i) => STAGE_PROGRESS[i.stage] ?? 0),
+    ...activePremium.map(getOperationProgress),
+  ];
+  const portfolioProgress = progressValues.length
+    ? Math.round((progressValues.reduce((a, b) => a + b, 0) / progressValues.length) * 100)
+    : null;
+
   const realizedGains = investments
     .filter((i) => i.outcome.kind === "settled" && i.outcome.roi > 0)
     .reduce(
@@ -76,11 +121,63 @@ export default function DashboardPage() {
       },
       {} as Partial<Record<"PEN" | "USD", number>>
     );
+  myPremium.forEach((r) => {
+    if (r.status === "settled" && r.settlement && r.settlement.gain > 0) {
+      realizedGains[r.currency] = (realizedGains[r.currency] ?? 0) + r.settlement.gain;
+    }
+  });
 
   // Acciones prioritarias (E-004): verificación pendiente + hitos del proceso
   // que piden algo al usuario. Máximo tres, en orden de urgencia.
   const priorityActions = useMemo<PriorityAction[]>(() => {
     const actions: PriorityAction[] = [];
+    // Premium primero: son las acciones con plazo y montos más altos.
+    if (isPremium && compliance.sourceOfFunds.status === "action_required") {
+      actions.push({
+        id: "kyc-premium",
+        title: "Completa tu verificación reforzada",
+        description: "Pendiente: declaración de origen de fondos.",
+        cta: "Completar",
+        href: "/dashboard/account?section=premium",
+        icon: ShieldCheck,
+      });
+    }
+    for (const r of activePremium) {
+      const name = getPremiumPropertyById(r.propertyId)?.name ?? r.code;
+      const doc = r.documents.find((d) => d.status === "to_sign");
+      if (doc) {
+        actions.push({
+          id: `sign-${r.id}`,
+          title: "Documento por firmar",
+          description: `${doc.title} · ${name}.`,
+          cta: "Revisar",
+          href: trackingHref(r.id, "documentos"),
+          icon: PenLine,
+        });
+      }
+      const funds = getFunds(r);
+      if (r.status === "reserved" && !needsSignature(r) && funds.pending > 0) {
+        actions.push({
+          id: `fund-${r.id}`,
+          title: "Completa tu aporte",
+          description: `Transfiere ${formatCurrency(funds.pending, r.currency)} para ${name}${r.reservedUntil ? ` antes del ${formatLimaShort(r.reservedUntil)}` : ""}.`,
+          cta: "Ver detalle",
+          href: trackingHref(r.id),
+          icon: Landmark,
+        });
+      }
+    }
+    const closing = isPremium ? openWindows.find((p) => hoursUntil(p.premiumDeadline) < 72) : undefined;
+    if (closing) {
+      actions.push({
+        id: `window-${closing.id}`,
+        title: "Una ventana Premium cierra pronto",
+        description: `${closing.name} cierra el ${formatLimaShort(closing.premiumDeadline)}.`,
+        cta: "Ver expediente",
+        href: `/dashboard/premium-properties/${closing.id}`,
+        icon: Timer,
+      });
+    }
     if (!user.verified) {
       actions.push({
         id: "kyc",
@@ -126,8 +223,8 @@ export default function DashboardPage() {
         icon: PenLine,
       });
     }
-    return actions.slice(0, 3);
-  }, [user.verified, inProgress, investments]);
+    return actions;
+  }, [user.verified, inProgress, investments, isPremium, compliance.sourceOfFunds.status, activePremium, openWindows]);
 
   // Oportunidad destacada: la de mayor retorno estimado que aún no tiene.
   const featured = useMemo(() => {
@@ -143,23 +240,43 @@ export default function DashboardPage() {
     <div className="w-full flex flex-col gap-8 pb-4">
       {/* 1. Encabezado y resumen */}
       <motion.div {...reveal(0)}>
-        <PortfolioOverview firstName={user.name.split(" ")[0]} isPremium={isPremium} />
+        <PortfolioOverview
+          firstName={user.name.split(" ")[0]}
+          isPremium={isPremium}
+          progress={portfolioProgress}
+          operations={progressValues.length}
+          onContactAdvisor={isPremium ? () => setAdvisorOpen(true) : undefined}
+        />
       </motion.div>
 
       {/* 2. KPIs principales (E-009) */}
       <motion.div {...reveal(0.06)}>
         <KpiCards
-          totalInvested={formatMixedCurrencyTotals(investedByCurrency)}
-          inProgress={{ count: inProgress.length, breakdown: stageBreakdown.join(" · ") }}
-          realizedGains={formatMixedCurrencyTotals(realizedGains)}
+          premium={isPremium}
+          totalInvested={<MoneyLines values={investedByCurrency} empty={formatCurrency(0, "PEN")} />}
+          inProgress={{
+            count: inProgress.length + activePremium.length,
+            breakdown: [
+              ...(activePremium.length ? [`${activePremium.length} Premium`] : []),
+              ...stageBreakdown,
+            ].join(" · "),
+          }}
+          realizedGains={<MoneyLines values={realizedGains} empty={formatCurrency(0, "PEN")} />}
           lastUpdated={lastUpdated ? formatDateTime(lastUpdated) : null}
         />
       </motion.div>
 
       {/* 3. Acciones prioritarias (E-004) */}
       <motion.div {...reveal(0.12)}>
-        <PriorityActions actions={priorityActions} viewAllHref="/dashboard/notifications" />
+        <PriorityActions actions={priorityActions} />
       </motion.div>
+
+      {/* 3b. Operaciones Premium activas */}
+      {activePremium.length > 0 && (
+        <motion.div {...reveal(0.16)}>
+          <PremiumOperations reservations={activePremium} />
+        </motion.div>
+      )}
 
       {/* 4. Inversiones activas (WP-2.3) */}
       <AccordionPrimitive.Root type="single" collapsible aria-label="Inversiones activas">
@@ -229,20 +346,26 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-premium/20 bg-premium/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+          className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
         >
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-xl bg-premium/15 flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-xl bg-premium/12 flex items-center justify-center shrink-0">
               <Crown className="size-4 text-premium" />
             </div>
             <div>
-              <p className="text-sm font-semibold">Oportunidades Premium activas</p>
+              <p className="text-sm font-semibold text-foreground">
+                {openWindows.length > 0
+                  ? `${openWindows.length} ventana${openWindows.length === 1 ? "" : "s"} Premium abierta${openWindows.length === 1 ? "" : "s"}`
+                  : "Sin ventanas Premium abiertas"}
+              </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {availablePremium.length} disponibles para inversión individual del 100% del capital.
+                {openWindows[0]
+                  ? `La próxima cierra el ${formatLimaShort(openWindows[0].premiumDeadline)} · financiamiento individual del 100%.`
+                  : "Te avisaremos cuando se abra la próxima."}
               </p>
             </div>
           </div>
-          <Button asChild variant="outline" className="rounded-xl border-premium/40 text-premium shrink-0 w-full sm:w-auto">
+          <Button asChild variant="outline" className="rounded-xl shrink-0 w-full sm:w-auto">
             <Link href="/dashboard/premium-properties?filter=available">
               Ver oportunidades
               <ArrowRight className="size-4 ml-1" />
@@ -250,6 +373,8 @@ export default function DashboardPage() {
           </Button>
         </motion.div>
       )}
+
+      <AdvisorDialog open={advisorOpen} onOpenChange={setAdvisorOpen} />
 
       <InvestmentDetailSheet
         investment={selectedInvestment}

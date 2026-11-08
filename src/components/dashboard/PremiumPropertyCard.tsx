@@ -2,221 +2,147 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  MapPin,
-  TrendingUp,
-  Lock,
-  CheckCircle2,
-  XCircle,
-  Crown,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight, Lock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
-import { PremiumCountdown } from "@/components/dashboard/PremiumCountdown";
-import { PremiumExclusiveBadge } from "@/components/dashboard/PremiumBadge";
+import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
+import { StatusPill } from "@/components/premium/StatusPill";
+import { WindowClock } from "@/components/premium/WindowClock";
+import { availabilityPill, trackingHref } from "@/components/premium/reservation-ui";
+import type { Availability } from "@/lib/premium/availability";
 import type { PremiumProperty } from "@/lib/premium/types";
-import { isCaughtByUser, isCaughtByOther } from "@/lib/premium/mock-data";
-import { formatCurrency } from "@/lib/dashboard/mock-data";
+import { formatCurrency } from "@/lib/currency";
+import { formatLimaDate } from "@/lib/premium/dates";
 import { cn } from "@/lib/utils";
 
 interface PremiumPropertyCardProps {
   property: PremiumProperty;
-  userId: string;
+  availability: Availability;
   isPremium: boolean;
   index?: number;
 }
 
-export function PremiumPropertyCard({
-  property,
-  userId,
-  isPremium,
-  index = 0,
-}: PremiumPropertyCardProps) {
-  const caughtByMe = isCaughtByUser(property, userId);
-  const caughtByOther = isCaughtByOther(property, userId);
-  const isAvailable = property.status === "available";
-  const isConverted = property.status === "converted" || property.status === "expired";
-  const estimatedReturn = (property.totalValue * property.premiumRoi) / 100;
+/**
+ * Misma tarjeta que Estándar (imagen, título, etapa judicial, datos clave,
+ * un CTA). Lo que cambia es el contenido: capital total en vez de ticket
+ * mínimo, ventana en vez de cierre de subasta y "Ver expediente" en vez de
+ * "Invertir". El dorado aparece una sola vez: el distintivo Premium.
+ */
+export function PremiumPropertyCard({ property: p, availability, isPremium, index = 0 }: PremiumPropertyCardProps) {
+  const pill = availabilityPill(availability);
+  const detailHref = `/dashboard/premium-properties/${p.id}`;
+  const dimmed = availability.kind === "collective" || availability.kind === "held";
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.06, duration: 0.4 }}
-      className={cn(
-        "group rounded-2xl border overflow-hidden shadow-sm transition-all duration-300",
-        caughtByMe
-          ? "border-premium/40 bg-gradient-to-br from-premium/10 to-card ring-1 ring-premium/30"
-          : caughtByOther
-            ? "border-border/40 bg-muted/30 opacity-90"
-            : isAvailable
-              ? "border-premium/20 bg-card hover:shadow-xl hover:-translate-y-1"
-              : "border-border/60 bg-card"
-      )}
+      transition={{ delay: Math.min(index, 6) * 0.05, duration: 0.35 }}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg"
+      data-testid={`premium-card-${p.id}`}
     >
-      <Link href={`/dashboard/premium-properties/${property.id}`} className="block">
-        <div className="relative overflow-hidden aspect-[16/9]">
+      <Link href={detailHref} className="block" aria-label={`Ver expediente de ${p.name}`}>
+        <div className="relative aspect-[16/10] overflow-hidden bg-muted">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={property.img}
-            alt={property.name}
+            src={p.img}
+            alt=""
             className={cn(
-              "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105",
-              !isPremium && "blur-[2px] scale-105",
-              caughtByOther && "grayscale-[30%]"
+              "size-full object-cover transition-transform duration-500 group-hover:scale-105",
+              dimmed && "saturate-[.6]"
             )}
+            loading="lazy"
+            decoding="async"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-
-          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-            <PremiumExclusiveBadge />
-            {caughtByMe && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-success text-success-foreground">
-                <CheckCircle2 className="size-2.5" />
-                Capturada por ti
-              </span>
-            )}
-            {caughtByOther && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-foreground text-background">
-                <XCircle className="size-2.5" />
-                Ya capturada
-              </span>
-            )}
-            {isConverted && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-info text-info-foreground">
-                Pasó a inversión colectiva
-              </span>
-            )}
+          <div className="absolute inset-0 bg-linear-to-t from-black/45 via-transparent to-transparent" aria-hidden />
+          <div className="absolute left-3 top-3 rounded-full bg-card/95 backdrop-blur-sm">
+            <StatusPill tone={pill.tone} size="xs" className="ring-0">
+              {pill.label}
+            </StatusPill>
           </div>
-
-          {!isPremium && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-              <div className="flex flex-col items-center gap-2 text-white">
-                <Lock className="size-8" />
-                <span className="text-xs font-semibold">Solo usuarios Premium</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="p-4">
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-1">
-            <span>{property.type} · {property.area}</span>
-          </div>
-          <h3 className="text-sm font-semibold text-foreground leading-snug">{property.name}</h3>
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
-            <MapPin className="size-2.5" />
-            <span className="truncate">{property.address}</span>
-          </div>
+          <PremiumBadge size="sm" className="absolute right-3 top-3" />
         </div>
       </Link>
 
-      <div className="px-4 pb-4 flex flex-col gap-3">
-        {/* Jerarquía financiera (P-006): capital requerido manda, luego retorno, luego ganancia */}
-        <div className="rounded-xl border border-border/60 overflow-hidden">
-          <div className="px-3 py-2 flex items-center justify-between gap-2 bg-muted/30">
-            <span className="text-[9px] text-muted-foreground uppercase tracking-wide">Capital requerido</span>
-            <CurrencyBadge currency={property.currency} />
+      <div className="flex flex-1 flex-col gap-4 p-5">
+        <Link href={detailHref} className="block min-w-0">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="text-base font-semibold leading-snug text-foreground">{p.name}</h3>
+            <CurrencyBadge currency={p.currency} className="mt-0.5 shrink-0" />
           </div>
-          <p className="px-3 pt-1.5 pb-2 text-base font-bold text-foreground tabular-nums">
-            {formatCurrency(property.totalValue, property.currency)}
+          <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+            <MapPin className="size-3 shrink-0" aria-hidden />
+            <span className="truncate">
+              {p.district} · {p.type} · {p.area}
+            </span>
           </p>
-          <div className="grid grid-cols-2 divide-x divide-border/60 border-t border-border/60 text-center">
-            <div className="py-2 px-1">
-              <p className="text-[9px] text-muted-foreground">Retorno estimado</p>
-              <p className="text-[10px] font-bold text-premium mt-0.5 flex items-center justify-center gap-0.5">
-                <TrendingUp className="size-2.5" />
-                {property.premiumRoi}%
-              </p>
-            </div>
-            <div className="py-2 px-1">
-              <p className="text-[9px] text-muted-foreground">Ganancia estimada</p>
-              <p className="text-[10px] font-bold text-success mt-0.5">
-                {formatCurrency(estimatedReturn, property.currency)}
-              </p>
-            </div>
+        </Link>
+
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border">
+          <div className="bg-muted px-3 py-3">
+            <dt className="text-[11px] text-muted-foreground">Capital requerido (100%)</dt>
+            <dd className="mt-1 text-sm font-bold tabular-nums text-foreground">
+              {formatCurrency(p.totalValue, p.currency)}
+            </dd>
           </div>
+          <div className="bg-muted px-3 py-3">
+            <dt className="text-[11px] text-muted-foreground">Retorno neto est.</dt>
+            <dd className="mt-1 text-sm font-bold tabular-nums text-foreground">
+              {isPremium ? (
+                `${p.roiBasis.netRoi}%`
+              ) : (
+                <span className="inline-flex items-center gap-1 text-muted-foreground">
+                  <Lock className="size-3.5" /> Premium
+                </span>
+              )}
+            </dd>
+          </div>
+        </dl>
+
+        <div className="min-h-5 text-xs text-muted-foreground">
+          {!isPremium ? (
+            <span>Expediente, escenarios y reserva con acceso Premium.</span>
+          ) : availability.kind === "available" ? (
+            <WindowClock deadline={p.premiumDeadline} compact />
+          ) : availability.kind === "held" ? (
+            <span>Otro inversionista tiene una solicitud en revisión. Puede liberarse.</span>
+          ) : availability.kind === "collective" ? (
+            <span>Ventana finalizada · disponible en participación colectiva.</span>
+          ) : availability.kind === "mine" ? (
+            <span>
+              Solicitud enviada el{" "}
+              <span className="font-medium text-foreground">{formatLimaDate(availability.reservation.requestedAt)}</span>
+            </span>
+          ) : null}
         </div>
 
-        {isAvailable && isPremium && (
-          <PremiumCountdown deadline={property.premiumDeadline} compact />
-        )}
-
-        {caughtByOther && (
-          <p className="text-xs text-muted-foreground text-center py-1">
-            Ya no está disponible para captura
-          </p>
-        )}
-
-        {isConverted && (
-          <p className="text-xs text-muted-foreground text-center py-1">
-            Ventana Premium finalizada · Ahora disponible en Estándar
-          </p>
-        )}
-
-        <div className="flex items-center gap-2">
-          {isPremium ? (
-            <>
-              {isAvailable && (
-                <Button
-                  asChild
-                  size="sm"
-                  className="flex-1 h-9 rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground text-xs font-semibold shadow-sm"
-                >
-                  <Link href={`/dashboard/premium-invest?property=${property.id}`}>
-                    <Crown className="size-3.5 mr-1" />
-                    Capturar 100%
-                  </Link>
-                </Button>
-              )}
-              {caughtByMe && (
-                <Button
-                  asChild
-                  size="sm"
-                  variant="outline"
-                  className="flex-1 h-9 rounded-xl border-premium/40 text-premium text-xs font-semibold"
-                >
-                  <Link href={`/dashboard/premium-properties/${property.id}`}>
-                    Ver mi inversión
-                    <ArrowRight className="size-3 ml-1" />
-                  </Link>
-                </Button>
-              )}
-              {caughtByOther && (
-                <Button
-                  size="sm"
-                  disabled
-                  className="flex-1 h-9 rounded-xl text-xs"
-                >
-                  Propiedad capturada
-                </Button>
-              )}
-              {isConverted && (
-                <Button
-                  asChild
-                  size="sm"
-                  variant="outline"
-                  className="flex-1 h-9 rounded-xl text-xs"
-                >
-                  <Link href="/dashboard/properties">Ver en estándar</Link>
-                </Button>
-              )}
-            </>
+        <div className="mt-auto">
+          {!isPremium ? (
+            <Button asChild className="h-10 w-full rounded-xl font-semibold">
+              <Link href="/dashboard/account?section=premium">Conocer Premium</Link>
+            </Button>
+          ) : availability.kind === "mine" ? (
+            <Button asChild className="h-10 w-full rounded-xl font-semibold">
+              <Link href={trackingHref(availability.reservation.id)}>
+                Ver seguimiento
+                <ArrowRight />
+              </Link>
+            </Button>
+          ) : availability.kind === "collective" ? (
+            <Button asChild variant="outline" className="h-10 w-full rounded-xl font-semibold">
+              <Link href="/dashboard/properties">Ver en inversión colectiva</Link>
+            </Button>
           ) : (
             <Button
               asChild
-              size="sm"
-              className="flex-1 h-9 rounded-xl bg-premium text-premium-foreground hover:bg-premium/90 text-xs font-semibold"
+              variant={availability.kind === "available" ? "default" : "outline"}
+              className="h-10 w-full rounded-xl font-semibold"
             >
-              <Link href="/dashboard/account?section=premium">
-                <Crown className="size-3.5 mr-1" />
-                Actualizar a Premium
-              </Link>
+              <Link href={detailHref}>Ver expediente</Link>
             </Button>
           )}
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }

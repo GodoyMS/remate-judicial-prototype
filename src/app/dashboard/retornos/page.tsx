@@ -28,10 +28,16 @@ import { getRetornosByUserId, subscribeRetornos } from "@/lib/retornos/store";
 import type { Retorno, RetornoType, TicketStatus } from "@/lib/retornos/types";
 import { RETORNO_CATEGORY_LABELS } from "@/lib/retornos/types";
 import { formatDateTime } from "@/lib/admin/formatters";
-import { formatCurrency, formatMixedCurrencyTotals, sumByCurrency } from "@/lib/currency";
+import { formatCurrency, sumByCurrency } from "@/lib/currency";
 import { useCurrentUser } from "@/contexts/user-context";
 import { RetornoDetailSheet } from "@/components/dashboard/retornos/RetornoDetailSheet";
 import { PageHero } from "@/components/dashboard/PageHero";
+import { MoneyLines } from "@/components/shared/MoneyLines";
+import { trackingHref } from "@/components/premium/reservation-ui";
+import { getPremiumPropertyById } from "@/lib/premium/mock-data";
+import { isActive, useReservations } from "@/lib/premium/reservations";
+import { formatLimaDate } from "@/lib/premium/dates";
+import Link from "next/link";
 import { CreateTicketDialog } from "@/components/dashboard/retornos/CreateTicketDialog";
 
 const typeConfig: Record<RetornoType, { label: string; icon: typeof TrendingUp; solid: string; chip: string }> = {
@@ -63,6 +69,12 @@ const ticketStatusConfig: Record<TicketStatus, { label: string; color: string }>
 
 export default function DashboardRetornosPage() {
   const { user } = useCurrentUser();
+  const premiumReservations = useReservations();
+  const premiumSettled = useMemo(
+    () => premiumReservations.filter((r) => r.userId === user.id && r.status === "settled" && r.settlement),
+    [premiumReservations, user.id]
+  );
+  const premiumInProgress = premiumReservations.filter((r) => r.userId === user.id && isActive(r)).length;
   const [retornos, setRetornos] = useState<Retorno[]>(() =>
     getRetornosByUserId(user.id)
   );
@@ -100,18 +112,16 @@ export default function DashboardRetornosPage() {
   }, [retornos, search, typeFilter]);
 
   const stats = useMemo(() => {
-    // Ganancia, devolución de capital y reembolso son movimientos distintos
-    // (E-043): solo la ganancia real alimenta el total de "Retornos".
-    const gainByCurrency = sumByCurrency(
-      retornos.map((r) => ({ amount: r.gainAmount, currency: r.currency }))
-    );
-    return {
-      total: retornos.length,
-      roi: retornos.filter((r) => r.type === "roi_return").length,
-      refund: retornos.filter((r) => r.type === "refund").length,
-      gainLabel: formatMixedCurrencyTotals(gainByCurrency),
-    };
-  }, [retornos]);
+    // Realizado, capital devuelto y proyección son lecturas distintas (E-043,
+    // auditoría Premium slide 13): nunca se mezclan en una sola cifra.
+    const gains = sumByCurrency(retornos.map((r) => ({ amount: r.gainAmount, currency: r.currency })));
+    const capital = sumByCurrency(retornos.map((r) => ({ amount: r.principalAmount, currency: r.currency })));
+    premiumSettled.forEach((r) => {
+      gains[r.currency] = (gains[r.currency] ?? 0) + Math.max(0, r.settlement!.gain);
+      capital[r.currency] = (capital[r.currency] ?? 0) + r.settlement!.capitalReturned;
+    });
+    return { gains, capital };
+  }, [retornos, premiumSettled]);
 
   function openDetail(r: Retorno) {
     setSelected(r);
@@ -135,44 +145,80 @@ export default function DashboardRetornosPage() {
 
       <div className="w-full">
 
-      {/* Summary */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          { label: "Total", value: retornos.length, sub: "retornos", icon: ArrowDownToLine, color: "text-primary bg-primary/10" },
-          { label: "ROI", value: stats.roi, sub: "ganancias", icon: TrendingUp, color: "text-success bg-success/10" },
-          { label: "Reembolsos", value: stats.refund, sub: "recibidos", icon: RotateCcw, color: "text-info bg-info/10" },
-          { label: "Devoluciones", value: retornos.filter((r) => r.type === "goal_not_reached").length, sub: "procesadas", icon: Target, color: "text-warning bg-warning/10" },
-        ].map((s, i) => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.04 }}
-            className="rounded-2xl border border-border/60 bg-card px-4 py-4 shadow-sm"
+      {/* Resumen: realizado, capital devuelto y proyección por separado */}
+      <div className="mb-6 grid gap-3 md:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl bg-primary p-5 text-primary-foreground shadow-sm shadow-primary/20"
+          data-testid="retornos-realized"
+        >
+          <span className="inline-flex rounded-full bg-primary-foreground px-2.5 py-1 text-xs font-semibold text-primary">Realizado</span>
+          <div className="mt-4 text-2xl font-bold tabular-nums leading-tight">
+            <MoneyLines values={stats.gains} empty={formatCurrency(0, "PEN")} />
+          </div>
+          <p className="mt-2 text-xs text-primary-foreground/75">Solo ganancias efectivamente abonadas</p>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.04 }}
+          className="rounded-2xl bg-primary p-5 text-primary-foreground shadow-sm shadow-primary/20"
+        >
+          <span className="inline-flex rounded-full bg-primary-foreground px-2.5 py-1 text-xs font-semibold text-primary">Capital devuelto</span>
+          <div className="mt-4 text-2xl font-bold tabular-nums leading-tight">
+            <MoneyLines values={stats.capital} empty={formatCurrency(0, "PEN")} />
+          </div>
+          <p className="mt-2 text-xs text-primary-foreground/75">Tu propio capital, separado del rendimiento</p>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="flex flex-col rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
+        >
+          <span className="inline-flex w-fit rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-foreground">En seguimiento</span>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Las proyecciones de tus operaciones en curso no son dinero disponible: las verás en cada inversión.
+          </p>
+          <Link
+            href={premiumInProgress > 0 ? "/dashboard/my-investments?tab=premium" : "/dashboard/my-investments"}
+            className="mt-auto pt-3 text-sm font-medium text-primary hover:underline"
           >
-            <div className="flex items-center justify-between gap-2">
-              <div>
-                <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{s.label}</p>
-                <p className="mt-0.5 text-xl font-bold">{s.value}</p>
-                <p className="text-[10px] text-muted-foreground">{s.sub}</p>
-              </div>
-              <div className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", s.color.split(" ")[1])}>
-                <s.icon className={cn("size-4", s.color.split(" ")[0])} />
-              </div>
-            </div>
-          </motion.div>
-        ))}
+            Ver mis inversiones en curso →
+          </Link>
+        </motion.div>
       </div>
 
-      <div className="mb-6 rounded-2xl bg-primary text-primary-foreground px-5 py-4 shadow-sm shadow-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
-        <div>
-          <p className="text-sm font-semibold">Ganancias generadas</p>
-          <p className="text-[11px] text-primary-foreground/75 mt-0.5">
-            Solo ganancia real. No incluye capital devuelto ni reembolsos.
-          </p>
-        </div>
-        <p className="text-xl sm:text-2xl font-bold tabular-nums shrink-0">{stats.gainLabel}</p>
-      </div>
+      {premiumSettled.length > 0 && (
+        <section className="mb-6 rounded-2xl border border-border/60 bg-card shadow-sm" aria-labelledby="premium-settled">
+          <h2 id="premium-settled" className="border-b border-border/60 px-4 py-3 text-sm font-semibold text-foreground sm:px-5">
+            Liquidaciones Premium
+          </h2>
+          <ul className="divide-y divide-border/60">
+            {premiumSettled.map((r) => (
+              <li key={r.id}>
+                <Link href={trackingHref(r.id)} className="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 hover:bg-muted/40 sm:px-5">
+                  <div className="min-w-0 basis-full sm:basis-auto sm:flex-1">
+                    <p className="text-sm font-semibold text-foreground sm:truncate">{getPremiumPropertyById(r.propertyId)?.name ?? r.code}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {r.code} · abonado el {formatLimaDate(r.settlement!.settledAt)}
+                    </p>
+                  </div>
+                  <div className="text-xs sm:text-right">
+                    <p className="text-muted-foreground">Capital devuelto</p>
+                    <p className="font-semibold tabular-nums text-foreground">{formatCurrency(r.settlement!.capitalReturned, r.currency)}</p>
+                  </div>
+                  <div className="text-xs sm:text-right">
+                    <p className="text-muted-foreground">Ganancia neta</p>
+                    <p className="font-semibold tabular-nums text-success">{formatCurrency(r.settlement!.gain, r.currency)}</p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Filters */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">

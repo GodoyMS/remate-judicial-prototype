@@ -44,7 +44,7 @@ const tierBenefits: Record<UserTier, string[]> = {
     "Acceso anticipado a nuevas subastas",
     "Análisis detallado de propiedades",
     "Soporte prioritario 24/7",
-    "Comisión reducida del 0.5%",
+    "Asesor asignado durante toda la operación",
   ],
 };
 

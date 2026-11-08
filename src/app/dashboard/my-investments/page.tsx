@@ -1,15 +1,13 @@
 "use client";
 
 import { PageHero } from "@/components/dashboard/PageHero";
-import { useMemo, useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Briefcase, Crown } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PremiumInvestmentsTab } from "@/components/dashboard/PremiumInvestmentsTab";
-import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
-import { useCurrentUser } from "@/contexts/user-context";
 import {
   Search,
   Eye,
@@ -113,14 +111,13 @@ export default function MyInvestmentsPage() {
 
 function MyInvestmentsContent() {
   const searchParams = useSearchParams();
-  const { isPremium } = useCurrentUser();
-  const [activeTab, setActiveTab] = useState("standard");
+  const router = useRouter();
+  // La pestaña vive en la URL: al volver desde un seguimiento Premium se
+  // regresa a la pestaña correcta.
+  const activeTab = searchParams.get("tab") === "premium" ? "premium" : "standard";
+  const setActiveTab = (tab: string) =>
+    router.replace(tab === "premium" ? "/dashboard/my-investments?tab=premium" : "/dashboard/my-investments", { scroll: false });
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab === "premium") setActiveTab("premium");
-  }, [searchParams]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [districtFilter, setDistrictFilter] = useState("all");
   const [paymentFilter, setPaymentFilter] = useState("all");
@@ -254,9 +251,8 @@ function MyInvestmentsContent() {
             Inversiones estándar
           </TabsTrigger>
           <TabsTrigger value="premium" className="rounded-lg text-xs font-medium px-4 gap-1.5">
-            <Crown className="size-3" />
+            <Crown className="size-3 text-premium" />
             Premium
-            {isPremium && <PremiumBadge size="sm" className="scale-75" />}
           </TabsTrigger>
         </TabsList>
 

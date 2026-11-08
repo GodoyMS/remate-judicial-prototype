@@ -51,14 +51,15 @@ export function isNavItemActive(pathname: string, item: DashboardNavItem): boole
 
 export function getPageTitle(pathname: string): string {
   if (pathname === "/dashboard") return "Inicio";
-  if (pathname.startsWith("/dashboard/premium-properties/")) return "Detalle premium";
+  if (pathname.startsWith("/dashboard/premium-properties/")) return "Oportunidad Premium";
   if (pathname === "/dashboard/premium-properties") return "Premium";
+  if (pathname.startsWith("/dashboard/my-investments/premium/")) return "Seguimiento Premium";
   if (pathname.startsWith("/dashboard/properties/")) return "Detalle de propiedad";
   if (pathname === "/dashboard/properties") return "Propiedades";
   if (pathname === "/dashboard/my-investments") return "Mis inversiones";
   if (pathname === "/dashboard/retornos") return "Retornos";
   if (pathname === "/dashboard/invest") return "Nueva inversión";
-  if (pathname === "/dashboard/premium-invest") return "Invertir Premium";
+  if (pathname === "/dashboard/premium-invest") return "Solicitar reserva";
   if (pathname === "/dashboard/account") return "Mi cuenta";
   if (pathname === "/dashboard/notifications") return "Notificaciones";
   if (pathname === "/dashboard/documents") return "Mis documentos";

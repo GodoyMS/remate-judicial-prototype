@@ -1,743 +1,622 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense, useMemo, useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  CheckCircle2,
-  ArrowRight,
-  ArrowLeft,
-  Crown,
-  CreditCard,
-  Banknote,
-  Landmark,
-  Smartphone,
-  Lock,
-  TrendingUp,
-  MapPin,
-  Shield,
-  Percent,
   AlertCircle,
+  ArrowLeft,
+  ArrowRight,
+  Banknote,
+  Check,
+  CircleCheck,
+  Crown,
+  Landmark,
+  Loader2,
+  Lock,
+  ShieldCheck,
+  Split,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  BankTransferForm,
-  type TransferFormData,
-} from "@/components/dashboard/invest/BankTransferForm";
-import {
-  CardPaymentForm,
-  type CardFormData,
-} from "@/components/dashboard/invest/CardPaymentForm";
-import {
-  DepositForm,
-  type DepositFormData,
-} from "@/components/dashboard/invest/DepositForm";
-import {
-  YapePaymentForm,
-  type YapeFormData,
-} from "@/components/dashboard/invest/YapePaymentForm";
-import { CurrencyBadge } from "@/components/shared/CurrencyBadge";
-import { PremiumCountdown } from "@/components/dashboard/PremiumCountdown";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PremiumBadge } from "@/components/dashboard/PremiumBadge";
+import { ComplianceChecklist } from "@/components/premium/ComplianceChecklist";
+import { ReservationStepper } from "@/components/premium/ReservationStepper";
+import { WindowClock } from "@/components/premium/WindowClock";
+import { trackingHref } from "@/components/premium/reservation-ui";
 import { useCurrentUser } from "@/contexts/user-context";
+import { useNotifications } from "@/contexts/notifications-context";
+import { getAllPremiumProperties, getPremiumPropertyById } from "@/lib/premium/mock-data";
+import { getAvailability } from "@/lib/premium/availability";
+import { canRequestReservation, useCompliance } from "@/lib/premium/compliance";
 import {
-  getAllPremiumProperties,
-  getPremiumPropertyById,
-  isPropertyEffectivelyAvailable,
-  premiumProperties,
-} from "@/lib/premium/mock-data";
+  FUNDING_PLAN_LABELS,
+  requestReservation,
+  useReservations,
+  type FundingPlan,
+  type PremiumReservation,
+} from "@/lib/premium/reservations";
+import { getEstimatedTerm, getPremiumScenarios } from "@/lib/premium/scenarios";
+import { getMaxForCurrency } from "@/lib/invest/payment-limits";
+import { formatCurrency } from "@/lib/currency";
 import type { PremiumProperty } from "@/lib/premium/types";
-import { formatCurrency } from "@/lib/dashboard/mock-data";
-import type { PropertyCurrency } from "@/lib/currency";
-import {
-  getPaymentValidationHint,
-  isPaymentFormValid,
-} from "@/lib/invest/payment-validation";
-import {
-  savePendingPremiumInvestment,
-  getPendingInvestmentsForProperty,
-} from "@/lib/app-store";
-import { methodCoversAmount, getPaymentMethodLimit } from "@/lib/invest/payment-limits";
+import { cn } from "@/lib/utils";
 
-const STEPS = ["Propiedad", "Revisión", "Pago", "Confirmación"];
+const STEPS = [
+  { id: "expediente", label: "Expediente" },
+  { id: "cuenta", label: "Validar cuenta" },
+  { id: "aporte", label: "Aporte" },
+  { id: "enviar", label: "Enviar solicitud" },
+] as const;
 
-const paymentMethods = [
-  { id: "card", label: "Tarjeta débito / crédito", icon: CreditCard, hint: "Visa, Mastercard, Amex" },
-  { id: "transfer", label: "Transferencia bancaria", icon: Banknote, hint: "BCP, Interbank, BBVA" },
-  { id: "deposit", label: "Depósito en cuenta", icon: Landmark, hint: "Ventanilla o agente" },
-  { id: "yape", label: "Yape", icon: Smartphone, hint: "Pago instantáneo" },
+const ACKS = [
+  { id: "file", label: "Revisé el expediente, los costos y los riesgos de esta oportunidad." },
+  { id: "estimate", label: "Entiendo que el retorno es estimado y no está garantizado; puede ser menor o negativo." },
+  { id: "title", label: "Entiendo que financiar el 100% no equivale a adquirir la propiedad registral de forma automática." },
 ];
 
-export default function PremiumInvestPage() {
+export default function PremiumReservationPage() {
   return (
     <Suspense>
-      <PremiumInvestContent />
+      <ReservationFlow />
     </Suspense>
   );
 }
 
-function PremiumInvestContent() {
+function ReservationFlow() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const { user, isPremium } = useCurrentUser();
+  const reservations = useReservations();
+  const propertyId = searchParams.get("property");
+  const property = propertyId ? getPremiumPropertyById(propertyId) : undefined;
+  const [submitted, setSubmitted] = useState<PremiumReservation | null>(null);
+
+  if (!isPremium) return <Gate />;
+  if (submitted && property) return <Success reservation={submitted} property={property} />;
+  if (!property) return <PickProperty userId={user.id} />;
+
+  const availability = getAvailability(property, reservations, user.id);
+  if (availability.kind === "mine") {
+    return (
+      <StateCard
+        icon={CircleCheck}
+        title="Ya tienes una reserva para esta oportunidad"
+        body="Sigue su avance, firma documentos y registra tus aportes desde el seguimiento."
+        primary={{ label: "Ver seguimiento", href: trackingHref(availability.reservation.id) }}
+      />
+    );
+  }
+  if (availability.kind !== "available") {
+    return (
+      <StateCard
+        icon={AlertCircle}
+        title="Esta oportunidad ya no admite solicitudes"
+        body={
+          availability.kind === "held"
+            ? "Otro inversionista envió una solicitud antes. Si no se aprueba, volverá a estar disponible y te avisaremos."
+            : "La ventana Premium cerró. Puedes participar en inversión colectiva desde S/ 500."
+        }
+        primary={{ label: "Ver oportunidades disponibles", href: "/dashboard/premium-properties?filter=available" }}
+      />
+    );
+  }
+
+  return <Wizard property={property} onSubmitted={setSubmitted} />;
+}
+
+function Wizard({ property, onSubmitted }: { property: PremiumProperty; onSubmitted: (r: PremiumReservation) => void }) {
+  const router = useRouter();
+  const { user } = useCurrentUser();
+  const { addNotification } = useNotifications();
+  const compliance = useCompliance(user.id);
   const [step, setStep] = useState(0);
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
-  const [cardForm, setCardForm] = useState<CardFormData>({
-    cardNumber: "", cardholder: "", expiry: "", cvv: "",
-  });
-  const [transferForm, setTransferForm] = useState<TransferFormData>({
-    accountNumber: "", transferNumber: "", amount: "", receipt: null,
-  });
-  const [depositForm, setDepositForm] = useState<DepositFormData>({
-    voucherNumber: "", voucherDate: undefined, operationNumber: "", amount: "", receipt: null,
-  });
-  const [yapeForm, setYapeForm] = useState<YapeFormData>({ phone: "", approvalCode: "" });
-  const [confirming, setConfirming] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
-  const deepLinkHandled = useRef(false);
+  const [acks, setAcks] = useState<Record<string, boolean>>({});
+  const [plan, setPlan] = useState<FundingPlan | null>(null);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [allProperties, setAllProperties] = useState<PremiumProperty[]>(premiumProperties);
+  const scenarios = getPremiumScenarios(property);
+  const term = getEstimatedTerm(property);
+  const totalCosts = property.roiBasis.costs.reduce((s, c) => s + c.amount, 0);
+  const cardMax = getMaxForCurrency("card", property.currency);
 
-  useEffect(() => {
-    setAllProperties(getAllPremiumProperties());
-  }, []);
+  const canContinue = [
+    ACKS.every((a) => acks[a.id]),
+    canRequestReservation(compliance),
+    plan !== null,
+    true,
+  ][step];
 
-  const availableProperties = useMemo(
-    () =>
-      allProperties.filter(
-        (p) => p.status === "available" && isPropertyEffectivelyAvailable(p.id)
-      ),
-    [allProperties]
-  );
+  const blockedHint = [
+    "Confirma las tres declaraciones para continuar.",
+    compliance.sourceOfFunds.status === "action_required"
+      ? "Envía tu declaración de origen de fondos para continuar."
+      : "Completa tu verificación para continuar.",
+    "Elige cómo harás el aporte.",
+    "",
+  ][step];
 
-  useEffect(() => {
-    if (deepLinkHandled.current) return;
-    const param = searchParams.get("property");
-    if (!param) return;
-    const isAvailable =
-      allProperties.some((p) => p.id === param && p.status === "available") &&
-      isPropertyEffectivelyAvailable(param);
-    if (isAvailable) {
-      setSelectedPropertyId(param);
-      setStep(1);
-      deepLinkHandled.current = true;
-    }
-  }, [searchParams, allProperties]);
-
-  const property = selectedPropertyId ? getPremiumPropertyById(selectedPropertyId) : null;
-  const propertyCurrency: PropertyCurrency = property?.currency ?? "PEN";
-  const amount = property?.totalValue ?? 0;
-  const estimatedReturn = property ? (amount * property.premiumRoi) / 100 : 0;
-  const commission = amount * 0.005;
-
-  // Para operaciones de alto valor, solo se ofrecen los canales que
-  // realmente pueden procesar el monto completo (WP-6.4, cierra
-  // P-024/P-026/P-028): tarjeta y Yape están acotados por el
-  // procesador/emisor y no son razonables como checkout ecommerce para
-  // cientos de miles de soles o dólares.
-  const availablePaymentMethods = paymentMethods.filter(
-    (m) =>
-      (propertyCurrency === "PEN" || m.id !== "yape") &&
-      methodCoversAmount(m.id as "card" | "transfer" | "deposit" | "yape", propertyCurrency, amount)
-  );
-
-  const paymentForms = { card: cardForm, transfer: transferForm, deposit: depositForm, yape: yapeForm };
-  const isPaymentStepValid = isPaymentFormValid(paymentMethod, paymentForms);
-  const paymentValidationHint = getPaymentValidationHint(paymentMethod, paymentForms);
-
-  const selectPaymentMethod = (methodId: string) => {
-    setPaymentMethod(methodId);
-    const amountStr = String(amount);
-    if (methodId === "transfer") {
-      setTransferForm((prev) => ({ ...prev, amount: amountStr }));
-    }
-    if (methodId === "deposit") {
-      setDepositForm((prev) => ({ ...prev, amount: amountStr }));
-    }
-  };
-
-  const goToPaymentStep = () => {
-    const defaultMethod = availablePaymentMethods[0]?.id ?? null;
-    if (!paymentMethod && defaultMethod) {
-      selectPaymentMethod(defaultMethod);
-    }
-    setStep(2);
-  };
-
-  const requiresVerification =
-    paymentMethod === "transfer" || paymentMethod === "deposit";
-
-  const handleConfirm = () => {
-    setConfirming(true);
+  const submit = () => {
+    setSending(true);
+    setError(null);
     setTimeout(() => {
-      setConfirming(false);
-      if (requiresVerification && property) {
-        // Save pending investment for admin verification
-        const investmentId = `pinv-${user.id}-${Date.now()}`;
-        savePendingPremiumInvestment({
-          id: investmentId,
-          certificateId: `PREM-2026-${investmentId.slice(-6).toUpperCase()}`,
-          propertyId: property.id,
-          propertyName: property.name,
-          userId: user.id,
-          userName: user.name,
-          userEmail: user.email,
-          amount,
-          currency: propertyCurrency,
-          premiumRoi: property.premiumRoi,
-          estimatedReturn,
-          paymentMethod: paymentMethod as "transfer" | "deposit",
-          submittedAt: new Date().toISOString(),
-          status: "pending_verification",
-          // Transfer fields
-          transferNumber: paymentMethod === "transfer" ? transferForm.transferNumber : undefined,
-          originAccountNumber: paymentMethod === "transfer" ? transferForm.accountNumber : undefined,
-          // Deposit fields
-          voucherNumber: paymentMethod === "deposit" ? depositForm.voucherNumber : undefined,
-          voucherDate: paymentMethod === "deposit" ? (depositForm.voucherDate ? String(depositForm.voucherDate) : undefined) : undefined,
-          operationNumber: paymentMethod === "deposit" ? depositForm.operationNumber : undefined,
-        });
-        setConfirmed(true);
-      } else {
-        setConfirmed(true);
+      const result = requestReservation({ user, property, fundingPlan: plan! });
+      setSending(false);
+      if (!result.ok) {
+        setError(result.message);
+        return;
       }
-    }, 2500);
+      addNotification({
+        category: "premium",
+        title: `Solicitud de reserva enviada — ${property.name}`,
+        description: "La revisaremos en 1 día hábil. Enviar la solicitud no generó ningún cobro.",
+        href: trackingHref(result.value.id),
+      });
+      onSubmitted(result.value);
+      window.scrollTo({ top: 0 });
+    }, 900);
   };
 
-  if (!isPremium) {
-    return (
-      <div className="max-w-lg mx-auto flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <div className="size-16 rounded-2xl bg-premium/10 flex items-center justify-center mb-4">
-          <Lock className="size-8 text-premium" />
-        </div>
-        <h2 className="text-xl font-bold mb-2">Acceso Premium requerido</h2>
-        <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-          Las inversiones exclusivas al 100% solo están disponibles para usuarios Premium.
-        </p>
-        <Button asChild className="rounded-xl">
-          <Link href="/dashboard/account?section=premium">
-            <Crown className="size-4 mr-2" />
-            Actualizar a Premium
-          </Link>
-        </Button>
-        <p className="text-xs text-muted-foreground mt-4">
-          Demo: inicia sesión con premium@rematto.com
-        </p>
-      </div>
-    );
-  }
-
-  if (confirmed && property) {
-    // Transfer / deposit → pending verification screen
-    if (requiresVerification) {
-      return (
-        <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[calc(100vh-12rem)]">
-          <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 200, damping: 18 }}
-            className="w-full rounded-3xl border border-info/20 bg-gradient-to-br from-info/10 to-card p-6 sm:p-10 flex flex-col items-center gap-6 text-center shadow-xl"
-          >
-            <div className="size-20 rounded-full bg-gradient-to-br from-info to-info/80 flex items-center justify-center">
-              <Shield className="size-10 text-info-foreground" />
-            </div>
-            <div>
-              <div className="inline-flex items-center gap-2 bg-info/10 text-info text-xs font-semibold px-3 py-1 rounded-full mb-3">
-                <div className="size-1.5 rounded-full bg-info animate-pulse" />
-                En verificación
-              </div>
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                Pago recibido — verificando
-              </h2>
-              <p className="text-muted-foreground mt-2 max-w-md leading-relaxed">
-                Recibimos tu comprobante de pago para{" "}
-                <strong className="text-foreground">{property.name}</strong>.
-                Un administrador verificará los datos y confirmará tu inversión.
-              </p>
-            </div>
-            <div className="w-full rounded-2xl bg-card border border-info/15 p-5 flex flex-col gap-3 text-left">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Inversión enviada</span>
-                <span className="font-bold">{formatCurrency(amount, propertyCurrency)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Método</span>
-                <span>{paymentMethods.find((m) => m.id === paymentMethod)?.label}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">ROI Premium</span>
-                <span className="font-bold text-premium">{property.premiumRoi}%</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Retorno estimado</span>
-                <span className="font-bold text-success">
-                  {formatCurrency(estimatedReturn, propertyCurrency)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Estado</span>
-                <span className="text-info font-medium">Pendiente de aprobación</span>
-              </div>
-            </div>
-            <div className="w-full rounded-xl bg-warning/10 border border-warning/20 p-4 text-left text-sm">
-              <p className="font-semibold text-warning mb-1">¿Qué sigue?</p>
-              <ul className="space-y-1 text-warning text-xs">
-                <li>• El administrador revisará tu comprobante en 1-2 días hábiles</li>
-                <li>• La propiedad quedará reservada mientras se verifica</li>
-                <li>• Recibirás una notificación cuando sea confirmado</li>
-                <li>• Si es rechazado, la propiedad vuelve a estar disponible</li>
-              </ul>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 w-full">
-              <Button
-                variant="outline"
-                className="flex-1 rounded-xl h-11"
-                onClick={() => router.push("/dashboard/premium-properties")}
-              >
-                Ver propiedades Premium
-              </Button>
-              <Button
-                className="flex-1 rounded-xl h-11 bg-info hover:bg-info/90 text-info-foreground"
-                onClick={() => router.push("/dashboard/my-investments?tab=premium")}
-              >
-                Mis inversiones Premium
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      );
+  const next = () => {
+    if (step < STEPS.length - 1) {
+      setStep(step + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else submit();
+  };
+  const back = () => {
+    if (step === 0) router.push(`/dashboard/premium-properties/${property.id}`);
+    else {
+      setStep(step - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-
-    // Card / Yape → immediate capture
-    return (
-      <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[calc(100vh-12rem)]">
-        <motion.div
-          initial={{ scale: 0.85, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 18 }}
-          className="w-full rounded-3xl border border-premium/20 bg-gradient-to-br from-premium/10 to-card p-6 sm:p-10 flex flex-col items-center gap-6 text-center shadow-xl"
-        >
-          <div className="size-20 rounded-full bg-gradient-to-br from-premium to-premium/80 flex items-center justify-center">
-            <Crown className="size-10 text-premium-foreground" />
-          </div>
-          <div>
-            <PremiumBadge size="md" className="mb-3" />
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">
-              Fondos recibidos — reserva confirmada
-            </h2>
-            <p className="text-muted-foreground mt-2 max-w-md leading-relaxed">
-              Recibimos tu aporte del <strong className="text-foreground">100%</strong> para{" "}
-              <strong className="text-foreground">{property.name}</strong>. Eres el único
-              inversor mientras avanza la formalización.
-            </p>
-          </div>
-          <div className="w-full rounded-2xl bg-card border border-premium/15 p-5 flex flex-col gap-3 text-left">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Inversión total</span>
-              <span className="font-bold">{formatCurrency(amount, propertyCurrency)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Participación</span>
-              <span className="font-bold text-premium">100%</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">ROI Premium</span>
-              <span className="font-bold text-premium">{property.premiumRoi}%</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Retorno estimado</span>
-              <span className="font-bold text-success">
-                {formatCurrency(estimatedReturn, propertyCurrency)}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Comisión (0.5%)</span>
-              <span className="font-medium">{formatCurrency(commission, propertyCurrency)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Certificado</span>
-              <span className="font-mono text-xs">PREM-2026-NEW</span>
-            </div>
-            <div className="flex justify-between text-sm pt-2 border-t border-border/60">
-              <span className="text-muted-foreground">Estado</span>
-              <span className="text-premium font-medium">Formalización en proceso</span>
-            </div>
-          </div>
-          {/* Hitos reales (P-025): "pago confirmado" no equivale a "propiedad adquirida" */}
-          <div className="w-full rounded-xl bg-muted/50 p-4 text-left text-xs text-muted-foreground">
-            <p className="font-semibold text-foreground mb-1">¿Qué sigue?</p>
-            <ul className="space-y-1">
-              <li>• Fondos recibidos y verificados</li>
-              <li>• Documentación y formalización en proceso</li>
-              <li>• Te notificaremos en cada hito hasta la operación formalizada</li>
-            </ul>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
-            <Button
-              variant="outline"
-              className="flex-1 rounded-xl h-11"
-              onClick={() => router.push("/dashboard/premium-properties")}
-            >
-              Ver propiedades Premium
-            </Button>
-            <Button
-              className="flex-1 rounded-xl h-11 bg-premium hover:bg-premium/90 text-premium-foreground"
-              onClick={() => router.push("/dashboard/my-investments?tab=premium")}
-            >
-              Mis inversiones Premium
-            </Button>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
+  };
 
   return (
-    <div className="max-w-2xl mx-auto w-full">
-      <div className="mb-6 sm:mb-8">
-        <div className="flex items-center gap-2 mb-1 flex-wrap">
-          <Crown className="size-5 text-premium shrink-0" />
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
-            Captura Premium
-          </h2>
-          <PremiumBadge />
+    <div className="mx-auto w-full max-w-5xl pb-28 lg:pb-0">
+      <Link
+        href={`/dashboard/premium-properties/${property.id}`}
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" />
+        Volver a la ficha
+      </Link>
+
+      <div className="mb-5">
+        <div className="mb-1.5 flex items-center gap-2">
+          <PremiumBadge size="md" />
         </div>
-        <p className="text-sm text-muted-foreground">
-          Invierte el 100% y sé el único inversor con retorno excepcional.
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Solicitar reserva</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Revisa las condiciones antes de comprometer capital. Enviar la solicitud no genera ningún cobro.
         </p>
       </div>
 
-      <div className="flex items-center mb-6 sm:mb-8 overflow-x-auto pb-1 -mx-1 px-1">
-        {STEPS.map((s, i) => (
-          <div key={s} className="flex items-center flex-1 min-w-[52px]">
-            <div className="flex flex-col items-center gap-1 shrink-0">
-              <div
-                className={`size-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                  step > i
-                    ? "bg-premium text-premium-foreground"
-                    : step === i
-                      ? "bg-premium text-premium-foreground ring-4 ring-premium/20"
-                      : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {step > i ? <CheckCircle2 className="size-4" /> : i + 1}
-              </div>
-              <span className={`text-[10px] font-medium text-center leading-tight max-w-[4.5rem] sm:max-w-none hidden sm:block ${step >= i ? "text-foreground" : "text-muted-foreground"}`}>
-                {s}
-              </span>
+      <StepHeader step={step} />
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="min-w-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="flex min-w-0 flex-col gap-4 [&>*]:min-w-0"
+            >
+              {step === 0 && (
+                <>
+                  <Card title="Qué estás solicitando">
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      Reservar en exclusiva el <strong className="text-foreground">100% del capital</strong> de{" "}
+                      <strong className="text-foreground">{property.name}</strong>. Si la aprobamos, firmarás un contrato de reserva
+                      y tendrás <strong className="text-foreground">5 días hábiles</strong> para completar el aporte.
+                    </p>
+                  </Card>
+                  <Card title="Condiciones clave">
+                    <dl className="divide-y divide-border/60 text-sm">
+                      <Row label="Capital requerido" value={formatCurrency(property.totalValue, property.currency)} strong />
+                      <Row
+                        label="Retorno neto estimado"
+                        value={`${property.roiBasis.netRoi}% esperado · ${scenarios[0].netRoi}% adverso`}
+                      />
+                      {term && <Row label="Plazo estimado" value={term} />}
+                      <Row label="Costos estimados de la operación" value={formatCurrency(totalCosts, property.currency)} />
+                      <Row label="Expediente" value={property.judicial.expediente} mono />
+                    </dl>
+                    <Link
+                      href={`/dashboard/premium-properties/${property.id}#escenarios`}
+                      className="mt-3 inline-flex text-sm font-medium text-primary hover:underline"
+                    >
+                      Ver escenarios, documentos y riesgos
+                    </Link>
+                  </Card>
+                  <Card title="Antes de continuar">
+                    <div className="flex flex-col gap-3">
+                      {ACKS.map((a) => (
+                        <label key={a.id} className="flex cursor-pointer items-start gap-3 rounded-xl border border-border/60 p-3 text-sm text-foreground has-[[data-state=checked]]:border-primary/40 has-[[data-state=checked]]:bg-primary/5">
+                          <Checkbox
+                            checked={!!acks[a.id]}
+                            onCheckedChange={(v) => setAcks((s) => ({ ...s, [a.id]: v === true }))}
+                            className="mt-0.5"
+                          />
+                          <span className="leading-relaxed">{a.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </Card>
+                </>
+              )}
+
+              {step === 1 && (
+                <Card
+                  title="Verificación reforzada"
+                  description="Las operaciones Premium exigen identidad, origen de fondos y una cuenta bancaria a tu nombre."
+                >
+                  <ComplianceChecklist profile={compliance} />
+                </Card>
+              )}
+
+              {step === 2 && (
+                <>
+                  <Card title="¿Cómo harás el aporte?" description="Lo podrás ajustar con tu asesora antes de transferir.">
+                    <div role="radiogroup" aria-label="Plan de aporte" className="grid gap-3 sm:grid-cols-2">
+                      <PlanOption
+                        selected={plan === "single"}
+                        onSelect={() => setPlan("single")}
+                        icon={Banknote}
+                        title={FUNDING_PLAN_LABELS.single}
+                        body={`Una transferencia de ${formatCurrency(property.totalValue, property.currency)}.`}
+                      />
+                      <PlanOption
+                        selected={plan === "staged"}
+                        onSelect={() => setPlan("staged")}
+                        icon={Split}
+                        title={FUNDING_PLAN_LABELS.staged}
+                        body="Varias transferencias hasta completar el 100% dentro del plazo de la reserva."
+                      />
+                    </div>
+                  </Card>
+                  <Card title="Medio de pago">
+                    <div className="flex items-start gap-3">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground/70">
+                        <Landmark className="size-4" />
+                      </span>
+                      <div className="min-w-0 text-sm">
+                        <p className="font-semibold text-foreground">Transferencia bancaria</p>
+                        <p className="text-muted-foreground">
+                          Desde tu cuenta verificada {compliance.bankAccount.bank} ···{compliance.bankAccount.last4}.
+                        </p>
+                      </div>
+                    </div>
+                    <p className="mt-3 rounded-xl bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground">
+                      Tarjeta y Yape no están disponibles para este monto
+                      {cardMax ? ` (la tarjeta admite hasta ${formatCurrency(cardMax, property.currency)} por operación)` : ""}.
+                    </p>
+                  </Card>
+                  <Card title="Dónde estará tu dinero">
+                    <ul className="flex flex-col gap-2.5 text-sm text-muted-foreground">
+                      <Bullet>Transfieres a una cuenta de custodia exclusiva para operaciones Premium. Verás sus datos al aprobarse la reserva.</Bullet>
+                      <Bullet>Cada transferencia se concilia y la ves como &quot;Confirmado&quot; en tu seguimiento.</Bullet>
+                      <Bullet>Si la operación no se formaliza, el aporte se devuelve a tu cuenta verificada.</Bullet>
+                    </ul>
+                  </Card>
+                </>
+              )}
+
+              {step === 3 && (
+                <>
+                  <Card title="Revisa tu solicitud">
+                    <dl className="divide-y divide-border/60 text-sm">
+                      <Row label="Oportunidad" value={property.name} />
+                      <Row label="Capital a reservar" value={formatCurrency(property.totalValue, property.currency)} strong />
+                      <Row label="Plan de aporte" value={plan ? FUNDING_PLAN_LABELS[plan] : "—"} />
+                      <Row label="Medio" value={`Transferencia desde ${compliance.bankAccount.bank} ···${compliance.bankAccount.last4}`} />
+                      <Row label="Cobro al enviar" value="Ninguno" />
+                    </dl>
+                  </Card>
+                  <Card title="Qué pasa después">
+                    <ol className="flex flex-col gap-3 text-sm">
+                      {[
+                        ["Revisión", "Validamos tu cuenta y la solicitud en 1 día hábil. Mientras tanto, nadie más puede solicitarla."],
+                        ["Firma", "Si se aprueba, firmas el contrato de reserva desde tu seguimiento."],
+                        ["Aporte", "Transfieres a la cuenta de custodia dentro de 5 días hábiles."],
+                        ["Si no se aprueba", "La oportunidad se libera y no se realiza ningún cobro."],
+                      ].map(([t, b], i) => (
+                        <li key={t} className="flex gap-3">
+                          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">{i + 1}</span>
+                          <p className="text-muted-foreground">
+                            <span className="font-semibold text-foreground">{t}. </span>
+                            {b}
+                          </p>
+                        </li>
+                      ))}
+                    </ol>
+                  </Card>
+                  {error && (
+                    <div role="alert" className="flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 text-sm">
+                      <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
+                      <div>
+                        <p className="font-semibold text-foreground">No pudimos enviar la solicitud</p>
+                        <p className="mt-0.5 text-muted-foreground">{error}</p>
+                        <Link href="/dashboard/premium-properties?filter=available" className="mt-2 inline-flex font-medium text-primary hover:underline">
+                          Ver otras oportunidades
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Navegación (escritorio) */}
+          <div className="mt-6 hidden items-center justify-between gap-3 lg:flex">
+            <Button variant="ghost" className="h-11 rounded-xl" onClick={back}>
+              <ArrowLeft />
+              {step === 0 ? "Volver a la ficha" : "Atrás"}
+            </Button>
+            <div className="flex items-center gap-3">
+              {!canContinue && blockedHint && <p className="text-xs text-muted-foreground">{blockedHint}</p>}
+              <Button className="h-11 min-w-48 rounded-xl font-semibold" disabled={!canContinue || sending} onClick={next} data-testid="wizard-next">
+                {sending ? <Loader2 className="animate-spin" /> : null}
+                {step === STEPS.length - 1 ? (sending ? "Enviando…" : "Enviar solicitud de reserva") : "Continuar"}
+                {!sending && step < STEPS.length - 1 && <ArrowRight />}
+              </Button>
             </div>
-            {i < STEPS.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-1.5 sm:mx-2 mb-4 min-w-[12px] ${step > i ? "bg-premium" : "bg-border"}`} />
-            )}
           </div>
-        ))}
+        </div>
+
+        <aside className="hidden lg:block">
+          <div className="sticky top-24">
+            <Summary property={property} plan={plan} />
+          </div>
+        </aside>
       </div>
 
-      <AnimatePresence mode="wait">
-        {step === 0 && (
-          <motion.div
-            key="step-0"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -24 }}
-            className="flex flex-col gap-4"
-          >
-            <div className="rounded-2xl border border-premium/20 bg-card p-4 sm:p-6 shadow-sm">
-              <h3 className="text-base font-semibold mb-4">Selecciona una propiedad disponible</h3>
-              <div className="flex flex-col gap-3">
-                {availableProperties.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => setSelectedPropertyId(p.id)}
-                    className={`flex items-center gap-4 rounded-xl border p-4 text-left transition-all ${
-                      selectedPropertyId === p.id
-                        ? "border-premium bg-premium/10 ring-2 ring-premium/20"
-                        : "border-border/60 hover:border-premium/40"
-                    }`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.img} alt={p.name} className="size-16 rounded-xl object-cover shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold">{p.name}</p>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                        <MapPin className="size-3" />
-                        <span className="truncate">{p.address}</span>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2 flex-wrap">
-                        <CurrencyBadge currency={p.currency} />
-                        <span className="text-xs font-bold text-premium">{p.premiumRoi}% ROI</span>
-                        <span className="text-xs font-medium">{formatCurrency(p.totalValue, p.currency)}</span>
-                      </div>
-                      <PremiumCountdown deadline={p.premiumDeadline} compact className="mt-2" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <Button
-              onClick={() => setStep(1)}
-              disabled={!selectedPropertyId}
-              className="w-full h-11 rounded-xl bg-premium hover:bg-premium/90 text-premium-foreground font-semibold"
+      {/* Navegación (móvil): barra fija al alcance del pulgar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-card/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] backdrop-blur-md lg:hidden">
+        {!canContinue && blockedHint && <p className="mb-2 text-center text-xs text-muted-foreground">{blockedHint}</p>}
+        <div className="mx-auto flex max-w-xl gap-2">
+          <Button variant="outline" className="h-11 rounded-xl px-4" onClick={back} aria-label={step === 0 ? "Volver a la ficha" : "Atrás"}>
+            <ArrowLeft />
+          </Button>
+          <Button className="h-11 flex-1 rounded-xl font-semibold" disabled={!canContinue || sending} onClick={next} data-testid="wizard-next-mobile">
+            {sending ? <Loader2 className="animate-spin" /> : null}
+            {step === STEPS.length - 1 ? (sending ? "Enviando…" : "Enviar solicitud") : "Continuar"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StepHeader({ step }: { step: number }) {
+  return (
+    <div>
+      <div className="flex gap-1.5 sm:hidden" aria-hidden>
+        {STEPS.map((s, i) => (
+          <span key={s.id} className={cn("h-1.5 flex-1 rounded-full", i <= step ? "bg-primary" : "bg-muted")} />
+        ))}
+      </div>
+      <p className="mt-2 text-xs text-muted-foreground sm:hidden">
+        Paso {step + 1} de {STEPS.length} · <span className="font-semibold text-foreground">{STEPS[step].label}</span>
+      </p>
+      <ol className="hidden items-center gap-2 sm:flex" aria-label="Pasos de la solicitud">
+        {STEPS.map((s, i) => (
+          <li key={s.id} className="flex flex-1 items-center gap-2" aria-current={i === step ? "step" : undefined}>
+            <span
+              className={cn(
+                "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                i < step && "bg-primary text-primary-foreground",
+                i === step && "bg-primary text-primary-foreground ring-4 ring-primary/15",
+                i > step && "bg-muted text-muted-foreground"
+              )}
             >
-              Continuar <ArrowRight className="size-4 ml-1" />
-            </Button>
-          </motion.div>
+              {i < step ? <Check className="size-3.5" /> : i + 1}
+            </span>
+            <span className={cn("whitespace-nowrap text-sm font-medium", i <= step ? "text-foreground" : "text-muted-foreground")}>
+              {s.label}
+            </span>
+            {i < STEPS.length - 1 && <span className={cn("h-px flex-1", i < step ? "bg-primary" : "bg-border")} />}
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function Summary({ property, plan }: { property: PremiumProperty; plan: FundingPlan | null }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={property.img} alt="" className="aspect-[16/9] w-full object-cover" />
+      <div className="p-4">
+        <p className="text-sm font-semibold leading-snug text-foreground">{property.name}</p>
+        <p className="text-xs text-muted-foreground">{property.district}</p>
+        <div className="my-4 h-px bg-border/70" />
+        <p className="text-xs text-muted-foreground">Capital requerido</p>
+        <p className="text-2xl font-bold tabular-nums text-foreground">{formatCurrency(property.totalValue, property.currency)}</p>
+        {plan && <p className="mt-1 text-xs text-muted-foreground">{FUNDING_PLAN_LABELS[plan]}</p>}
+        <WindowClock deadline={property.premiumDeadline} className="mt-4" />
+      </div>
+    </div>
+  );
+}
+
+function Card({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm sm:p-5">
+      <h2 className="text-[15px] font-semibold text-foreground">{title}</h2>
+      {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
+      <div className="mt-4">{children}</div>
+    </section>
+  );
+}
+
+function Row({ label, value, strong, mono }: { label: string; value: string; strong?: boolean; mono?: boolean }) {
+  return (
+    <div className="flex flex-col gap-0.5 py-2.5 first:pt-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className={cn("text-foreground sm:text-right", strong ? "text-base font-bold tabular-nums" : "font-medium", mono && "font-mono text-[13px] break-all")}>
+        {value}
+      </dd>
+    </div>
+  );
+}
+
+function Bullet({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="flex gap-2.5">
+      <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary dark:text-accent-foreground" />
+      <span>{children}</span>
+    </li>
+  );
+}
+
+function PlanOption({
+  selected,
+  onSelect,
+  icon: Icon,
+  title,
+  body,
+}: {
+  selected: boolean;
+  onSelect: () => void;
+  icon: typeof Banknote;
+  title: string;
+  body: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={cn(
+        "flex items-start gap-3 rounded-xl border p-4 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+        selected ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border/70 hover:border-primary/40"
+      )}
+    >
+      <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-xl", selected ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/70")}>
+        <Icon className="size-4" />
+      </span>
+      <span>
+        <span className="block text-sm font-semibold text-foreground">{title}</span>
+        <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">{body}</span>
+      </span>
+    </button>
+  );
+}
+
+function Success({ reservation, property }: { reservation: PremiumReservation; property: PremiumProperty }) {
+  return (
+    <div className="mx-auto w-full max-w-2xl py-4">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm sm:p-8"
+        data-testid="reservation-success"
+      >
+        <span className="flex size-12 items-center justify-center rounded-2xl bg-success/12 text-success">
+          <CircleCheck className="size-6" />
+        </span>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight text-foreground">Solicitud enviada</h1>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          Reservamos <strong className="text-foreground">{property.name}</strong> para ti mientras revisamos tu solicitud. Te responderemos en 1 día hábil. No se realizó ningún cobro.
+        </p>
+        <div className="mt-5 flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3 text-sm">
+          <span className="text-muted-foreground">Código de solicitud</span>
+          <span className="font-mono font-semibold text-foreground">{reservation.code}</span>
+        </div>
+        <ReservationStepper status="requested" className="mt-6" />
+        <div className="mt-8 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button asChild variant="outline" className="h-11 rounded-xl">
+            <Link href="/dashboard/premium-properties">Volver a oportunidades</Link>
+          </Button>
+          <Button asChild className="h-11 rounded-xl font-semibold">
+            <Link href={trackingHref(reservation.id)}>
+              Ver seguimiento
+              <ArrowRight />
+            </Link>
+          </Button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function StateCard({
+  icon: Icon,
+  title,
+  body,
+  primary,
+}: {
+  icon: typeof Lock;
+  title: string;
+  body: string;
+  primary: { label: string; href: string };
+}) {
+  return (
+    <div className="mx-auto flex min-h-[55vh] max-w-md flex-col items-center justify-center text-center">
+      <span className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground/70">
+        <Icon className="size-6" />
+      </span>
+      <h1 className="text-xl font-bold text-foreground">{title}</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{body}</p>
+      <Button asChild className="mt-6 h-11 rounded-xl">
+        <Link href={primary.href}>{primary.label}</Link>
+      </Button>
+    </div>
+  );
+}
+
+function Gate() {
+  return (
+    <StateCard
+      icon={Crown}
+      title="Las reservas Premium requieren acceso Premium"
+      body="Premium está pensado para quienes pueden financiar individualmente el 100% de una operación. Revisa los requisitos en tu cuenta."
+      primary={{ label: "Conocer Premium", href: "/dashboard/account?section=premium" }}
+    />
+  );
+}
+
+function PickProperty({ userId }: { userId: string }) {
+  const reservations = useReservations();
+  const options = useMemo(
+    () => getAllPremiumProperties().filter((p) => getAvailability(p, reservations, userId).kind === "available"),
+    [reservations, userId]
+  );
+  return (
+    <div className="mx-auto w-full max-w-2xl">
+      <h1 className="text-2xl font-bold tracking-tight text-foreground">Solicitar reserva</h1>
+      <p className="mt-1 text-sm text-muted-foreground">Elige una oportunidad con ventana abierta.</p>
+      <ul className="mt-6 flex flex-col gap-3">
+        {options.map((p) => (
+          <li key={p.id}>
+            <Link
+              href={`/dashboard/premium-invest?property=${p.id}`}
+              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-3 shadow-sm hover:border-primary/40"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p.img} alt="" className="size-16 shrink-0 rounded-xl object-cover" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-foreground">{p.name}</p>
+                <p className="text-sm font-bold tabular-nums text-foreground">{formatCurrency(p.totalValue, p.currency)}</p>
+                <WindowClock deadline={p.premiumDeadline} compact />
+              </div>
+              <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+            </Link>
+          </li>
+        ))}
+        {options.length === 0 && (
+          <li className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+            No hay ventanas abiertas en este momento.
+          </li>
         )}
-
-        {step === 1 && property && (
-          <motion.div
-            key="step-1"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -24 }}
-            className="flex flex-col gap-4"
-          >
-            <div className="rounded-2xl border border-premium/20 bg-card p-4 sm:p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6 pb-5 border-b">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={property.img} alt={property.name} className="size-14 rounded-xl object-cover" />
-                <div>
-                  <p className="text-sm font-semibold">{property.name}</p>
-                  <p className="text-xs text-premium font-bold">{property.premiumRoi}% ROI Premium</p>
-                </div>
-              </div>
-
-              <h3 className="text-base font-semibold mb-4">Revisión de captura al 100%</h3>
-
-              <div className="rounded-xl bg-premium/10 border border-premium/15 p-4 space-y-3 mb-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Valor de la propiedad</span>
-                  <span className="font-bold">{formatCurrency(amount, propertyCurrency)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Percent className="size-3.5" />
-                    Tu participación
-                  </span>
-                  <span className="font-bold text-premium">100% — Único inversor</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <TrendingUp className="size-3.5" />
-                    Retorno estimado
-                  </span>
-                  <span className="font-bold text-success">
-                    {formatCurrency(estimatedReturn, propertyCurrency)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Comisión Premium (0.5%)</span>
-                  <span className="font-medium">{formatCurrency(commission, propertyCurrency)}</span>
-                </div>
-              </div>
-
-              <PremiumCountdown deadline={property.premiumDeadline} />
-
-              {/* Métodos y límites, visibles antes del último paso (P-028) */}
-              <div className="mt-4 rounded-xl border border-border/60 p-4">
-                <p className="text-xs font-semibold text-foreground mb-2">Métodos disponibles para esta oportunidad</p>
-                <div className="space-y-1.5">
-                  {paymentMethods
-                    .filter((m) => propertyCurrency === "PEN" || m.id !== "yape")
-                    .map((m) => {
-                      const covers = methodCoversAmount(m.id as "card" | "transfer" | "deposit" | "yape", propertyCurrency, amount);
-                      const limit = getPaymentMethodLimit(m.id as "card" | "transfer" | "deposit" | "yape");
-                      return (
-                        <div key={m.id} className="flex items-start gap-2 text-xs">
-                          <span className={covers ? "text-success mt-0.5" : "text-muted-foreground mt-0.5"}>
-                            {covers ? "✓" : "✕"}
-                          </span>
-                          <div>
-                            <span className={covers ? "font-medium text-foreground" : "text-muted-foreground"}>
-                              {m.label}
-                            </span>
-                            {!covers && limit && (
-                              <span className="text-muted-foreground"> — {limit.note}</span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-2">
-                  El capital total debe recibirse en una única operación.
-                </p>
-              </div>
-
-              <div className="flex items-start gap-2 mt-4 rounded-xl bg-muted/50 p-3">
-                <Shield className="size-4 text-muted-foreground shrink-0 mt-0.5" />
-                <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  Al confirmar, reservas esta propiedad como único inversor Premium mientras
-                  se procesa tu pago. Otros usuarios Premium no podrán invertir mientras tanto.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col-reverse sm:flex-row gap-3">
-              <Button variant="outline" onClick={() => setStep(0)} className="rounded-xl h-11 w-full sm:w-auto">
-                <ArrowLeft className="size-4 mr-1" /> Atrás
-              </Button>
-              <Button
-                onClick={goToPaymentStep}
-                className="flex-1 rounded-xl h-11 bg-premium hover:bg-premium/90 text-premium-foreground font-semibold"
-              >
-                Proceder al pago <ArrowRight className="size-4 ml-1" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
-
-        {step === 2 && property && (
-          <motion.div
-            key="step-2"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -24 }}
-            className="flex flex-col gap-4"
-          >
-            <div className="rounded-2xl border border-border/60 bg-card p-4 sm:p-6 shadow-sm">
-              <div className="rounded-xl bg-muted/30 p-3 mb-5 flex justify-between items-center gap-3 text-sm">
-                <span className="text-muted-foreground shrink-0">Monto a pagar</span>
-                <span className="font-bold text-base sm:text-lg text-right">{formatCurrency(amount, propertyCurrency)}</span>
-              </div>
-
-              <h3 className="text-base font-semibold mb-4">Método de pago</h3>
-              <div className="flex flex-col gap-2.5 mb-5">
-                {availablePaymentMethods.map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => selectPaymentMethod(m.id)}
-                    className={`flex items-center gap-3 sm:gap-4 rounded-xl border p-3.5 sm:p-4 text-left transition-all ${
-                      paymentMethod === m.id
-                        ? "border-premium bg-premium/10 ring-2 ring-premium/20"
-                        : "border-border/60 hover:border-premium/40"
-                    }`}
-                  >
-                    <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${
-                      paymentMethod === m.id ? "bg-premium text-premium-foreground" : "bg-muted text-muted-foreground"
-                    }`}>
-                      <m.icon className="size-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold">{m.label}</p>
-                      <p className="text-xs text-muted-foreground">{m.hint}</p>
-                    </div>
-                    <div className={`size-5 rounded-full border-2 shrink-0 transition-colors ${
-                      paymentMethod === m.id ? "border-premium bg-premium" : "border-border"
-                    }`}>
-                      {paymentMethod === m.id && <CheckCircle2 className="size-full text-premium-foreground" />}
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              {paymentMethod === "card" && (
-                <CardPaymentForm amount={String(amount)} currency={propertyCurrency} value={cardForm} onChange={setCardForm} />
-              )}
-              {paymentMethod === "transfer" && (
-                <BankTransferForm defaultAmount={String(amount)} currency={propertyCurrency} value={transferForm} onChange={setTransferForm} />
-              )}
-              {paymentMethod === "deposit" && (
-                <DepositForm defaultAmount={String(amount)} currency={propertyCurrency} value={depositForm} onChange={setDepositForm} />
-              )}
-              {paymentMethod === "yape" && (
-                <YapePaymentForm defaultAmount={String(amount)} currency={propertyCurrency} value={yapeForm} onChange={setYapeForm} />
-              )}
-            </div>
-
-            {!isPaymentStepValid && paymentValidationHint && (
-              <div className="flex items-start gap-2 rounded-xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm text-warning">
-                <AlertCircle className="size-4 shrink-0 mt-0.5" />
-                <p>{paymentValidationHint}</p>
-              </div>
-            )}
-
-            <div className="flex flex-col-reverse sm:flex-row gap-3">
-              <Button variant="outline" onClick={() => setStep(1)} className="rounded-xl h-11 w-full sm:w-auto">
-                <ArrowLeft className="size-4 mr-1" /> Atrás
-              </Button>
-              <Button
-                onClick={() => setStep(3)}
-                disabled={!isPaymentStepValid}
-                className="flex-1 rounded-xl h-11 bg-premium hover:bg-premium/90 text-premium-foreground font-semibold disabled:opacity-50"
-              >
-                Revisar y confirmar <ArrowRight className="size-4 ml-1" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
-
-        {step === 3 && property && (
-          <motion.div
-            key="step-3"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -24 }}
-            className="flex flex-col gap-4"
-          >
-            <div className="rounded-2xl border border-premium/20 bg-gradient-to-br from-premium/10 to-card p-4 sm:p-6 shadow-sm">
-              <h3 className="text-base font-semibold mb-4">Confirmar captura Premium</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Inversor</span>
-                  <span className="font-medium">{user.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Propiedad</span>
-                  <span className="font-medium text-right max-w-[200px] truncate">{property.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Inversión</span>
-                  <span className="font-bold">{formatCurrency(amount, propertyCurrency)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Participación</span>
-                  <span className="font-bold text-premium">100%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">ROI Premium</span>
-                  <span className="font-bold text-premium">{property.premiumRoi}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Retorno estimado</span>
-                  <span className="font-bold text-success">{formatCurrency(estimatedReturn, propertyCurrency)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Método</span>
-                  <span>{paymentMethods.find((m) => m.id === paymentMethod)?.label}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col-reverse sm:flex-row gap-3">
-              <Button variant="outline" onClick={() => setStep(2)} className="rounded-xl h-11 w-full sm:w-auto">
-                <ArrowLeft className="size-4 mr-1" /> Atrás
-              </Button>
-              <Button
-                onClick={handleConfirm}
-                disabled={confirming}
-                className="flex-1 rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold h-11 sm:h-12"
-              >
-                {confirming ? (
-                  <span className="flex items-center gap-2">
-                    <div className="size-4 border-2 border-premium-foreground/40 border-t-premium-foreground rounded-full animate-spin" />
-                    Procesando captura...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <Crown className="size-4" />
-                    Confirmar captura al 100%
-                  </span>
-                )}
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </ul>
     </div>
   );
 }

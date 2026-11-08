@@ -21,6 +21,7 @@ const HERO_ROUTES: Record<string, "primary" | "inverse"> = {
   "/dashboard/properties": "primary",
   "/dashboard/notifications": "inverse",
   "/dashboard/documents": "primary",
+  "/dashboard/premium-properties": "primary",
 };
 
 const HERO_CLASSES = {

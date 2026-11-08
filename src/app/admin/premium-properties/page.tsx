@@ -36,6 +36,13 @@ import { usePagination } from "@/hooks/use-pagination";
 import { ReadOnlyBanner } from "@/components/admin/rbac/ReadOnlyBanner";
 import { PermissionGate } from "@/components/admin/rbac/PermissionGate";
 import { cn } from "@/lib/utils";
+import { StatusPill } from "@/components/premium/StatusPill";
+import {
+  RESERVATION_STATUS_LABELS,
+  RESERVATION_STATUS_TONE,
+  getActiveReservationForProperty,
+  useReservations,
+} from "@/lib/premium/reservations";
 
 const statusConfig: Record<
   PremiumPropertyAdminStatus,
@@ -48,7 +55,7 @@ const statusConfig: Record<
     icon: Clock,
   },
   caught: {
-    label: "Capturada",
+    label: "Reservada",
     rowBorder: "border-l-success",
     badge: "bg-success/10 text-success border-success/20",
     icon: CheckCircle2,
@@ -68,6 +75,8 @@ const statusConfig: Record<
 };
 
 export default function AdminPremiumPropertiesPage() {
+  const reservations = useReservations();
+  const pendingRequests = reservations.filter((r) => r.status === "requested").length;
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [pageSize, setPageSize] = useState(8);
@@ -140,7 +149,7 @@ export default function AdminPremiumPropertiesPage() {
         {[
           { label: "Total Premium", value: stats.total, icon: Crown, color: "text-premium bg-premium/10" },
           { label: "Disponibles", value: stats.available, icon: Clock, color: "text-warning bg-warning/10" },
-          { label: "Capturadas", value: stats.caught, icon: CheckCircle2, color: "text-success bg-success/10" },
+          { label: "Solicitudes por revisar", value: pendingRequests, icon: CheckCircle2, color: "text-info bg-info/10" },
           { label: "Convertidas", value: stats.converted, icon: ArrowRightLeft, color: "text-info bg-info/10" },
         ].map((s, i) => (
           <motion.div
@@ -249,19 +258,22 @@ export default function AdminPremiumPropertiesPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {isCaught ? (
-                      <div>
-                        <p className="text-sm font-medium text-success">
-                          {p.caughtByUserName}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-                          <Users className="size-2.5" />
-                          1 inversor · 100%
-                        </p>
-                      </div>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    )}
+                    {(() => {
+                      const res = getActiveReservationForProperty(reservations, p.id);
+                      return res ? (
+                        <div className="flex flex-col items-start gap-1">
+                          <StatusPill tone={RESERVATION_STATUS_TONE[res.status]} size="xs">
+                            {RESERVATION_STATUS_LABELS[res.status]}
+                          </StatusPill>
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-0.5">
+                            <Users className="size-2.5" />
+                            {res.userName}
+                          </p>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      );
+                    })()}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {p.premiumDeadline

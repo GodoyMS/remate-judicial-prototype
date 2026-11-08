@@ -36,8 +36,8 @@ const PREMIUM_BENEFITS = [
   },
   {
     icon: Shield,
-    title: "Comisión reducida 0.5%",
-    description: "Menos del tercio de la comisión estándar (1.5%)",
+    title: "Expediente completo y escenarios",
+    description: "Documentos, costos y escenario adverso antes de comprometer capital",
   },
   {
     icon: Sparkles,
@@ -92,25 +92,26 @@ export function PremiumUpgradeDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md rounded-2xl p-0 overflow-hidden gap-0">
         {/* Header gradient */}
-        <div className="bg-gradient-to-br from-premium to-premium/80 p-6 text-premium-foreground">
+        <div className="border-b border-border/60 bg-card p-6 text-foreground">
           <DialogHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-premium-foreground/20 flex items-center justify-center">
-                  <Crown className="size-5 text-premium-foreground" />
+                <div className="size-10 rounded-xl bg-premium/12 flex items-center justify-center">
+                  <Crown className="size-5 text-premium" />
                 </div>
-                <DialogTitle className="text-lg font-bold text-premium-foreground">
+                <DialogTitle className="text-lg font-bold text-foreground">
                   Acceso Premium
                 </DialogTitle>
               </div>
               <button
                 onClick={handleClose}
-                className="size-8 rounded-lg bg-premium-foreground/10 hover:bg-premium-foreground/20 flex items-center justify-center transition-colors"
+                className="size-8 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
+                aria-label="Cerrar"
               >
-                <X className="size-4 text-premium-foreground" />
+                <X className="size-4 text-muted-foreground" />
               </button>
             </div>
-            <p className="text-sm text-premium-foreground/80 mt-2 text-left">
+            <p className="text-sm text-muted-foreground mt-2 text-left">
               Premium cambia cómo participas, no cuánto ganas: accedes individualmente
               a operaciones antes de que se abran al capital colectivo.
             </p>
@@ -166,8 +167,8 @@ export function PremiumUpgradeDialog({
               <div className="space-y-3">
                 {PREMIUM_BENEFITS.map((benefit) => (
                   <div key={benefit.title} className="flex items-start gap-3">
-                    <div className="size-8 rounded-lg bg-premium/10 flex items-center justify-center shrink-0 mt-0.5">
-                      <benefit.icon className="size-4 text-premium" />
+                    <div className="size-8 rounded-lg bg-primary/8 flex items-center justify-center shrink-0 mt-0.5 dark:bg-accent">
+                      <benefit.icon className="size-4 text-primary dark:text-accent-foreground" />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-foreground">
@@ -194,13 +195,13 @@ export function PremiumUpgradeDialog({
                     <li>Acceso cuando abre al público</li>
                   </ul>
                 </div>
-                <div className="rounded-xl border border-premium/20 bg-premium/10 p-3">
-                  <p className="text-[10px] font-semibold text-premium uppercase mb-2">
+                <div className="rounded-xl border border-border/60 bg-muted/50 p-3">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-2">
                     Premium ✦
                   </p>
                   <ul className="space-y-1 text-xs text-foreground font-medium">
                     <li>100% individual</li>
-                    <li>Comisión 0.5%</li>
+                    <li>Asesora asignada</li>
                     <li>Ventana de exclusividad</li>
                   </ul>
                 </div>
@@ -210,11 +211,11 @@ export function PremiumUpgradeDialog({
                 <Button
                   onClick={handleRequest}
                   disabled={loading}
-                  className="w-full h-11 rounded-xl bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70 text-premium-foreground font-semibold"
+                  className="w-full h-11 rounded-xl font-semibold"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
-                      <div className="size-4 border-2 border-premium-foreground/40 border-t-premium-foreground rounded-full animate-spin" />
+                      <div className="size-4 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
                       Enviando solicitud...
                     </span>
                   ) : (
